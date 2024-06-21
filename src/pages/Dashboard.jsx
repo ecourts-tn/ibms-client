@@ -37,7 +37,7 @@ const Dashboard = () => {
 
     return (
     <>
-        <div className="container-fluid">
+        <div className="container-fluid" style={{minHeight:'600px'}}>
             <ToastContainer />
             <div className="content-header">
                 <div className="container-fluid">

@@ -229,7 +229,7 @@ const Payment = () => {
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Amount</label>
                                         <input 
-                                            type="password" 
+                                            type="text" 
                                             className="form-control" 
                                             name="amount"
                                             value={payment.amount}
@@ -254,7 +254,7 @@ const Payment = () => {
                                     <div className="col-md-2">
                                         <div className="form-group mb-3">
                                             <input 
-                                                type="text" 
+                                                type="password" 
                                                 className="form-control" 
                                                 onChange={(e) => setOtp(e.target.value)}
                                             />

@@ -16,7 +16,7 @@ const PetitionDetail = () => {
             }
         }
         fetchData()
-    }, [petition])
+    }, [])
 
     return (
         <>

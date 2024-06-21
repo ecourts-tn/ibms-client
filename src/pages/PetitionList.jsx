@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
@@ -13,7 +12,7 @@ const PetitionList = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/list/`)
+                const response = await api.get(`api/bail/petition/submitted/list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -22,7 +21,7 @@ const PetitionList = () => {
             }
         }
         fetchData();
-    }, [cases])
+    }, [])
 
     const handleSubmit = async(cino) => {
         try{
@@ -67,7 +66,11 @@ const PetitionList = () => {
                                 </Link>
                             </td>
                             <td>{ item.petition.date_of_filing }</td>
-                            <td>{ item.petition.filing_type.type_name }/{item.petition.filing_number}/{item.petition.filing_year}</td>
+                            <td>
+                                { item.petition.filing_type && (
+                                <span>{ item.petition.filing_type.type_name }/{item.petition.filing_number}/{item.petition.filing_year}</span>
+                                )}
+                            </td>
                             <td>
                                 { item.petitioner.map((p, index) => (
                                     <span className="text ml-2">{index+1}. {p.petitioner_name}</span>

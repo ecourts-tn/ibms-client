@@ -32,11 +32,12 @@ const EFileDetails = () => {
                 <div className="card-header pb-0">
                     <h3 className="card-title"><strong>Basic Details</strong></h3>
                 </div>
-                <div className="card-body">
+                <div className="card-body p-2">
+                    { Object.keys(petition).length > 0 && (
                     <table className="custom-table">
                         { petition && (
                         <>
-                            {/* <tr>
+                            <tr>
                                 <td>Court Type</td>
                                 <td>{ petition.court_type.name }</td>
                                 <td>Bench Type</td>
@@ -62,13 +63,14 @@ const EFileDetails = () => {
                             </tr>
                             <tr>
                                 <td>Crime Registered</td>
-                                <td>{ petition.crime_registered === 1 ? 'YES' : 'NO' }</td>
+                                <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
                                 <td>Compliant Type</td>
                                 <td>{ petition.complaint_type.name }</td>
-                            </tr> */}
+                            </tr>
                         </>
                         )}
                     </table>
+                    )}
                 </div>
             </div>
             <div className="card card-outline card-success">

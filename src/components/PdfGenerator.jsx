@@ -66,7 +66,7 @@ const PdfGenerator = () => {
                             ))}
                         </div>
                         <div className="col-md-6 d-flex justify-content-end mt-5">
-                            <p>Petitioner /accused /Intervener</p>
+                            <p>Petitioner / Accused</p>
                         </div>
                         <div className="col-md-12 d-flex justify-content-center">
                             <p><strong>-Vs-</strong></p>
@@ -133,11 +133,14 @@ const PdfGenerator = () => {
                         </div>
                         <div className="col-md-6 mt-5">
                             <p>Place: <strong>{petition.petition.district.district_name}</strong></p>
-                            <p>Date: [Date Time]</p>
+                            <p>Submitted on: {petition.petition.created_at}</p>
                         </div>
                         <div className="col-md-6 mt-5" style={{textAlign:'right'}}>
-                            <p>Advocates:</p>
-                            <p>[e-signed submitted on Date Time]</p>
+                            <p>Advocates<br></br>
+                            { petition.advocate.map((adv, index) => (
+                                <span><strong>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}, &nbsp;</strong></span>
+                            ))}</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>

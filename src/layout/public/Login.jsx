@@ -271,7 +271,7 @@ const Login = () => {
                             {/* <button className="btn btn-block btn-signin">Sign in</button> */}
                             <div className="mt-1">
                                 <p><a href="#">Forgot&nbsp;password?</a></p>
-                                <p className="d-flex justify-content-end">Don't have an account?&nbsp;<Link to="register"> Register</Link></p>
+                                <p className="d-flex justify-content-end">Don't have an account?&nbsp;<Link to="user/registration"> Register</Link></p>
                             </div>
                         </form>
                     </Col>
