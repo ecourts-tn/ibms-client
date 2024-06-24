@@ -35,9 +35,14 @@ const FIRSearch = () => {
         investigation_officer:'',
         fir_date_time: null,
         place_of_occurrence: '',
-        complaintant_name: '',
         gist_of_fir: '',
-        gist_in_local: ''
+        gist_in_local: '',
+        complainant_age: null,
+        complainant_guardian:null,
+        complainant_guardian_name: '',
+        complainant_name:'',
+        investigation_officer_rank:'',
+        no_of_accused: null
     })
 
     const validationSchema = Yup.object({
@@ -83,15 +88,22 @@ const FIRSearch = () => {
                     investigation_officer :data.investigation_officer_name,
                     fir_date_time: data.FIR_DATE_Time,
                     place_of_occurrence: data.place_of_occurence,
-                    complaintant_name: data.complaintant_name,
                     gist_of_fir: data.gist_of_FIR,
-                    gist_in_local: data.gist_of_FIR_local_language
+                    gist_in_local: data.gist_of_FIR_local_language,
+                    complainant_age: data.complainant_age,
+                    complainant_guardian_name: data.complainant_guardian_name,
+                    complainant_name: data.complaintant_name,
+                    investigation_officer_rank: data.investigation_officer_rank,
+                    no_of_accused: data.no_of_accused,
+                    complainant_guardian: data.complainant_guardian
                 })
-                const cino = localStorage.getItem("cino")
-                const update = await api.put(`api/bail/filing/${cino}/update/`, petition)
-                setLoading(false)
-                setShowAdditionalFields(true)
-                dispatch(getAccusedDetails())
+                if(petition.no_of_accused){
+                    const cino = localStorage.getItem("cino")
+                    const update = await api.put(`api/bail/filing/${cino}/update/`, petition)
+                    setLoading(false)
+                    setShowAdditionalFields(true)
+                    dispatch(getAccusedDetails())
+                }
             }
         }catch(error){
             const newErrors = {}

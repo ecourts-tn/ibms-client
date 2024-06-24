@@ -12,7 +12,7 @@ import AdminLayout from "./layout/AdminLayout"
 import BailFiling from "./components/filing/BailFiling"
 import TodayCases from "./components/court/TodayCases"
 import DailyProceedings from "./components/court/DailyProceedings"
-import IntervenePetition from "./components/filing/IntervenePetition"
+import IntervenePetition from "./components/IntervenePetition/Petition"
 import CaseScrutiny from "./components/court/CaseScrutiny"
 import CaseRegistration from "./components/court/CaseRegistration"
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -139,8 +139,9 @@ function App() {
         </Route>
         <Route element={<AdminLayout />} >
           <Route path="filing" element={<Filing />} />
-          <Route path="police-response" element={<Response />} />
-          <Route name="response-create" path="police-response/create/" element={<ResponseCreate />} />
+          <Route path="filing/intervene-petition" element={<IntervenePetition />} />
+          <Route path="police/response" element={<Response />} />
+          <Route path="police/response/create" element={<ResponseCreate />} />
           <Route path="court" >
             <Route path="today-cases" element={<TodayCases />} />
             <Route path="daily-proceedings" element={<DailyProceedings />} />
