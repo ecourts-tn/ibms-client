@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "homepage": "http://ecourts-tn.github.io/ibms-client/",
+  "homepage": "https://ecourts-tn.github.io/ibms-client",
   "private": true,
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
