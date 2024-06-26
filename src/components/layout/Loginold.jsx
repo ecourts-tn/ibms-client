@@ -7,9 +7,9 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
 import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
-import api from '../../api';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
-import { getUserTypes, getUserTypeStatus } from '../../redux/features/UserTypeSlice';
+import api from '../api';
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants";
+import { getUserTypes, getUserTypeStatus } from '../redux/features/UserTypeSlice';
 import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
 

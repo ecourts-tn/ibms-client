@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
-import { getDistricts, getDistrictsStatus } from '../../redux/features/DistrictSlice'
-import { getUserTypes, getUserTypeStatus } from '../../redux/features/UserTypeSlice'
-import { getPoliceSationByDistrict, getPoliceStationsStatus } from '../../redux/features/PoliceStationSlice'
-import { getPrisonsByDistrict, getPrisonsStatus } from '../../redux/features/PrisonSlice'
+import { getDistricts, getDistrictsStatus } from '../redux/features/DistrictSlice'
+import { getUserTypes, getUserTypeStatus } from '../redux/features/UserTypeSlice'
+import { getPoliceSationByDistrict, getPoliceStationsStatus } from '../redux/features/PoliceStationSlice'
+import { getPrisonsByDistrict, getPrisonsStatus } from '../redux/features/PrisonSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
-import api from '../../api'
+import api from '../api'
 
 const Register = () => {
 

@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { ToastContainer } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import api from './../api'
+import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 
 const Dashboard = () => {

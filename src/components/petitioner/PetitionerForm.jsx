@@ -44,6 +44,7 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
       taluk:'',
       post_office:'',
       pincode:'',
+      nationality: '',
       mobile_number:null,
       aadhar_number:null,
       email_address:'',
@@ -69,21 +70,21 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
     address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required"),
     aadhar_number: Yup.number().required("Aadhaar number is required"),
-    email_address: Yup.string().required().email(),
+    // email_address: Yup.string().required().email(),
     act: Yup.string().required(),
     section: Yup.string().required(),
     address: Yup.string().required(),
     is_custody: Yup.boolean().required(),
-    prison: Yup.string().when('is_custody', (is_custody, schema) => {
-      if(is_custody){
-          return schema.required("Please select the prison")
-      }
-    }),
-    custody_days: Yup.number().when('is_custody', (is_custody, schema) => {
-      if(is_custody){
-        return schema.required("This field is required")
-      }
-    })
+    // prison: Yup.string().when('is_custody', (is_custody, schema) => {
+    //   if(is_custody){
+    //       return schema.required("Please select the prison")
+    //   }
+    // }),
+    // custody_days: Yup.number().when('is_custody', (is_custody, schema) => {
+    //   if(is_custody){
+    //     return schema.required("This field is required")
+    //   }
+    // })
   })
 
   useEffect(() => {
@@ -395,6 +396,20 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                   value={petitioner.pincode}
                   onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
                 ></Form.Control>
+              </Form.Group>
+            </div>
+            <div className="col-md-3">
+              <Form.Group>
+                <Form.Label>Nationality</Form.Label>
+                <select 
+                  name="nationality" 
+                  className="form-control"
+                  value={petitioner.nationality}
+                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                >
+                  <option value="1">Indian</option>
+                  <option value="2">Others</option>
+                </select>
               </Form.Group>
             </div>
             <div className="col-md-3">

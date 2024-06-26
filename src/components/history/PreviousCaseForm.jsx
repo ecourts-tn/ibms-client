@@ -18,6 +18,22 @@ const PreviousCaseForm = () => {
 
     const[petition, setPetition] = useState(initialState)
 
+    const[petitions, setPetitions] = useState([])
+
+    useEffect(() => {
+        async function fetchData(){
+            try{
+                const response = await api.get('api/bail/petition/TN20240624000002/previous-history/')
+                if(response.status === 200){
+                    setPetitions(response.data)
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }
+        fetchData();
+    })
+
     const handleSubmit = async (e) => {
         try{
             const cino = localStorage.getItem("cino")
@@ -40,6 +56,33 @@ const PreviousCaseForm = () => {
                 <div className="col-md-12">
                     <div className="alert alert-info"><strong>Previous Application Filed</strong></div>
                 </div>
+                { Object.keys(petitions).length > 0 && (
+                    <>
+                    <table className="table table-bordered table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Case Number</th>
+                                <th>Petitioner Name</th>
+                                <th>Court Details</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Order Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { petitions.map((petition, index) => (
+                            <tr>
+                                <td>{index+1}</td>
+                                <td>{petition.filing_type.type_name}/{petition.filing_number}/{petition.filing_year}</td>
+                                <td></td>
+                                <td>{ petition.court.court_name}, {petition.establishment.establishment_name}, {petition.district.district_name}</td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    </>
+                )}
                 <div className="col-md-2">
                     <div className="form-group">
                         <label htmlFor="">Case Number</label>

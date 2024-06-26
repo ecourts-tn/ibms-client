@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
@@ -12,7 +12,6 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import { loadUser } from '../../redux/features/UserSlice';
 import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
-import SearchIcon from '@mui/icons-material/Search';
 
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
@@ -24,19 +23,14 @@ import SendIcon from '@mui/icons-material/Send';
 import { styled, alpha } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
-import Collapse from '@mui/material/Collapse';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import { red } from '@mui/material/colors';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { tableBodyClasses } from '@mui/material';
 import CommentIcon from '@mui/icons-material/Comment';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';

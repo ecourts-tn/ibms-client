@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
-import SendIcon from '@mui/icons-material/Send';
 import Modal from 'react-bootstrap/Modal'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import api from '../api'
+import api from '../../api'
 import PaymentHistory from './PaymentHistory';
 
 const Payment = () => {
@@ -105,8 +104,6 @@ const Payment = () => {
         }
     },[payment.petition])
 
-    console.log(paymentHistory.length)
-
     useEffect(() => {
         async function fetchData(id){
             try{
@@ -164,7 +161,7 @@ const Payment = () => {
                     <div className="row">
                         <div className="col-md-8 offset-2">
                             <div className="row">
-                                <div className="col-md-12">
+                                {/* <div className="col-md-12">
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Select Petition</label>
                                         <select 
@@ -187,7 +184,7 @@ const Payment = () => {
                                             ))}
                                         </select>
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className="col-md-12">
                                     { paymentHistory.length > 0 && (
                                         <Button
@@ -199,7 +196,7 @@ const Payment = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="">Petitioner Name</label>
+                                        <label htmlFor="">Payer Name</label>
                                         <select 
                                             name="petitioner_name" 
                                             className="form-control"

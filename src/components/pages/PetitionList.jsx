@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
-import api from '../api'
+import api from '../../api'
 
 const PetitionList = () => {
 

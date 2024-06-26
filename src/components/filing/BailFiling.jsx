@@ -13,6 +13,7 @@ import GroundsContainer from '../grounds/GroundsContainer'
 import AdvocateContainer from '../advocate/AdvocateContainer'
 import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
+import Payment from '../pages/Payment'
 
 import EFile from '../efile/EFile'
 import api from '../../api'
@@ -69,7 +70,8 @@ const BailFiling = () => {
         { label: 'Previous Case Details', onClick: () => setActiveStep(3)},
         { label: 'Advocate Details', onClick: () => setActiveStep(4)},
         { label: 'Upload Documents', onClick: () => setActiveStep(5)},
-        { label: 'eFile', onClick: () => setActiveStep(6)}
+        { label: 'Payment', onClick: () => setActiveStep(6)},
+        { label: 'eFile', onClick: () => setActiveStep(7)}
     ];
 
     
@@ -299,6 +301,9 @@ const BailFiling = () => {
                 />
             }
             case 6: {
+                return <Payment />
+            }
+            case 7: {
                 return <EFile
                     petition={petition}
                     petitioners={petitioners}

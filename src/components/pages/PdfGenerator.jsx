@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import generatePDF from "react-to-pdf";
 import Button from '@mui/material/Button'
 import DownloadIcon from '@mui/icons-material/Download'
-import api from '../api';
+import api from '../../api';
 
 
 const options = {

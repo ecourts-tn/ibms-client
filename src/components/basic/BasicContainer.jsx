@@ -165,17 +165,17 @@ const BasicContainer = ({setActiveStep}) => {
         <>
             <div className="row">
                 <div className="col-md-12">
-                    <div className="card card-outline card-primary">
-                        <div className="card-header">
+                    <div className="">
+                        {/* <div className="card-header">
                             <h3 className="text-center card-title">
                                 <i className="fa fa-pencil-alt mr-2"></i>
                                 <strong>Basic Details</strong>
                             </h3>
-                        </div>
-                        <div className="card-body">
-                            <div className="row">
-                                <div className="col-md-12">
-                                    <Form.Group className="row mb-3">
+                        </div> */}
+                        <div className="">
+                            <div className="row mt-4">
+                                <div className="col-md-6 offset-3">
+                                    <Form.Group className="row mb-4">
                                         <Form.Label className="col-sm-3">Court Type</Form.Label>
                                         <div className="col-sm-9">
                                             <select 
@@ -194,9 +194,9 @@ const BasicContainer = ({setActiveStep}) => {
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-12">
+                                <div className="col-md-6 offset-3">
                                     { petition.court_type == 1 && (
-                                    <div className="form-group row">
+                                    <div className="form-group row mb-4">
                                         <label htmlFor="bench_type" className="col-sm-3">High Court Bench</label>
                                         <div className="col-sm-9">
                                             <select 
@@ -218,7 +218,9 @@ const BasicContainer = ({setActiveStep}) => {
                             </div>  
                             { petition.court_type == 2 && (
                             <div className="row">
-                                <div className="col-md-6">
+                                <div className="col-md-8 offset-2">
+                                    <div className="row mb-4">
+                                    <div className="col-md-6">
                                     <div className="form-group">
                                     <label htmlFor="state">State</label>
                                     <select 
@@ -232,138 +234,142 @@ const BasicContainer = ({setActiveStep}) => {
                                     </select>
                                     </div>
                                 </div>
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                <label htmlFor="district">District</label>
-                                <select 
-                                    id="basic_district"
-                                    name="district" 
-                                    className="form-control"
-                                    value={petition.district}
-                                    onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                >
-                                    <option value="">Select district</option>
-                                    { districts.map( (item, index) => (
-                                        <option key={index} value={item.district_code}>{item.district_name}</option>)
-                                    )}
-                                </select>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                <label htmlFor="establishment">Establishment Name</label>
-                                <select 
-                                    name="establishment" 
-                                    id="establishment" 
-                                    className="form-control"
-                                    value={petition.establishment}
-                                    onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                >Case
-                                    <option value="">Select Establishment</option>
-                                    {
-                                        establishments.filter((establishment) => {
-                                            return establishment.bail_filing && establishment.display
-                                        })
-                                        .map((item, index) => (
-                                            <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                        ))
-                                    }
-                                </select>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <div className="form-group">
-                                <label htmlFor="court">Court Name</label>
-                                <select 
-                                    name="court" 
-                                    id="court" 
-                                    className="form-control"
-                                    value={petition.court}
-                                    onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                                >
-                                    <option value="">Select court</option>
-                                    {   courts.filter((court) => {
-                                            return court.bail_filing && court.display
-                                        })
-                                        .map((item, index) => (
-                                            <option key={index} value={item.court_code}>{ item.court_name}</option>
-                                        ))
-                                    }
-                                </select>
-                                </div>
-                            </div>
-                            </div>
-                            )}
-                            <div className="row">
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <div className="form-group">
-                                    <label htmlFor="caseType">Case Type</label>
+                                    <label htmlFor="district">District</label>
                                     <select 
-                                        name="case_type" 
-                                        id="case_type" 
-                                        className="form-control" 
-                                        value={petition.case_type} 
+                                        id="basic_district"
+                                        name="district" 
+                                        className="form-control"
+                                        value={petition.district}
                                         onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                     >
-                                        <option value="">Select type</option>
-                                        { casetypes.map( (item, index) => (
-                                        <option key={index} value={item.id}>{item.type_full_form}</option>)
+                                        <option value="">Select district</option>
+                                        { districts.map( (item, index) => (
+                                            <option key={index} value={item.district_code}>{item.district_name}</option>)
                                         )}
                                     </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <div className="form-group">
-                                    <label htmlFor="bailType">Bail Type</label>
+                                    <label htmlFor="establishment">Establishment Name</label>
                                     <select 
-                                        name="bail_type" 
-                                        id="bail_type" 
+                                        name="establishment" 
+                                        id="establishment" 
                                         className="form-control"
-                                        value={petition.bail_type}
+                                        value={petition.establishment}
+                                        onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                    >Case
+                                        <option value="">Select Establishment</option>
+                                        {
+                                            establishments.filter((establishment) => {
+                                                return establishment.bail_filing && establishment.display
+                                            })
+                                            .map((item, index) => (
+                                                <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
+                                            ))
+                                        }
+                                    </select>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                    <label htmlFor="court">Court Name</label>
+                                    <select 
+                                        name="court" 
+                                        id="court" 
+                                        className="form-control"
+                                        value={petition.court}
                                         onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                     >
-                                        <option value="">Select type</option>
-                                        { bailtypes.map((item, index) => (
-                                        <option key={index} value={item.id}>{ item.type_name }</option>
-                                        ))}
+                                        <option value="">Select court</option>
+                                        {   courts.filter((court) => {
+                                                return court.bail_filing && court.display
+                                            })
+                                            .map((item, index) => (
+                                                <option key={index} value={item.court_code}>{ item.court_name}</option>
+                                            ))
+                                        }
                                     </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
-                                    <Form.Group>
-                                    <Form.Label>Complaint Type</Form.Label>
-                                    <select 
-                                        name="complaint_type" 
-                                        id="complaint_type"
-                                        className="form-control"   
-                                        value={petition.complaint_type}
-                                        onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
-                                    >
-                                        <option value="">Select type</option>
-                                        { complainttypes.map((item, index) => (
-                                            <option key={index} value={item.id}>{ item.type_name }</option>
-                                        ))}
-                                    </select>
-                                    </Form.Group>
-                                </div>
-                                <div className="col-sm-12" style={{ marginTop:'40px'}}>
-                                    <div className="form-group clearfix">
-                                    <label htmlFor="" className="mr-2">Crime Registered?</label>
-                                    <div className="icheck-success d-inline mx-2">
-                                        <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
-                                        <label htmlFor="radioPrimary1">Yes</label>
-                                    </div>
-                                    <div className="icheck-danger d-inline mx-2">
-                                        <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
-                                        <label htmlFor="radioPrimary2">No</label>
-                                    </div>
-                                    <div className="icheck-primary d-inline mx-2">
-                                        <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
-                                        <label htmlFor="radioPrimary3">Not Known</label>
-                                    </div>
                                     </div>
                                 </div>
-                                <div className="col-md-12 d-flex justify-content-center">
+                            </div>
+                            )}
+                            <div className="row">
+                                <div className="col-md-6 offset-3">
+                                    <div className="form-group row mb-4">
+                                        <label htmlFor="caseType" className="col-sm-3">Case Type</label>
+                                        <div className="col-sm-9">
+                                            <select 
+                                                name="case_type" 
+                                                id="case_type" 
+                                                className="form-control" 
+                                                value={petition.case_type} 
+                                                onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                            >
+                                                <option value="">Select type</option>
+                                                { casetypes.map( (item, index) => (
+                                                <option key={index} value={item.id}>{item.type_full_form}</option>)
+                                                )}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row mb-4">
+                                        <label htmlFor="bailType" className="col-sm-3">Bail Type</label>
+                                        <div className="col-sm-9">
+                                            <select 
+                                                name="bail_type" 
+                                                id="bail_type" 
+                                                className="form-control"
+                                                value={petition.bail_type}
+                                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select type</option>
+                                                { bailtypes.map((item, index) => (
+                                                <option key={index} value={item.id}>{ item.type_name }</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row mb-4">
+                                        <label htmlFor="complaint_type" className="col-sm-3">Complaint Type</label>
+                                        <div className="col-sm-9">
+                                            <select 
+                                                name="complaint_type" 
+                                                id="complaint_type"
+                                                className="form-control"   
+                                                value={petition.complaint_type}
+                                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
+                                            >
+                                                <option value="">Select type</option>
+                                                { complainttypes.map((item, index) => (
+                                                    <option key={index} value={item.id}>{ item.type_name }</option>
+                                                ))}
+                                            </select>    
+                                        </div>
+                                    </div>
+                                    <div className="form-group row clearfix mb-4">
+                                        <label htmlFor="" className="col-sm-3">Crime Registered?</label>
+                                        <div className="col-sm-9">
+                                            <div className="icheck-success d-inline mx-2">
+                                                <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
+                                                <label htmlFor="radioPrimary1">Yes</label>
+                                            </div>
+                                            <div className="icheck-danger d-inline mx-2">
+                                                <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
+                                                <label htmlFor="radioPrimary2">No</label>
+                                            </div>
+                                            <div className="icheck-primary d-inline mx-2">
+                                                <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
+                                                <label htmlFor="radioPrimary3">Not Known</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-12 d-flex justify-content-center mt-2">
                                     <Button
                                         variant="contained"
                                         color="success"
