@@ -17,6 +17,7 @@ import EFile from '../efile/EFile'
 
 
 import { useSearchParams } from 'react-router-dom'
+import SearchBail from './SearchBail';
 
 function Litigants(props){
     const {
@@ -254,7 +255,7 @@ const Petition = () => {
     function getSectionComponent() {
         switch(activeStep) {
             case 0: {
-                return <BasicContainer 
+                return <SearchBail 
                     setActiveStep={setActiveStep}
                 />;
             }  

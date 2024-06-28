@@ -106,15 +106,43 @@ const DocumentContainer = () => {
                                 />
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-2 mt-4 pt-2">
                                 <Button 
                                     variant="contained"
                                     color="primary"
-                                    className="mt-2"
                                     onClick={sendMobileOTP}
                                     endIcon={<SendIcon />}
                                 >Sworn Affidavit</Button>
                             </div>
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="">Enrolment Number</label>
+                                    <div className="row">
+                                        <div className="col-md-4">
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                placeholder='MS'
+                                            />
+                                        </div>
+                                        <div className="col-md-4">
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                placeholder='Reg. No.'
+                                            />
+                                        </div>
+                                        <div className="col-md-4">
+                                            <input 
+                                                type="text" 
+                                                className="form-control" 
+                                                placeholder='Reg. Year'
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             {/* { !mobileVerified && (
                                 <div className="col-sm-2">
                                 <Button 

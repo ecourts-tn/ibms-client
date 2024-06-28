@@ -1,21 +1,19 @@
-import React from 'react'
-import { useEffect, useState } from 'react'
-import Form from 'react-bootstrap/Form'
+import React, { useEffect, useState } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
+import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { useDispatch, useSelector } from "react-redux";
 import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
 import { getStatesStatus, getStates } from '../../redux/features/StateSlice';
 import { getCaseTypeStatus,getCaseTypes } from '../../redux/features/CaseTypeSlice';
-import { getBailTypeByCaseType, getBailTypeStatus } from '../../redux/features/BailTypeSlice';
+import { getBailTypeByCaseType } from '../../redux/features/BailTypeSlice';
 import { getCourtsByEstablishmentCode } from '../../redux/features/CourtSlice';
 import { getEstablishmentByDistrict } from '../../redux/features/EstablishmentSlice';
 import { getComplaintTypes, getComplaintTypeStatus } from '../../redux/features/ComplaintTypeSlice';
 import { getCourtTypes, getCourtTypeStatus } from '../../redux/features/CourtTypeSlice';
 import { getBenchTypes, getBenchTypeStatus } from '../../redux/features/BenchTypeSlice';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
-import $ from 'jquery'
 import api from '../../api';
 
 const BasicContainer = ({setActiveStep}) => {

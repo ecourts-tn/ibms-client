@@ -181,7 +181,7 @@ const Login = () => {
 
     return (
         <>
-            <Container>
+            <Container fluid className="px-5">
                 <Row className='py-2'>
                     <Col md={3} className="mt-5 pt-3">
                         <ToastContainer />

@@ -60,6 +60,7 @@ const BailFiling = () => {
 
     const[searchParams] = useSearchParams()
 
+    const[nextEnabled, setNextEnabled] = useState(false)
     const[activeStep, setActiveStep] = useState(0)
     const currentStep = searchParams.get("step")
 
@@ -321,7 +322,7 @@ const BailFiling = () => {
 
     return (
         <>
-            <div className="container-fluid" style={{ paddingLeft:'100px', paddingRight:'100px'}}>
+            <div className="container-fluid" style={{ paddingLeft:'100px', paddingRight:'100px', minHeight:'800px'}}>
                 <div className="card" style={{ boxShadow:'none', border:'none'}}>
                     <div className="card-body mt-4" style={{ minHeight:'600px', boxShadow:'none', borderColor:'none'}}>
                         <Stepper

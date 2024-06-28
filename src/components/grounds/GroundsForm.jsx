@@ -5,10 +5,14 @@ import { nanoid } from '@reduxjs/toolkit'
 import { ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
 import api from '../../api'
+import Editor from 'react-simple-wysiwyg';
+// import { Editor } from '@tinymce/tinymce-react';
+import { useRef } from 'react';
 
 
 const GroundsForm = ({addGround, count, incrementCount}) => {
 
+    const editorRef = useRef(null);
     const validationSchema = Yup.object({
         description: Yup.string().required("The description field may not be blank").max(3000, "Description should not be more than 3000 characters")
     })
@@ -45,14 +49,21 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
                 <ToastContainer />
                 <div className="form-group">
                     <label htmlFor="">Description</label>
-                    <textarea 
+                    {/* <EditorProvider> */}
+                        <Editor value={ground.description} onChange={(e) => setGround({...ground, description: e.target.value })} />
+                            {/* <Toolbar>
+                                <BtnBold />
+                                <BtnItalic />
+                            </Toolbar> */}
+                    {/* </EditorProvider> */}
+                    {/* <textarea 
                         name="description" 
                         id="summernote"
                         rows="4" 
                         className={`form-control ${errors.description ? 'is-invalid' : ''}`}
                         value={ground.description}
                         onChange={(e) => setGround({...ground, [e.target.name]: e.target.value })}
-                    ></textarea>
+                    ></textarea> */}
                     <div className="invalid-feedback">
                         { errors.description }
                     </div>
