@@ -41,8 +41,7 @@ const SearchBail = () => {
         try{
             await validationSchema.validate(form, {abortEarly:false})
             try{
-                const response = await api.get("api/bail/petition/detail/", {form})
-                console.log(response)
+                const response = await api.get("api/bail/petition/detail/", {params: form})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setPetitioners(response.data.petitioner)
@@ -60,7 +59,7 @@ const SearchBail = () => {
             setErrors(newErrors)
         }
     }
-    console.log(respondents)
+
     return (
         <>
             <ToastContainer />

@@ -121,7 +121,7 @@ const CaseSearch = () => {
 
 
     return (
-        <>
+        <div className="container">
             <div className="row">
                 <div className="col-md-12 d-flex justify-content-center">
                     <div className="form-group clearfix">
@@ -294,7 +294,7 @@ const CaseSearch = () => {
                     <Loader />
                 )}
             </div>           
-        </>
+        </div>
   )
 }
 

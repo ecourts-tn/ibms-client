@@ -5,7 +5,7 @@ import api from '../../api'
 const PreviousCaseContainer = ({petition, setPetition}) => {
 
     return (
-        <>
+        <div className="container">
             <div className="card card-outline card-secondary">
                 <div className="card-header">
                     <h3 className="card-title"><i className="fas fa-download mr-2"></i><strong>Previous Case Details</strong></h3>
@@ -21,7 +21,7 @@ const PreviousCaseContainer = ({petition, setPetition}) => {
                     </>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

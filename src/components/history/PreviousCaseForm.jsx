@@ -32,7 +32,7 @@ const PreviousCaseForm = () => {
             }
         }
         fetchData();
-    })
+    },[])
 
     const handleSubmit = async (e) => {
         try{

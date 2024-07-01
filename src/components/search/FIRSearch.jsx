@@ -115,7 +115,7 @@ const FIRSearch = () => {
     }
 
     return (
-        <>
+        <div className="container">
             <div className="row">
                 <div className="col-md-3">
                     <label htmlFor="crime_state">State</label>
@@ -216,7 +216,7 @@ const FIRSearch = () => {
             { showAdditionalFields && (
                 <FIRDetails fir={petition}/>
             )}
-        </>    
+        </div>    
     )
 }
 

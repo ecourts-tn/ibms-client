@@ -20,7 +20,7 @@ const PetitionerContainer = (props) => {
     const handleShow = () => setShow(true);
      
     return (
-        <>
+        <div className="container">
             <div className="card card-outline card-danger">
                 <div className="card-header">
                     <div className="d-flex justify-content-between">
@@ -55,7 +55,7 @@ const PetitionerContainer = (props) => {
                     <PetitionerForm addPetitioner={addPetitioner} petitioners={petitioners}/>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

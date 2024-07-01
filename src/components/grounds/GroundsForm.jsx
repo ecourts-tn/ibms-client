@@ -8,6 +8,7 @@ import api from '../../api'
 import Editor from 'react-simple-wysiwyg';
 // import { Editor } from '@tinymce/tinymce-react';
 import { useRef } from 'react';
+import './style.css'
 
 
 const GroundsForm = ({addGround, count, incrementCount}) => {
@@ -48,34 +49,24 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
             <>
                 <ToastContainer />
                 <div className="form-group">
-                    <label htmlFor="">Description</label>
-                    {/* <EditorProvider> */}
-                        <Editor value={ground.description} onChange={(e) => setGround({...ground, description: e.target.value })} />
-                            {/* <Toolbar>
-                                <BtnBold />
-                                <BtnItalic />
-                            </Toolbar> */}
-                    {/* </EditorProvider> */}
-                    {/* <textarea 
-                        name="description" 
-                        id="summernote"
-                        rows="4" 
-                        className={`form-control ${errors.description ? 'is-invalid' : ''}`}
-                        value={ground.description}
-                        onChange={(e) => setGround({...ground, [e.target.name]: e.target.value })}
-                    ></textarea> */}
+                    {/* <label htmlFor="" className='text-left'>Grounds</label> */}
+                    <Editor 
+                        value={ground.description} 
+                        onChange={(e) => setGround({...ground, description: e.target.value })} 
+                        style={{ minHeight:'300px'}}
+                    />
                     <div className="invalid-feedback">
                         { errors.description }
                     </div>
                 </div>
-                <div className="form-group">
+                {/* <div className="form-group">
                     <Button 
                         variant="secondary"
                         onClick={saveGround}
                     >
                         <i className="fa fa-plus mr-2"></i>
                     Add Ground</Button>
-                </div>    
+                </div>     */}
             </>
             )}
         </>

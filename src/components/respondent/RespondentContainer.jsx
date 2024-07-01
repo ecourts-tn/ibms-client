@@ -14,7 +14,7 @@ const RespondentContainer = ({respondents, addRespondent, deleteRespondent}) => 
     const handleShow = () => setShow(true);
     
     return (
-        <>
+        <div className='container'>
         <div className="card card-outline card-info">
             <div className="card-header">
                 <div className="d-flex justify-content-between">
@@ -67,7 +67,7 @@ const RespondentContainer = ({respondents, addRespondent, deleteRespondent}) => 
                 ><i className="fa fa-plus mr-2"></i>Add Respondent</Button>
             </div> */}
         </div>
-    </>
+    </div>
   )
 }
 

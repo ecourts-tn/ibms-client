@@ -22,7 +22,7 @@ const AdvocateContainer = () => {
             }
         }
         fetchAdvocates();
-    }, [advocates])
+    }, [])
 
     const addAdvocate = async (advocate) => {
         try{
@@ -46,14 +46,14 @@ const AdvocateContainer = () => {
 
     
     return (
-        <>
-            <div className="card card-outline card-info">
+        <div className="container">
+            {/* <div className="card card-outline card-info">
                 <div className="card-header">
                     <h3 className="card-title"><i className="fas fa-graduation-cap mr-2"></i><strong>Advocate Details</strong></h3>
                 </div>
-                <div className="card-body">
+                <div className="card-body"> */}
                     <div className="row">
-                        <div className="col-md-8 offset-2">
+                        <div className="col-md-8 offset-md-2">
                             <div className="my-5">
                                 <AdvocateList 
                                     advocates={advocates}
@@ -66,8 +66,8 @@ const AdvocateContainer = () => {
                         addAdvocate={addAdvocate}
                     />
                 </div>
-            </div>
-        </>
+        //     </div>
+        // </div>
     )
 }
 

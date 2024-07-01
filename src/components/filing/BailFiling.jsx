@@ -18,6 +18,7 @@ import Payment from '../pages/Payment'
 import EFile from '../efile/EFile'
 import api from '../../api'
 import { useSearchParams } from 'react-router-dom'
+import ComplainantDetails from '../petitioner/ComplainantDetails'
 
 function Litigants(props){
     const {
@@ -38,6 +39,11 @@ function Litigants(props){
                 setPetition={setPetition}
             />
             <PetitionerContainer 
+                petitioners={petitioners} 
+                addPetitioner={addPetitioner}
+                deletePetitioner={deletePetitioner}
+            />
+            <ComplainantDetails 
                 petitioners={petitioners} 
                 addPetitioner={addPetitioner}
                 deletePetitioner={deletePetitioner}

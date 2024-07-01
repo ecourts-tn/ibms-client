@@ -76,7 +76,7 @@ const DocumentContainer = () => {
     }
 
     return (
-        <>
+        <div className="container">
             <ToastContainer />
             <div className="card card-outline card-success">
                 <div className="card-body">
@@ -194,7 +194,7 @@ const DocumentContainer = () => {
                     </form>
                 </div>    
             </div>  
-        </>
+        </div>
     )
 }
 

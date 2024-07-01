@@ -159,7 +159,7 @@ const Payment = () => {
             <div className="container my-4" style={{minHeight:'500px'}}>
                 {/* <form method="post"> */}
                     <div className="row">
-                        <div className="col-md-8 offset-2">
+                        <div className="col-md-8 offset-md-2">
                             <div className="row">
                                 {/* <div className="col-md-12">
                                     <div className="form-group mb-3">

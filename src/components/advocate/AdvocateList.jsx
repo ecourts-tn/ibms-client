@@ -3,9 +3,9 @@ import { Button } from 'react-bootstrap'
 
 const AdvocateList = ({advocates, deleteAdvocate}) => {
     return (
-      <>
-        
-          <table className="table table-striped table-bordered">
+    <>
+      <div className="table-responsive">
+      <table className="table table-striped table-bordered">
             <thead>
               <tr>
                 <th>Advocate Name</th>
@@ -41,8 +41,8 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
               ))}
             </tbody>
           </table>
-
-      </>
+      </div>
+    </>
     )
 }
 

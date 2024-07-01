@@ -16,11 +16,11 @@ const GroundsContainer = ({grounds, addGround, deleteGround}) => {
     }
     
     return (
-        <>
-            <div className="card card-outline card-info">
-                <div className="card-header">
+        <div className="container">
+            <div className="card">
+                {/* <div className="card-header">
                     <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>Grounds</strong></h3>
-                </div>
+                </div> */}
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-12">
@@ -50,7 +50,7 @@ const GroundsContainer = ({grounds, addGround, deleteGround}) => {
                         Add Ground</button>
                 </div> */}
             </div>
-        </>
+        </div>
      )
 }
 

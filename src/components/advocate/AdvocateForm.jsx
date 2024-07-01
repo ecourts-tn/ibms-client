@@ -31,7 +31,7 @@ const AdvocateForm = ({addAdvocate}) => {
         <>
             <ToastContainer />
             <div className="row">
-                <div className="col-md-6 offset-3">
+                <div className="col-md-6 offset-md-3">
                     <Form.Group className="row mb-3">
                         <Form.Label  className="col-sm-3">Advocate Name</Form.Label>
                         <div className="col-sm-9">
