@@ -15,7 +15,8 @@ import { getBenchTypes, getBenchTypeStatus } from '../../redux/features/BenchTyp
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
 import api from '../../api';
-import { Today } from '@mui/icons-material';
+import Select from 'react-select'
+import { BorderColor } from '@mui/icons-material';
 
 const BasicContainer = ({setActiveStep}) => {
 
@@ -160,6 +161,13 @@ const BasicContainer = ({setActiveStep}) => {
         }
     }
 
+    const districtOptions = districts.map((district, index) => {
+        return {
+            value : district.district_code,
+            label : district.district_name
+        }
+    })
+
     return (
         <>
             <ToastContainer />
@@ -242,7 +250,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label htmlFor="district">District</label>
-                                                <select 
+                                                {/* <select 
                                                     id="basic_district"
                                                     name="district" 
                                                     className={`form-control ${errors.district ? 'is-invalid' : null}`}
@@ -253,7 +261,14 @@ const BasicContainer = ({setActiveStep}) => {
                                                     { districts.map( (item, index) => (
                                                         <option key={index} value={item.district_code}>{item.district_name}</option>)
                                                     )}
-                                                </select>
+                                                </select> */}
+                                                <Select 
+                                                    name="district"
+                                                    style={{BorderColor:'red'}}
+                                                    options={districtOptions} 
+                                                    className={`${errors.district ? 'is-invalid' : null}`}
+                                                    onChange={(e) => setPetition({...petition, district:e.value})}
+                                                />
                                                 <div className="invalid-feedback">
                                                     { errors.district }
                                                 </div>
