@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Stepper, Step } from 'react-form-stepper'
-import { Button } from 'react-bootstrap'
-import { toast } from 'react-toastify'
+import { Button, Toast } from 'react-bootstrap'
+import { toast, ToastContainer } from 'react-toastify'
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom'
 import CaseDetails from './CaseDetails';
@@ -32,7 +32,8 @@ function Litigants(props){
         } = props
 
     return (
-        <>
+        <>  
+            <ToastContainer />
             <CaseDetails 
                 petition={petition}
                 setPetition={setPetition}

@@ -14,6 +14,7 @@ import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
 import SideBar from './components/layout/SideBar'
 import MuiStepper from './components/MuiStepper'
+import Surety from './components/Surety'
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             <Route path="filing/kiosk" element={<CaseStatus />} />
             <Route path="filing" element={<SideBar />} />
             <Route path="stepper" element={<MuiStepper />} />
+            <Route path="surety" element={<Surety />} />
           </Route>
         </Routes>
       </BrowserRouter>

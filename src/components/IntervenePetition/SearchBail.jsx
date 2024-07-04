@@ -48,6 +48,9 @@ const SearchBail = () => {
                     setRespondents(response.data.respondent)
                     setAdvocates(response.data.advocate)
                 }
+                if(response.status === 404){
+                    console.log("error")
+                }
             }catch(error){
                 console.log(error)
             }
@@ -63,65 +66,87 @@ const SearchBail = () => {
     return (
         <>
             <ToastContainer />
-            <div className="container mt-5">
-            <form onSubmit={handleSubmit} method="POST">
-                <div className="row my-3">
-                    <div className="col-md-3 offset-2">
-                        <div className="form-group">
-                            <label htmlFor="case_type">Case Type</label>
-                            <select 
-                                name="case_type" 
-                                className={`form-control ${errors.case_type ? 'is-invalid' : ''}`} 
-                                value={form.case_type}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            >
-                                <option value="">Select Case Type</option>
-                                <option value="1">Bail Petition</option>
-                            </select>
-                            <div className="invalid-feedback">
-                                { errors.case_type }
+            <div className="container">
+                <div className="card">
+                    <div className="card-body">
+                        <form onSubmit={handleSubmit} method="POST">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="form-group">
+                                        <label htmlFor="">My Cases</label>
+                                        <select 
+                                            name="cases" 
+                                            className="form-control"
+                                            value={() => {}}
+                                            onChange={() => {}}
+                                        ></select>
+                                    </div>
+                                </div>
+                                <div className="col-md-12 d-flex justify-content-center">
+                                    <span className="text-danger"><strong>OR</strong></span>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="col-md-2">
-                        <div className="form-group">
-                            <label htmlFor="case_number">Case Number</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.case_number ? 'is-invalid' : ''}`} 
-                                name="case_number"
-                                value={form.case_number}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            />
-                            <div className="invalid-feedback">
-                                { errors.case_number }
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="case_type">Case Type</label>
+                                        <select 
+                                            name="case_type" 
+                                            className={`form-control ${errors.case_type ? 'is-invalid' : ''}`} 
+                                            value={form.case_type}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                        >
+                                            <option value="">Select Case Type</option>
+                                            <option value="1">Bail Petition</option>
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.case_type }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="case_number">Case Number</label>
+                                        <input 
+                                            type="text" 
+                                            className={`form-control ${errors.case_number ? 'is-invalid' : ''}`} 
+                                            name="case_number"
+                                            value={form.case_number}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.case_number }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="case_year">Year</label>
+                                        <input 
+                                            type="text" 
+                                            className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
+                                            name="case_year"
+                                            value={form.case_year}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.case_year }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="col-md-2">
-                        <div className="form-group">
-                            <label htmlFor="case_year">Year</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
-                                name="case_year"
-                                value={form.case_year}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            />
-                            <div className="invalid-feedback">
-                                { errors.case_year }
+                            <div className="row">
+                                <div className="col-md-12 d-flex justify-content-center">
+                                    <Button
+                                        variant='contained'
+                                        type="submit"
+                                        color="success"
+                                    >Search</Button>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="col-md-1 mt-4 pt-2">
-                        <Button
-                            variant='contained'
-                            type="submit"
-                            color="success"
-                        >Search</Button>
+                        </form>
                     </div>
                 </div>
-            </form>
             <div>
                 { Object.keys(petition).length > 0 && (
                     <table className="table table-bordered table-striped table-sm">
@@ -202,7 +227,7 @@ const SearchBail = () => {
                         </tbody>
                     </table>
                 )}
-                <p>Condition Details</p>
+
                 { Object.keys(advocates).length > 0 && (
                 <table className=" table table-bordered table-striped table-sm">
                     <thead>

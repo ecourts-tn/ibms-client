@@ -18,7 +18,7 @@ const Home = () => {
                   <NavDropdown title="Filing" id="basic-nav-dropdown">
                     <NavDropdown.Item href="/petition/new-filing">New Filing</NavDropdown.Item>
                     <NavDropdown.Item href="/petition/draft">Draft Petitions</NavDropdown.Item>
-                    <NavDropdown.Item href="#">Something</NavDropdown.Item>
+                    <NavDropdown.Item href="surety">Surety</NavDropdown.Item>
                   </NavDropdown>
                   <Nav.Link href="/petition/payment">Payment</Nav.Link>
                   <Nav.Link href="#features">Features</Nav.Link>
