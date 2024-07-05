@@ -22,6 +22,9 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
         id: nanoid(),
         description: ''
     }
+    const onChange = () => {
+
+    }
 
     const[ground, setGround] = useState(initialState)
     const[errors, setErrors] = useState(false)
@@ -48,6 +51,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
             { count < 3 && (
             <>
                 <ToastContainer />
+                <textarea name="" id="summernote"></textarea>
                 <div className="form-group">
                     {/* <label htmlFor="" className='text-left'>Grounds</label> */}
                     <Editor 
