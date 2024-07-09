@@ -81,9 +81,6 @@ const BailFiling = () => {
         { label: 'eFile', onClick: () => setActiveStep(7)}
     ];
 
-    
-
-
     const[petition, setPetition] = useState({
         cino: 123,
         case_no: 123,

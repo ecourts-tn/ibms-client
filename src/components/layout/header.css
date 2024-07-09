@@ -89,6 +89,10 @@ form input[type="radio"], form input[type="checkbox"]{
     height:500px;
     overflow-y:scroll
 }
+.comments-container{
+    height:400px;
+    overflow-y: scroll;
+}
 .css-bhp9pd-MuiPaper-root-MuiCard-root {
     background:#F8F9F9!important;
     margin:10px!important;

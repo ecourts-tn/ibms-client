@@ -20,6 +20,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
+import LoginIcon from '@mui/icons-material/LockOpen'
 import { styled, alpha } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -27,18 +28,18 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
 import InputBase from '@mui/material/InputBase';
 import * as Yup from 'yup'
+import { Grid, Paper } from '@mui/material';
+
+// import "./styles.css";
+
+const imgLink = "";
+
 
 
 
@@ -179,6 +180,9 @@ const Login = () => {
         // } 
     }
 
+    const[counter, setCourter] = useState([1,2,3,4,5,6,7,8,9,0])
+
+
     return (
         <>
             <Container fluid className="px-5">
@@ -231,8 +235,9 @@ const Login = () => {
                                 <FormControl fullWidth>
                                     <Button 
                                         variant="contained" 
-                                        endIcon={<SendIcon />}
+                                        endIcon={<LoginIcon />}
                                         onClick={handleSubmit}
+                                        color="success"
                                     >Sign In</Button>
                                 </FormControl>
                                 {/* <input  
@@ -386,73 +391,38 @@ const Login = () => {
                         </div>
                     </Col>
                     <Col md={3} className="mt-5">
-                        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                            <ListItem alignItems="flex-start">
-                                <ListItemAvatar>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary="Brunch this weekend?"
-                                    secondary={
-                                        <React.Fragment>
-                                        <Typography
-                                            sx={{ display: 'inline' }}
-                                            component="span"
-                                            variant="body2"
-                                            color="text.primary"
-                                        >
-                                            Ali Connors
-                                        </Typography>
-                                        {" — I'll be in your neighborhood doing errands this…"}
-                                        </React.Fragment>
-                                    }
-                                />
-                            </ListItem>
-                            <Divider variant="inset" component="li" />
-                            <ListItem alignItems="flex-start">
-                                <ListItemAvatar>
-                                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
-                                </ListItemAvatar>
-                                <ListItemText
-                                primary="Summer BBQ"
-                                secondary={
-                                    <React.Fragment>
-                                    <Typography
-                                        sx={{ display: 'inline' }}
-                                        component="span"
-                                        variant="body2"
-                                        color="text.primary"
-                                    >
-                                        to Scott, Alex, Jennifer
-                                    </Typography>
-                                    {" — Wish I could come, but I'm out of town this…"}
-                                    </React.Fragment>
-                                }
-                                />
-                            </ListItem>
-                            <Divider variant="inset" component="li" />
-                            <ListItem alignItems="flex-start">
-                                <ListItemAvatar>
-                                <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-                                </ListItemAvatar>
-                                <ListItemText
-                                primary="Oui Oui"
-                                secondary={
-                                    <React.Fragment>
-                                    <Typography
-                                        sx={{ display: 'inline' }}
-                                        component="span"
-                                        variant="body2"
-                                        color="text.primary"
-                                    >
-                                        Sandra Adams
-                                    </Typography>
-                                    {' — Do you have Paris recommendations? Have you ever…'}
-                                    </React.Fragment>
-                                }
-                                />
-                            </ListItem>
-                        </List>
+                        <h5><strong>Comments</strong></h5>
+                        <div className="comments-container">
+                            <Paper style={{ padding: "40px 20px" }}>
+                                { counter.map((c, index) => (
+                                <Grid container wrap="nowrap" spacing={2}>
+                                    <Grid item>
+                                        <Avatar alt="Remy Sharp" src={imgLink} />
+                                    </Grid>
+                                    <Grid justifyContent="left" item xs zeroMinWidth>
+                                        <h6 style={{ margin: 0, textAlign: "left", fontWeight:'bold' }}>User {index+1}</h6>
+                                        <p style={{ textAlign: "left" }}>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
+                                            luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet.<br></br>
+                                        <span style={{ textAlign: "left", color: "gray" }}>posted 1 minute ago</span>
+                                        </p>
+                                    </Grid>
+                                </Grid>
+                                ))}
+                            </Paper>
+                        </div>
+                        <form action="">
+                            <textarea 
+                                className="form-control mb-2"
+                                rows={3}
+                            ></textarea>
+                            <Button
+                                variant='contained'
+                                color='primary'  
+                                endIcon={<SendIcon />}                          
+                            >Post your comment
+                            </Button>
+                        </form>
                     </Col>
                 </Row>
             </Container>
