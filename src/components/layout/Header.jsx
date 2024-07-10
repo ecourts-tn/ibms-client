@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import Navbar from 'react-bootstrap/Navbar'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
@@ -16,9 +17,10 @@ const Home = () => {
                   <Nav.Link href="/">Home</Nav.Link>
                   <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                   <NavDropdown title="Filing" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="/petition/new-filing">New Filing</NavDropdown.Item>
-                    <NavDropdown.Item href="/petition/draft">Draft Petitions</NavDropdown.Item>
-                    <NavDropdown.Item href="/surety">Surety</NavDropdown.Item>
+                    <NavDropdown.Item><Link to="/petition/filing">New Petition</Link></NavDropdown.Item>
+                    <NavDropdown.Item><Link to="/petition/draft">Draft Petitions</Link></NavDropdown.Item>
+                    <NavDropdown.Item><Link to="/petition/surety/filing">Surety Petition</Link></NavDropdown.Item>
+                    <NavDropdown.Item><Link to="/petition/intervene/filing">Intervene Petition</Link></NavDropdown.Item>
                   </NavDropdown>
                   <Nav.Link href="/petition/payment">Payment</Nav.Link>
                   <Nav.Link href="#features">Features</Nav.Link>

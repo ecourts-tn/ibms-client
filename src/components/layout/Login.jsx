@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Container from 'react-bootstrap/Container'
@@ -9,6 +9,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
+import { useAuth } from '../../hooks/useAuth';
 import { loadUser } from '../../redux/features/UserSlice';
 import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
@@ -90,19 +91,14 @@ const Search = styled('div')(({ theme }) => ({
 
 const Login = () => {
 
- const [expanded, setExpanded] = React.useState(false);
-
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-
     const [loading, setLoading]   = useState(false);
+
     const[form, setForm] =  useState({
         usertype: '',
         username:'',
         password:''
     })
-
+    const { login } = useAuth();
     const[errors, setErrors] = useState({})
 
     const validationSchema = Yup.object({
@@ -111,9 +107,6 @@ const Login = () => {
         password: Yup.string().required("Password is required")
     })
 
-    const dispatch = useDispatch()
-
-    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
@@ -123,11 +116,11 @@ const Login = () => {
             const response = await api.post('api/login/public/', { usertype, username, password })
             localStorage.setItem(ACCESS_TOKEN, response.data.access);
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-            dispatch(loadUser(response.data.user))
+            await login(response.data)
             toast.success('logged in successfully', {
                 theme: "colored"
             })
-            navigate("/dashboard")
+            // navigate("/dashboard")
         }catch(error){
             if(!error.response){
                 toast.error("Unable to reach the server. Please try later!",{

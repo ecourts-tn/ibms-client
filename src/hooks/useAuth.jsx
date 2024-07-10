@@ -10,13 +10,13 @@ export const AuthProvider = ({ children }) => {
   // call this function when you want to authenticate the user
   const login = async (data) => {
     setUser(data);
-    navigate("/profile");
+    navigate("/dashboard");
   };
 
   // call this function to sign out logged in user
   const logout = () => {
     setUser(null);
-    navigate("/", { replace: true });
+    navigate("/auth/login", { replace: true });
   };
 
   const value = useMemo(

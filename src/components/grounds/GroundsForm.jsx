@@ -51,7 +51,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
             { count < 3 && (
             <>
                 <ToastContainer />
-                <textarea name="" id="summernote"></textarea>
+                {/* <textarea name="" id="summernote"></textarea> */}
                 <div className="form-group">
                     {/* <label htmlFor="" className='text-left'>Grounds</label> */}
                     <Editor 

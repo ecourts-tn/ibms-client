@@ -43,64 +43,75 @@ const DraftList = () => {
     return (
         <>
             <ToastContainer />
-            <div className="container my-4" style={{minHeight:'500px'}}>
-                <h3 className="my-3"><strong>Draft Petitions</strong></h3>
-                <table className="table table-striped table-bordered">
-                    <thead className="bg-primary">
-                        <tr>
-                            <th>S. No</th>
-                            <th>eFiling Number</th>
-                            <th>Litigants</th>
-                            <th>View Documents</th>
-                            <th>Payment</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { cases.map((item, index) => (
-                        <tr>
-                            <td>{ index+1 }</td>
-                            <td>{ item.petition.cino }</td>
-                            <td>
-                                { item.petitioner.map((p, index) => (
-                                    <span className="text ml-2">{index+1}. {p.petitioner_name}</span>
+            <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
+                <div className="row">
+                    <div className="col-md-12">
+                        <nav aria-label="breadcrumb" className="mt-2 mb-1">
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item"><a href="#">Home</a></li>
+                                <li className="breadcrumb-item"><a href="#">Petition</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">Draft</li>
+                            </ol>
+                        </nav>
+                        <h3><strong>Draft Petitions</strong></h3>
+                        <table className="table table-striped table-bordered">
+                            <thead className="bg-secondary">
+                                <tr>
+                                    <th>S. No</th>
+                                    <th>eFiling Number</th>
+                                    <th>Litigants</th>
+                                    <th>View Documents</th>
+                                    <th>Payment</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { cases.map((item, index) => (
+                                <tr>
+                                    <td>{ index+1 }</td>
+                                    <td>{ item.petition.cino }</td>
+                                    <td>
+                                        { item.petitioner.map((p, index) => (
+                                            <span className="text ml-2">{index+1}. {p.petitioner_name}</span>
+                                        ))}
+                                        <span className="text text-danger text-center mx-3"><strong>Vs</strong></span>
+                                        { item.respondent.map((res, index) => (
+                                            <span className="text">{res.respondent_name} rep by {res.designation}</span>
+                                        ))} 
+                                    </td>
+                                    <td>
+                                        { item.petition.vakalath && (
+                                            <>
+                                                <a href={`http://localhost:8000${item.petition.vakalath}`} target="_blank">Vakalath</a><br/>
+                                            </>
+                                        )}
+                                        { item.petition.supporting_document && (
+                                            <a href={`http://localhost:8000${item.petition.supporting_document}`} target="_blank">Supporting Document</a>
+                                        )}
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        <button className="btn btn-info mx-1">
+                                            <i className="fa fa-pencil-alt"></i>
+                                        </button>
+                                        <button className="btn btn-danger mx-1">
+                                            <i className="fa fa-trash"></i>
+                                        </button>
+                                        <Button
+                                            variant="contained"
+                                            color="success"
+                                            onClick = {(e) => handleSubmit(item.petition.cino) }
+                                        >
+                                            Submit
+                                        </Button>
+                                    </td>
+                                </tr>
                                 ))}
-                                <span className="text text-danger text-center mx-3"><strong>Vs</strong></span>
-                                { item.respondent.map((res, index) => (
-                                    <span className="text">{res.respondent_name} rep by {res.designation}</span>
-                                ))} 
-                            </td>
-                            <td>
-                                { item.petition.vakalath && (
-                                    <>
-                                        <a href={`http://localhost:8000${item.petition.vakalath}`} target="_blank">Vakalath</a><br/>
-                                    </>
-                                )}
-                                { item.petition.supporting_document && (
-                                    <a href={`http://localhost:8000${item.petition.supporting_document}`} target="_blank">Supporting Document</a>
-                                )}
-                            </td>
-                            <td>
-                            </td>
-                            <td>
-                                <button className="btn btn-info mx-1">
-                                    <i className="fa fa-pencil-alt"></i>
-                                </button>
-                                <button className="btn btn-danger mx-1">
-                                    <i className="fa fa-trash"></i>
-                                </button>
-                                <Button
-                                    variant="contained"
-                                    color="success"
-                                    onClick = {(e) => handleSubmit(item.petition.cino) }
-                                >
-                                    Submit
-                                </Button>
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                </table>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </>
     )
