@@ -42,14 +42,14 @@ const Dashboard = () => {
             <div className="content-header">
                 <div className="container-fluid">
                     <div className="row mb-2">
-                        <div className="col-sm-6">
+                        <div className="col-sm-12">
+                            <nav aria-label="breadcrumb" className="mt-2 mb-1">
+                                <ol className="breadcrumb">
+                                    <li className="breadcrumb-item"><a href="#">Home</a></li>
+                                    <li className="breadcrumb-item"><a href="#">Dashboard</a></li>
+                                </ol>
+                            </nav>
                             <h3 className="m-0"><strong>Dashboard</strong></h3>
-                        </div>
-                        <div className="col-sm-6">
-                            <ol className="breadcrumb float-sm-right">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item active">Dashboard</li>
-                            </ol>
                         </div>
                     </div>
                 </div>

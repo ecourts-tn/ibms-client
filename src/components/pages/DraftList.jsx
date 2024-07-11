@@ -22,7 +22,7 @@ const DraftList = () => {
             }
         }
         fetchData();
-    }, [cases])
+    }, [])
 
     const handleSubmit = async(cino) => {
         try{
@@ -108,6 +108,11 @@ const DraftList = () => {
                                     </td>
                                 </tr>
                                 ))}
+                                { cases.length <= 0 && (
+                                <tr>
+                                    <td colSpan={6} className="text-danger text-center">***** No petitions found *****</td>
+                                </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

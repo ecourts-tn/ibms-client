@@ -1,8 +1,15 @@
 .public-navbar .nav-link{
     color: white!important;
     font-size: 16px;
-    padding-left:8px!important;
-    padding-right:8px!important;
+    padding-left:6px!important;
+    padding-right:6px!important;
+}
+.public-navbar .nav-link a{
+    color: white!important;
+    font-size: 16px;
+    padding-left:6px!important;
+    padding-right:6px!important;
+    text-decoration: none;
 }
 .public-navbar .nav-link-order{
     color: orange!important;
@@ -90,7 +97,7 @@ form input[type="radio"], form input[type="checkbox"]{
     overflow-y:scroll
 }
 .comments-container{
-    height:400px;
+    height:500px;
     overflow-y: scroll;
 }
 .css-bhp9pd-MuiPaper-root-MuiCard-root {
@@ -111,4 +118,27 @@ form input[type="radio"], form input[type="checkbox"]{
 }
 legend > span {
     font-weight:400!important
+}
+
+.calendar{
+    width   :50px;
+    height  :50px;
+    border :1px solid  #3498db;
+    /* border-radius: 2px; */
+}
+
+.calendar .month, .calendar .year {
+    background-color: #3498db;
+    text-align:center;
+    color: #fafafa;
+    font-size: 12px;
+    font-weight: bold;
+    height:15px;
+}
+.calendar .date{
+    text-align:center;
+    color: #3498db;
+    font-size: 14px;
+    font-weight: bold;
+    height:18px;
 }

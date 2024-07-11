@@ -1,7 +1,5 @@
-import React from 'react'
-import { Link, Navigate } from 'react-router-dom';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
@@ -10,7 +8,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import api from '../../api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import { useAuth } from '../../hooks/useAuth';
-import { loadUser } from '../../redux/features/UserSlice';
 import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
 
@@ -22,7 +19,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
 import LoginIcon from '@mui/icons-material/LockOpen'
-import { styled, alpha } from '@mui/material/styles';
+// import { styled, alpha } from '@mui/material/styles';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
@@ -33,7 +30,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CommentIcon from '@mui/icons-material/Comment';
-import InputBase from '@mui/material/InputBase';
+// import InputBase from '@mui/material/InputBase';
 import * as Yup from 'yup'
 import { Grid, Paper } from '@mui/material';
 
@@ -42,52 +39,50 @@ import { Grid, Paper } from '@mui/material';
 const imgLink = "";
 
 
-
-
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    borderColor:'green',
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(1),
-      width: 'auto',
-    },
-  }));
+// const Search = styled('div')(({ theme }) => ({
+//     position: 'relative',
+//     borderRadius: theme.shape.borderRadius,
+//     backgroundColor: alpha(theme.palette.common.white, 0.15),
+//     '&:hover': {
+//       backgroundColor: alpha(theme.palette.common.white, 0.25),
+//     },
+//     borderColor:'green',
+//     marginLeft: 0,
+//     width: '100%',
+//     [theme.breakpoints.up('sm')]: {
+//       marginLeft: theme.spacing(1),
+//       width: 'auto',
+//     },
+//   }));
   
-  const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    borderColor:'green',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }));
+//   const SearchIconWrapper = styled('div')(({ theme }) => ({
+//     padding: theme.spacing(0, 2),
+//     height: '100%',
+//     borderColor:'green',
+//     position: 'absolute',
+//     pointerEvents: 'none',
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//   }));
   
-  const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    width: '100%',
-    borderColor:'green',
-    '& .MuiInputBase-input': {
-      padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-      transition: theme.transitions.create('width'),
-      [theme.breakpoints.up('sm')]: {
-        width: '12ch',
-        '&:focus': {
-          width: '20ch',
-        },
-      },
-    },
-  }));
+//   const StyledInputBase = styled(InputBase)(({ theme }) => ({
+//     color: 'inherit',
+//     width: '100%',
+//     borderColor:'green',
+//     '& .MuiInputBase-input': {
+//       padding: theme.spacing(1, 1, 1, 0),
+//       // vertical padding + font size from searchIcon
+//       paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+//       transition: theme.transitions.create('width'),
+//       [theme.breakpoints.up('sm')]: {
+//         width: '12ch',
+//         '&:focus': {
+//           width: '20ch',
+//         },
+//       },
+//     },
+//   }));
 
 const Login = () => {
 
@@ -120,8 +115,16 @@ const Login = () => {
             toast.success('logged in successfully', {
                 theme: "colored"
             })
-            // navigate("/dashboard")
         }catch(error){
+            if(error.inner){
+                setLoading(false)
+                const newErrors = {};
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message;
+                });
+                setErrors(newErrors);
+                return
+            }
             if(!error.response){
                 toast.error("Unable to reach the server. Please try later!",{
                     theme:"colored"
@@ -136,12 +139,7 @@ const Login = () => {
                 setLoading(false)
                 return
             }
-            setLoading(false)
-            const newErrors = {};
-            error.inner.forEach((err) => {
-                newErrors[err.path] = err.message;
-            });
-            setErrors(newErrors);
+
         }
 
         // try {
@@ -173,7 +171,11 @@ const Login = () => {
         // } 
     }
 
-    const[counter, setCourter] = useState([1,2,3,4,5,6,7,8,9,0])
+    const[counter, setCourter] = useState([])
+
+    useEffect(() => {
+        setCourter([1,2,3,4,5,6,7,8,9,0])
+    },[])
 
 
     return (
@@ -198,6 +200,8 @@ const Login = () => {
                                 <FormControlLabel value={1} control={<Radio />} label="Advocate" />
                                 <FormControlLabel value={2} control={<Radio />} label="Litigant" />
                             </RadioGroup>
+                            <p className="text-danger mb-3 text-center" style={{marginTop:'-15px', fontSize:'14px', fontWeight:'bold'}}>{ errors.usertype }</p>
+                            
                             <div className="form-group mb-3">
                                 <FormControl fullWidth className="mb-3">
                                     <TextField
@@ -384,27 +388,32 @@ const Login = () => {
                         </div>
                     </Col>
                     <Col md={3} className="mt-5">
-                        <h5><strong>Comments</strong></h5>
+                        <h5><strong>Notifications</strong></h5>
                         <div className="comments-container">
                             <Paper style={{ padding: "40px 20px" }}>
                                 { counter.map((c, index) => (
                                 <Grid container wrap="nowrap" spacing={2}>
                                     <Grid item>
-                                        <Avatar alt="Remy Sharp" src={imgLink} />
+                                        <div className="calendar">
+                                            <div className="month">Jul</div>
+                                            <div className="date">{ index+3 }</div>
+                                            <div className="year">2024</div>
+                                        </div>
+                                        {/* <Avatar alt="Remy Sharp" src={imgLink} /> */}
                                     </Grid>
                                     <Grid justifyContent="left" item xs zeroMinWidth>
-                                        <h6 style={{ margin: 0, textAlign: "left", fontWeight:'bold' }}>User {index+1}</h6>
+                                        <h6 style={{ margin: 0, textAlign: "left", fontWeight:'bold' }}>Notification {index+1}</h6>
                                         <p style={{ textAlign: "left" }}>
                                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
                                             luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet.<br></br>
-                                        <span style={{ textAlign: "left", color: "gray" }}>posted 1 minute ago</span>
+                                        {/* <span style={{ textAlign: "left", color: "gray" }}>posted 1 minute ago</span> */}
                                         </p>
                                     </Grid>
                                 </Grid>
                                 ))}
                             </Paper>
                         </div>
-                        <form action="">
+                        {/* <form action="">
                             <textarea 
                                 className="form-control mb-2"
                                 rows={3}
@@ -415,7 +424,7 @@ const Login = () => {
                                 endIcon={<SendIcon />}                          
                             >Post your comment
                             </Button>
-                        </form>
+                        </form> */}
                     </Col>
                 </Row>
             </Container>

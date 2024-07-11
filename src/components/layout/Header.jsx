@@ -14,15 +14,14 @@ const Home = () => {
             <Container>
               <Navbar.Brand href="#home">Integrated Bail Management System</Navbar.Brand>
               <Nav className="d-flex justify-content-end">
-                  <Nav.Link href="/">Home</Nav.Link>
-                  <Nav.Link href="/dashboard">Dashboard</Nav.Link>
+                  <Nav.Link><Link to="/">Home</Link></Nav.Link>
+                  <Nav.Link><Link to="/dashboard">Dashboard</Link></Nav.Link>
                   <NavDropdown title="Filing" id="basic-nav-dropdown">
                     <NavDropdown.Item><Link to="/petition/filing">New Petition</Link></NavDropdown.Item>
                     <NavDropdown.Item><Link to="/petition/draft">Draft Petitions</Link></NavDropdown.Item>
                     <NavDropdown.Item><Link to="/petition/surety/filing">Surety Petition</Link></NavDropdown.Item>
                     <NavDropdown.Item><Link to="/petition/intervene/filing">Intervene Petition</Link></NavDropdown.Item>
                   </NavDropdown>
-                  <Nav.Link href="/petition/payment">Payment</Nav.Link>
                   <Nav.Link href="#features">Features</Nav.Link>
                   <Nav.Link href="#features">User Guide</Nav.Link>
                   <Nav.Link href="#features">FAQ</Nav.Link>
