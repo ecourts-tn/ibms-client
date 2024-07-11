@@ -25,7 +25,7 @@ const PdfGenerator = () => {
     console.log(state.cino)
     useEffect(() => {
         async function fetchData(){
-            const response = await api.get(`api/bail/petition/${state.cino}/detail/`)
+            const response = await api.get(`api/bail/petition/detail/`, {params:{cino:state.cino}})
             if(response.status === 200){
                 setPetition(response.data)
             }

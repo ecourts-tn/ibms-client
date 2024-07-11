@@ -106,14 +106,6 @@ const DocumentContainer = () => {
                                 />
                                 </div>
                             </div>
-                            <div className="col-md-2 mt-4 pt-2">
-                                <Button 
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={sendMobileOTP}
-                                    endIcon={<SendIcon />}
-                                >Sworn Affidavit</Button>
-                            </div>
                             <div className="col-md-4">
                                 <div className="form-group">
                                     <label htmlFor="">Enrolment Number</label>
@@ -142,6 +134,14 @@ const DocumentContainer = () => {
                                     </div>
                                 </div>
                             </div>
+                            <div className="col-md-2 mt-4 pt-2">
+                                <Button 
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={sendMobileOTP}
+                                    endIcon={<SendIcon />}
+                                >Sworn Affidavit</Button>
+                            </div>
                             
                             {/* { !mobileVerified && (
                                 <div className="col-sm-2">
@@ -155,7 +155,7 @@ const DocumentContainer = () => {
                             )} */}
                             { mobileOtp && !mobileVerified && (
                             <>
-                                <div className="col-md-1">
+                                <div className="col-md-1 mt-3 pt-2">
                                     <input 
                                         type="password" 
                                         className="form-control mt-2" 
@@ -164,7 +164,7 @@ const DocumentContainer = () => {
                                         onChange={(e) => setOtp(e.target.value)}
                                     />
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-2 mt-3 pt-2">
                                     <button 
                                         type="button" 
                                         className="btn btn-success px-5 mt-2"
@@ -174,7 +174,7 @@ const DocumentContainer = () => {
                             </>
                         )}
                             { mobileVerified && (
-                                <p className="mt-3">
+                                <p className="mt-4 pt-3">
                                     <CheckCircleRoundedIcon color="success"/>
                                     <span className="text-success ml-1"><strong>Verified</strong></span>
                                 </p>

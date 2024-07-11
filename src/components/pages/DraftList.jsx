@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
+import ViewDocument from './ViewDocument'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../../api'
 
 const DraftList = () => {
@@ -9,6 +10,15 @@ const DraftList = () => {
     const[cases, setCases] = useState([])
 
     const navigate = useNavigate()
+
+    const [showDocument, setShowDocument] = useState(false);
+    const [showVakalath, setShowVakalath] = useState(false)
+    const handleClose = () => {
+        setShowDocument(false);
+        setShowVakalath(false)
+    }
+    const handleShowDocument = () => setShowDocument(true);
+    const handleShowVakalath = () => setShowVakalath(true)
 
     useEffect(() => {
         async function fetchData(){
@@ -80,13 +90,35 @@ const DraftList = () => {
                                         ))} 
                                     </td>
                                     <td>
-                                        { item.petition.vakalath && (
+                                    { item.petition.vakalath && (
                                             <>
-                                                <a href={`http://localhost:8000${item.petition.vakalath}`} target="_blank">Vakalath</a><br/>
+                                                <Link
+                                                    onClick={handleShowVakalath}
+                                                >Vakalath</Link>
                                             </>
                                         )}
+                                        { showVakalath && (
+                                            <ViewDocument 
+                                                url={`http://127.0.0.1:8000${item.petition.vakalath}`}
+                                                show={showVakalath} 
+                                                setShow={setShowVakalath} 
+                                                handleClose={handleClose} 
+                                                handleShow={handleShowVakalath}/>
+                                        )}
                                         { item.petition.supporting_document && (
-                                            <a href={`http://localhost:8000${item.petition.supporting_document}`} target="_blank">Supporting Document</a>
+                                            <>
+                                                <Link
+                                                    onClick={handleShowDocument}
+                                                >Supporting Document</Link>
+                                            </>
+                                        )}
+                                        { showDocument && (
+                                            <ViewDocument 
+                                                url={`http://127.0.0.1:8000${item.petition.supporting_document}`}
+                                                show={showDocument} 
+                                                setShow={setShowDocument} 
+                                                handleClose={handleClose} 
+                                                handleShow={handleShowDocument}/>
                                         )}
                                     </td>
                                     <td>

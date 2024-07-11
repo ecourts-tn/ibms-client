@@ -9,13 +9,13 @@ import * as Yup from 'yup'
 
 const Payment = () => {
 
-    const[cases, setCases] = useState([])
-
     const initialState = {
         payer_name: '***********',
         mobile_number:null,
-        amount: null
+        amount: null,
+        cino:''
     }
+
     const validationSchema = Yup.object({
         payer_name: Yup.string().required("Please selete the payer"),
         mobile_number: Yup.number("Enter valid number").required("Please enter the mobile number"),
@@ -73,60 +73,30 @@ const Payment = () => {
     }
 
     useEffect(() => {
-        async function fetchData(){
-            try{
-                const response = await api.get(`api/bail/petition/draft/list/`)
-                if(response.status === 200){
-                    setCases(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchData();
-    }, [])
+        setPayment({
+            ...payment,
+            cino: localStorage.getItem("cino")
+        })
+    },[])
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/filing/${payment.petition}/petitioner/list/`)
-                setPetitioner(response.data)
-            }catch(error){
-                console.log(error)
+                const response = await api.get(`api/bail/petition/detail/`, {params:{cino:payment.cino}})
+                const { petitioner} = response.data
+                setPetitioner(petitioner)
+            }catch(err){
+                console.log(err)
             }
         }
-        fetchData()
-    },[payment.petition])
-
-    useEffect(() => {
-        if(payment.petition !== ''){
-            async function fetchData(){
-                try{
-                    const response = await api.get(`api/bail/filing/${payment.petition}/payment/list/`)
-                    setPaymentHistory(response.data)
-                }catch(error){
-                    console.log(error)
-                }
-            }
-            fetchData()
+        if(payment.cino !== ''){
+            fetchData();
         }
-    },[payment.petition])
-
-    useEffect(() => {
-        async function fetchData(id){
-            try{
-                const response = await api.get(`api/bail/petitioner/${id}/details/`)
-                setPetitioner(response.data)
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchData()
-    },[payment.petitioner_name])
+    }, [payment.cino])
 
     const handleSubmit = async () => {
         try{
-            const response = await api.post(`api/bail/filing/${payment.petition}/payment/create/`, payment)
+            const response = await api.post(`api/bail/filing/payment/create/`, payment)
             if(response.status === 201){
                 toast.success("Payment completed successfully", {
                     theme: "colored"
@@ -183,14 +153,25 @@ const Payment = () => {
                                 <div className="col-md-6 offset-md-3">
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Payer Name</label>
-                                        <input 
+                                        <select 
+                                            name="payer_name" 
+                                            className="form-control"
+                                            value={payment.payer_name}
+                                            onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
+                                        >
+                                            <option value="">Select payer</option>
+                                            { petitioner.map((p, index) => (
+                                            <option value={p.petitioner_name} key={index}>{p.petitioner_name}</option>
+                                            ))}
+                                        </select>
+                                        {/* <input 
                                             type="text"
                                             name="payer_name" 
                                             className={`form-control ${error.payer_name ? 'is-invalid' : null }`}
                                             value={payment.payer_name}
                                             onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                             readOnly={true}
-                                        />
+                                        /> */}
                                         <div className="invalid-feedback">
                                             { error.payer_name }
                                         </div>

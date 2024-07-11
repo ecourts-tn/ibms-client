@@ -54,8 +54,8 @@ const FIRDetails = ({fir}) => {
                         <Form.Label>Complaintant Name</Form.Label>
                         <Form.Control 
                             name="compliantantName"
-                            readOnly={ fir.complaintant_name ? 'readOnly' : ''}
-                            value={ fir.complaintant_name }></Form.Control>
+                            readOnly={ fir.complainant_name ? 'readOnly' : ''}
+                            value={ fir.complainant_name }></Form.Control>
                     </Form.Group>
                 </div>
                 <div className="col-md-6">

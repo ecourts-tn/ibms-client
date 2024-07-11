@@ -43,11 +43,11 @@ function Litigants(props){
                 addPetitioner={addPetitioner}
                 deletePetitioner={deletePetitioner}
             />
-            <ComplainantDetails 
+            {/* <ComplainantDetails 
                 petitioners={petitioners} 
                 addPetitioner={addPetitioner}
                 deletePetitioner={deletePetitioner}
-            />
+            /> */}
             <RespondentContainer 
                 respondents={respondents}
                 addRespondent={addRespondent}
