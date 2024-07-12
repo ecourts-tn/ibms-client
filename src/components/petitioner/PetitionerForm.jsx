@@ -29,13 +29,12 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
   const stateStatus = useSelector(getStatesStatus)
 
   const initialPetitioner = {
-      cino:"TN20240603000009",
       petitioner: 'o',
       petitioner_id:nanoid(),
       petitioner_name: '',
       relation: '',
       relation_name: '',
-      age:null,
+      age:'',
       gender:'',
       address:'',
       rank: '',
@@ -45,14 +44,14 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
       post_office:'',
       pincode:'',
       nationality: '',
-      mobile_number:null,
-      aadhar_number:null,
+      mobile_number:'',
+      aadhar_number:'',
       email_address:'',
       act: '',
       section: '',
       is_custody: false,
       prison: '',
-      custody_days: null,
+      custody_days: '',
       is_surrendered: false,
       identification_marks:'',
     }
@@ -146,14 +145,17 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
       await validationSchema.validate(petitioner, { abortEarly:false})
       const cino = localStorage.getItem("cino")
       const response = await api.post(`api/bail/filing/${cino}/petitioner/create/`, petitioner)
+      
       addPetitioner(petitioner)
       setPetitioner(initialPetitioner)
     }catch(error){
-      const newErrors = {};
-      error.inner.forEach((err) => {
-          newErrors[err.path] = err.message;
-      });
-      setErrors(newErrors);
+      if(error.inner){
+        const newErrors = {};
+        error.inner.forEach((err) => {
+            newErrors[err.path] = err.message;
+        });
+        setErrors(newErrors);
+      }
     }
   }
 
@@ -414,7 +416,7 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Aadhar Number</Form.Label>
+                <Form.Label>Aadhaar Number</Form.Label>
                 <Form.Control
                   type="text"
                   name="aadhar_number"

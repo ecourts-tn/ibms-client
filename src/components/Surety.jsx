@@ -361,7 +361,7 @@ const Surety = () => {
                                     </div>
                                     <div className="bs-stepper-content">
                                         <div id="initial-input" className="content">
-                                        <div className="row">
+                                            <div className="row">
                                                 <div className="col-md-12 text-center">
                                                     <div className="form-group">
                                                         <div>

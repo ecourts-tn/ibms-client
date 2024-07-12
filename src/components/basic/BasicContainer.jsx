@@ -37,7 +37,7 @@ const BasicContainer = ({setActiveStep}) => {
     const courttypes        = useSelector((state) => state.courttypes.courttypes)
     const benchtypes        = useSelector((state) => state.benchtypes.benchtypes)
 
-    const[petition, setPetition] = useState({
+    const initialState = {
         court_type: 1,
         bench_type: null,
         state: '',
@@ -48,17 +48,19 @@ const BasicContainer = ({setActiveStep}) => {
         bail_type: '',
         complaint_type:'',
         crime_registered: '',
-    })
+    }
+
+    const[petition, setPetition] = useState(initialState)
 
     const[errors, setErrors] = useState({})
 
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
-                return schema.required("Please select the bench type")
-            }
-        }),
+        // bench_type: Yup.string().when("court_type",(court_type, schema) => {
+        //     if(parseInt(court_type) === 1){
+        //         return schema.required("Please select the bench type")
+        //     }
+        // }),
         state: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
                 return schema.required("Please select the state")
@@ -151,6 +153,7 @@ const BasicContainer = ({setActiveStep}) => {
                     theme:"colored"
                 })
             }
+            setPetition(initialState)
           }catch(error){
             const newErrors = {};
             error.inner.forEach((err) => {

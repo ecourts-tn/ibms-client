@@ -1,14 +1,10 @@
 import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
-import { useSelector } from 'react-redux'
-import { Link, useNavigate } from 'react-router-dom'
 import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 
 const Dashboard = () => {
-
-    const user = useSelector((state) => state.user.user)
-    const navigate = useNavigate()
 
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
@@ -29,28 +25,19 @@ const Dashboard = () => {
         fecthCases();
     },[])
 
-    console.log(cases)
-
-    if(!user){
-        navigate("/")
-    }
-
     return (
     <>
         <div className="container-fluid" style={{minHeight:'600px'}}>
             <ToastContainer />
-            <div className="content-header">
-                <div className="container-fluid">
-                    <div className="row mb-2">
-                        <div className="col-sm-12">
-                            <nav aria-label="breadcrumb" className="mt-2 mb-1">
-                                <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li className="breadcrumb-item"><a href="#">Dashboard</a></li>
-                                </ol>
-                            </nav>
-                            <h3 className="m-0"><strong>Dashboard</strong></h3>
-                        </div>
+            <div className="container-fluid">
+                <div className="row mb-2">
+                    <div className="col-sm-12">
+                        <nav aria-label="breadcrumb" className="mt-2 mb-1">
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item"><a href="#/">Home</a></li>
+                                <li className="breadcrumb-item active"  aria-current="page">Dashboard</li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -94,7 +81,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                     <i className="ion ion-person-add" />
                                 </div>
-                                <a href="#" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
+                                <a href="#/" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
                             </div>
                         </div>
                         <div className="col-lg-3 col-6">
@@ -106,7 +93,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                     <i className="ion ion-pie-graph" />
                                 </div>
-                                <a href="#" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
+                                <a href="#/" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
                             </div>
                         </div>
                     </div>
@@ -124,10 +111,10 @@ const Dashboard = () => {
                                         <i className="fas fa-bars" />
                                     </button>
                                     <div className="dropdown-menu" role="menu">
-                                        <a href="#" className="dropdown-item">Add new event</a>
-                                        <a href="#" className="dropdown-item">Clear events</a>
+                                        <a href="#/" className="dropdown-item">Add new event</a>
+                                        <a href="#/" className="dropdown-item">Clear events</a>
                                         <div className="dropdown-divider" />
-                                        <a href="#" className="dropdown-item">View calendar</a>
+                                        <a href="#/" className="dropdown-item">View calendar</a>
                                     </div>
                                     </div>
                                     <button type="button" className="btn btn-success btn-sm" data-card-widget="collapse">
@@ -144,7 +131,7 @@ const Dashboard = () => {
                         </div>
                         </div>
                         <div className="col-md-9">
-                            <div className="card">
+                            <div className="card" style={{minHeight:'500px'}}>
                                 <div className="card-header">
                                 <h3 className="card-title">
                                     <i className="ion ion-clipboard mr-1" />
@@ -152,11 +139,11 @@ const Dashboard = () => {
                                 </h3>
                                 <div className="card-tools">
                                     <ul className="pagination pagination-sm">
-                                    <li className="page-item"><a href="#" className="page-link">«</a></li>
-                                    <li className="page-item"><a href="#" className="page-link">1</a></li>
-                                    <li className="page-item"><a href="#" className="page-link">2</a></li>
-                                    <li className="page-item"><a href="#" className="page-link">3</a></li>
-                                    <li className="page-item"><a href="#" className="page-link">»</a></li>
+                                    <li className="page-item"><a href="#/" className="page-link">«</a></li>
+                                    <li className="page-item"><a href="#/" className="page-link">1</a></li>
+                                    <li className="page-item"><a href="#/" className="page-link">2</a></li>
+                                    <li className="page-item"><a href="#/" className="page-link">3</a></li>
+                                    <li className="page-item"><a href="#/" className="page-link">»</a></li>
                                     </ul>
                                 </div>
                                 </div>

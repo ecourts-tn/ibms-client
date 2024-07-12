@@ -20,6 +20,19 @@
     color:#FAFAFA!important;
     font-size:20px;
 }
+.public-navbar .dropdown{
+    margin:0; 
+}
+.public-navbar a.dropdown-item{
+    padding:8px 8px;
+    min-width: 200px;
+}
+.public-navbar a.dropdown-item a{
+    text-decoration: none;
+    padding:10px;
+    color:#024796;
+    font-weight: 600;
+}
 .btn-signin{
     width:100%;
     background-color:#024796!important;

@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { CreateMarkup } from '../../utils'
 import api from '../../api'
 
 const EFileDetails = () => {
@@ -12,7 +13,7 @@ const EFileDetails = () => {
         async function fetchData(){
             try{
                 const cino = localStorage.getItem("cino")
-                const response = await api.get(`api/bail/petition/${cino}/detail/`)
+                const response = await api.get(`api/bail/petition/detail/`, {params:{cino}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setPetitioners(response.data.petitioner)
@@ -34,7 +35,7 @@ const EFileDetails = () => {
                 </div>
                 <div className="card-body p-2">
                     { Object.keys(petition).length > 0 && (
-                    <table className="custom-table">
+                    <table className="custom-table table-sm">
                         { petition && (
                         <>
                             <tr>
@@ -143,7 +144,7 @@ const EFileDetails = () => {
                     { grounds.map((ground, index) => (
                     <div className="card" key={index}>
                         <div className="card-body">
-                            { ground.description}
+                            <p dangerouslySetInnerHTML={CreateMarkup(ground.description)}></p>
                         </div>
                     </div>
                     ))}

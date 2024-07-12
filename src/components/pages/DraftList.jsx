@@ -58,8 +58,8 @@ const DraftList = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#">Petition</a></li>
+                                <li className="breadcrumb-item"><a href="#/">Home</a></li>
+                                <li className="breadcrumb-item"><a href="#/">Petition</a></li>
                                 <li className="breadcrumb-item active" aria-current="page">Draft</li>
                             </ol>
                         </nav>

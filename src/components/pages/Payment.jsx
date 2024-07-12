@@ -10,7 +10,7 @@ import * as Yup from 'yup'
 const Payment = () => {
 
     const initialState = {
-        payer_name: '***********',
+        petitioner_name: '',
         mobile_number:null,
         amount: null,
         cino:''
@@ -154,9 +154,9 @@ const Payment = () => {
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Payer Name</label>
                                         <select 
-                                            name="payer_name" 
+                                            name="petitioner_name" 
                                             className="form-control"
-                                            value={payment.payer_name}
+                                            value={payment.petitioner_name}
                                             onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select payer</option>
@@ -173,7 +173,7 @@ const Payment = () => {
                                             readOnly={true}
                                         /> */}
                                         <div className="invalid-feedback">
-                                            { error.payer_name }
+                                            { error.petitioner_name }
                                         </div>
                                     </div>
                                 </div>

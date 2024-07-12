@@ -6,11 +6,6 @@ import EFileDetails from './EFileDetails'
 
 const EFile = (props) => {
     const { 
-            petition, 
-            petitioners, 
-            respondents, 
-            grounds, 
-            advocates, 
             isFinalSubmit, 
             setIsFinalSubmit,
             handleSubmit
@@ -58,13 +53,7 @@ const EFile = (props) => {
                         <Modal.Title><strong>Draft Application</strong></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <EFileDetails 
-                            petition={petition}
-                            petitioners={petitioners}
-                            respondents={respondents}
-                            grounds={grounds}
-                            advocates={advocates}
-                        />
+                        <EFileDetails />
                     </Modal.Body>
                     <Modal.Footer style={{ justifyContent: "space-between", alignItems:"center"}}>
                         <div>

@@ -309,11 +309,6 @@ const BailFiling = () => {
             }
             case 7: {
                 return <EFile
-                    petition={petition}
-                    petitioners={petitioners}
-                    respondents={respondents}
-                    grounds={grounds}
-                    advocates={advocates}
                     isFinalSubmit={isFinalSubmit}
                     setIsFinalSubmit={setIsFinalSubmit}
                     handleSubmit={handleSubmit}

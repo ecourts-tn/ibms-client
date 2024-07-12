@@ -106,11 +106,13 @@ const FIRSearch = () => {
                 }
             }
         }catch(error){
-            const newErrors = {}
-            error.inner.forEach((err) => {
-                newErrors[err.path] = err.message
-            })
-            setErrors(newErrors)
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
         }
     }
 
