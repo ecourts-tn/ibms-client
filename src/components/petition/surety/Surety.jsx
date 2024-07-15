@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button'
-import api from '../api';
-import Payment from './pages/Payment';
+import api from '../../../api';
+import Payment from '../../pages/Payment';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../redux/features/TalukSlice'
+import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
+import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
+import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import * as Yup from 'yup'
 
 

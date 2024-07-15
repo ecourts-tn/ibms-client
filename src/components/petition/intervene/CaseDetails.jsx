@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
-import FIRSearch from '../search/FIRSearch'
-import CaseSearch from '../search/CaseSearch'
+import FIRSearch from '../../search/FIRSearch'
+import CaseSearch from '../../search/CaseSearch'
 
 
 const CaseDetails = ({ petition, setPetition }) => {

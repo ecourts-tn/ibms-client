@@ -1,9 +1,9 @@
 import React, {useState, useEffect } from 'react'
-import api from '../../api'
+import api from '../../../api'
 import * as Yup from 'yup'
 import Button from '@mui/material/Button'
-import GroundsContainer from '../grounds/GroundsContainer'
-import DocumentContainer from '../documents/DocumentContainer'
+import GroundsContainer from '../../grounds/GroundsContainer'
+import DocumentContainer from '../../documents/DocumentContainer'
 import { toast, ToastContainer } from 'react-toastify'
 
 const SearchBail = () => {

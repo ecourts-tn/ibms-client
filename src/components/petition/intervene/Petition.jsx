@@ -5,15 +5,15 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom'
 import CaseDetails from './CaseDetails';
-import BasicContainer from '../basic/BasicContainer'
-import PetitionerContainer from '../petitioner/PetitionerContainer'
-import RespondentContainer from '../respondent/RespondentContainer'
-import GroundsContainer from '../grounds/GroundsContainer'
-import AdvocateContainer from '../advocate/AdvocateContainer'
-import PreviousCaseContainer from '../history/PreviousCaseContainer'
-import DocumentContainer from '../documents/DocumentContainer'
+import BasicContainer from '../../basic/BasicContainer'
+import PetitionerContainer from '../../petitioner/PetitionerContainer'
+import RespondentContainer from '../../respondent/RespondentContainer'
+import GroundsContainer from '../../grounds/GroundsContainer'
+import AdvocateContainer from '../../advocate/AdvocateContainer'
+import PreviousCaseContainer from '../../history/PreviousCaseContainer'
+import DocumentContainer from '../../documents/DocumentContainer'
 
-import EFile from '../efile/EFile'
+import EFile from '../../efile/EFile'
 
 
 import { useSearchParams } from 'react-router-dom'

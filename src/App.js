@@ -1,20 +1,29 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
-import Login from "./components/layout/Login"
-import Register from "./components/layout/Register"
-import PublicLayout from "./components/layout/PublicLayout"
+import Login from "./components/pages/Login"
+import Register from "./components/pages/Register"
+import PublicLayout from "./components/pages/PublicLayout"
 import BailFiling from "./components/filing/BailFiling"
-import IntervenePetition from "./components/IntervenePetition/NewPetition"
-import CaseStatus from "./components/kiosk/CaseStatus"
+import Relaxation from './components/petition/relaxation/Relaxation'
+import IntervenePetition from "./components/petition/intervene/NewPetition"
+import Modification from './components/petition/modification/Modification'
+import Surety from './components/petition/surety/Surety'
+import DischargeSurety from './components/petition/surety/DischargeSurety'
+import Extension from './components/petition/extension/Extension'
+import ReturnPassport from './components/petition/return/ReturnPassport'
+import FilingSearch from './components/pages/kiosk/FilingSearch'
+import CNRSearch from './components/pages/kiosk/CNRSearch'
+import FIRSearch from './components/pages/kiosk/FIRSearch'
+import RegistrationSearch from './components/pages/kiosk/RegistrationSearch'
+import PartyNameSearch from './components/pages/kiosk/PartyNameSearch'
+import CaseStatus from "./components/pages/kiosk/CaseStatus"
 import DraftList from "./components/pages/DraftList"
 import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
-import SideBar from './components/layout/SideBar'
-import MuiStepper from './components/MuiStepper'
-import Surety from './components/Surety'
+import MuiStepper from './components/petition/bail/MuiStepper'
 import NotFound from './components/pages/NotFound'
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
@@ -81,7 +90,7 @@ function App() {
                 } 
               />
               <Route 
-                path="petition/filing" 
+                path="petition/bail" 
                 element={
                   <PrivateRoute>
                     <BailFiling />
@@ -89,7 +98,15 @@ function App() {
                 } 
               />
               <Route 
-                path="petition/intervene/filing" 
+                path="petition/relaxation" 
+                element={
+                  <PrivateRoute>
+                    <Relaxation />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="petition/intervene" 
                 element={
                   <PrivateRoute>
                     <IntervenePetition />
@@ -97,12 +114,64 @@ function App() {
                 }
               />
               <Route 
-                path="petition/surety/filing" 
+                path="petition/modification" 
+                element={
+                  <PrivateRoute>
+                    <Modification />
+                  </PrivateRoute>
+                }
+              />
+              <Route 
+                path="petition/surety" 
                 element={
                 <PrivateRoute>
                   <Surety />
                 </PrivateRoute>
                 }
+              />
+              <Route 
+                path="petition/surety-discharge" 
+                element={
+                  <PrivateRoute>
+                    <DischargeSurety />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="petition/extension-time" 
+                element={
+                  <PrivateRoute>
+                    <Extension />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="petition/return-passport" 
+                element={
+                  <PrivateRoute>
+                    <ReturnPassport />
+                  </PrivateRoute>
+                } 
+              />
+              <Route
+                path="status/filing-number"
+                element={<FilingSearch />}
+              />
+              <Route
+                path="status/registration-number"
+                element={<RegistrationSearch />}
+              />
+              <Route
+                path="status/cnr-number"
+                element={<CNRSearch />}
+              />
+              <Route
+                path="status/fir-number"
+                element={<FIRSearch />}
+              />
+              <Route
+                path="status/party-name"
+                element={<PartyNameSearch />}
               />
               <Route path="user/registration" element={<Register />} />
               <Route path="filing/kiosk" element={<CaseStatus />} />

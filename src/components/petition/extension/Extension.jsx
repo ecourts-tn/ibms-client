@@ -1,18 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button'
-import api from '../../api';
-import Payment from '../pages/Payment';
+import api from '../../../api';
+import Payment from '../../pages/Payment';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import GroundsContainer from '../grounds/GroundsContainer';
-import DocumentContainer from '../documents/DocumentContainer';
+import { useDispatch, useSelector } from "react-redux";
+import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
+import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
+import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
+import GroundsContainer from '../../grounds/GroundsContainer';
+import DocumentContainer from '../../documents/DocumentContainer';
 import * as Yup from 'yup'
 
 
-const NewPetition = () => {
+const Extension = () => {
+
+    const dispatch = useDispatch()
+    const stateStatus       = useSelector(getStatesStatus);
+
+    const states    = useSelector((state) => state.states.states)
+    const districts = useSelector((state) => state.districts.districts)
+    const taluks    = useSelector((state) => state.taluks.taluks)
 
     const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
@@ -21,8 +32,70 @@ const NewPetition = () => {
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
 
+    const deleteAdvocate = (advocate) => {
+        const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
+        setAdvocates(newAdvocate)
+    }
+
+    const deleteRespondent = (respondent) => {
+        const newRespondent = respondents.filter((res) => { return res.id !== respondent.id })
+        setRespondents(newRespondent)
+    }
+
+
     const initialState = {
         cino: '',
+        surety_name: '',
+        relation: '',
+        relative_name:'',
+        aadhar_number: '',
+        address: '',
+        state: '',
+        district: '',
+        taluk: '',
+        pincode: '',
+        phone_number: '',
+        email_address: '',
+        residing_years: '',
+        property_type: '',
+        survey_number: '',
+        site_location:'',
+        site_area:'',
+        site_valuation:'',
+        rent_bill_surety_name: false,
+        property_document:'',
+        employment_type: '',
+        business_address: '',
+        business_state: '',
+        business_district: '',
+        business_taluk: '',
+        business_nature: '',
+        business_rent_paid: '',
+        is_rent_bill_name: false,
+        business_document:'',
+        employer_name: '',
+        designation: '',
+        employer_address: '',
+        employer_state: '',
+        employer_district: '',
+        employer_taluk: '',
+        service_length: '',
+        pf_amount: '',
+        property_details: '',
+        income_tax_paid: '',
+        employment_document: '',
+        bank_accounts: [],
+        accused_duration_year: '',
+        accused_duration_month: '',
+        is_related: false,
+        relation_details: '',
+        others_surety:'',
+        litigation_details: '',
+        other_particulars: '',
+        surety_amount: '',
+        photo: '',
+        signature:'',
+        identity_proof:''
     }
 
     const[form, setForm] = useState(initialState);
@@ -50,22 +123,15 @@ const NewPetition = () => {
         });
     }, []);
 
-    console.log(petition)
-    
+    const addBankAccount = () => {}
+
+    const handleBankAccountChange = () =>{}
+
+    const removeBankAccount = () => {}
 
     const handleChange = (e) => {
             const {name, value} = e.target
             setForm({...form, [name]:value})
-    }
-
-    const deleteAdvocate = (advocate) => {
-        const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
-        setAdvocates(newAdvocate)
-    }
-
-    const deleteRespondent = (respondent) => {
-        const newRespondent = respondents.filter((res) => { return res.id !== respondent.id })
-        setRespondents(newRespondent)
     }
 
 
@@ -82,6 +148,7 @@ const NewPetition = () => {
         }
         fetchData();
     },[])
+
 
     useEffect(() => {
         async function fetchDetails(){
@@ -102,14 +169,16 @@ const NewPetition = () => {
         }
     },[form.cino])
 
-    console.log(petition)
     const handleSearch = async(e) => {
         e.preventDefault()
         try{
             // await searchSchema.validate(searchForm, { abortEarly:false})
             const response = await api.get("api/bail/petition/detail/", { params: searchForm})
             if(response.status === 200){
-                console.log(response.data)
+                setPetition(response.data.petition)
+                setPetitioners(response.data.petitioner)
+                setRespondents(response.data.respondent)
+                setAdvocates(response.data.advocate)
                 setForm({...form, cino:response.data.petition.cino})
             }
             if(response.status === 404){
@@ -163,7 +232,7 @@ const NewPetition = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#">Home</a></li>
                                 <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Intervene Petition</li>
+                                <li className="breadcrumb-item active" aria-current="page">Extension Petition</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -193,7 +262,7 @@ const NewPetition = () => {
                                     </div>
                                     <div className="bs-stepper-content">
                                         <div id="initial-input" className="content">
-                                        <div className="row">
+                                            <div className="row">
                                                 <div className="col-md-12 text-center">
                                                     <div className="form-group">
                                                         <div>
@@ -231,7 +300,7 @@ const NewPetition = () => {
                                                                 <select 
                                                                     name="cino" 
                                                                     className="form-control"
-                                                                    value={searchForm.cino}
+                                                                    value={form.cino}
                                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                                 >
                                                                     <option value="">Select petition</option>
@@ -359,6 +428,37 @@ const NewPetition = () => {
                                                                     )}
                                                                 </table>
                                                             )}
+                                                            { Object.keys(petitioners).length > 0 && (
+                                                                <table className="table table-bordered table-striped">
+                                                                    <thead>
+                                                                        <tr className="bg-secondary">
+                                                                            <td colSpan={6}>Petitioner Details</td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th>S.No</th>
+                                                                            <th>Petitioner Name</th>
+                                                                            <th>Age</th>
+                                                                            <th>Relation</th>
+                                                                            <th>Relation Name</th>
+                                                                            <th>Select</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        { petitioners.map((petitioner, index) => (
+                                                                        <tr>
+                                                                            <td>{ index+1 }</td>
+                                                                            <td>{ petitioner.petitioner_name }</td>
+                                                                            <td>{ petitioner.age }</td>
+                                                                            <td>{ petitioner.relation }</td>
+                                                                            <td>{ petitioner.relation_name }</td>
+                                                                            <td>
+                                                                                <input type="checkbox" />
+                                                                            </td>
+                                                                        </tr>
+                                                                        ))}
+                                                                    </tbody>
+                                                                </table>
+                                                            )}
                                                             { Object.keys(respondents).length > 0 && (
                                                                 <table className=" table table-bordered table-striped">
                                                                     <thead>
@@ -371,10 +471,6 @@ const NewPetition = () => {
                                                                             <th>Designation</th>
                                                                             <th>Police Station</th>
                                                                             <th>District</th>
-                                                                            <th width={120}>
-                                                                                Action
-                                                                                <span className="badge bg-success float-right mt-1"><i className="fa fa-plus-circle mr-1"></i>New</span>
-                                                                            </th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -385,13 +481,6 @@ const NewPetition = () => {
                                                                                 <td>{respondent.designation}</td>
                                                                                 <td>{respondent.address}</td>
                                                                                 <td>{respondent.district}</td>
-                                                                                <td>
-                                                                                    <i className="fa fa-pencil-alt text-primary"></i>
-                                                                                    <i 
-                                                                                        className="fa fa-trash-alt text-danger ml-3"
-                                                                                        onClick={() => deleteRespondent(respondent)}
-                                                                                    ></i>
-                                                                                </td>
                                                                             </tr>
                                                                         ))}
                                                                     </tbody>
@@ -401,7 +490,11 @@ const NewPetition = () => {
                                                             <table className=" table table-bordered table-striped">
                                                                 <thead>
                                                                     <tr className="bg-secondary">
-                                                                        <td colSpan={6}><strong>Advocate Details</strong></td>
+                                                                        <td colSpan={6}><strong>Advocate Details</strong>
+                                                                            <div className="float-right">
+                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                            </div>
+                                                                        </td>
                                                                     </tr>
                                                                     <tr>
                                                                         <th>S.No.</th>
@@ -409,10 +502,7 @@ const NewPetition = () => {
                                                                         <th>Enrolment Number</th>
                                                                         <th>Mobile Number</th>
                                                                         <th>Email Address</th>
-                                                                        <th width={120}>
-                                                                            Action
-                                                                            <span className="badge bg-success float-right mt-1"><i className="fa fa-plus-circle mr-1"></i>New</span>
-                                                                        </th>
+                                                                        <th width={120}>Action</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -486,4 +576,4 @@ const NewPetition = () => {
     )
 }
 
-export default NewPetition;
+export default Extension;

@@ -3,16 +3,16 @@ import { render } from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
-import BasicContainer from './basic/BasicContainer';
-import CaseSearch from './search/CaseSearch';
-import CaseDetails from './filing/CaseDetails';
-import GroundsContainer from './grounds/GroundsContainer';
-import PetitionerContainer from './petitioner/PetitionerContainer';
-import RespondentContainer from './respondent/RespondentContainer';
-import PreviousCaseContainer from './history/PreviousCaseContainer';
-import AdvocateContainer from './advocate/AdvocateContainer';
-import DocumentContainer from './documents/DocumentContainer';
-import Payment from './pages/Payment';
+import BasicContainer from '../../basic/BasicContainer';
+import CaseSearch from '../../search/CaseSearch';
+import CaseDetails from '../../filing/CaseDetails';
+import GroundsContainer from '../../grounds/GroundsContainer';
+import PetitionerContainer from '../../petitioner/PetitionerContainer';
+import RespondentContainer from '../../respondent/RespondentContainer';
+import PreviousCaseContainer from '../../history/PreviousCaseContainer';
+import AdvocateContainer from '../../advocate/AdvocateContainer';
+import DocumentContainer from '../../documents/DocumentContainer';
+import Payment from '../../pages/Payment';
 
 
 // import './style.css';
