@@ -16,7 +16,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
 import api from '../../api';
 import Select from 'react-select'
-import { BorderColor } from '@mui/icons-material';
 
 const BasicContainer = ({setActiveStep}) => {
 
@@ -267,7 +266,6 @@ const BasicContainer = ({setActiveStep}) => {
                                                 </select> */}
                                                 <Select 
                                                     name="district"
-                                                    style={{BorderColor:'red'}}
                                                     options={districtOptions} 
                                                     className={`${errors.district ? 'is-invalid' : null}`}
                                                     onChange={(e) => setPetition({...petition, district:e.value})}

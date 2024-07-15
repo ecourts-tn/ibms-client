@@ -89,15 +89,6 @@ const imgLink = "";
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
-    const [states, setStates] = useState([])
-
-    useEffect(()=> {
-        const data = getAllState()
-        console.log(data)
-        setStates(data)
-    }, [])
-
-
 
     const[form, setForm] =  useState({
         usertype: '',
@@ -192,9 +183,6 @@ const Login = () => {
     return (
         <>
             <Container fluid className="px-5">
-                { states.map((s, index) => {
-                    <p>{s.state_name}</p>
-                })}
                 <Row className='py-2'>
                     <Col md={3} className="mt-5 pt-3">
                         <ToastContainer />
@@ -345,15 +333,15 @@ const Login = () => {
                                     subheader="September 14, 2016"
                                 />
                                 <CardContent>
-                                    <p color="text.dark" style={{ textAlign:'justify'}}>
+                                    <div color="text.dark" style={{ textAlign:'justify'}}>
                                         <ul style={{lineHeight: '1.5rem'}}>
                                             <li>Save time, money, travel of advocates, litigants and government officials </li>
-                                            <li>Obviate the need to physically visit the court</li>
+                                            <li>Obviate the need to divhysically visit the court</li>
                                             {/* <li>Reduce the need of meetings between clients and advocates</li> */}
                                             <li>Automatic digitization of case records</li>
                                             <li>Positive impact on environment by reducing paper footprint</li> 
                                         </ul>
-                                    </p>
+                                    </div>
                                 </CardContent>
                                 <CardActions className="d-flex justify-content-between">
                                     <IconButton aria-label="add to favorites">
@@ -406,7 +394,7 @@ const Login = () => {
                         <div className="comments-container">
                             <Paper style={{ padding: "40px 20px" }}>
                                 { counter.map((c, index) => (
-                                <Grid container wrap="nowrap" spacing={2}>
+                                <Grid container wrap="nowrap" spacing={2} key={index}>
                                     <Grid item>
                                         <div className="calendar">
                                             <div className="month">Jul</div>

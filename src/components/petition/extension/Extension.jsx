@@ -8,22 +8,13 @@ import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import GroundsContainer from '../../grounds/GroundsContainer';
 import DocumentContainer from '../../documents/DocumentContainer';
+import Editor from 'react-simple-wysiwyg';
 import * as Yup from 'yup'
 
 
 const Extension = () => {
-
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-
-    const states    = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks    = useSelector((state) => state.taluks.taluks)
 
     const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
@@ -45,57 +36,7 @@ const Extension = () => {
 
     const initialState = {
         cino: '',
-        surety_name: '',
-        relation: '',
-        relative_name:'',
-        aadhar_number: '',
-        address: '',
-        state: '',
-        district: '',
-        taluk: '',
-        pincode: '',
-        phone_number: '',
-        email_address: '',
-        residing_years: '',
-        property_type: '',
-        survey_number: '',
-        site_location:'',
-        site_area:'',
-        site_valuation:'',
-        rent_bill_surety_name: false,
-        property_document:'',
-        employment_type: '',
-        business_address: '',
-        business_state: '',
-        business_district: '',
-        business_taluk: '',
-        business_nature: '',
-        business_rent_paid: '',
-        is_rent_bill_name: false,
-        business_document:'',
-        employer_name: '',
-        designation: '',
-        employer_address: '',
-        employer_state: '',
-        employer_district: '',
-        employer_taluk: '',
-        service_length: '',
-        pf_amount: '',
-        property_details: '',
-        income_tax_paid: '',
-        employment_document: '',
-        bank_accounts: [],
-        accused_duration_year: '',
-        accused_duration_month: '',
-        is_related: false,
-        relation_details: '',
-        others_surety:'',
-        litigation_details: '',
-        other_particulars: '',
-        surety_amount: '',
-        photo: '',
-        signature:'',
-        identity_proof:''
+        ground: ''
     }
 
     const[form, setForm] = useState(initialState);
@@ -122,17 +63,6 @@ const Extension = () => {
         animation: true,
         });
     }, []);
-
-    const addBankAccount = () => {}
-
-    const handleBankAccountChange = () =>{}
-
-    const removeBankAccount = () => {}
-
-    const handleChange = (e) => {
-            const {name, value} = e.target
-            setForm({...form, [name]:value})
-    }
 
 
     useEffect(() => {
@@ -530,8 +460,18 @@ const Extension = () => {
                                                             )}
                                                             { Object.keys(petition).length > 0 && (
                                                                 <>  
+                                                                    <div className="form-group">
+                                                                        <Editor 
+                                                                            value={form.ground} 
+                                                                            onChange={(e) => setForm({...form, description: e.target.value })} 
+                                                                            style={{ minHeight:'300px'}}
+                                                                        />
+                                                                        <div className="invalid-feedback">
+                                                                            { errors.description }
+                                                                        </div>
+                                                                    </div>
                                                                     
-                                                                    <GroundsContainer grounds={grounds}/>
+                                                                    {/* <GroundsContainer grounds={grounds}/> */}
                                                                     <DocumentContainer />
                                                                 </>
                                                             )}

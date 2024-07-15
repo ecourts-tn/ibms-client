@@ -7,25 +7,15 @@ import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
-import GroundsContainer from '../../grounds/GroundsContainer';
-import DocumentContainer from '../../documents/DocumentContainer';
+import SendIcon from '@mui/icons-material/Send';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import Editor  from 'react-simple-wysiwyg';
+import Select from 'react-select'
 import * as Yup from 'yup'
 
 
 const Relaxation = () => {
 
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-
-    const states    = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks    = useSelector((state) => state.taluks.taluks)
-
-    const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
     const[petitioners, setPetitioners] = useState([])
     const[respondents, setRespondents] = useState([])
@@ -45,57 +35,56 @@ const Relaxation = () => {
 
     const initialState = {
         cino: '',
-        surety_name: '',
-        relation: '',
-        relative_name:'',
-        aadhar_number: '',
-        address: '',
+        case_no: '',
+        court_type: '',
+        bench_type:'',
         state: '',
-        district: '',
-        taluk: '',
-        pincode: '',
-        phone_number: '',
-        email_address: '',
-        residing_years: '',
-        property_type: '',
-        survey_number: '',
-        site_location:'',
-        site_area:'',
-        site_valuation:'',
-        rent_bill_surety_name: false,
-        property_document:'',
-        employment_type: '',
-        business_address: '',
-        business_state: '',
-        business_district: '',
-        business_taluk: '',
-        business_nature: '',
-        business_rent_paid: '',
-        is_rent_bill_name: false,
-        business_document:'',
-        employer_name: '',
-        designation: '',
-        employer_address: '',
-        employer_state: '',
-        employer_district: '',
-        employer_taluk: '',
-        service_length: '',
-        pf_amount: '',
-        property_details: '',
-        income_tax_paid: '',
-        employment_document: '',
-        bank_accounts: [],
-        accused_duration_year: '',
-        accused_duration_month: '',
-        is_related: false,
-        relation_details: '',
-        others_surety:'',
-        litigation_details: '',
-        other_particulars: '',
-        surety_amount: '',
-        photo: '',
-        signature:'',
-        identity_proof:''
+        district:'',
+        establishment: '',
+        court:'',
+        case_type: '',
+        bail_type: '',
+        complaint_type:'',
+        crime_registered: '',
+        crime_state: null,
+        crime_district: null,
+        police_station:null,
+        crime_number: null,
+        crime_year: null,
+        case_state: null,
+        case_district: null,
+        case_establishment: null,
+        case_court: null,
+        case_case_type:  null,
+        case_number: null,
+        case_year: null,
+        cnr_number: null,
+        date_of_occurrence:'',
+        fir_date_time:'',
+        place_of_occurrence:'',
+        investigation_officer:'',
+        complaintant_name:'',
+        gist_of_fir:'',
+        gist_in_local:'',
+        grounds:'',
+        is_details_correct: true,
+        remarks:'',
+        is_previous_pending: false,
+        advocate_name:'',
+        enrolment_number: null,
+        advocate_mobile: '',
+        advocate_email:'',
+        prev_case_number: '',
+        prev_case_year: '',
+        prev_case_status:'',
+        prev_disposal_date:'',
+        prev_proceedings:'',
+        prev_is_correct:false,
+        prev_remarks:'',
+        prev_is_pending:false,
+        vakalath: '',
+        supporting_document:''
+        
     }
 
     const[form, setForm] = useState(initialState);
@@ -123,15 +112,44 @@ const Relaxation = () => {
         });
     }, []);
 
-    const addBankAccount = () => {}
+    const[otp, setOtp] = useState('')
 
-    const handleBankAccountChange = () =>{}
+    const[mobileOtp, setMobileOtp] = useState(false)
+    const[mobileVerified, setMobileVerified] = useState(false)
 
-    const removeBankAccount = () => {}
+    const sendMobileOTP = () => {
+        // if(otp === ''){
+        //     toast.error("Please enter valid mobile number",{
+        //         theme:"colored"
+        //     })
+        // }else{
+            // setMobileLoading(true)
+        if(mobileOtp){
+            toast.success("OTP already verified successfully.", {
+                theme: "colored"
+            })
+            return
+        }
+            toast.success("OTP has been sent your mobile number",{
+                theme:"colored"
+            })
+            setMobileOtp(true)
+        // }
+    }
 
-    const handleChange = (e) => {
-            const {name, value} = e.target
-            setForm({...form, [name]:value})
+    const verifyMobile = (otp) => {
+        if(parseInt(otp) === 123456){
+            toast.success("Mobile otp verified successfully",{
+                theme:"colored"
+            })
+            setMobileVerified(true)
+        }else{
+            toast.error("Invalid OTP. Please enter valid OTP",{
+                theme:"colored"
+            })
+            setMobileVerified(false)
+            setMobileOtp(true)
+        }
     }
 
 
@@ -151,7 +169,7 @@ const Relaxation = () => {
 
 
     useEffect(() => {
-        async function fetchDetails(){
+        const fetchDetails = async() => {
             try{
                 const response = await api.get("api/bail/petition/detail/", {params: {cino:form.cino}})
                 if(response.status === 200){
@@ -164,7 +182,7 @@ const Relaxation = () => {
                 console.log(error)
             }
         }
-        if(form.cino!== ''){
+        if(form.cino !== ''){
             fetchDetails()
         }
     },[form.cino])
@@ -202,24 +220,16 @@ const Relaxation = () => {
         }
     }
 
+    const petitionerOptions = petitioners.map((petitioner, index) => {
+        return {
+            value : petitioner.petitioner_id,
+            label : petitioner.petitioner_name
+        }
+    })
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const response = await api.post("api/bail/surety/create/", form, {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    // 'X-CSRFTOKEN': CSRF_TOKEN
-                  }
-            })
-            if(response.status === 201){
-                toast.success("Petition submitted successfully", {
-                    theme:'colored'
-                })
-                setForm(initialState)
-            }
-        }catch(error){
-            console.log(error)
-        }
+        
     }
 
     return(
@@ -438,9 +448,9 @@ const Relaxation = () => {
                                                                             <th>S.No</th>
                                                                             <th>Petitioner Name</th>
                                                                             <th>Age</th>
+                                                                            <th>Rank</th>
                                                                             <th>Relation</th>
                                                                             <th>Relation Name</th>
-                                                                            <th>Select</th>
                                                                         </tr>
                                                                     </thead>
                                                                     <tbody>
@@ -449,11 +459,9 @@ const Relaxation = () => {
                                                                             <td>{ index+1 }</td>
                                                                             <td>{ petitioner.petitioner_name }</td>
                                                                             <td>{ petitioner.age }</td>
+                                                                            <td>{ petitioner.rank }</td>
                                                                             <td>{ petitioner.relation }</td>
                                                                             <td>{ petitioner.relation_name }</td>
-                                                                            <td>
-                                                                                <input type="checkbox" />
-                                                                            </td>
                                                                         </tr>
                                                                         ))}
                                                                     </tbody>
@@ -528,11 +536,139 @@ const Relaxation = () => {
                                                                 </tbody>
                                                             </table>
                                                             )}
+                                                            <>
+                                                                <Select
+                                                                    isMulti={true}
+                                                                    name="district"
+                                                                    options={petitionerOptions}
+                                                                    className={`${errors.district ? 'is-invalid' : null}`}
+                                                                    onChange={(e) => {}}
+                                                                ></Select>
+                                                            </>
                                                             { Object.keys(petition).length > 0 && (
                                                                 <>  
-                                                                    
-                                                                    <GroundsContainer grounds={grounds}/>
-                                                                    <DocumentContainer />
+                                                                    <div className="form-group">
+                                                                        <label htmlFor="">Grounds</label>
+                                                                        <Editor 
+                                                                            value={form.ground} 
+                                                                            onChange={(e) => setForm({...form, ground: e.target.value })} 
+                                                                        />
+                                                                        <div className="invalid-feedback">
+                                                                            { errors.ground }
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="row">
+                                                                        { parseInt(searchPetition) === 1 && (
+                                                                        <div className="col-md-12 mt-4"> 
+                                                                            <div className="form-group">
+                                                                            <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
+                                                                            <input 
+                                                                                type="file" 
+                                                                                name="vakalath"
+                                                                                className="form-control"
+                                                                                // value={petition.vakalath}
+                                                                                onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                            />
+                                                                            </div>
+                                                                        </div>
+                                                                        )}
+                                                                        <div className="col-md-12 mt-4"> 
+                                                                            <div className="form-group">
+                                                                            <label htmlFor="document">Supporting Documents</label>
+                                                                            <input 
+                                                                                type="file" 
+                                                                                name="supporting_document" 
+                                                                                className="form-control"
+                                                                                // value={petition.supporting_document}
+                                                                                onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                            />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-md-4">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">Enrolment Number</label>
+                                                                                <div className="row">
+                                                                                    <div className="col-md-4">
+                                                                                        <input 
+                                                                                            type="text" 
+                                                                                            className="form-control" 
+                                                                                            placeholder='MS'
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="col-md-4">
+                                                                                        <input 
+                                                                                            type="text" 
+                                                                                            className="form-control" 
+                                                                                            placeholder='Reg. No.'
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="col-md-4">
+                                                                                        <input 
+                                                                                            type="text" 
+                                                                                            className="form-control" 
+                                                                                            placeholder='Reg. Year'
+                                                                                        />
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    <div className="col-md-2 mt-4 pt-2">
+                                                                        <Button 
+                                                                            variant="contained"
+                                                                            color="primary"
+                                                                            onClick={sendMobileOTP}
+                                                                            endIcon={<SendIcon />}
+                                                                        >Sworn Affidavit</Button>
+                                                                    </div>
+                            
+                                                                    {/* { !mobileVerified && (
+                                                                        <div className="col-sm-2">
+                                                                        <Button 
+                                                                            variant="contained"
+                                                                            color="primary" 
+                                                                            onClick={sendMobileOTP}
+                                                                        >
+                                                                            Send OTP</Button>
+                                                                    </div>
+                                                                    )} */}
+                                                                    { mobileOtp && !mobileVerified && (
+                                                                    <>
+                                                                        <div className="col-md-1 mt-3 pt-2">
+                                                                            <input 
+                                                                                type="password" 
+                                                                                className="form-control mt-2" 
+                                                                                placeholder="OTP" 
+                                                                                value={otp}
+                                                                                onChange={(e) => setOtp(e.target.value)}
+                                                                            />
+                                                                        </div>
+                                                                        <div className="col-md-2 mt-3 pt-2">
+                                                                            <button 
+                                                                                type="button" 
+                                                                                className="btn btn-success px-5 mt-2"
+                                                                                onClick={() => verifyMobile(otp)}
+                                                                            >Verify</button>
+                                                                        </div>
+                                                                    </>
+                                                                    )}
+                                                                        { mobileVerified && (
+                                                                            <p className="mt-4 pt-3">
+                                                                                <CheckCircleRoundedIcon color="success"/>
+                                                                                <span className="text-success ml-1"><strong>Verified</strong></span>
+                                                                            </p>
+                                                                        )}
+                                                                        <div className="col-md-12">
+                                                                            <div className="d-flex justify-content-center">
+                                                                                <Button
+                                                                                    variant="contained"
+                                                                                    color="success"
+                                                                                    onClick={handleSubmit}
+                                                                                >
+                                                                                    Submit
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </>
                                                             )}
                                                             </>
