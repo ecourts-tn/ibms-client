@@ -536,7 +536,7 @@ const Relaxation = () => {
                                                                 </tbody>
                                                             </table>
                                                             )}
-                                                            <>
+                                                            {/* <>
                                                                 <Select
                                                                     isMulti={true}
                                                                     name="district"
@@ -544,7 +544,7 @@ const Relaxation = () => {
                                                                     className={`${errors.district ? 'is-invalid' : null}`}
                                                                     onChange={(e) => {}}
                                                                 ></Select>
-                                                            </>
+                                                            </> */}
                                                             { Object.keys(petition).length > 0 && (
                                                                 <>  
                                                                     <div className="form-group">

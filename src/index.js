@@ -6,8 +6,6 @@ import store from './redux/store';
 import { Provider } from 'react-redux'
 import "react-toastify/dist/ReactToastify.css";
 import TimeAgo from 'javascript-time-ago'
-import $ from 'jquery';
-import Stepper from 'bs-stepper'
 
 import en from 'javascript-time-ago/locale/en'
 

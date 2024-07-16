@@ -4,6 +4,7 @@ import generatePDF from "react-to-pdf";
 import Button from '@mui/material/Button'
 import DownloadIcon from '@mui/icons-material/Download'
 import api from '../../api';
+import { CreateMarkup } from '../../utils'
 
 
 const options = {
@@ -107,13 +108,14 @@ const PdfGenerator = () => {
                                     }and 2 other(s) based on a petition given by one&nbsp;<strong>{petition.petition.complaintant_name}</strong>.
                                 </li>
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
-                                    It is most humbly submitted that the alleged facts stated in the F.I.R. are<br></br>{petition.petition.gist_in_local}.
+                                    It is most humbly submitted that the alleged facts stated in the F.I.R. are<br></br>
+                                    <span dangerouslySetInnerHTML={CreateMarkup(petition.petition.gist_in_local)}></span>
                                 </li>
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
-                                    It is most humbly submitted that the petitioner was arrested by the respondent police in connection with this case and was remanded to judicial custody on <strong>[Date of Arrest]</strong> and he/she is languishing at District Jail/Central Prison at <strong>{petition.petitioner[0].prison.name}</strong></li>
+                                    It is most humbly submitted that the petitioner was arrested by the respondent police in connection with this case and was remanded to judicial custody on <strong>[Date of Arrest]</strong> and he/she is languishing at District Jail/Central Prison at <strong>{ petition.petitioner[0].prison ? petition.petitioner[0].prison.name : ''}</strong></li>
                                 { petition.grounds.map((ground, index) => (
-                                    <li key={index}  style={{marginTop:'20px', textAlign:'justify'}}>
-                                        {ground.description}
+                                    <li key={index}  style={{marginTop:'20px', textAlign:'justify'}} >
+                                        <span dangerouslySetInnerHTML={CreateMarkup(ground.description)}></span>
                                     </li>
                                     ))
                                 }
@@ -124,7 +126,7 @@ const PdfGenerator = () => {
                                     It is most humbly submitted that the petitioner is ready to abide with any condition imposed on him/her by this Honourable Court.
                                 </li>
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
-                                    ( if previous case Yes ). Earlier bail petitions filed by the petitioner before the [ Court] as [Case No ] [Status] , [ Court] as [Case No ] [Status] , respectively if NIL {'{'} I humbly submit that this is the first petition filed by me seeking Anticipatory Bail before this Honourable Court and no such petition is filed or pending before any courts{'}'}
+                                    I humbly submit that this is the first petition filed by me seeking {petition.petition.case_type.type_full_form } before this Honourable Court and no such petition is filed or pending before any courts
                                 </li>
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
                                     Hence it is most humbly prayed that this Honourable Court may be pleased to accept this petition and pass orders to release the petitioner on bail and thus render justice.
