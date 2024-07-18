@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Login from "./components/pages/Login"
 import Register from "./components/pages/Register"
@@ -36,7 +36,7 @@ function App() {
   
  return (
     <>
-      <BrowserRouter>
+      <HashRouter>
         <AuthProvider>
           <Routes>
             <Route element={<PublicLayout />}>
@@ -181,7 +181,7 @@ function App() {
             </Route>
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
+      </HashRouter>
     </>
     
   )
