@@ -1,12 +1,11 @@
 import axios from "axios";
 import { ACCESS_TOKEN } from "./constants";
 
-// const apiUrl = "http://192.168.100.135:8000/";
+const apiUrl = "http://192.168.100.135:8000/";
 
-const apiUrl = "https://17ae-202-53-7-10.ngrok-free.app/"
+// const apiUrl = "http://localhost:8000/"
 
 const api = axios.create({
-//   baseURL: import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : apiUrl,
     baseURL: apiUrl
 });
 

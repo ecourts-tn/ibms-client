@@ -14,6 +14,8 @@ import AdvocateContainer from '../advocate/AdvocateContainer'
 import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
 import Payment from '../pages/Payment'
+import { useCaseNumber } from '../../hooks/useCaseNumber'
+import { CaseNumberProvider } from '../../hooks/useCaseNumber'
 
 import EFile from '../efile/EFile'
 import api from '../../api'
@@ -43,11 +45,6 @@ function Litigants(props){
                 addPetitioner={addPetitioner}
                 deletePetitioner={deletePetitioner}
             />
-            {/* <ComplainantDetails 
-                petitioners={petitioners} 
-                addPetitioner={addPetitioner}
-                deletePetitioner={deletePetitioner}
-            /> */}
             <RespondentContainer 
                 respondents={respondents}
                 addRespondent={addRespondent}
@@ -260,21 +257,29 @@ const BailFiling = () => {
     function getSectionComponent() {
         switch(activeStep) {
             case 0: {
-                return <BasicContainer 
-                    setActiveStep={setActiveStep}
-                />;
+                return (
+                    <CaseNumberProvider>
+                        <BasicContainer 
+                            setActiveStep={setActiveStep}
+                        />;
+                    </CaseNumberProvider>
+                )
             }  
             case 1: {   
-                return <Litigants 
-                    petition={petition}
-                    setPetition={setPetition}
-                    petitioners={petitioners} 
-                    addPetitioner={addPetitioner}
-                    deletePetitioner={deletePetitioner}
-                    respondents={respondents}
-                    addRespondent={addRespondent}
-                    deleteRespondent={deleteRespondent}
-                />;
+                return (
+                    <CaseNumberProvider>
+                        <Litigants 
+                            petition={petition}
+                            setPetition={setPetition}
+                            petitioners={petitioners} 
+                            addPetitioner={addPetitioner}
+                            deletePetitioner={deletePetitioner}
+                            respondents={respondents}
+                            addRespondent={addRespondent}
+                            deleteRespondent={deleteRespondent}
+                        />
+                    </CaseNumberProvider>
+                )
             }
             case 2: {
                 return <GroundsContainer
