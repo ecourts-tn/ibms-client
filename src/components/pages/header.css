@@ -31,7 +31,7 @@
     text-decoration: none;
     padding:10px;
     color:#FAFAFA;
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 
 .navbar-nav li:hover, .dropdown-menu a:hover{
