@@ -146,19 +146,6 @@ const BailFiling = () => {
         compliant_type:null,
         crime_registered: null
     })
-    const[initialAdvocate, setInitialAdvocate] = useState({})
-
-    useEffect(() => {
-        if(userrole === 1){
-            setPetition({...petition,
-                advocate_name:'Deenadayalan',
-                enrolment_number:'MS/123/456',
-                advocate_mobile: '8344381139',
-                advocate_email:'deenadayalan.mhc@gmail.com'
-            })
-            setAdvocates([...advocates, initialAdvocate])
-        }
-    },[])
 
     const[petitioners, setPetitioners] = useState([])
     const[grounds, setGrounds] = useState([])
@@ -242,18 +229,44 @@ const BailFiling = () => {
     }
 
     const handleSubmit = async () => {
-        localStorage.removeItem("cino")
-        navigate('/dashboard')
-        // const data = {
-        //     petition,
-        //     petitioners, 
-        //     respondents, 
-        //     grounds
-        // }
-        // const response = await api.post("api/bail/filing/", data)
-        // console.log(response.errors)
-        
+        const cino = localStorage.getItem("cino")
+        if(cino){
+            try{
+                const response = await api.get("api/bail/filing/final-submit/", {
+                    params: {
+                        cino: cino
+                    }
+                })
+                if(response.status === 200){
+                    if(response.data.error){
+                        response.data.message.forEach((error) => {
+                            toast.error(error, {
+                                theme:"colored"
+                            })
+                        })
+                        setIsFinalSubmit(false)
+                    }else{
+                        try{
+                            const result = await api.put(`api/bail/filing/${cino}/final-submit/`)
+                            if(result.status === 200){
+                                toast.success("Petition filed successfully", {
+                                    theme:"colored"
+                                })
+                            }
+                            localStorage.removeItem("cino")
+                            navigate('/dashboard')
+                        }catch(error){
+                            console.error(error)
+                        }
+                    }
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }       
     }
+
+
     function getSectionComponent() {
         switch(activeStep) {
             case 0: {

@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
+import { getDistrictByStateCode, loadDistricts } from '../../redux/features/DistrictSlice'
 import { getStatesStatus, getStates } from '../../redux/features/StateSlice';
 import { getCaseTypeStatus,getCaseTypes } from '../../redux/features/CaseTypeSlice';
 import { getBailTypeByCaseType } from '../../redux/features/BailTypeSlice';
@@ -16,6 +16,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
 import api from '../../api';
 import Select from 'react-select'
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 const BasicContainer = ({setActiveStep}) => {
 
@@ -52,6 +53,7 @@ const BasicContainer = ({setActiveStep}) => {
     const[petition, setPetition] = useState(initialState)
 
     const[errors, setErrors] = useState({})
+    const [user, setUser] = useLocalStorage("user", null)
 
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
@@ -143,23 +145,36 @@ const BasicContainer = ({setActiveStep}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            await validationSchema.validate(petition, { abortEarly:false})
+            // await validationSchema.validate(petition, { abortEarly:false})
             const response = await api.post("api/bail/filing/", {petition})
             if(response.status === 201){
-                // setActiveStep(1)
                 localStorage.setItem("cino", response.data.cino)
                 toast.success(`${response.data.cino} details submitted successfully`, {
                     theme:"colored"
                 })
+                if(parseInt(user.user.user_type) === 1){
+                    console.log("here")
+                    const advocate = {
+                        advocate_name: user.user.username,
+                        advocate_email: user.user.email,
+                        advocate_mobile: user.user.mobile,
+                        enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
+                        is_primary: true
+                    }
+                    const cino = localStorage.getItem("cino")
+                    const response = await api.post(`api/bail/filing/${cino}/advocate/create/`, advocate)
+                    console.log(response)
+                }
             }
             setPetition(initialState)
           }catch(error){
-            const newErrors = {};
-            error.inner.forEach((err) => {
-                newErrors[err.path] = err.message;
-            });
-            setErrors(newErrors);
-            console.log(error)
+            if (error.inner){
+                const newErrors = {};
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message;
+                });
+                setErrors(newErrors);
+            }
         }
     }
 

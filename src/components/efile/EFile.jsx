@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
 import EFileDetails from './EFileDetails'
+import {toast, ToastContainer} from 'react-toastify'
 
 const EFile = (props) => {
     const { 
@@ -14,12 +15,13 @@ const EFile = (props) => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const[allChecked, setAllChecked] =  useState(true)
+    const[allChecked, setAllChecked] =  useState(false)
     const[isConfirm, setIsConfirm] = useState(false)
 
 
     return (
         <>
+            <ToastContainer />
             <div className="row mt-5">
                 <div className="col-md-6 offset-3">
                     <div className="mt-3">

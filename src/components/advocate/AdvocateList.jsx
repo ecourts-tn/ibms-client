@@ -1,13 +1,14 @@
 import React from 'react'
-import { Button } from 'react-bootstrap'
+import Button from '@mui/material/Button'
 
 const AdvocateList = ({advocates, deleteAdvocate}) => {
     return (
     <>
       <div className="table-responsive">
-      <table className="table table-striped table-bordered">
-            <thead>
+      <table className="table table-striped table-bordered table-sm">
+            <thead className="bg-secondary">
               <tr>
+                <td>S. No.</td>
                 <th>Advocate Name</th>
                 <th>Enrolment Number</th>
                 <th>Mobile Number</th>
@@ -18,24 +19,29 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
             <tbody>
               { advocates.map((advocate, index) => (
                 <tr key={index}>
+                  <td>{ index+1 }</td>
                   <td>{ advocate.advocate_name }</td>
                   <td>{ advocate.enrolment_number }</td>
                   <td>{ advocate.advocate_mobile }</td>
                   <td>{ advocate.advocate_email }</td>
                   <td>
-                    <Button
-                      variant="primary"
-                      className='btn-sm'
-                    >
-                      <i className="fa fa-pencil-alt mr-2"></i>
-                      Edit</Button>
-                    <Button
-                      variant="danger"
-                      className="ml-2 btn-sm"
-                      onClick={() => deleteAdvocate(advocate)}
-                    >
-                      <i className="fa fa-trash mr-2"></i>
-                      Delete</Button>
+                    { !advocate.is_primary && (
+                      <>
+                        <Button
+                          variant='contained'
+                          color='primary'
+                          size='small'
+                          onClick={() => deleteAdvocate(advocate)}
+                        >Edit</Button>
+                        <Button
+                          variant='contained'
+                          color='error'
+                          size='small'
+                          className='ml-1'
+                          onClick={()=> deleteAdvocate(advocate)}
+                        >Delete</Button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

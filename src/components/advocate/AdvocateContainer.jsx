@@ -29,20 +29,35 @@ const AdvocateContainer = () => {
             const cino = localStorage.getItem("cino")
             const response = await api.post(`api/bail/filing/${cino}/advocate/create/`, advocate)
             if(response.status === 201){
+                setAdvocates(advocates => [...advocates, advocate])
                 toast.success("Advocate details added successfully", {
                     theme: "colored"
                 })
             }
         }catch(error){
-            console.log(error)
+            console.error(error)
         }
     }
     
-    const deleteAdvocate = () => {
-
+    const deleteAdvocate = (advocate) => {
+        const newAdvocate = advocates.filter((a) => {
+            return a.id !== advocate.id
+        })
+        /* 
+            const response = await api.delete(`api/bail/filing/advocate/delete`) 
+            if(response.status === 200){
+                toast.success("Advocate details deleted successfully", {
+                    theme:"colored"
+                })
+                setAdvocates(newAdvocate)
+            }
+        
+        */
+        toast.error("Advocate details deleted successfully", {
+            theme:"colored"
+        })
+        setAdvocates(newAdvocate)
     }
-
-    console.log(advocates)
 
     
     return (

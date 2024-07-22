@@ -3,15 +3,14 @@ import { useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { ToastContainer, toast } from 'react-toastify'
-import api from '../../api'
 
 const AdvocateForm = ({addAdvocate}) => {
-
     const initialAdvocate = {
         advocate_name: '',
         advocate_email: '',
         advocate_mobile: '',
-        enrolment_number: ''
+        enrolment_number: '',
+        is_primary: false
     }
 
     const[advocate, setAdvocate] = useState(initialAdvocate)

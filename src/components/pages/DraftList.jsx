@@ -37,7 +37,7 @@ const DraftList = () => {
     const handleSubmit = async(cino) => {
         try{
             if(window.confirm("Are you sure you want to submit the petition")){
-                const response = await api.put(`api/bail/filing/${cino}/update/`, {is_draft:false})
+                const response = await api.put(`api/bail/filing/${cino}/final-submit/`, {is_draft:false})
                 if(response.status === 200){
                     toast.success("Petition submitted successfully",{
                         theme:"colored"
@@ -69,6 +69,7 @@ const DraftList = () => {
                                 <tr>
                                     <th>S. No</th>
                                     <th>eFiling Number</th>
+                                    <th>eFile Date</th>
                                     <th>Litigants</th>
                                     <th>View Documents</th>
                                     <th>Payment</th>
@@ -79,7 +80,8 @@ const DraftList = () => {
                                 { cases.map((item, index) => (
                                 <tr>
                                     <td>{ index+1 }</td>
-                                    <td>{ item.petition.cino }</td>
+                                    <td><a href="#/">{ item.petition.efile_number }</a></td>
+                                    <td>{ item.petition.efile_date }</td>
                                     <td>
                                         { item.petitioner.map((p, index) => (
                                             <span className="text ml-2">{index+1}. {p.petitioner_name}</span>
