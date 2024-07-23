@@ -10,6 +10,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import { useAuth } from '../../hooks/useAuth';
 import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
+import axios from 'axios'
 
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
@@ -110,9 +111,11 @@ const Login = () => {
         try{
             await validationSchema.validate(form, {abortEarly: false})
             const {username, password, usertype} = form
-            const response = await api.post('api/login/public/', { usertype, username, password })
+            const response = await api.post('api/auth/public/', { usertype, username, password })
+            localStorage.clear()
             localStorage.setItem(ACCESS_TOKEN, response.data.access);
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
             await login(response.data)
             toast.success('logged in successfully', {
                 theme: "colored"
@@ -143,34 +146,6 @@ const Login = () => {
             }
 
         }
-
-        // try {
-        //     const {username, password, usertype} = form
-        //     const response = await api.post('api/login/public/', { usertype, username, password })
-        //     localStorage.setItem(ACCESS_TOKEN, response.data.access);
-        //     localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-        //     dispatch(loadUser(response.data.user))
-        //     toast.success('logged in successfully', {
-        //         theme: "colored"
-        //     })
-        //     navigate("/dashboard")
-        // } catch (error) {
-        //     if(error.response.status === 401){
-        //         toast.error("Invalid username or password", {
-        //             theme: "colored"
-        //         });
-        //         setLoading(false)
-        //         navigate("/")
-        //     }
-        //     if(error.response.status === 403){
-        //         toast.error( error.response.data.message , {
-        //             theme: "colored"
-        //         });
-        //         setLoading(false)
-        //         navigate("/")
-        //     }
-        //     console.log(error)
-        // } 
     }
 
     const[counter, setCourter] = useState([])

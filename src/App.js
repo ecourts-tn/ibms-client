@@ -28,6 +28,7 @@ import NotFound from './components/pages/NotFound'
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";
+import Logout from './components/pages/Logout'
 
 
 function App() {
@@ -172,6 +173,14 @@ function App() {
               <Route
                 path="status/party-name"
                 element={<PartyNameSearch />}
+              />
+              <Route 
+                path="logout" 
+                element={
+                  <PrivateRoute>
+                    <Logout />
+                  </PrivateRoute>
+                } 
               />
               <Route path="user/registration" element={<Register />} />
               <Route path="filing/kiosk" element={<CaseStatus />} />
