@@ -184,7 +184,6 @@ function App() {
               />
               <Route path="user/registration" element={<Register />} />
               <Route path="filing/kiosk" element={<CaseStatus />} />
-              {/* <Route path="filing" element={<SideBar />} /> */}
               <Route path="stepper" element={<MuiStepper />} />
               <Route path="*" element={<NotFound />} />
             </Route>

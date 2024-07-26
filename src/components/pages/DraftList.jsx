@@ -3,6 +3,7 @@ import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
+import Modal from 'react-bootstrap/Modal'
 import api from '../../api'
 
 const DraftList = () => {
@@ -13,6 +14,7 @@ const DraftList = () => {
 
     const [showDocument, setShowDocument] = useState(false);
     const [showVakalath, setShowVakalath] = useState(false)
+    const[errors, setErrors] = useState([])
     const handleClose = () => {
         setShowDocument(false);
         setShowVakalath(false)
@@ -34,25 +36,75 @@ const DraftList = () => {
         fetchData();
     }, [])
 
+    const [show, setShow] = useState(false);
+
+    const[showError, setShowError] = useState(false)
+    const handleErrorClose = () => setShowError(false);
+    const handleErrorShow = () => setShowError(true);
+
     const handleSubmit = async(cino) => {
-        try{
-            if(window.confirm("Are you sure you want to submit the petition")){
-                const response = await api.put(`api/bail/filing/${cino}/final-submit/`, {is_draft:false})
+        if(window.confirm("Are you sure you want to submit the petition")){
+            try{
+                const response = await api.get("api/bail/filing/final-submit/", {
+                    params: {
+                        cino: cino
+                    }
+                })
                 if(response.status === 200){
-                    toast.success("Petition submitted successfully",{
-                        theme:"colored"
-                    })
+                    if(response.data.error){
+                        setShowError(true)
+                        setErrors(response.data.message)
+                        // response.data.message.forEach((error) => {
+                        //     toast.error(error, {
+                        //         theme:"colored"
+                        //     })
+                        // })
+                    }else{
+                        try{
+                            const result = await api.put(`api/bail/filing/${cino}/final-submit/`)
+                            if(result.status === 200){
+                                toast.success("Petition submitted successfully", {
+                                    theme:"colored"
+                                })
+                            }
+                            navigate('/dashboard')
+                        }catch(error){
+                            console.error(error)
+                        }
+                    }
                 }
-                navigate("/dashboard")
-            }
-        }catch(error){
-            console.log(error)
+            }catch(error){
+                console.log(error)
+            }  
         }
     }
 
     return (
         <>
             <ToastContainer />
+            <Modal 
+                    show={showError} 
+                    onHide={handleErrorClose} 
+                    backdrop="static"
+                    keyboard={false}
+                    size="xl"
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <ul>
+                        { errors.map((error, index) => (
+                            <li key={index} className='text-danger'><strong>{error}</strong></li>
+                        ))}
+                        </ul>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="contained" onClick={handleErrorClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+            </Modal>
             <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
                 <div className="row">
                     <div className="col-md-12">

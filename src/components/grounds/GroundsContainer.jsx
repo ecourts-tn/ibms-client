@@ -40,15 +40,6 @@ const GroundsContainer = ({grounds, addGround, deleteGround}) => {
                         </div>
                     </div>
                 </div>
-                {/* <div className="card-footer">
-                    <button 
-                        type="button" 
-                        id="add_ground_button" 
-                        className="btn btn-info float-right"
-                        onClick={addGround}
-                    ><i className="fa fa-plus mr-2"></i>
-                        Add Ground</button>
-                </div> */}
             </div>
         </div>
      )
