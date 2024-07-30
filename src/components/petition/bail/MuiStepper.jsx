@@ -167,7 +167,7 @@ const MuiStepper = () => {
                       </div>
                     </div>
                     <div id="documents" className="content text-center">
-                      <DocumentContainer />
+                      <DocumentContainer petition={petition}/>
                       <div className="d-flex justify-content-between mt-5">
                       <button className="btn btn-primary" type="button" onClick={() => stepperRef.current.next()}>Previous</button>
                       <button className="btn btn-success" type="button" onClick={() => stepperRef.current.next()}>Save</button>

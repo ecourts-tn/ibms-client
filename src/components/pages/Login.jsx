@@ -111,7 +111,9 @@ const Login = () => {
         try{
             await validationSchema.validate(form, {abortEarly: false})
             const {username, password, usertype} = form
-            const response = await api.post('api/auth/public/', { usertype, username, password })
+            const response = await api.post('api/auth/public/login/', { usertype, username, password }, {
+                skipInterceptor: true // Custom configuration to skip the interceptor
+              })
             localStorage.clear()
             localStorage.setItem(ACCESS_TOKEN, response.data.access);
             localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
@@ -130,21 +132,30 @@ const Login = () => {
                 setErrors(newErrors);
                 return
             }
-            if(!error.response){
-                toast.error("Unable to reach the server. Please try later!",{
-                    theme:"colored"
-                })
-                setLoading(false)
-                return
+            if(error.response){
+                const { status, data } = error.response
+                switch(status){
+                    case 400:
+                        toast.error(data.message, {theme: "colored"})
+                        setLoading(false)
+                        break;
+                    case 401:
+                        toast.error(data.message, {theme:"colored"})
+                        setLoading(false)
+                        break;
+                    case 403:
+                        toast.error(data.message, {theme:"colored"})
+                        setLoading(false)
+                        break;
+                    case 404:
+                        toast.error(data.message, {theme:"colored"})
+                        setLoading(false)
+                        break;
+                    default:
+                        toast.error(error, {theme:"colored"})
+                        setLoading(false)
+                }
             }
-            if(error.response.status === 400 || error.response.status === 401){
-                toast.error("Invalid username or password", {
-                    theme: "colored"
-                });
-                setLoading(false)
-                return
-            }
-
         }
     }
 

@@ -25,9 +25,11 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(resp => resp, async error => {  
+  if (error.config && error.config.skipInterceptor) {
+    return Promise.reject(error);
+  }
   if (error.response.status === 401 && !refresh) {     
     refresh = true;
-    console.log(localStorage.getItem(REFRESH_TOKEN))
     const response = await api.post('api/auth/token/refresh/', {      
                           refresh:localStorage.getItem(REFRESH_TOKEN)
                         }, { 

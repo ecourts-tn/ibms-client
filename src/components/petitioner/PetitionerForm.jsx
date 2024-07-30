@@ -141,8 +141,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
   },[petitioner.petitioner, accused])
 
   const handleSubmit = async() => {
+    console.log("hi")
     try{
-      await validationSchema.validate(petitioner, { abortEarly:false})
+      // await validationSchema.validate(petitioner, { abortEarly:false})
       const cino = localStorage.getItem("cino")
       const response = await api.post(`api/bail/filing/${cino}/petitioner/create/`, petitioner)
       

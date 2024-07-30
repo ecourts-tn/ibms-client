@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
+import { formatDate, formatLitigant } from '../../utils'
 import api from '../../api'
 
 const DraftList = () => {
@@ -133,16 +134,8 @@ const DraftList = () => {
                                 <tr>
                                     <td>{ index+1 }</td>
                                     <td><a href="#/">{ item.petition.efile_number }</a></td>
-                                    <td>{ item.petition.efile_date }</td>
-                                    <td>
-                                        { item.petitioner.map((p, index) => (
-                                            <span className="text ml-2">{index+1}. {p.petitioner_name}</span>
-                                        ))}
-                                        <span className="text text-danger text-center mx-3"><strong>Vs</strong></span>
-                                        { item.respondent.map((res, index) => (
-                                            <span className="text">{res.respondent_name} rep by {res.designation}</span>
-                                        ))} 
-                                    </td>
+                                    <td>{ formatDate(item.petition.efile_date) }</td>
+                                    <td>{ formatLitigant(item.petitioner, item.respondent)}</td>
                                     <td>
                                     { item.petition.vakalath && (
                                             <>

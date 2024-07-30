@@ -11,7 +11,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fecthCases = async() =>{
-            const response = await api.get("api/bail/dashboard/")
+            const response = await api.get("api/case/dashboard/")
             if(response.status === 200){
                 setCases(response.data.petitions)
                 setCount({

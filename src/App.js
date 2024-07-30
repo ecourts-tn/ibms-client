@@ -24,11 +24,14 @@ import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
 import MuiStepper from './components/petition/bail/MuiStepper'
+import NewStepper from './components/petition/bail/NewStepper'
+import MultiStepForm from './components/petition/bail/MultiStepForm'
 import NotFound from './components/pages/NotFound'
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";
 import Logout from './components/pages/Logout'
+import DecryptForm from './components/DecryptForm'
 
 
 function App() {
@@ -184,9 +187,10 @@ function App() {
               />
               <Route path="user/registration" element={<Register />} />
               <Route path="filing/kiosk" element={<CaseStatus />} />
-              <Route path="stepper" element={<MuiStepper />} />
+              <Route path="stepper" element={<MultiStepForm />} />
               <Route path="*" element={<NotFound />} />
             </Route>
+            <Route path="decrypt" element={<DecryptForm />} />
           </Routes>
         </AuthProvider>
       </HashRouter>
