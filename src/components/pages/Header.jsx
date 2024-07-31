@@ -18,7 +18,7 @@ const Home = () => {
   useEffect(() => {
       setUser(localStorage.getItem("user"))
   },[])
-  console.log(user.access)
+
   return (
       <>
         <nav className="navbar navbar-expand-lg public-navbar">
@@ -35,7 +35,7 @@ const Home = () => {
                 <li className="nav-item">
                   { isAuth ? <Link to="/dashboard" className="nav-link">Dashboard</Link> : null}
                 </li>
-                { !isAuth ? (
+                { isAuth ? (
                     <li className="nav-item dropdown">
                       <a className="nav-link dropdown-toggle" href="#/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Filing

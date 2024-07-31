@@ -146,7 +146,7 @@ const BasicContainer = ({setActiveStep}) => {
         e.preventDefault()
         try{
             // await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("api/bail/filing/", {petition})
+            const response = await api.post("api/case/filing/create/", {petition})
             if(response.status === 201){
                 localStorage.setItem("cino", response.data.cino)
                 toast.success(`${response.data.cino} details submitted successfully`, {
