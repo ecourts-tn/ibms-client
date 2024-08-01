@@ -1,7 +1,7 @@
 import React from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
@@ -30,8 +30,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
 
   const initialPetitioner = {
       petitioner: 'o',
-      petitioner_id:nanoid(),
-      petitioner_name: '',
+      litigant_name: '',
+      litigant_type: 1, 
       relation: '',
       relation_name: '',
       age:'',
@@ -141,21 +141,30 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
   },[petitioner.petitioner, accused])
 
   const handleSubmit = async() => {
-    console.log("hi")
     try{
       // await validationSchema.validate(petitioner, { abortEarly:false})
-      const cino = localStorage.getItem("cino")
-      const response = await api.post(`api/bail/filing/${cino}/petitioner/create/`, petitioner)
-      
-      addPetitioner(petitioner)
-      setPetitioner(initialPetitioner)
+      const efile_no = localStorage.getItem("efile_no")
+      const response = await api.post(`api/litigant/create/`, petitioner, {
+        params: {
+          efile_no
+        }
+      })
+      if(response.status === 200){
+        toast.success("Petitioner details added successfully", {
+          theme:"colored"
+        })
+      }
     }catch(error){
+      console.log(error)
       if(error.inner){
         const newErrors = {};
         error.inner.forEach((err) => {
             newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
+      }
+      if(error){
+        toast.error("error.response", {theme:"colored"})
       }
     }
   }
@@ -185,13 +194,13 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Label>Name of the Petitioner</Form.Label>
                 <Form.Control
                   type="text"
-                  name="petitioner_name" 
-                  className={`${errors.petitioner_name ? 'is-invalid' : ''}`}
-                  value={petitioner.petitioner_name} 
+                  name="litigant_name" 
+                  className={`${errors.litigant_name ? 'is-invalid' : ''}`}
+                  value={petitioner.litigant_name} 
                   readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : false }
                   onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
                 ></Form.Control>
-                <div className="invalid-feedback">{ errors.petitioner_name }</div>
+                <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
             </div>
             <div className="col-md-1">

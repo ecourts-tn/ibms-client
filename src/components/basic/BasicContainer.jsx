@@ -146,25 +146,25 @@ const BasicContainer = ({setActiveStep}) => {
         e.preventDefault()
         try{
             // await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("api/case/filing/create/", {petition})
+            const response = await api.post("api/case/filing/create/", petition)
             if(response.status === 201){
-                localStorage.setItem("cino", response.data.cino)
-                toast.success(`${response.data.cino} details submitted successfully`, {
+                localStorage.setItem("efile_no", response.data.efile_number)
+                toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme:"colored"
                 })
-                if(parseInt(user.user.user_type) === 1){
-                    console.log("here")
-                    const advocate = {
-                        advocate_name: user.user.username,
-                        advocate_email: user.user.email,
-                        advocate_mobile: user.user.mobile,
-                        enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
-                        is_primary: true
-                    }
-                    const cino = localStorage.getItem("cino")
-                    const response = await api.post(`api/bail/filing/${cino}/advocate/create/`, advocate)
-                    console.log(response)
-                }
+                // if(parseInt(user.user.user_type) === 1){
+                //     console.log("here")
+                //     const advocate = {
+                //         advocate_name: user.user.username,
+                //         advocate_email: user.user.email,
+                //         advocate_mobile: user.user.mobile,
+                //         enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
+                //         is_primary: true
+                //     }
+                //     const cino = localStorage.getItem("cino")
+                //     const response = await api.post(`api/bail/filing/${cino}/advocate/create/`, advocate)
+                //     console.log(response)
+                // }
             }
             setPetition(initialState)
           }catch(error){
