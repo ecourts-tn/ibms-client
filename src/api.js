@@ -3,7 +3,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
 //const apiUrl = "http://192.168.100.135:8000/";
 
-const apiUrl = "http://localhost:8000/"
+const apiUrl = "http://117.193.76.243:8088/"
 
 const api = axios.create({
     baseURL: apiUrl
