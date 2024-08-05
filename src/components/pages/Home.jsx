@@ -1,29 +1,14 @@
 import React, {useState, useEffect} from 'react'
-import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
-import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
-import api from '../../api';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
-import { useAuth } from '../../hooks/useAuth';
-import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
-import axios from 'axios'
-
-import FormControl from '@mui/material/FormControl'
-import TextField from '@mui/material/TextField'
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Button from '@mui/material/Button'
-import LoginIcon from '@mui/icons-material/LockOpen'
-import * as Yup from 'yup'
-
 import Notification from './Notification';
-import Post from './Post';
+import Post from './Postold';
+import Feed from './Feed'
 import Login from './Login';
+import Sidebar from './Sidebar';
 
 // import "./styles.css";
 
@@ -77,16 +62,29 @@ const imgLink = "";
 
 const Home = () => {
 
+    const[isAuth, setIsAuth] = useState(false)
+    const[user, setUser] = useState({})
+
+    useEffect(() => {
+        if(localStorage.getItem("access") !== null){
+        setIsAuth(true)
+        }
+    },[isAuth])
+
+    useEffect(() => {
+        setUser(localStorage.getItem("user"))
+    },[])
+
     return (
         <>
             <Container fluid className="px-5">
                 <Row className='py-2'>
                     <Col md={3} className="mt-5 pt-3">
                         <ToastContainer />
-                        <Login />
+                        { !isAuth ? <Login /> : <Sidebar />}  
                     </Col>
                     <Col md={6} className="mt-5">
-                        <Post />
+                        <Feed />
                     </Col>
                     <Col md={3} className="mt-5">
                         <Notification />
