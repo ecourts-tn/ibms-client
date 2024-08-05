@@ -80,8 +80,8 @@ const Home = () => {
                           <AccountCircleIcon /> ATN20240000001
                       </a>
                       <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <Link to="#" className="nav-link">Profile</Link>
-                        <Link to="#" className="nav-link">Change Password</Link>
+                        <Link to="/auth/profile" className="nav-link">Profile</Link>
+                        <Link to="/auth/change-password" className="nav-link">Change Password</Link>
                         <Link to="/logout" className="nav-link">Logout</Link>
                       </div>
                     </li>

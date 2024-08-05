@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Login from "./components/pages/Login"
+import Home from './components/pages/Home'
 import Register from "./components/pages/Register"
 import PublicLayout from "./components/pages/PublicLayout"
 import BailFiling from "./components/filing/BailFiling"
@@ -32,6 +33,8 @@ import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";
 import Logout from './components/pages/Logout'
 import DecryptForm from './components/DecryptForm'
+import ChangePassword from './components/pages/ChangePassword'
+import Profile from './components/pages/Profile'
 
 
 function App() {
@@ -44,8 +47,8 @@ function App() {
         <AuthProvider>
           <Routes>
             <Route element={<PublicLayout />}>
-              <Route path="/auth/login" element={<Login />} />
-              <Route index element={<Login />} />
+              <Route path="/auth/login" element={<Home />} />
+              <Route index element={<Home />} />
               <Route path="pdf" element={<PdfGenerator />} />
               <Route
                 path="/dashboard"
@@ -176,6 +179,22 @@ function App() {
               <Route
                 path="status/party-name"
                 element={<PartyNameSearch />}
+              />
+              <Route 
+                path="auth/change-password" 
+                element={
+                  <PrivateRoute>
+                    <ChangePassword />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="auth/profile" 
+                element={
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                } 
               />
               <Route 
                 path="logout" 

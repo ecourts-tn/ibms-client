@@ -194,3 +194,9 @@ legend > span {
     text-align: center; /* Center the text of each list item */
     width: 100%; /* Make each list item take the full width */
   }
+
+.profile .card{
+    border:none;
+    border-radius:0px;
+    box-shadow: none;
+}
