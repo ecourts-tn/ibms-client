@@ -16,7 +16,7 @@ const Feed = () => {
         const fetchPosts = async () => {
             const response = await api.get("api/base/post")
             if(response.status === 200){
-                setPosts(response.data)
+              setPosts(response.data)
             }
         }
         fetchPosts()
@@ -25,12 +25,20 @@ const Feed = () => {
   return (
     <Box p={{ xs: 0, md: 2 }}>
       {loading ? (
-        <Stack spacing={1}>
-          <Skeleton variant="text" height={100} />
-          <Skeleton variant="text" height={20} />
-          <Skeleton variant="text" height={20} />
-          <Skeleton variant="rectangular" height={300} />
-        </Stack>
+        <>
+          <Stack spacing={1}>
+            <Skeleton variant="text" height={100} />
+            <Skeleton variant="text" height={20} />
+            <Skeleton variant="text" height={20} />
+            <Skeleton variant="rectangular" height={300} />
+          </Stack>
+          <Stack spacing={1}>
+            <Skeleton variant="text" height={100} />
+            <Skeleton variant="text" height={20} />
+            <Skeleton variant="text" height={20} />
+            <Skeleton variant="rectangular" height={300} />
+          </Stack>
+        </>
       ) : (
         <>
             { posts.map((post, index) =>(

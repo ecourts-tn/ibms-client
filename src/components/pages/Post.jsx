@@ -1,4 +1,5 @@
 import { Favorite, FavoriteBorder, MoreVert, Share } from "@mui/icons-material";
+import { CreateMarkup } from '../../utils'
 import {
   Avatar,
   Card,
@@ -39,7 +40,7 @@ const Post = ({post}) => {
                 />
             )}
         <CardContent>
-            <p>{post.description}</p>
+            <p dangerouslySetInnerHTML={CreateMarkup(post.description)}></p>
         </CardContent>
         <CardActions disableSpacing>
             <IconButton aria-label="add to favorites">

@@ -14,13 +14,11 @@ import AdvocateContainer from '../advocate/AdvocateContainer'
 import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
 import Payment from '../pages/Payment'
-import { useCaseNumber } from '../../hooks/useCaseNumber'
 import { CaseNumberProvider } from '../../hooks/useCaseNumber'
 
 import EFile from '../efile/EFile'
 import api from '../../api'
 import { useSearchParams } from 'react-router-dom'
-import ComplainantDetails from '../petitioner/ComplainantDetails'
 
 function Litigants(props){
     const {

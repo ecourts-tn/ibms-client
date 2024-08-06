@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
+import profile_pic from '../../profile.jpg'
 import * as Yup from 'yup'
 import api from '../../api'
 import './header.css'
@@ -66,7 +67,7 @@ const Profile = () => {
                 <div className="row">
                     <div className="col-md-4 d-flex justify-content-center profile">
                         <div class="card" style={{width: '18rem'}}>
-                            <img src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o=" alt="" />
+                            <img src={profile_pic} alt="" />
                             <div className="card-body text-center">
                                 <p className="card-text"><strong>ADM20240000001<br/>Deenadayalan M<br/>deenadayalan17@gmail.com</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>

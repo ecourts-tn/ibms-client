@@ -1,13 +1,17 @@
 import React, {useState, useEffect} from 'react'
+import { Box, Stack, Skeleton } from "@mui/material";
 import { Grid, Paper } from '@mui/material';
 import api from '../../api';
 
 const Notification = () => {
 
-    const[counter, setCourter] = useState([])
+    const [loading, setLoading] = useState(true);
+
+    setTimeout(() => {
+        setLoading(false);
+    }, [3000]);
+
     const[notifications, setNotifications] = useState([])
-
-
 
     useEffect(() => {
         const fetchNotifications = async () => {
@@ -22,6 +26,17 @@ const Notification = () => {
     return (
         <>
             <h5><strong>Notifications</strong></h5>
+            {loading ? (
+                <Stack spacing={2}>
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                    <Skeleton variant="rectangle" height={70} />
+                </Stack>
+            ) : (
             <div className="comments-container">
                 <Paper style={{ padding: "40px 20px" }}>
                     { notifications.map((s, index) => (
@@ -39,13 +54,14 @@ const Notification = () => {
                             <p style={{ textAlign: "left" }}>
                                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean
                                 luctus ut est sed faucibus. Duis bibendum ac ex vehicula laoreet.<br></br>
-                            {/* <span style={{ textAlign: "left", color: "gray" }}>posted 1 minute ago</span> */}
+                            <span style={{ textAlign: "left", color: "gray" }}>posted 1 minute ago</span>
                             </p>
                         </Grid>
                     </Grid>
                     ))}
                 </Paper>
             </div>
+            )}
         </>
     )
 }
