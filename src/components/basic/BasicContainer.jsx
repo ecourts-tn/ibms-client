@@ -55,6 +55,8 @@ const BasicContainer = ({setActiveStep}) => {
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 
+    console.log(user.user)
+
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
         // bench_type: Yup.string().when("court_type",(court_type, schema) => {
@@ -145,26 +147,24 @@ const BasicContainer = ({setActiveStep}) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
-            // await validationSchema.validate(petition, { abortEarly:false})
+            await validationSchema.validate(petition, { abortEarly:false})
             const response = await api.post("api/case/filing/create/", petition)
             if(response.status === 201){
                 localStorage.setItem("efile_no", response.data.efile_number)
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme:"colored"
                 })
-                // if(parseInt(user.user.user_type) === 1){
-                //     console.log("here")
-                //     const advocate = {
-                //         advocate_name: user.user.username,
-                //         advocate_email: user.user.email,
-                //         advocate_mobile: user.user.mobile,
-                //         enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
-                //         is_primary: true
-                //     }
-                //     const cino = localStorage.getItem("cino")
-                //     const response = await api.post(`api/bail/filing/${cino}/advocate/create/`, advocate)
-                //     console.log(response)
-                // }
+                if(parseInt(user.user.user_type) === 1){
+                    const advocate = {
+                        advocate_name: user.user.username,
+                        advocate_email: user.user.email,
+                        advocate_mobile: user.user.mobile,
+                        enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
+                        is_primary: true
+                    }
+                    const efile_no = localStorage.getItem("efile_no")
+                    const res = await api.post(`api/advocate/create/`, advocate, {params: {efile_no}})
+                }
             }
             setPetition(initialState)
           }catch(error){

@@ -19,6 +19,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import * as Yup from 'yup'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -52,14 +53,13 @@ const Register = () => {
     }
     const [form, setForm] = useState({
         user_type: 1,
-        advocate:'',
         username: '',
         bar_code:'',
         reg_number:'',
         reg_year:'',
         gender: 1,
         date_of_birth: '',
-        litigation_place: '',
+        litigation_place: 1,
         district: '',
         police_station:'',
         prison:'',
@@ -76,33 +76,18 @@ const Register = () => {
         identity_proof: '',
         registration_certificate: ''
     })
-
-    const [errors, setErrors] = useState({
-        // Define error states for each field
-        user_type:'',
-        advocate: '',
-        state_code:'',
-        reg_number:'',
-        reg_year:'',
-        gender: '',
-        date_of_birth: '',
-        litigation_place: '',
-        district: '',
-        police_station:'',
-        prison:'',
-        password:'',
-        confirm_password:'',
-        mobile_number:'',
-        mobile_otp:'',
-        email_address:'',
-        email_otp:'',
-        idproof:'',
-        photo:'',
-
-        // Add more fields as needed
-    });
-
-
+    const[errors, setErrors] = useState({})
+    const validationSchema = Yup.object({
+        username: Yup.string().required(),
+        date_of_birth: Yup.string().required(),
+        litigation_place: Yup.string().required(),
+        gender: Yup.string().required(),
+        password: Yup.string().required(),
+        confirm_password: Yup.string().required('Confirm password is required').oneOf([Yup.ref('password'), null], 'Passwords must match'),
+        mobile: Yup.number().required().typeError("The mobile number should be numeric"),
+        email: Yup.string().email().required()
+    })
+    console.log(errors)
     useEffect(() => {
         if( userStatus === 'idle'){
             dispatch(getUserTypes())
@@ -198,133 +183,17 @@ const Register = () => {
     }
     
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        let isValid = true;
-        const newErrors = { ...errors };
-        if (!form.advocate && form.advocate.trim() === '') {
-            newErrors.advocate = 'Please enter Advocate Name';
-            isValid = false;
-        } else {
-            newErrors.advocate = '';
-        }
-        if (!form.user_type && form.user_type.trim() === '') {
-            newErrors.user_type = 'Please Choose usertype';
-            isValid = false;
-        } else {
-            newErrors.user_type = '';
-        }
-        if (!form.gender && form.gender.trim() === '') {
-            newErrors.gender = 'Please enter gender';
-            isValid = false;
-        } else {
-            newErrors.gender = '';
-        }
-        if (!form.district && form.district.trim() === '') {
-            newErrors.district = 'Please enter district Name';
-            isValid = false;
-        } else {
-            newErrors.district = '';
-        } 
-        if (!form.password && form.password.trim() === '') {
-            newErrors.password = 'Please enter password';
-            isValid = false;
-        } else {
-            newErrors.password = '';
-        } 
-        if (!form.confirm_password && form.confirm_password.trim() === '') {
-            newErrors.confirm_password = 'Please enter confirm_password';
-            isValid = false;
-        } else {
-            newErrors.confirm_password = '';
-        }
-        if (!form.date_of_birth && form.date_of_birth.trim() === '') {
-            newErrors.date_of_birth = 'Please enter date_of_birth';
-            isValid = false;
-        } else {
-            newErrors.date_of_birth = '';
-        }
-        if (!form.litigation && form.litigation_place.trim() === '') {
-            newErrors.litigation = 'Please enter litigation';
-            isValid = false;
-        } else {
-            newErrors.litigation = '';
-        }
-        if (!form.police_station && form.police_station.trim() === '') {
-            newErrors.police_station = 'Please enter police_station';
-            isValid = false;
-        } else {
-            newErrors.police_station = '';
-        }
-        if (!form.mobile && form.mobile.trim() === '') {
-            newErrors.mobile = 'Please enter mobile_number';
-            isValid = false;
-        } else {
-            newErrors.mobile = '';
-        }
-        if (!form.email && form.email.trim() === '') {
-            newErrors.email = 'Please enter email_address';
-            isValid = false;
-        } else {
-            newErrors.email = '';
-        }
-        if (!form.prison && form.prison.trim() === '') {
-            newErrors.prison = 'Please enter prison';
-            isValid = false;
-        } else {
-            newErrors.prison = '';
-        }
-        if (!form.gender && form.gender.trim() === '') {
-            newErrors.gender = 'Please select a gender';
-            isValid = false;
-        }else{
-            newErrors.gender ='';
-        }  
-        if (!form.idproof && form.idproof.trim() === '') {
-            newErrors.idproof = 'Please upload a file';
-            isValid = false;
-        }else{
-            newErrors.idproof ='';
-        }     
-        if (!form.photo && form.photo.trim() === '') {
-            newErrors.photo = 'Please upload a photo';
-            isValid = false;
-        }else{
-            newErrors.photo ='';
-        }  
-        if (!form.litigation_place && form.litigation_place.trim() === '') {
-            newErrors.litigation_place = 'Please select litigation_place';
-            isValid = false;
-        }else{
-            newErrors.litigation_place ='';
-        } 
-        if (!form.state_code && form.state_code.trim() === '') {
-            newErrors.state_code = 'Please select state_code';
-            isValid = false;
-        }else{
-            newErrors.state_code ='';
-        }       
-        if (!form.reg_number && form.reg_number.trim() === '') {
-            newErrors.reg_number = 'Please select reg_number';
-            isValid = false;
-        }else{
-            newErrors.reg_number ='';
-        }       
-        if (!form.reg_year && form.reg_year.trim() === '') {
-            newErrors.reg_year = 'Please select reg_year';
-            isValid = false;
-        }else{
-            newErrors.reg_year ='';
-        }       
-
-        if (isValid) {
-
-         
-        } else {
-            setErrors(newErrors);
-        }
-        
+        e.preventDefault();       
         try{
-            const response = await api.post("/api/auth/register/", form)
+            await validationSchema.validate(form, {abortEarly:false})
+            if(!mobileVerified){
+                toast.error("Please verify your mobile number", {theme:"colored"})
+                return
+            }if(!emailVerified){
+                toast.error("Please verify your email address", {theme:"colored"})
+                return
+            }
+            const response = await api.post("/api/auth/user/register/", form)
             setUser(response.data)
             setShow(true)
             toast.success("User registered successfully", {
@@ -332,12 +201,19 @@ const Register = () => {
             })
         }
         catch(error){
-            const errors = error.response.data 
-            for(const err in errors){
-                toast.error(`${err.toUpperCase()} - ${errors[err]}`, {
-                    theme: "colored"
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
                 })
+                setErrors(newErrors)
             }
+            // const errors = error.response.data 
+            // for(const err in errors){
+            //     toast.error(`${err.toUpperCase()} - ${errors[err]}`, {
+            //         theme: "colored"
+            //     })
+            // }
 
         }
     }
@@ -401,9 +277,12 @@ const Register = () => {
                                                     type="text" 
                                                     name="username" 
                                                     value={form.username}
-                                                    className="form-control" 
+                                                    className={`form-control ${errors.username ? 'is-invalid' : null}`}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
+                                                <div className="invalid-feedback">
+                                                    { errors.username }
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
@@ -421,6 +300,9 @@ const Register = () => {
                                                         <FormControlLabel value={2} control={<Radio />} label="Female" />
                                                         <FormControlLabel value={3} control={<Radio />} label="Other" />
                                                     </RadioGroup>
+                                                    <div className="invalid-feedback">
+                                                        { errors.gender }
+                                                    </div>
                                                 </FormControl>
                                             </div>
                                             <div className="col-sm-2">
@@ -429,11 +311,14 @@ const Register = () => {
                                             <div className="col-sm-3">
                                                 <input 
                                                     type="date" 
-                                                    className="form-control" 
+                                                    className={`form-control ${errors.date_of_birth ? 'is-invalid' : null }`}
                                                     name="date_of_birth"
                                                     value={form.date_of_birth}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
+                                                <div className="invalid-feedback">
+                                                    { errors.date_of_birth}
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
@@ -511,64 +396,28 @@ const Register = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        { form.user_type === 4 && (
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="police_station" className='col-form-label col-sm-3'>Police Station</label>
-                                            <div className="col-sm-6">
-                                                <select 
-                                                    name="police_station" 
-                                                    id="police_station" 
-                                                    className="form-control"
-                                                    value={form.police_station}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.event})}
-                                                >
-                                                    <option value="">Select Police station</option>
-                                                    { policeStations.map((station, index) => (
-                                                        <option key={index} value={station.station_code }>{ station.station_name }</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        )}
-                                        { form.user_type === 5 && (
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="prison" className='col-form-label col-sm-3'>Prison Name</label>
-                                            <div className="col-sm-6">
-                                                <select 
-                                                    name="prison" 
-                                                    id="prison" 
-                                                    className="form-control"
-                                                    value={form.prison}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                                >
-                                                    <option value="">Select Prison</option>
-                                                    { prisons.map((prison, index) => (
-                                                        <option key={index} value={prison.prison_code }>{ prison.prison_name }</option>
-                                                    ))}
-                                                </select>
-                                            </div>
-                                            </div>
-                                        )}
                                         <div className="form-group row">
                                             <label className="col-form-label col-sm-3 pt-0">Password</label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
-                                                    <TextField
+                                                    <input
                                                         type="password"
                                                         name="password"
-                                                        label="Password"
-                                                        size="small"
                                                         value={form.password}
+                                                        className={`form-control ${errors.password ? 'is-invalid' : null }`}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     />
+                                                    <div className="invalid-feedback">
+                                                        { errors.password }
+                                                    </div>
                                                 </FormControl>
                                             </div> 
                                         </div>
                                         <div className="form-group row" style={{ marginTop:"-20px"}}>
                                             <div className="col-sm-3"></div>   
                                             <div className="col-sm-9">
-                                                <small className="text-danger">
-                                                    <ul style={{ marginLeft:"-25px"}}>
+                                                <small className="text-primary">
+                                                    <ul style={{ marginLeft:"-25px", fontWeight:700}}>
                                                         <li>Your password can't be too similar to your other personal information.</li>
                                                         <li>Your password must contain at least 8 characters.</li>
                                                         <li>Your password can't be a commonly used password.</li>
@@ -581,14 +430,16 @@ const Register = () => {
                                             <label className="col-form-label col-sm-3 pt-0">Confirm Password</label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
-                                                    <TextField
+                                                    <input
                                                         type="password" 
                                                         name="confirm_password" 
-                                                        size="small"
-                                                        label="Confirm Password" 
+                                                        className={`form-control ${errors.confirm_password ? 'is-invalid' : null }`}
                                                         value={form.confirm_password}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                                     />
+                                                    <div className="invalid-feedback">
+                                                        { errors.confirm_password }
+                                                    </div>
                                                 </FormControl>
                                             </div>
                                         </div>
@@ -596,14 +447,16 @@ const Register = () => {
                                             <label className="col-form-label col-sm-3">Mobile Number</label>
                                             <div className="col-sm-4">
                                                 <FormControl className="mb-3" fullWidth>
-                                                    <TextField 
+                                                    <input 
                                                         type="text" 
                                                         name="mobile" 
-                                                        size="small"
-                                                        label="Mobile Number"
+                                                        className={`form-control ${errors.mobile ? 'is-invalid' : null }`}
                                                         value={form.mobile}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     />
+                                                    <div className="invalid-feedback">
+                                                        { errors.mobile }
+                                                    </div>
                                                 </FormControl>
                                             </div>
                                             { !mobileVerified && (
@@ -654,10 +507,13 @@ const Register = () => {
                                                 <input 
                                                     type="email" 
                                                     name="email" 
-                                                    className="form-control" 
+                                                    className={`form-control ${errors.email ? 'is-invalid' : null}`}
                                                     value={form.email}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
+                                                <div className="invalid-feedback">
+                                                    { errors.email }
+                                                </div>
                                             </div>
                                             { !emailVerified && (
                                                 <div className="col-sm-2">

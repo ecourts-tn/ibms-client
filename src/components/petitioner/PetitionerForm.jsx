@@ -15,7 +15,7 @@ import api from '../../api';
 
 
 
-const PetitionerForm = ({petitioners, addPetitioner}) => {
+const PetitionerForm = ({litigants, addlitigant}) => {
 
   const dispatch = useDispatch()
 
@@ -28,8 +28,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
 
   const stateStatus = useSelector(getStatesStatus)
 
-  const initialPetitioner = {
-      petitioner: 'o',
+  const initialState = {
+      litigant: 'o',
       litigant_name: '',
       litigant_type: 1, 
       relation: '',
@@ -56,19 +56,19 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
       identification_marks:'',
     }
 
-  const[petitioner, setPetitioner] = useState(initialPetitioner)
+  const[litigant, setLitigant] = useState(initialState)
   const[errors, setErrors] = useState({})
 
   const validationSchema = Yup.object({
-    petitioner_name: Yup.string().required(),
+    litigant_name: Yup.string().required(),
     relation: Yup.string().required(),
     relation_name: Yup.string().required(),
-    age: Yup.number().required(),
+    age: Yup.number().required().typeError("This is field should be numeric"),
     rank: Yup.string().required(),
     gender: Yup.string().required(),
     address: Yup.string().required(),
-    mobile_number: Yup.number().required("The mobile number is required"),
-    aadhar_number: Yup.number().required("Aadhaar number is required"),
+    mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
+    aadhar_number: Yup.number().required("Aadhaar number is required").typeError("This is field should be numeric"),
     // email_address: Yup.string().required().email(),
     act: Yup.string().required(),
     section: Yup.string().required(),
@@ -93,22 +93,22 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
   },[stateStatus, dispatch])
   
   useEffect(() => {
-    if(petitioner.state !== ''){
-      dispatch(getDistrictByStateCode(petitioner.state))
+    if(litigant.state !== ''){
+      dispatch(getDistrictByStateCode(litigant.state))
     }
-  },[petitioner.state, dispatch])
+  },[litigant.state, dispatch])
 
   useEffect(() => {
-    if(petitioner.district !== ''){
-      dispatch(getTalukByDistrictCode(petitioner.district))
+    if(litigant.district !== ''){
+      dispatch(getTalukByDistrictCode(litigant.district))
     }
-  },[petitioner.district, dispatch])
+  },[litigant.district, dispatch])
 
   useEffect(() => {
-    if(petitioner.is_custody){
+    if(litigant.is_custody){
       dispatch(getPrisons())
     }
-  },[petitioner.is_custody, dispatch])
+  },[litigant.is_custody, dispatch])
 
   useEffect(() => {
     dispatch(getRelations())
@@ -117,15 +117,15 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
 
   useEffect(() => {
     const result = accused.find((a) => {
-      return a.name_of_accused === petitioner.petitioner
+      return a.name_of_accused === litigant.litigant
     })
-    if(petitioner.petitioner === 'o'){
-      setPetitioner(initialPetitioner)
+    if(litigant.litigant === 'o'){
+      setLitigant(initialState)
     }
     else if(result){
-      setPetitioner({
-        ...petitioner,
-        petitioner_name :result.name_of_accused,
+      setLitigant({
+        ...litigant,
+        litigant_name :result.name_of_accused,
         rank: result.Rank_of_accused,
         gender: result.gender,
         act: result.act,
@@ -138,24 +138,23 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
         email_address: result.email_id,
       })
     }
-  },[petitioner.petitioner, accused])
+  },[litigant.litigant, accused])
 
   const handleSubmit = async() => {
     try{
-      // await validationSchema.validate(petitioner, { abortEarly:false})
+      await validationSchema.validate(litigant, { abortEarly:false})
       const efile_no = localStorage.getItem("efile_no")
-      const response = await api.post(`api/litigant/create/`, petitioner, {
+      const response = await api.post(`api/litigant/create/`, litigant, {
         params: {
           efile_no
         }
       })
       if(response.status === 200){
-        toast.success("Petitioner details added successfully", {
+        toast.success("litigant details added successfully", {
           theme:"colored"
         })
       }
     }catch(error){
-      console.log(error)
       if(error.inner){
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -164,7 +163,7 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
         setErrors(newErrors);
       }
       if(error){
-        toast.error("error.response", {theme:"colored"})
+        toast.error(error.response, {theme:"colored"})
       }
     }
   }
@@ -175,9 +174,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
           <div className="row">
             <div className="col-md-3 mb-3">
                 <div className="form-group">
-                    <label htmlFor="petitioner">Select Petitioner</label><br />
-                    <select name="petitioner" value={petitioner.petitioner} className="form-control" onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})} >
-                      <option value="o">Select Petitioner</option>
+                    <label htmlFor="litigant">Select litigant</label><br />
+                    <select name="litigant" value={litigant.litigant} className="form-control" onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})} >
+                      <option value="o">Select litigant</option>
                     { accused.map((item, index) => (
                       <option key={index} value={item.name_of_accused}>{item.name_of_accused}</option>
                     ))}
@@ -185,20 +184,20 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 </div>
             </div>
             <div className="col-md-9 mt-4 pt-3">
-              <p className="text-danger"><strong>*****  Fill the following details if the petitioner name is not listed  *****</strong></p>
+              <p className="text-danger"><strong>*****  Fill the following details if the litigant name is not listed  *****</strong></p>
             </div>
           </div>
           <div className="row">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Name of the Petitioner</Form.Label>
+                <Form.Label>Name of the litigant</Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
                   className={`${errors.litigant_name ? 'is-invalid' : ''}`}
-                  value={petitioner.litigant_name} 
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : false }
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  value={litigant.litigant_name} 
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : false }
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
@@ -206,17 +205,18 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
             <div className="col-md-1">
               <Form.Group className="mb-3">
                 <Form.Label>Gender</Form.Label>
-                { petitioner.petitioner !== 'o' && (
+                { litigant.litigant !== 'o' && (
                   <Form.Control 
-                    readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                    value={petitioner.gender}
+                    readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                    value={litigant.gender}
                   ></Form.Control>
                 )}
-                { petitioner.petitioner === 'o' && (
+                { litigant.litigant === 'o' && (
                   <select 
                     name="gender" 
-                    value={petitioner.gender} 
+                    value={litigant.gender} 
                     className="form-control"
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
@@ -231,10 +231,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="age"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.age}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.age}
                   className={`${errors.age ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.age }</div>
               </Form.Group>
@@ -245,10 +245,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="rank"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.rank}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.rank}
                   className={`${errors.rank ? 'is-invalid': ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.rank }</div>
               </Form.Group>
@@ -256,20 +256,20 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
             <div className="col-md-2">
                 <div className="form-group mb-3">
                   <label htmlFor="relation">Relation</label><br />
-                  { petitioner.petitioner !== 'o' && (
+                  { litigant.litigant !== 'o' && (
                     <Form.Control 
-                      value={petitioner.relation}
-                      readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
+                      value={litigant.relation}
+                      readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                       ></Form.Control>
                   )}
-                  { petitioner.petitioner === 'o' && (
+                  { litigant.litigant === 'o' && (
                   <>
                     <select 
                       name="relation" 
                       id="relation" 
                       className={`form-control ${errors.relation ? 'is-invalid' : ''}`}
-                      value={petitioner.relation}
-                      onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                      value={litigant.relation}
+                      onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                       >
                       <option value="">Select relation</option>
                       { relations.map((item, index) => (
@@ -287,10 +287,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="relation_name"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.relation_name}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.relation_name}
                   className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
@@ -301,10 +301,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="act"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.act}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.act}
                   className={`${errors.act ? 'is-invalid': ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.act }</div>
               </Form.Group>
@@ -315,10 +315,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="section"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.section.toString()}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.section.toString()}
                   className={`${errors.section ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value })}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.section }</div>
               </Form.Group>
@@ -329,10 +329,10 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="address"
-                  readOnly={petitioner.petitioner !== 'o' ? 'readOnly' : null }
-                  value={petitioner.address}
+                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
+                  value={litigant.address}
                   className={`${errors.address ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.address }</div>
               </Form.Group>
@@ -344,8 +344,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                     name="state" 
                     id="state" 
                     className="form-control"
-                    value={petitioner.state}
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                    value={litigant.state}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select state</option>
                     { states.map((item, index) => (
@@ -361,8 +361,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                     name="district" 
                     id="district" 
                     className="form-control"
-                    value={petitioner.district}
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                    value={litigant.district}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select District</option>
                     { districts.map((item, index) => (
@@ -378,8 +378,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                     name="taluk" 
                     id="taluk" 
                     className="form-control"
-                    value={petitioner.taluk}
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                    value={litigant.taluk}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select Taluk</option>
                     { taluks.map((item, index) => (
@@ -394,8 +394,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="post_office"
-                  value={petitioner.post_office}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  value={litigant.post_office}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
               </Form.Group>
             </div>
@@ -405,8 +405,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="pincode"
-                  value={petitioner.pincode}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  value={litigant.pincode}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
               </Form.Group>
             </div>
@@ -416,8 +416,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <select 
                   name="nationality" 
                   className="form-control"
-                  value={petitioner.nationality}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  value={litigant.nationality}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
                   <option value="1">Indian</option>
                   <option value="2">Others</option>
@@ -430,9 +430,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="aadhar_number"
-                  value={petitioner.aadhar_number}
+                  value={litigant.aadhar_number}
                   className={`${errors.aadhar_number ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.aadhar_number }</div>
               </Form.Group>
@@ -444,8 +444,8 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                   type="text"
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
-                  value={petitioner.mobile_number}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  value={litigant.mobile_number}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -458,9 +458,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                 <Form.Control
                   type="text"
                   name="email_address"
-                  value={petitioner.email_address}
+                  value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
-                  onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>
@@ -474,9 +474,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                         type="radio" 
                         name="is_custody" 
                         id="custodyYes" 
-                        value={petitioner.is_custody}
-                        checked={ petitioner.is_custody }
-                        onChange={(e) => setPetitioner({...petitioner, is_custody: true})} 
+                        value={litigant.is_custody}
+                        checked={ litigant.is_custody }
+                        onChange={(e) => setLitigant({...litigant, is_custody: true})} 
                       />
                       <label htmlFor="custodyYes">Yes</label>
                     </div>
@@ -485,9 +485,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                         type="radio" 
                         id="custodyNo" 
                         name="is_custody" 
-                        value={petitioner.is_custody}
-                        checked={ !petitioner.is_custody } 
-                        onChange={(e) => setPetitioner({...petitioner, is_custody: false})}
+                        value={litigant.is_custody}
+                        checked={ !litigant.is_custody } 
+                        onChange={(e) => setLitigant({...litigant, is_custody: false})}
                       />
                       <label htmlFor="custodyNo">No</label>
                     </div>
@@ -501,9 +501,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                     name="prison" 
                     id="prison" 
                     className={`form-control ${errors.prison ? 'is-invalid' : ''}`}
-                    disabled={ !petitioner.is_custody } 
-                    value={petitioner.prison}
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value })}
+                    disabled={ !litigant.is_custody } 
+                    value={litigant.prison}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                   >
                     <option value="">Select Prision</option>
                     { prisons.map((item, index) => (
@@ -519,9 +519,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                   <Form.Control
                     type="text"
                     name="custody_days"
-                    disabled={ !petitioner.is_custody }
-                    value={petitioner.custody_days}
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value })}
+                    disabled={ !litigant.is_custody }
+                    value={litigant.custody_days}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                   ></Form.Control>
                 </Form.Group>
               </div>
@@ -534,9 +534,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                         type="radio" 
                         id="surrenderedYes" 
                         name="is_surrendered" 
-                        value={petitioner.is_surrendered}
-                        checked={ petitioner.is_surrendered }
-                        onChange={(e) => setPetitioner({...petitioner, is_surrendered: true })}
+                        value={litigant.is_surrendered}
+                        checked={ litigant.is_surrendered }
+                        onChange={(e) => setLitigant({...litigant, is_surrendered: true })}
                       />
                       <label htmlFor="surrenderedYes">Yes</label>
                     </div>
@@ -545,9 +545,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                         type="radio" 
                         id="surrenderedNo" 
                         name="is_surrendered" 
-                        value={petitioner.is_surrendered}
-                        checked={ !petitioner.is_surrendered }
-                        onChange={(e) => setPetitioner({...petitioner, is_surrendered: false })}
+                        value={litigant.is_surrendered}
+                        checked={ !litigant.is_surrendered }
+                        onChange={(e) => setLitigant({...litigant, is_surrendered: false })}
                       />
                       <label htmlFor="surrenderedNo">No</label>
                     </div>
@@ -560,9 +560,9 @@ const PetitionerForm = ({petitioners, addPetitioner}) => {
                   <Form.Control
                     type="text"
                     name="identification_marks"
-                    value={petitioner.identification_marks}
-                    disabled={ !petitioner.is_surrendered }
-                    onChange={(e) => setPetitioner({...petitioner, [e.target.name]: e.target.value})}
+                    value={litigant.identification_marks}
+                    disabled={ !litigant.is_surrendered }
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   ></Form.Control>
                 </Form.Group>
               </div>

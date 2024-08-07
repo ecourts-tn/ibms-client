@@ -1,17 +1,32 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Badge from 'react-bootstrap/Badge'
 import RespondentForm from './RespondentForm'
 import RespondentList from './RespondentList'
+import api from '../../api'
 
-const RespondentContainer = ({respondents, addRespondent, deleteRespondent}) => {
+const RespondentContainer = ({addRespondent, deleteRespondent}) => {
 
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const[respondents, setRespondents] = useState([])
+    useEffect(() => {
+        const fetchLitigants =  async() => {
+            try{
+                const efile_no = localStorage.getItem("efile_no")
+                const response = await api.get(`api/litigant/list/`, {params:{efile_no}})
+                if(response.status === 200){
+                    setRespondents(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+    })
     
     return (
         <div className='container'>
