@@ -84,6 +84,8 @@ const FIRSearch = () => {
             if(data){
                 setPetition({
                     ...petition,
+                    fir_number : petition.crime_number,
+                    fir_year    : petition.crime_year,
                     date_of_occurrence: data.date_of_Occurrence,
                     investigation_officer :data.investigation_officer_name,
                     fir_date_time: data.FIR_DATE_Time,
@@ -98,8 +100,8 @@ const FIRSearch = () => {
                     complainant_guardian: data.complainant_guardian
                 })
                 if(petition.no_of_accused){
-                    const cino = localStorage.getItem("cino")
-                    const update = await api.put(`api/bail/filing/${cino}/update/`, petition)
+                    const efile_no = localStorage.getItem("efile_no")
+                    const update = await api.post(`api/case/crime/details/create/`, petition, {params:{efile_no}})
                     setLoading(false)
                     setShowAdditionalFields(true)
                     dispatch(getAccusedDetails())

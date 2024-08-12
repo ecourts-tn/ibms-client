@@ -1,7 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
-import Login from "./components/pages/Login"
 import Home from './components/pages/Home'
 import Register from "./components/pages/Register"
 import PublicLayout from "./components/pages/PublicLayout"
@@ -24,8 +23,6 @@ import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
-import MuiStepper from './components/petition/bail/MuiStepper'
-import NewStepper from './components/petition/bail/NewStepper'
 import MultiStepForm from './components/petition/bail/MultiStepForm'
 import NotFound from './components/pages/NotFound'
 
@@ -35,6 +32,8 @@ import Logout from './components/pages/Logout'
 import DecryptForm from './components/DecryptForm'
 import ChangePassword from './components/pages/ChangePassword'
 import Profile from './components/pages/Profile'
+import InitialInput from './components/petition/bail/InitialInput'
+import Litigant from './components/petition/bail/Litigant'
 
 
 function App() {
@@ -102,6 +101,22 @@ function App() {
                   <PrivateRoute>
                     <BailFiling />
                   </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="petition/bail/initial-input" 
+                element={
+                  <PrivateRoute>
+                    <InitialInput />
+                  </PrivateRoute>       
+                } 
+              />
+              <Route 
+                path="petition/bail/litigant" 
+                element={
+                  
+                    <Litigant />
+                  
                 } 
               />
               <Route 

@@ -4,14 +4,14 @@ import { Button } from 'react-bootstrap'
 const RespondentList = ({respondents, deleteRespondent}) => {
   return (
       <>
-        { respondents.map( (respondent, index) => (
-          <div className="card">
+        { respondents.map((respondent, index)=>(
+          <div className="card" key={index}>
             <div className="card-body">
               <table className="table no-border litigant-table">
                 <tr>
                   <td>Respondent Name</td>
                   <td>:</td>
-                  <td>{ respondent.respondent_name }</td>               
+                  <td>{ respondent.litigant_name }</td>               
                 </tr>
                 <tr>
                   <td>Represented By</td>
@@ -31,7 +31,6 @@ const RespondentList = ({respondents, deleteRespondent}) => {
             </div>
           </div>
         ))}
-
     { respondents.length === 0 && (<span className="text-danger"><strong>No records found</strong></span>)}
       </>
   )

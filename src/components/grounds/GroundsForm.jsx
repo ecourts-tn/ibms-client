@@ -22,19 +22,12 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
         id: nanoid(),
         description: ''
     }
-    const onChange = () => {
-
-    }
-
     const[ground, setGround] = useState(initialState)
     const[errors, setErrors] = useState(false)
 
     const saveGround = async () => {
         try{
-            await  validationSchema.validate(ground, {abortEarly: false})
-            const cino = localStorage.getItem("cino")
-            const response = await api.post(`api/bail/filing/${cino}/grounds/create/`, ground)
-            incrementCount()
+            await  validationSchema.validate(ground, {abortEarly: false})     
             addGround(ground)
             setGround(initialState)
         }catch(error){

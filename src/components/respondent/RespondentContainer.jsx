@@ -5,9 +5,10 @@ import Modal from 'react-bootstrap/Modal'
 import Badge from 'react-bootstrap/Badge'
 import RespondentForm from './RespondentForm'
 import RespondentList from './RespondentList'
+import {toast, ToastContainer} from 'react-toastify'
 import api from '../../api'
 
-const RespondentContainer = ({addRespondent, deleteRespondent}) => {
+const RespondentContainer = () => {
 
     const [show, setShow] = useState(false);
 
@@ -20,13 +21,51 @@ const RespondentContainer = ({addRespondent, deleteRespondent}) => {
                 const efile_no = localStorage.getItem("efile_no")
                 const response = await api.get(`api/litigant/list/`, {params:{efile_no}})
                 if(response.status === 200){
-                    setRespondents(response.data)
+                    const filtered_data = response.data.filter((respondent)=> {
+                        return respondent.litigant_type === 2
+                    })
+                    setRespondents(filtered_data)
                 }
             }catch(error){
                 console.error(error)
             }
         }
-    })
+        fetchLitigants();
+    },[])
+
+    const addRespondent = async(litigant) => {
+        const efile_no = localStorage.getItem("efile_no")
+        try{
+            const response = await api.post(`api/litigant/create/`, litigant, {
+                params: {
+                efile_no
+                }
+            })
+            if(response.status === 201){
+                setRespondents(respondents => [...respondents, litigant])
+                toast.success(`Respondent ${response.data.litigant_id} added successfully`, {
+                theme:"colored"
+                })
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    const deleteRespondent =async (respondent) => {
+        try{
+            const newRespondents = respondents.filter((p) => {
+                return p.litigant_id !== respondent.litigant_id
+            })
+            setRespondents(newRespondents)
+            toast.error(`Respondent ${respondent.litigant_id} deleted successfuly`, {
+                theme: "colored"
+            })
+
+        }catch(error){
+            console.error(error)
+        }
+    }
     
     return (
         <div className='container'>

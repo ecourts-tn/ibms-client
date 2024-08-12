@@ -12,8 +12,8 @@ const EFileDetails = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const cino = localStorage.getItem("cino")
-                const response = await api.get(`api/bail/petition/detail/`, {params:{cino}})
+                const efile_no = localStorage.getItem("efile_no")
+                const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setPetitioners(response.data.petitioner)

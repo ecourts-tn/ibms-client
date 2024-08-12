@@ -1,9 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useState } from 'react'
 import GroundsList from './GroundsList'
 import GroundsForm from './GroundsForm'
+import api from '../../api'
+import {toast, ToastContainer} from 'react-toastify'
 
-const GroundsContainer = ({grounds, addGround, deleteGround}) => {
+
+const GroundsContainer = () => {
+
+    const[grounds, setGrounds] = useState([])
 
     const[count, setCount] = useState(0)
 
@@ -15,6 +20,54 @@ const GroundsContainer = ({grounds, addGround, deleteGround}) => {
         setCount(count-1)
     }
     
+    useEffect(() => {
+        const fecthGrounds = async() => {
+            try{
+                const efile_no = localStorage.getItem("efile_no")
+                const response = await api.get("api/case/ground/list/", {params:{efile_no}})
+                if(response.status === 200){
+                    setGrounds(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        fecthGrounds()
+    }, [])
+
+
+    const addGround = async (ground) => {
+        try{
+            const efile_no = localStorage.getItem("efile_no")
+            const response = await api.post(`api/case/ground/create/`, ground, {params:{efile_no}})
+            if(response.status === 201){
+                incrementCount()
+                setGrounds(grounds => [...grounds, ground])
+                toast.success("Grounds added successfully", {theme:"colored"})
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    const deleteGround = async(ground) => {
+        try{
+            const newGrounds = grounds.filter((g) => {
+                return g.id !== ground.id
+            })
+            const response = await api.delete("api/case/ground/delete", {params:{id:ground.id}})
+            if(response.status === 204){
+                setGrounds(newGrounds)
+                decrementCount()
+                toast.error("Grounds deleted successfully", {
+                    theme: "colored"
+                })
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
     return (
         <div className="container-fluid m-0">
             <div className="card">

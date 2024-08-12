@@ -33,25 +33,7 @@ const Step1 = ({ nextStep }) => {
     >
       {() => (
             <div id="initial-input" className='content'>
-                <div className="form-group">
-                    <label htmlFor="email">Email address</label>
-                    <Field name="email" type="email" className="form-control" />
-                    <ErrorMessage name="email" component="small" className="form-text text-danger" />
-                </div>
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
-                    <Field name="password" type="password" className="form-control" />
-                    <ErrorMessage name="password" component="small" className="form-text text-danger" />
-                </div>
-                <div className="form-check">
-                    <Field name="check" type="checkbox" className="form-check-input" />
-                    <label className="form-check-label" htmlFor="check">Check me out</label>
-                    <ErrorMessage name="check" component="small" className="form-text text-danger" />
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-                <button className="btn btn-primary float-right" type="button" onClick={nextStep}>
-                    <i className="fa fa-arrow-right mr-2"></i>Next
-                </button>
+                
             </div>
       )}
     </Formik>

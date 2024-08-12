@@ -1,23 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import api, {apiUrl} from '../../api';
+import api from '../../api';
 
 
 const DocumentContainer = ({petition}) => {
 
-    const initialState = {
-        title: '',
-        document: ''
-    }
-    const[form, setForm] = useState(initialState)
-    const[documents, setDocuments] = useState([])
-    // const[documents, setDocuments] = useState({
-    //     vakalath: '',
-    //     supporting_document: ''
-    // })
+    const[documents, setDocuments] = useState({
+        vakalath: '',
+        supporting_document: ''
+    })
 
     const[otp, setOtp] = useState('')
 
@@ -59,59 +53,20 @@ const DocumentContainer = ({petition}) => {
         }
     }
 
-    useEffect(() => {
-        const fetchDocuments = async() => {
-            try{
-                const efile_no = localStorage.getItem("efile_no")
-                const response = await api.get("api/case/document/list/", {params:{efile_no}})
-                if(response.status === 200){
-                    setDocuments(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchDocuments()
-    }, [])
-
-
-    const deleteDocument = async(document) => {
-        try{
-            const newDocuments = documents.filter((g) => {
-                return g.id !== document.id
-            })
-            const response = await api.delete("api/case/document/delete/", {params:{id:document.id}})
-            if(response.status === 204){
-                setDocuments(newDocuments)
-                toast.error("Documents deleted successfully", {
-                    theme: "colored"
-                })
-            }
-        }catch(error){
-            console.log(error)
-        }
-    }
-
-
     const handleSubmit = async () => {
         // let form_data = new FormData();
         // form_data.append('vakalath', documents.vakalath, documents.vakalath.name);
         // form_data.append('supporting_document', documents.supporting_document, documents.supporting_document.name);
         try{
-            const efile_no = localStorage.getItem("efile_no")
-            const response = await api.post(`api/case/document/create/`, form, {
+            const cino = localStorage.getItem("cino")
+            const response = await api.put(`api/bail/filing/${cino}/document/create/`, documents, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     // 'X-CSRFTOKEN': CSRF_TOKEN
-                },
-                params:{
-                    efile_no
-                }
+                  }
             })
             if(response.status === 201){
-                setDocuments(documents => [...documents, response.data])
-                setForm(initialState)
-                toast.success(`Document ${response.data.id} uploaded successfully`, {
+                toast.success("Documents uploaded successfully", {
                     theme:"colored"
                 })
             }
@@ -125,53 +80,29 @@ const DocumentContainer = ({petition}) => {
             <ToastContainer />
             <div className="card card-outline card-success">
                 <div className="card-body">
-                    { documents.length > 0 && (
-                        <table className='table table-bordered table-striped table-sm'>
-                            <thead className="bg-info">
-                                <tr>
-                                    <th>S.No</th>
-                                    <th>Title</th>
-                                    <th>Document</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {documents.map((document, index) => (
-                                <tr>
-                                    <td>{ index+1}</td>
-                                    <td>{ document.title }</td>
-                                    <td>
-                                        <a href={`${apiUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
-                                        <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(document)}>Delete</button>
-                                    </td>
-                                </tr>    
-                                ))}
-
-                            </tbody>
-                        </table>
-                    )}
                     <form encType='multipart/form-data'>
                         <div className="row">
                             <div className="col-md-12 mt-4"> 
                                 <div className="form-group">
-                                <label htmlFor="title">Document Title</label>
+                                <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
                                 <input 
-                                    type="text" 
-                                    name="title"
+                                    type="file" 
+                                    name="vakalath"
                                     className="form-control"
-                                    value={form.title}
-                                    onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                    // value={petition.vakalath}
+                                    onChange={(e) => setDocuments({[e.target.name]:e.target.files[0]})}
                                 />
                                 </div>
                             </div>
                             <div className="col-md-12 mt-4"> 
                                 <div className="form-group">
-                                <label htmlFor="document">Document</label>
+                                <label htmlFor="document">Supporting Documents</label>
                                 <input 
                                     type="file" 
-                                    name="document" 
+                                    name="supporting_document" 
                                     className="form-control"
                                     // value={petition.supporting_document}
-                                    onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
+                                    onChange={(e) => setDocuments({[e.target.name]:e.target.files[0]})}
                                 />
                                 </div>
                             </div>

@@ -11,7 +11,7 @@ import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
 
 
-const RespondentForm = () => {
+const RespondentForm = ({addRespondent}) => {
     const dispatch = useDispatch()
     const states = useSelector((state) => state.states.states)
     const districts = useSelector((state) => state.districts.districts)
@@ -58,23 +58,16 @@ const RespondentForm = () => {
     const handleSubmit = async () => {
         try{
             await validationSchema.validate(litigant, {abortEarly:false})
-            const efile_no = localStorage.getItem("efile_no")
-            const response = await api.post(`api/litigant/create/`, litigant, {
-                params:{
-                    efile_no
-                }
-            })
-            if(response.status === 201){
-                console.log(response.data)
-                toast.success(`Respondent ${response.data.litigant_id} added successfully`, {theme:"colored"})
-                setLitigant(initialState)
-            }
+            addRespondent(litigant)
         }catch(error){
-            const newErrors = {}
-            error.inner.forEach((err) => {
-                newErrors[err.path] = err.message
-            });
-            setErrors(newErrors)
+            console.error(error)
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                });
+                setErrors(newErrors)
+                }
         }
     }
 
@@ -128,7 +121,7 @@ const RespondentForm = () => {
                         >
                             <option value="">Select station</option>
                             { policeStations.map((item, index) => (
-                                <option key={index} value={item.id}>{ item.station_name}</option>
+                                <option key={index} value={item.uniform_code}>{ item.station_name}</option>
                             ))}
                         </select>
                         <div className="invalid-feedback">

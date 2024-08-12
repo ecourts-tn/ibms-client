@@ -1,23 +1,66 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import Badge from 'react-bootstrap/Badge'
 import Button from 'react-bootstrap/Button'
 import PetitionerForm from './PetitionerForm'
 import PetitionerList from './PetitionerList'
+import {toast, ToastContainer} from 'react-toastify'
+import api from '../../api'
 
-const PetitionerContainer = (props) => {
-
-    const {
-            petitioners, 
-            addPetitioner, 
-            deletePetitioner
-        } = props
+const PetitionerContainer = () => {
 
     const [show, setShow] = useState(false);
-
+    const[petitioners, setPetitioners] = useState([])
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    useEffect(() => {
+        const fetchPetitioners = async() => {
+            const efile_no = localStorage.getItem("efile_no")
+            const response = await api.get("api/litigant/list", {params:{efile_no}})
+            if(response.status === 200){
+                const filtered_data = response.data.filter((petitioner)=> {
+                    return petitioner.litigant_type === 1
+                })
+                setPetitioners(filtered_data)
+            }
+        }
+        fetchPetitioners()
+    },[])
+
+    const addPetitioner = async(litigant) => {
+        const efile_no = localStorage.getItem("efile_no")
+        try{
+            const response = await api.post(`api/litigant/create/`, litigant, {
+                params: {
+                efile_no
+                }
+            })
+            if(response.status === 201){
+                setPetitioners(petitioners => [...petitioners, litigant])
+                toast.success(`Petitioner ${response.data.litigant_id} added successfully`, {
+                theme:"colored"
+                })
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    const deletePetitioner =async (petitioner) => {
+        try{
+            const newPetitioners = petitioners.filter((p) => {
+                return p.litigant_id !== petitioner.litigant_id
+            })
+            setPetitioners(newPetitioners)
+            toast.error(`Petitioner ${petitioner.litigant_id} deleted successfuly`, {
+                theme: "colored"
+            })
+
+        }catch(error){
+            console.error(error)
+        }
+    }
      
     return (
         <div className="container">

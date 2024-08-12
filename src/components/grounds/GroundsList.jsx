@@ -1,12 +1,7 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button'
 
-const GroundsList = ({grounds, deleteGround, decrementCount}) => {
-
-    const handleDelete = (ground) => {
-        decrementCount()
-        deleteGround(ground)
-    }
+const GroundsList = ({grounds, deleteGround}) => {
 
     return (
         <>
@@ -26,7 +21,7 @@ const GroundsList = ({grounds, deleteGround, decrementCount}) => {
                         <Button 
                             variant="danger" 
                             size="sm" 
-                            onClick={()=>handleDelete(ground) }
+                            onClick={()=>deleteGround(ground) }
                         >
                             <i className="fa fa-trash mr-2"></i>
                         Delete</Button>

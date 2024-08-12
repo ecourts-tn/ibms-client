@@ -15,7 +15,7 @@ import api from '../../api';
 
 
 
-const PetitionerForm = ({litigants, addlitigant}) => {
+const PetitionerForm = ({addPetitioner}) => {
 
   const dispatch = useDispatch()
 
@@ -73,7 +73,7 @@ const PetitionerForm = ({litigants, addlitigant}) => {
     act: Yup.string().required(),
     section: Yup.string().required(),
     address: Yup.string().required(),
-    is_custody: Yup.boolean().required(),
+    // is_custody: Yup.boolean().required(),
     // prison: Yup.string().when('is_custody', (is_custody, schema) => {
     //   if(is_custody){
     //       return schema.required("Please select the prison")
@@ -143,17 +143,7 @@ const PetitionerForm = ({litigants, addlitigant}) => {
   const handleSubmit = async() => {
     try{
       await validationSchema.validate(litigant, { abortEarly:false})
-      const efile_no = localStorage.getItem("efile_no")
-      const response = await api.post(`api/litigant/create/`, litigant, {
-        params: {
-          efile_no
-        }
-      })
-      if(response.status === 200){
-        toast.success("litigant details added successfully", {
-          theme:"colored"
-        })
-      }
+      addPetitioner(litigant)
     }catch(error){
       if(error.inner){
         const newErrors = {};

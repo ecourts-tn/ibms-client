@@ -6,14 +6,14 @@ const PetitionerList = ({petitioners, deletePetitioner}) => {
 
   return (
     <>
-      { petitioners.map( (petitioner, index) => (
-        <div className="card">
+      { petitioners.map((petitioner, index) => (
+        <div className="card" key={index}>
           <div className="card-body">
             <table className="table no-border litigant-table">
               <tr>
                 <td>Petitioner Name</td>
                 <td>:</td>
-                <td>{ petitioner.petitioner_name }, {petitioner.age} , {petitioner.gender}</td>
+                <td>{ petitioner.litigant_name }, {petitioner.age} , {petitioner.gender}</td>
               </tr>
               <tr>
                 <td>Address</td>
@@ -39,6 +39,7 @@ const PetitionerList = ({petitioners, deletePetitioner}) => {
             </div>
           </div>
         </div>
+        
       ))}
       { petitioners.length === 0 && (<span className="text-danger"><strong>No records found</strong></span>)}
     </>

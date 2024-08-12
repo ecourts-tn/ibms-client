@@ -61,7 +61,7 @@ const MultiStepForm = () => {
                   </div>
                   <div className="bs-stepper-content">
                     {steps[currentStep]}
-                    {/* <div id="initial-input" className='content'>
+                    <div id="initial-input" className='content'>
                         <Step1 nextStep={() => setCurrentStep(1)} />
                     </div>
                     <div id="litigants" className='content'>
@@ -69,7 +69,7 @@ const MultiStepForm = () => {
                     </div>
                     <div id="ground" className='content'>
                         <Step3 prevStep={() => setCurrentStep(1)} />
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>

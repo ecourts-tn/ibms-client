@@ -1,7 +1,7 @@
 import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
-const apiUrl = "http://localhost:8000/";
+export const apiUrl = "http://localhost:8000/";
 
 // const apiUrl = "http://117.193.76.243:8088/"
 
@@ -49,3 +49,4 @@ api.interceptors.response.use(resp => resp, async error => {
 });
 
 export default api
+
