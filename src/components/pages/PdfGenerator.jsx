@@ -23,10 +23,9 @@ const PdfGenerator = () => {
     
     const[petition, setPetition] = useState({})
     const {state} = useLocation()
-    console.log(state.cino)
     useEffect(() => {
         async function fetchData(){
-            const response = await api.get(`api/bail/petition/detail/`, {params:{cino:state.cino}})
+            const response = await api.get(`api/case/filing/detail/`, {params:{efile_no:state.efile_no}})
             if(response.status === 200){
                 setPetition(response.data)
             }
@@ -47,21 +46,21 @@ const PdfGenerator = () => {
                             <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.petition.court.court_name}<br/>
                             {petition.petition.establishment.establishment_name}
                             </strong> </h4>
-                            <p><strong>{ petition.petition.cino }</strong></p>
-                            <p className="mb-4">
+                            <p><strong>{ petition.petition.efile_number }</strong></p>
+                            {/* <p className="mb-4">
                                 (In the matter of Crime number: {petition.petition.crime_number} / {petition.petition.crime_year} of {petition.petition.police_station.station_name} &nbsp;
                                 Police Station U/s. {petition.petitioner[0].section } of {petition.petitioner[0].act } pending before the {petition.petition.court.court_name},&nbsp;
                                 {petition.petition.establishment.establishment_name},&nbsp;{petition.petition.district.district_name},&nbsp;{petition.petition.state.state_name}
-                            </p>
+                            </p> */}
                         </div>
                         <div className="col-md-6">
-                            { petition.petitioner.map((p, index) => (
+                            { petition.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                             <>
-                                <p><strong>{index+1}. {p.petitioner_name}, {p.age}, {p.gender}, {p.rank}</strong><br/>
-                                {p.relation} Name: {p.relation_name}<br/>
-                                { p.address }<br></br>
-                                Mobile Number: {p.mobile_number}<br/>
-                                eMail Address: {p.email_address}
+                                <p><strong>{index+1}. {l.litigant_name}, {l.age}, {l.gender}, {l.rank}</strong><br/>
+                                {l.relation} Name: {l.relation_name}<br/>
+                                { l.address }<br></br>
+                                Mobile Number: {l.mobile_number}<br/>
+                                eMail Address: {l.email_address}
                                 </p>
                             </>
                             ))}
@@ -73,10 +72,10 @@ const PdfGenerator = () => {
                             <p><strong>-Vs-</strong></p>
                         </div>
                         <div className="col-md-6">
-                            { petition.respondent.map((res, index) => (
+                            { petition.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                 <>
-                                    <p><strong>{index+1}. {res.respondent_name} rep by {res.designation}</strong><br/>
-                                        { res.address}, { res.address }
+                                    <p><strong>{index+1}. {l.litigant_name} rep by {l.designation}</strong><br/>
+                                        { l.address}, { l.address }
                                     </p>
                                 </>
                             ))}
@@ -89,9 +88,9 @@ const PdfGenerator = () => {
                                 { petition.advocate.map((adv, index) => (
                                     <span>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}, &nbsp;</span>
                                 ))}
-                                 for and on behalf of the Petitioner/Accused&nbsp;[{ petition.petitioner.map((p, index) => (
+                                 for and on behalf of the Petitioner/Accused&nbsp;[{ petition.litigant.filter(l => l.litigant_type ===1).map((p, index) => (
                             <>
-                                <span><strong>&nbsp;{index+1}.{p.petitioner_name}&nbsp;&nbsp;</strong></span>
+                                <span><strong>&nbsp;{index+1}.{p.litigant_name}&nbsp;&nbsp;</strong></span>
                             </>
                             ))}] U/s {petition.petition.bail_type.name}:-</strong></p>
                             <ol style={{lineHeight:'2'}}>

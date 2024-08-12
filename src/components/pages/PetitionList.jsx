@@ -2,7 +2,9 @@ import React, {useState, useEffect} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import ViewDocument from './ViewDocument'
-import api from '../../api'
+import { formatDate, formatLitigant } from '../../utils'
+import api, {apiUrl} from '../../api'
+
 
 const PetitionList = () => {
 
@@ -21,7 +23,7 @@ const PetitionList = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`api/case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -68,9 +70,9 @@ const PetitionList = () => {
                                     <th>S. No</th>
                                     <th>eFiling Number</th>
                                     <th>Filing Date</th>
-                                    <th>Case Number</th>
                                     <th>Litigants</th>
                                     <th>View Documents</th>
+                                    <th>Court Fee</th>
                                     <th>Download</th>
                                 </tr>
                             </thead>
@@ -78,60 +80,45 @@ const PetitionList = () => {
                                 { cases.map((item, index) => (
                                 <tr>
                                     <td>{ index+1 }</td>
-                                    <td>
-                                        <Link to={`/petition/detail`} state={{cino: item.petition.cino}}>
-                                            {item.petition.cino}
-                                        </Link>
-                                    </td>
-                                    <td>{ item.petition.date_of_filing }</td>
-                                    <td>
-                                        { item.petition.filing_type && (
-                                        <span>{ item.petition.filing_type.type_name }/{item.petition.filing_number}/{item.petition.filing_year}</span>
-                                        )}
-                                    </td>
-                                    <td>
-                                        { item.petitioner.map((p, index) => (
-                                            <span className="text ml-2">{index+1}. {p.petitioner_name}</span>
-                                        ))}
-                                        <span className="text text-danger text-center mx-3"><strong>Vs</strong></span>
-                                        { item.respondent.map((res, index) => (
-                                            <span className="text">{res.respondent_name} rep by {res.designation}</span>
-                                        ))} 
+                                    <td><a href="#/">{ item.petition.efile_number }</a></td>
+                                    <td>{ formatDate(item.petition.efile_date) }</td>
+                                    <td className="text-center">
+                                        { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                            <span className="text ml-2">{index+1}. {l.litigant_name}</span>
+                                        ))
+                                        }
+                                        <br/>
+                                        <span className="text text-danger ml-2">Vs</span> <br/>
+                                        { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                            <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                        ))
+                                        }
                                     </td>
                                     <td>
-                                        { item.petition.vakalath && (
+                                        { item.document.map((d, index) => (
                                             <>
-                                                <Link
-                                                    onClick={handleShowVakalath}
-                                                >Vakalath</Link>
-                                            </>
-                                        )}
-                                        { showVakalath && (
-                                            <ViewDocument 
-                                                url={`http://127.0.0.1:8000/${item.petition.vakalath}`}
-                                                show={showVakalath} 
-                                                setShow={setShowVakalath} 
-                                                handleClose={handleClose} 
-                                                handleShow={handleShowVakalath}/>
-                                        )}
-                                        { item.petition.supporting_document && (
-                                            <>
-                                                <Link
+                                                <span key={index}><a href={`${apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                {/* <Link
                                                     onClick={handleShowDocument}
-                                                >Supporting Document</Link>
+                                                >{d.title}</Link>
+                                                { showDocument && (
+                                                    <ViewDocument 
+                                                        url={`${apiUrl}${d.title}`}
+                                                        show={showDocument} 
+                                                        setShow={setShowDocument} 
+                                                        handleClose={handleClose} 
+                                                        handleShow={handleShowDocument}/>
+                                                )} */}
                                             </>
-                                        )}
-                                        { showDocument && (
-                                            <ViewDocument 
-                                                url={`http://127.0.0.1:8000/${item.petition.supporting_document}`}
-                                                show={showDocument} 
-                                                setShow={setShowDocument} 
-                                                handleClose={handleClose} 
-                                                handleShow={handleShowDocument}/>
-                                        )}
+                                        ))}
                                     </td>
                                     <td>
-                                        <Link to="/petition/pdf" state={{cino:item.petition.cino}}>Download</Link>
+                                        { item.fees.map((fee, index) => (
+                                            <span>Rs.{fee.amount}<br/></span>
+                                        ))}
+                                    </td>
+                                    <td>
+                                        <Link to="/petition/pdf" state={{efile_no:item.petition.efile_number}}>Download</Link>
                                     </td>
                                 </tr>
                                 ))}

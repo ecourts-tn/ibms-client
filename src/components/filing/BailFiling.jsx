@@ -227,12 +227,12 @@ const BailFiling = () => {
     }
 
     const handleSubmit = async () => {
-        const cino = localStorage.getItem("cino")
-        if(cino){
+        const efile_no = localStorage.getItem("efile_no")
+        if(efile_no){
             try{
                 const response = await api.get("api/bail/filing/final-submit/", {
                     params: {
-                        cino: cino
+                        efile_no
                     }
                 })
                 if(response.status === 200){
@@ -245,7 +245,7 @@ const BailFiling = () => {
                         setIsFinalSubmit(false)
                     }else{
                         try{
-                            const result = await api.put(`api/bail/filing/${cino}/final-submit/`)
+                            const result = await api.put(`api/bail/filing/${efile_no}/final-submit/`)
                             if(result.status === 200){
                                 toast.success("Petition filed successfully", {
                                     theme:"colored"

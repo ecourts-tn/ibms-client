@@ -4,20 +4,55 @@ import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
 import EFileDetails from './EFileDetails'
 import {toast, ToastContainer} from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
+import api from '../../api'
 
-const EFile = (props) => {
-    const { 
-            isFinalSubmit, 
-            setIsFinalSubmit,
-            handleSubmit
-        } = props
-    const [show, setShow] = useState(false);
-
+const EFile = () => {
+    const navigate = useNavigate()
+    const[isFinalSubmit, setIsFinalSubmit] = useState(false)
+    const[show, setShow] = useState(false)
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const[allChecked, setAllChecked] =  useState(false)
     const[isConfirm, setIsConfirm] = useState(false)
 
+    const handleSubmit = async () => {
+        const efile_no = localStorage.getItem("efile_no")
+        if(efile_no){
+            try{
+                const response = await api.get("api/case/filing/final-submit/", {
+                    params: {
+                        efile_no
+                    }
+                })
+                if(response.status === 200){
+                    if(response.data.error){
+                        response.data.message.forEach((error) => {
+                            toast.error(error, {
+                                theme:"colored"
+                            })
+                        })
+                        setIsFinalSubmit(false)
+                    }else{
+                        try{
+                            const result = await api.put(`api/case/filing/${efile_no}/final-submit/`)
+                            if(result.status === 200){
+                                toast.success("Petition filed successfully", {
+                                    theme:"colored"
+                                })
+                            }
+                            localStorage.removeItem("efile_no")
+                            navigate('/dashboard')
+                        }catch(error){
+                            console.error(error)
+                        }
+                    }
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }       
+    }
 
     return (
         <>
@@ -52,7 +87,7 @@ const EFile = (props) => {
                     size="xl"
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title><strong>Draft Application</strong></Modal.Title>
+                        <Modal.Title><strong>Draft Application</strong></Modal.Title>234324
                     </Modal.Header>
                     <Modal.Body>
                         <EFileDetails />

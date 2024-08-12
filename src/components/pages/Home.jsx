@@ -81,7 +81,7 @@ const Home = () => {
                 <Row className='py-2'>
                     <Col md={3} className="mt-5 pt-3">
                         <ToastContainer />
-                        { !isAuth ? <Login /> : <Sidebar />}  
+                        { !isAuth ? <Login /> : <Login />}  
                     </Col>
                     <Col md={6} className="mt-5">
                         <Feed />

@@ -13,7 +13,6 @@ const Payment = () => {
         petitioner_name: '',
         mobile_number:null,
         amount: null,
-        cino:''
     }
 
     const validationSchema = Yup.object({
@@ -25,7 +24,6 @@ const Payment = () => {
     const[payment, setPayment] = useState(initialState)
     const[error, setError] = useState({})
     const[paymentHistory, setPaymentHistory] = useState([])
-    const[petitioner, setPetitioner] = useState([])
     const[show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -75,28 +73,30 @@ const Payment = () => {
     useEffect(() => {
         setPayment({
             ...payment,
-            cino: localStorage.getItem("cino")
+            efile_no: localStorage.getItem("efile_no")
         })
     },[])
 
-    useEffect(() => {
-        async function fetchData(){
-            try{
-                const response = await api.get(`api/bail/petition/detail/`, {params:{cino:payment.cino}})
-                const { petitioner} = response.data
-                setPetitioner(petitioner)
-            }catch(err){
-                console.log(err)
-            }
-        }
-        if(payment.cino !== ''){
-            fetchData();
-        }
-    }, [payment.cino])
+    // useEffect(() => {
+    //     async function fetchData(){
+    //         try{
+    //             const efile_no = localStorage.getItem("efile_no")
+    //             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
+    //             const { petitioner} = response.data
+    //             setPetitioner(petitioner)
+    //         }catch(err){
+    //             console.log(err)
+    //         }
+    //     }
+    //     if(payment.cino !== ''){
+    //         fetchData();
+    //     }
+    // }, [payment.cino])
 
     const handleSubmit = async () => {
         try{
-            const response = await api.post(`api/bail/filing/payment/create/`, payment)
+            const efile_no = localStorage.getItem("efile_no")
+            const response = await api.post(`api/payment/court-fee/`, payment, {params:{efile_no}})
             if(response.status === 201){
                 toast.success("Payment completed successfully", {
                     theme: "colored"
@@ -153,7 +153,7 @@ const Payment = () => {
                                 <div className="col-md-6 offset-md-3">
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Payer Name</label>
-                                        <select 
+                                        {/* <select 
                                             name="petitioner_name" 
                                             className="form-control"
                                             value={payment.petitioner_name}
@@ -163,15 +163,15 @@ const Payment = () => {
                                             { petitioner.map((p, index) => (
                                             <option value={p.petitioner_name} key={index}>{p.petitioner_name}</option>
                                             ))}
-                                        </select>
-                                        {/* <input 
+                                        </select> */}
+                                        <input 
                                             type="text"
                                             name="payer_name" 
                                             className={`form-control ${error.payer_name ? 'is-invalid' : null }`}
                                             value={payment.payer_name}
                                             onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
-                                            readOnly={true}
-                                        /> */}
+                                            // readOnly={true}
+                                        />
                                         <div className="invalid-feedback">
                                             { error.petitioner_name }
                                         </div>

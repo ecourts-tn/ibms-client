@@ -50,7 +50,23 @@ const BasicContainer = ({setActiveStep}) => {
         crime_registered: '',
     }
 
+    
     const[petition, setPetition] = useState(initialState)
+    
+    // useEffect(() => {
+    //     const fetchData = async() => {
+    //         try{
+    //             const efile_no = "ADM20240000001F2024000001" //localStorage.getItem("efile_no")
+    //             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
+    //             if(response.status === 200){
+    //                 setPetition(response.data.petition)
+    //             }
+    //         }catch(error){
+    //             console.error(error)
+    //         }
+    //     }
+    //     fetchData()
+    // },[])
 
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)

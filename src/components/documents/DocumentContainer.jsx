@@ -151,7 +151,7 @@ const DocumentContainer = ({petition}) => {
                     )}
                     <form encType='multipart/form-data'>
                         <div className="row">
-                            <div className="col-md-12 mt-4"> 
+                            <div className="col-md-5 mt-4"> 
                                 <div className="form-group">
                                 <label htmlFor="title">Document Title</label>
                                 <input 
@@ -163,7 +163,7 @@ const DocumentContainer = ({petition}) => {
                                 />
                                 </div>
                             </div>
-                            <div className="col-md-12 mt-4"> 
+                            <div className="col-md-5 mt-4"> 
                                 <div className="form-group">
                                 <label htmlFor="document">Document</label>
                                 <input 
@@ -175,6 +175,17 @@ const DocumentContainer = ({petition}) => {
                                 />
                                 </div>
                             </div>
+                            <div className="col-md-1 mt-5 pt-2">
+                                    <div className="">
+                                        <Button
+                                            variant="contained"
+                                            color="success"
+                                            onClick={handleSubmit}
+                                        >
+                                            Upload
+                                        </Button>
+                                    </div>
+                                </div>
                         </div>
                         { parseInt(petition.case_type) !== 1 && (
                             <div className="row">
@@ -251,17 +262,6 @@ const DocumentContainer = ({petition}) => {
                                         <span className="text-success ml-1"><strong>Verified</strong></span>
                                     </p>
                                 )}
-                                <div className="col-md-12">
-                                    <div className="d-flex justify-content-center">
-                                        <Button
-                                            variant="contained"
-                                            color="success"
-                                            onClick={handleSubmit}
-                                        >
-                                            Submit
-                                        </Button>
-                                    </div>
-                                </div>
                             </div>
                         )}
                     </form>

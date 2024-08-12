@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from 'react-bootstrap/Button'
+import { CreateMarkup } from '../../utils'
 
 const GroundsList = ({grounds, deleteGround}) => {
 
@@ -7,8 +8,8 @@ const GroundsList = ({grounds, deleteGround}) => {
         <>
             { grounds.map((ground, index) => (
                 <div className="card" key={index}>
-                    <div className="card-body">
-                        {ground.description}
+                    <div className="card-body" dangerouslySetInnerHTML={CreateMarkup(ground.description)}>
+
                     </div>
                     <div className="card-footer d-flex justify-content-end" style={{backgroundColor:"inherit", borderTop:"none", marginTop:"-20px"}}>
                     <Button 

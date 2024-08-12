@@ -5,7 +5,7 @@ import ViewDocument from './ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { formatDate, formatLitigant } from '../../utils'
-import api from '../../api'
+import api, {apiUrl} from '../../api'
 
 const DraftList = () => {
 
@@ -14,19 +14,17 @@ const DraftList = () => {
     const navigate = useNavigate()
 
     const [showDocument, setShowDocument] = useState(false);
-    const [showVakalath, setShowVakalath] = useState(false)
     const[errors, setErrors] = useState([])
     const handleClose = () => {
         setShowDocument(false);
-        setShowVakalath(false)
+        // setShowVakalath(false)
     }
     const handleShowDocument = () => setShowDocument(true);
-    const handleShowVakalath = () => setShowVakalath(true)
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/draft/list/`)
+                const response = await api.get(`api/case/filing/draft-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -36,6 +34,7 @@ const DraftList = () => {
         }
         fetchData();
     }, [])
+    console.log(cases)
 
     const [show, setShow] = useState(false);
 
@@ -43,12 +42,12 @@ const DraftList = () => {
     const handleErrorClose = () => setShowError(false);
     const handleErrorShow = () => setShowError(true);
 
-    const handleSubmit = async(cino) => {
+    const handleSubmit = async(efile_no) => {
         if(window.confirm("Are you sure you want to submit the petition")){
             try{
-                const response = await api.get("api/bail/filing/final-submit/", {
+                const response = await api.get("api/case/filing/final-submit/", {
                     params: {
-                        cino: cino
+                        efile_no
                     }
                 })
                 if(response.status === 200){
@@ -62,7 +61,7 @@ const DraftList = () => {
                         // })
                     }else{
                         try{
-                            const result = await api.put(`api/bail/filing/${cino}/final-submit/`)
+                            const result = await api.put(`api/case/filing/${efile_no}/final-submit/`)
                             if(result.status === 200){
                                 toast.success("Petition submitted successfully", {
                                     theme:"colored"
@@ -135,40 +134,40 @@ const DraftList = () => {
                                     <td>{ index+1 }</td>
                                     <td><a href="#/">{ item.petition.efile_number }</a></td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
-                                    <td>{ formatLitigant(item.petitioner, item.respondent)}</td>
-                                    <td>
-                                    { item.petition.vakalath && (
-                                            <>
-                                                <Link
-                                                    onClick={handleShowVakalath}
-                                                >Vakalath</Link>
-                                            </>
-                                        )}
-                                        { showVakalath && (
-                                            <ViewDocument 
-                                                url={`http://127.0.0.1:8000${item.petition.vakalath}`}
-                                                show={showVakalath} 
-                                                setShow={setShowVakalath} 
-                                                handleClose={handleClose} 
-                                                handleShow={handleShowVakalath}/>
-                                        )}
-                                        { item.petition.supporting_document && (
-                                            <>
-                                                <Link
-                                                    onClick={handleShowDocument}
-                                                >Supporting Document</Link>
-                                            </>
-                                        )}
-                                        { showDocument && (
-                                            <ViewDocument 
-                                                url={`http://127.0.0.1:8000${item.petition.supporting_document}`}
-                                                show={showDocument} 
-                                                setShow={setShowDocument} 
-                                                handleClose={handleClose} 
-                                                handleShow={handleShowDocument}/>
-                                        )}
+                                    <td className="text-center">
+                                        { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                            <span className="text ml-2">{index+1}. {l.litigant_name}</span>
+                                        ))
+                                        }
+                                        <br/>
+                                        <span className="text text-danger ml-2">Vs</span> <br/>
+                                        { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                            <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                        ))
+                                        }
                                     </td>
                                     <td>
+                                        { item.document.map((d, index) => (
+                                            <>
+                                                <span key={index}><a href={`${apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                {/* <Link
+                                                    onClick={handleShowDocument}
+                                                >{d.title}</Link>
+                                                { showDocument && (
+                                                    <ViewDocument 
+                                                        url={`${apiUrl}${d.title}`}
+                                                        show={showDocument} 
+                                                        setShow={setShowDocument} 
+                                                        handleClose={handleClose} 
+                                                        handleShow={handleShowDocument}/>
+                                                )} */}
+                                            </>
+                                        ))}
+                                    </td>
+                                    <td>
+                                        { item.fees.map((fee, index) => (
+                                            <span>Rs.{fee.amount}<br/></span>
+                                        ))}
                                     </td>
                                     <td>
                                         <button className="btn btn-info mx-1">
@@ -180,7 +179,7 @@ const DraftList = () => {
                                         <Button
                                             variant="contained"
                                             color="success"
-                                            onClick = {(e) => handleSubmit(item.petition.cino) }
+                                            onClick = {(e) => handleSubmit(item.petition.efile_number) }
                                         >
                                             Submit
                                         </Button>

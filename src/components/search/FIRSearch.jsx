@@ -217,10 +217,8 @@ const FIRSearch = () => {
                     <Loader />
                 )}
             </div>
-            { showAdditionalFields && petition.date_of_occurrence !== '' ? (
+            { showAdditionalFields && (
                 <FIRDetails fir={petition}/>
-            ):(
-                <div className="alert alert-danger">Details not found</div>
             )}
         </div>    
     )

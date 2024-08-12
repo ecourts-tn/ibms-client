@@ -5,7 +5,7 @@ import api from '../../api'
 const EFileDetails = () => {
 
     const[petition, setPetition] = useState({})
-    const[petitioners, setPetitioners] = useState([])
+    const[litigants, setLitigants] = useState([])
     const[respondents, setRespondents] = useState([])
     const[grounds, setGrounds] = useState([])
 
@@ -16,8 +16,7 @@ const EFileDetails = () => {
                 const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
-                    setPetitioners(response.data.petitioner)
-                    setRespondents(response.data.respondent)
+                    setLitigants(response.data.litigant)
                     setGrounds(response.data.grounds)
                 }
             }catch(error){
@@ -92,15 +91,15 @@ const EFileDetails = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            { petitioners.map((petitioner, index) => (
+                            { litigants.filter(litigant=>litigant.litigant_type===1).map((litigant, index) => (
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
-                                    <td>{ petitioner.petitioner_name }</td>
-                                    <td>{ petitioner.gender }</td>
-                                    <td>{ petitioner.age }</td>
-                                    <td>{ petitioner.address }</td>
-                                    <td>{ petitioner.act }</td>
-                                    <td>{ petitioner.section }</td>
+                                    <td>{ litigant.litigant_name }</td>
+                                    <td>{ litigant.gender }</td>
+                                    <td>{ litigant.age }</td>
+                                    <td>{ litigant.address }</td>
+                                    <td>{ litigant.act }</td>
+                                    <td>{ litigant.section }</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -119,17 +118,17 @@ const EFileDetails = () => {
                                 <th>Respondent&nbsp;Name</th>
                                 <th>Designation</th>
                                 <th>Address</th>
-                                <th>District</th>
+                                {/* <th>District</th> */}
                             </tr>
                         </thead>
                         <tbody>
-                            { respondents.map((respondent, index) => (
+                            { litigants.filter(litigant=>litigant.litigant_type===2).map((litigant, index) => (
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
-                                    <td>{ respondent.respondent_name }</td>
-                                    <td>{ respondent.designation }</td>
-                                    <td>{ respondent.address }</td>
-                                    <td>{ respondent.district }</td>
+                                    <td>{ litigant.litigant_name }</td>
+                                    <td>{ litigant.designation }</td>
+                                    <td>{ litigant.address }</td>
+                                    {/* <td>{ litigant.district }</td> */}
                                 </tr>
                             ))}
                         </tbody>
