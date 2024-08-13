@@ -51,7 +51,7 @@ const PetitionerForm = ({addPetitioner}) => {
       section: '',
       is_custody: false,
       prison: '',
-      custody_days: '',
+      custody_days: null,
       is_surrendered: false,
       identification_marks:'',
     }

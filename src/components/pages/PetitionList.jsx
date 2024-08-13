@@ -70,6 +70,7 @@ const PetitionList = () => {
                                     <th>S. No</th>
                                     <th>eFiling Number</th>
                                     <th>Filing Date</th>
+                                    <th>Case Number</th>
                                     <th>Litigants</th>
                                     <th>View Documents</th>
                                     <th>Court Fee</th>
@@ -82,6 +83,7 @@ const PetitionList = () => {
                                     <td>{ index+1 }</td>
                                     <td><a href="#/">{ item.petition.efile_number }</a></td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
+                                    <td>{item.petition.reg_type.type_name}/{item.petition.reg_number}/{item.petition.reg_year}</td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2">{index+1}. {l.litigant_name}</span>

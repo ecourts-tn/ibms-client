@@ -125,7 +125,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`api/case/submitted/list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }

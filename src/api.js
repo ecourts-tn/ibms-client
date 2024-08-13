@@ -1,7 +1,9 @@
 import axios from "axios";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
-export const apiUrl = "http://localhost:8000/";
+// export const apiUrl = "http://localhost:8000/";
+
+export const apiUrl = "http://192.168.100.135:8000"
 
 // const apiUrl = "http://117.193.76.243:8088/"
 

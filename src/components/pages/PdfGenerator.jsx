@@ -22,19 +22,30 @@ const downloadPdf = () => generatePDF(getTargetElement, options);
 const PdfGenerator = () => {
     
     const[petition, setPetition] = useState({})
+    const[petitioner, setPetitioner] = useState([])
+    const[respondent, setRespondent] = useState([])
+    const[crime, setCrime] = useState({})
     const {state} = useLocation()
     useEffect(() => {
         async function fetchData(){
             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no:state.efile_no}})
             if(response.status === 200){
                 setPetition(response.data)
+                setCrime(response.data.crime)
+                const filtered_petitioner = response.data.litigant.filter((l => {
+                    return l.litigant_type === 1
+                }))
+                setPetitioner(filtered_petitioner)
+                const filtered_respondent = response.data.litigant.filter((l => {
+                    return l.litigant_type === 2
+                }))
+                setRespondent(filtered_respondent)
             }
         }
         fetchData()
     }, [])
 
-
-    console.log(petition)
+    console.log(crime)
 
     if(Object.keys(petition).length > 0){
         return (
@@ -47,11 +58,11 @@ const PdfGenerator = () => {
                             {petition.petition.establishment.establishment_name}
                             </strong> </h4>
                             <p><strong>{ petition.petition.efile_number }</strong></p>
-                            {/* <p className="mb-4">
-                                (In the matter of Crime number: {petition.petition.crime_number} / {petition.petition.crime_year} of {petition.petition.police_station.station_name} &nbsp;
-                                Police Station U/s. {petition.petitioner[0].section } of {petition.petitioner[0].act } pending before the {petition.petition.court.court_name},&nbsp;
+                            <p className="mb-4">
+                                (In the matter of Crime number: {crime.fir_number} / {crime.fir_year} of {crime.police_station} &nbsp;
+                                Police Station U/s. {petitioner[0].section } of {petitioner[0].act } pending before the {petition.petition.court.court_name},&nbsp;
                                 {petition.petition.establishment.establishment_name},&nbsp;{petition.petition.district.district_name},&nbsp;{petition.petition.state.state_name}
-                            </p> */}
+                            </p>
                         </div>
                         <div className="col-md-6">
                             { petition.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
@@ -92,8 +103,8 @@ const PdfGenerator = () => {
                             <>
                                 <span><strong>&nbsp;{index+1}.{p.litigant_name}&nbsp;&nbsp;</strong></span>
                             </>
-                            ))}] U/s {petition.petition.bail_type.name}:-</strong></p>
-                            <ol style={{lineHeight:'2'}}>
+                            ))}] U/s {petition.petition.bail_type.type_name}:-</strong></p>
+                            {/* <ol style={{lineHeight:'2'}}>
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
                                     It is most respectfully submitted that the respondent&nbsp;
                                     <strong>{petition.respondent[0].respondent_name}&nbsp;rep by&nbsp;{petition.respondent[0].designation},&nbsp;{petition.petition.police_station.station_name}</strong> on&nbsp;
@@ -130,7 +141,7 @@ const PdfGenerator = () => {
                                 <li style={{marginTop:'20px', textAlign:'justify'}}>
                                     Hence it is most humbly prayed that this Honourable Court may be pleased to accept this petition and pass orders to release the petitioner on bail and thus render justice.
                                 </li>
-                            </ol>
+                            </ol> */}
                         </div>
                         <div className="col-md-6 mt-5">
                             <p>Place: <strong>{petition.petition.district.district_name}</strong></p>
