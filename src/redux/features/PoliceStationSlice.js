@@ -11,7 +11,7 @@ export const getPoliceSationByDistrict = createAsyncThunk(
     'police_station/getPoliceStationByDistrict',
     async (district) => {
         console.log(district)
-        const response = await api.get(`api/base/district/${district}/police-station/`)
+        const response = await api.get(`base/district/${district}/police-station/`)
         // return JSON.parse(response.data)
         return response.data
     }

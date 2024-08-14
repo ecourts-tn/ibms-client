@@ -3,8 +3,8 @@ import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import ViewDocument from './ViewDocument'
 import { formatDate, formatLitigant } from '../../utils'
-import api, {apiUrl} from '../../api'
-
+import api from '../../api'
+import config from '../../config'
 
 const PetitionList = () => {
 
@@ -99,7 +99,7 @@ const PetitionList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <>
-                                                <span key={index}><a href={`${apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                <span key={index}><a href={`${config.apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
                                                 {/* <Link
                                                     onClick={handleShowDocument}
                                                 >{d.title}</Link>

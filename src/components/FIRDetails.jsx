@@ -52,21 +52,31 @@ const FIRDetails = ({fir}) => {
                                     </tr>
                                     <tr>
                                         <td>Place of Occurence</td>
-                                        <td>{ fir.place_of_occurrence }</td>
+                                        <td colSpan={3}>{ fir.place_of_occurrence }</td>
+                                    </tr>
+                                    <tr>
                                         <td>Investigation Officer</td>
                                         <td>{ fir.investigation_officer }</td>
+                                        <td>Investigation Officer Rank</td>
+                                        <td>{ fir.investigation_officer_rank }</td>
                                     </tr>
                                     <tr>
                                         <td>Complaintant&nbsp;Name</td>
-                                        <td colSpan={3}>{ fir.complainant_name }</td>
+                                        <td>{ fir.complainant_name }</td>
+                                        <td>Complaintant&nbsp;Guardian Name</td>
+                                        <td>{ fir.complainant_guardian_name }</td>
                                     </tr>
                                     <tr>
-                                        <td>Gist of FIR / Allegations</td>
-                                        <td colSpan={3}>{ fir.gist_of_fir }</td>
+                                        <td colSpan={4}>
+                                            <p><strong>Gist of FIR / Allegations</strong></p>
+                                            <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_of_fir)}></span>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td>Gist of FIR / Allegations (In Local Language)</td>
-                                        <td colSpan={3}><span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span></td>
+                                        <td colSpan={4}>
+                                            <p><strong>Gist of FIR / Allegations (In Local Language)</strong></p>
+                                            <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
+                                        </td>
                                     </tr>
                                 </table>
                             </Modal.Body>

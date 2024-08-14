@@ -17,6 +17,7 @@ import * as Yup from 'yup'
 import api from '../../api';
 import Select from 'react-select'
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { RequiredField } from '../../utils';
 
 const BasicContainer = ({setActiveStep}) => {
 
@@ -217,7 +218,7 @@ const BasicContainer = ({setActiveStep}) => {
                             <div className="row mt-4">
                                 <div className="col-md-6 offset-md-3">
                                     <Form.Group className="row mb-4">
-                                        <Form.Label className="col-sm-3">Court Type</Form.Label>
+                                        <Form.Label className="col-sm-3">Court Type<RequiredField /></Form.Label>
                                         <div className="col-sm-9">
                                             <select 
                                                 name="court_type" 
@@ -238,7 +239,7 @@ const BasicContainer = ({setActiveStep}) => {
                                 <div className="col-md-6 offset-md-3">
                                     { petition.court_type == 1 && (
                                     <div className="form-group row mb-4">
-                                        <label htmlFor="bench_type" className="col-sm-3">High Court Bench</label>
+                                        <label htmlFor="bench_type" className="col-sm-3">High Court Bench<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <select 
                                                 name="bench_type" 
@@ -265,7 +266,7 @@ const BasicContainer = ({setActiveStep}) => {
                                     <div className="row mb-4">
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="state">State</label>
+                                                <label htmlFor="state">State<RequiredField /></label>
                                                 <select 
                                                     name="state" 
                                                     className={`form-control ${errors.state ? 'is-invalid': null }`}
@@ -282,7 +283,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="district">District</label>
+                                                <label htmlFor="district">District<RequiredField /></label>
                                                 {/* <select 
                                                     id="basic_district"
                                                     name="district" 
@@ -308,7 +309,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="establishment">Establishment Name</label>
+                                                <label htmlFor="establishment">Establishment Name<RequiredField /></label>
                                                 <select 
                                                     name="establishment" 
                                                     id="establishment" 
@@ -333,7 +334,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
-                                                <label htmlFor="court">Court Name</label>
+                                                <label htmlFor="court">Court Name<RequiredField /></label>
                                                 <select 
                                                     name="court" 
                                                     id="court" 
@@ -362,7 +363,7 @@ const BasicContainer = ({setActiveStep}) => {
                             <div className="row">
                                 <div className="col-md-6 offset-md-3">
                                     <div className="form-group row mb-4">
-                                        <label htmlFor="caseType" className="col-sm-3">Case Type</label>
+                                        <label htmlFor="caseType" className="col-sm-3">Case Type<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <select 
                                                 name="case_type" 
@@ -382,7 +383,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                     </div>
                                     <div className="form-group row mb-4">
-                                        <label htmlFor="bail_type" className="col-sm-3">Bail Type</label>
+                                        <label htmlFor="bail_type" className="col-sm-3">Bail Type<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <select 
                                                 name="bail_type" 
@@ -402,7 +403,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                     </div>
                                     <div className="form-group row mb-4">
-                                        <label htmlFor="complaint_type" className="col-sm-3">Complaint Type</label>
+                                        <label htmlFor="complaint_type" className="col-sm-3">Complaint Type<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <select 
                                                 name="complaint_type" 
@@ -422,7 +423,7 @@ const BasicContainer = ({setActiveStep}) => {
                                         </div>
                                     </div>
                                     <div className="form-group row clearfix mb-4">
-                                        <label htmlFor="" className="col-sm-3">Crime Registered?</label>
+                                        <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <div className="icheck-success d-inline mx-2">
                                                 <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />

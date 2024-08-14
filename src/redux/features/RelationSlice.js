@@ -10,7 +10,7 @@ const initialState = {
 export const getRelations = createAsyncThunk(
     'relation/getRelation',
     async () => {
-        const response = await api.get("api/base/relation/")
+        const response = await api.get("base/relation/")
         return response.data
     }
 )

@@ -10,7 +10,7 @@ const initialState = {
 export const getCourtTypes = createAsyncThunk(
     'courttype/getCourtTypes',
     async () => {
-        const response = await api.get("api/base/court-type/")
+        const response = await api.get("base/court-type/")
         return response.data
     }
 );

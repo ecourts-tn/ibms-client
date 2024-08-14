@@ -10,7 +10,7 @@ const initialState = {
 export const getUserTypes = createAsyncThunk(
     'usertype/getUserType',
     async () => {
-        const response = await api.get("api/base/user-type/")
+        const response = await api.get("base/user-type/")
         return response.data
     }
 )

@@ -11,7 +11,7 @@ const initialState = {
 export const getTaluks = createAsyncThunk(
     'taluks/getTaluks',
     async () => {
-        const response = await api.get("api/base/taluk/")
+        const response = await api.get("base/taluk/")
         return response.data
     }
 )

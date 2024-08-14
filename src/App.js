@@ -35,11 +35,13 @@ import Profile from './components/pages/Profile'
 import InitialInput from './components/petition/bail/InitialInput'
 import Litigant from './components/petition/bail/Litigant'
 
+import config from './config'
 
 function App() {
 
   const isAuthenticated = false
-  
+  console.log(`API URL: ${config.apiUrl}`);
+  console.log(`Feature Flag: ${config.featureFlag ? 'Enabled' : 'Disabled'}`);
  return (
     <>
       <HashRouter>

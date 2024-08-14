@@ -87,7 +87,7 @@ const Login = () => {
         try{
             await validationSchema.validate(form, {abortEarly: false})
             const {username, password, usertype} = form
-            const response = await api.post('api/auth/public/login/', { usertype, username, password }, {
+            const response = await api.post('auth/public/login/', { usertype, username, password }, {
                 skipInterceptor: true // Custom configuration to skip the interceptor
               })
             localStorage.clear()

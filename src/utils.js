@@ -1,3 +1,4 @@
+import { Dangerous } from '@mui/icons-material';
 import './components/pages/header.css'
 
 export const CreateMarkup = (content) => {
@@ -28,5 +29,12 @@ export const formatLitigant = (petitioners, respondents) => {
                 ))}
             </ol>
         </div>
+    )
+}
+
+
+export const RequiredField = () => {
+    return(
+        <span className="text-danger ml-1">*</span>
     )
 }

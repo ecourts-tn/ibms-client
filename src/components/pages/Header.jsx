@@ -41,14 +41,16 @@ const Header = () => {
                         Filing
                       </a>
                       <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <Link to="/petition/bail" className="nav-link">Bail/AB Petition</Link>
+                        <Link to="/petition/bail" className="nav-link">Bail Petition</Link>
+                        <Link to="/petition/anticipatory/bail" className="nav-link">Anticipatory Bail Petition</Link>
                         <Link to="/petition/relaxation" className="nav-link">Condition Relaxation</Link>
                         <Link to="/petition/intervene" className="nav-link">Intervene Petition</Link>
                         <Link to="/petition/modification" className="nav-link">Modification Petition</Link>
                         <Link to="/petition/surety" className="nav-link">Surety Petition</Link>
-                        <Link to="/petition/surety-discharge" className="nav-link">Discharge of Surity</Link>
+                        <Link to="/petition/surety-discharge" className="nav-link">Discharge of Surety</Link>
                         <Link to="/petition/extension-time" className="nav-link">Extension of Time</Link>
                         <Link to="/petition/return-passport" className="nav-link">Return of Passport</Link>
+                        <Link to="/petition/return-property" className="nav-link">Return of Property</Link>
                       </div>
                     </li>
                   ) : null}

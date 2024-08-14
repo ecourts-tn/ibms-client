@@ -12,6 +12,7 @@ import { getAccusedDetails } from '../../redux/features/AccusedSlice'
 import FIRDetails from '../FIRDetails'
 import Loader from '../Loader'
 import * as Yup from 'yup'
+import { RequiredField } from '../../utils'
 
 
 const FIRSearch = () => {
@@ -29,8 +30,8 @@ const FIRSearch = () => {
         crime_state: '',
         crime_district: '',
         police_station: '',
-        crime_number: '',
-        crime_year: '',
+        crime_number: null,
+        crime_year: null,
         date_of_occurrence  : null,
         investigation_officer:'',
         fir_date_time: null,
@@ -46,11 +47,11 @@ const FIRSearch = () => {
     })
 
     const validationSchema = Yup.object({
-        crime_state: Yup.string().required(),
-        crime_district: Yup.string().required(),
-        police_station: Yup.string().required(),
-        crime_number: Yup.string().required(),
-        crime_year: Yup.string().required()
+        crime_state: Yup.string().required("Please select state"),
+        crime_district: Yup.string().required("Please select district"),
+        police_station: Yup.string().required("Please select police station"),
+        crime_number: Yup.number().required("Please enter FIR number").typeError("This field should be numeric"),
+        crime_year: Yup.number().required("Please enter year").typeError("This field should be numeric")
     })
 
     const dispatch = useDispatch()
@@ -73,14 +74,13 @@ const FIRSearch = () => {
         }
     }, [petition.crime_district, dispatch])
 
-    
     const handleSearch = async (e) => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
             setLoading(true)
             setShowAdditionalFields(false)
-            const {data} = await api.get("api/external/police/tamilnadu/fir-details/")
+            const {data} = await api.get("external/police/tamilnadu/fir-details/")
             if(data){
                 setPetition({
                     ...petition,
@@ -101,7 +101,7 @@ const FIRSearch = () => {
                 })
                 if(petition.no_of_accused){
                     const efile_no = localStorage.getItem("efile_no")
-                    const update = await api.post(`api/case/crime/details/create/`, petition, {params:{efile_no}})
+                    const update = await api.post(`case/crime/details/create/`, petition, {params:{efile_no}})
                     setLoading(false)
                     setShowAdditionalFields(true)
                     dispatch(getAccusedDetails())
@@ -122,7 +122,7 @@ const FIRSearch = () => {
         <div className="container">
             <div className="row">
                 <div className="col-md-3">
-                    <label htmlFor="crime_state">State</label>
+                    <label htmlFor="crime_state">State<RequiredField/></label>
                     <select 
                         name="crime_state" 
                         id="crime_state" 
@@ -141,7 +141,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="crime_district">District</label><br />
+                        <label htmlFor="crime_district">District<RequiredField/></label><br />
                         <select 
                             name="crime_district" 
                             id="crime_district" 
@@ -161,7 +161,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-6">
                 <div className="form-group">
-                    <label htmlFor="police_station">Police Station Name</label><br />
+                    <label htmlFor="police_station">Police Station<RequiredField/></label><br />
                     <select 
                         name="police_station" 
                         id="police_station" 
@@ -180,7 +180,7 @@ const FIRSearch = () => {
                 <div className="col-md-2 offset-4">
                     <div className="form-group">
                     <Form.Group className="mb-3">
-                        <Form.Label>Crime Number</Form.Label>
+                        <Form.Label>FIR Number<RequiredField/></Form.Label>
                         <Form.Control 
                             type="text"
                             name="crime_number"
@@ -192,9 +192,9 @@ const FIRSearch = () => {
                     </Form.Group>
                     </div>
                 </div>
-                <div className="col-md-1">
+                <div className="col-md-2">
                     <Form.Group>
-                        <Form.Label>Year</Form.Label>
+                        <Form.Label>Year<RequiredField/></Form.Label>
                         <Form.Control 
                             type="text"
                             name="crime_year"

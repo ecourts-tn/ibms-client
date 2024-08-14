@@ -49,9 +49,10 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "REACT_APP_ENV=development react-scripts start",
+    "build:staging": "REACT_APP_ENV=staging react-scripts build",
+    "build:production": "REACT_APP_ENV=production react-scripts build",
+    "test": "REACT_APP_ENV=test react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -76,3 +77,5 @@
     "gh-pages": "^6.1.1"
   }
 }
+
+

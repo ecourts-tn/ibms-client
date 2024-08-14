@@ -10,7 +10,7 @@ const initialState = {
 export const getBasicDetails = createAsyncThunk(
     'fir/getBasicDetails',
     async (data) => {
-        const response = await api.get("api/external/police/tamilnadu/fir-details/", {data:data})
+        const response = await api.get("external/police/tamilnadu/fir-details/", {data:data})
         return response.data
     }
 );

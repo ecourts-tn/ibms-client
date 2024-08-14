@@ -10,7 +10,7 @@ const initialState = {
 export const getCaseTypes = createAsyncThunk(
     'casetype/getCaseTypes',
     async () => {
-        const response = await api.get("api/base/case-type/")
+        const response = await api.get("base/case-type/")
         return response.data
     }
 );

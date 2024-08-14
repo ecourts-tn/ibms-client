@@ -8,11 +8,9 @@ import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
 import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
 import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
 import { getPrisons } from '../../redux/features/PrisonSlice'
-import { nanoid } from '@reduxjs/toolkit';
 import { getRelations } from '../../redux/features/RelationSlice';
+import { RequiredField } from '../../utils';
 import * as Yup from 'yup'
-import api from '../../api';
-
 
 
 const PetitionerForm = ({addPetitioner}) => {
@@ -43,7 +41,7 @@ const PetitionerForm = ({addPetitioner}) => {
       taluk:'',
       post_office:'',
       pincode:'',
-      nationality: '',
+      nationality: 1,
       mobile_number:'',
       aadhar_number:'',
       email_address:'',
@@ -69,22 +67,22 @@ const PetitionerForm = ({addPetitioner}) => {
     address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
     aadhar_number: Yup.number().required("Aadhaar number is required").typeError("This is field should be numeric"),
-    // email_address: Yup.string().required().email(),
     act: Yup.string().required(),
     section: Yup.string().required(),
     address: Yup.string().required(),
-    // is_custody: Yup.boolean().required(),
-    // prison: Yup.string().when('is_custody', (is_custody, schema) => {
-    //   if(is_custody){
-    //       return schema.required("Please select the prison")
-    //   }
-    // }),
-    // custody_days: Yup.number().when('is_custody', (is_custody, schema) => {
-    //   if(is_custody){
-    //     return schema.required("This field is required")
-    //   }
-    // })
+    prison: Yup.string().when("is_custody", (is_custody, schema) => {
+      if(is_custody){
+          return schema.required("Please select the prison")
+      }
+    }),
+    custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
+      if(is_custody){
+          return schema.required()
+      }
+  }),
   })
+
+  
 
   useEffect(() => {
     if(stateStatus === 'idle'){
@@ -162,25 +160,26 @@ const PetitionerForm = ({addPetitioner}) => {
     <>
       <ToastContainer />
           <div className="row">
-            <div className="col-md-3 mb-3">
+            <div className="col-md-4 mb-3">
                 <div className="form-group">
-                    <label htmlFor="litigant">Select litigant</label><br />
+                    <label htmlFor="litigant">Select petitioner</label><br />
                     <select name="litigant" value={litigant.litigant} className="form-control" onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})} >
-                      <option value="o">Select litigant</option>
+                      <option value="o">Select petitioner</option>
                     { accused.map((item, index) => (
                       <option key={index} value={item.name_of_accused}>{item.name_of_accused}</option>
                     ))}
                     </select>
                 </div>
             </div>
-            <div className="col-md-9 mt-4 pt-3">
-              <p className="text-danger"><strong>*****  Fill the following details if the litigant name is not listed  *****</strong></p>
+            <div className="col-md-7 d-flex justify-content-end">
+              <img src="https://t3.ftcdn.net/jpg/06/59/57/56/360_F_659575640_mKCJlXJiCHGxi4v76N4QvDhTUcOCXOAN.jpg" class="rounded float-end" alt="..." style={{height:'170px', width:'160px'}}/>
             </div>
           </div>
-          <div className="row">  
+          <p className="text-danger"><strong>*****  Fill the following details if the petitioner name is not listed  *****</strong></p>
+          <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Name of the litigant</Form.Label>
+                <Form.Label>Name of the litigant<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -194,7 +193,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-1">
               <Form.Group className="mb-3">
-                <Form.Label>Gender</Form.Label>
+                <Form.Label>Gender<RequiredField /></Form.Label>
                 { litigant.litigant !== 'o' && (
                   <Form.Control 
                     readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
@@ -217,7 +216,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-1">
               <Form.Group className="mb-3">
-                <Form.Label>Age</Form.Label>
+                <Form.Label>Age<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="age"
@@ -231,7 +230,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Accused Rank</Form.Label>
+                <Form.Label>Accused Rank<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="rank"
@@ -245,7 +244,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
                 <div className="form-group mb-3">
-                  <label htmlFor="relation">Relation</label><br />
+                  <label htmlFor="relation">Relation<RequiredField /></label><br />
                   { litigant.litigant !== 'o' && (
                     <Form.Control 
                       value={litigant.relation}
@@ -273,7 +272,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Relation Name</Form.Label>
+                <Form.Label>Relation Name<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="relation_name"
@@ -287,7 +286,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Act</Form.Label>
+                <Form.Label>Act<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="act"
@@ -301,7 +300,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Section</Form.Label>
+                <Form.Label>Section<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="section"
@@ -315,7 +314,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-6">
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>Address<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="address"
@@ -402,7 +401,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Nationality</Form.Label>
+                <Form.Label>Nationality<RequiredField /></Form.Label>
                 <select 
                   name="nationality" 
                   className="form-control"
@@ -416,11 +415,12 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Aadhaar Number</Form.Label>
+                <Form.Label>Aadhaar Number<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="aadhar_number"
                   value={litigant.aadhar_number}
+                  readOnly={litigant.nationality !== 1 ? true : false }
                   className={`${errors.aadhar_number ? 'is-invalid' : ''}`}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
@@ -429,7 +429,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Mobile Number</Form.Label>
+                <Form.Label>Mobile Number<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
@@ -457,7 +457,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label>Whether Accused in Custody?</label><br />
+                  <label>Whether Accused in Custody?<RequiredField /></label><br />
                   <div>
                     <div className="icheck-success d-inline mx-2">
                       <input 
@@ -466,7 +466,7 @@ const PetitionerForm = ({addPetitioner}) => {
                         id="custodyYes" 
                         value={litigant.is_custody}
                         checked={ litigant.is_custody }
-                        onChange={(e) => setLitigant({...litigant, is_custody: true})} 
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: true})} 
                       />
                       <label htmlFor="custodyYes">Yes</label>
                     </div>
@@ -477,7 +477,7 @@ const PetitionerForm = ({addPetitioner}) => {
                         name="is_custody" 
                         value={litigant.is_custody}
                         checked={ !litigant.is_custody } 
-                        onChange={(e) => setLitigant({...litigant, is_custody: false})}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: false, prison:''})}
                       />
                       <label htmlFor="custodyNo">No</label>
                     </div>
@@ -495,7 +495,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     value={litigant.prison}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                   >
-                    <option value="">Select Prision</option>
+                    <option value="">Select Prison</option>
                     { prisons.map((item, index) => (
                       <option value={item.prison_code} key={index}>{item.prison_name}</option>
                     ))}
@@ -509,15 +509,19 @@ const PetitionerForm = ({addPetitioner}) => {
                   <Form.Control
                     type="text"
                     name="custody_days"
+                    className={`${errors.custody_days ? 'is-invalid' : ''}`}
                     disabled={ !litigant.is_custody }
                     value={litigant.custody_days}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                   ></Form.Control>
+                  <div className="invalid-feedback">
+                    {errors.custody_days}
+                  </div>
                 </Form.Group>
               </div>
               <div className="col-md-2">
                 <div className="form-group">
-                  <label>If accused Surrendered</label><br />
+                  <label>If accused Surrendered<RequiredField /></label><br />
                   <div>
                     <div className="icheck-success d-inline mx-2">
                       <input 
@@ -546,12 +550,11 @@ const PetitionerForm = ({addPetitioner}) => {
               </div>
               <div className="col-md-4">
                 <Form.Group>
-                  <Form.Label>Identification marks of Accused</Form.Label>
+                  <Form.Label>Identification marks of Accused<RequiredField /></Form.Label>
                   <Form.Control
                     type="text"
                     name="identification_marks"
                     value={litigant.identification_marks}
-                    disabled={ !litigant.is_surrendered }
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   ></Form.Control>
                 </Form.Group>

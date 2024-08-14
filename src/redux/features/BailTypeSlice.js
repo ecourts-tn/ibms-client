@@ -10,7 +10,7 @@ const initialState = {
 export const getBailTypes = createAsyncThunk(
     'bailtype/getBailType',
     async () => {
-        const response = await api.get("api/base/bail-type/")
+        const response = await api.get("base/bail-type/")
         return response.data
     }
 )

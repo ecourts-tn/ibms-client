@@ -10,7 +10,7 @@ const initialState = {
 export const getComplaintTypes = createAsyncThunk(
     'complainttype/getComplaintTypes',
     async () => {
-        const response = await api.get("api/base/complaint-type/")
+        const response = await api.get("base/complaint-type/")
         return response.data
     }
 );

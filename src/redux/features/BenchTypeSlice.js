@@ -10,7 +10,7 @@ const initialState = {
 export const getBenchTypes = createAsyncThunk(
     'benchtype/getBenchTypes',
     async () => {
-        const response = await api.get("api/base/bench-type/")
+        const response = await api.get("base/bench-type/")
         return response.data
     }
 );

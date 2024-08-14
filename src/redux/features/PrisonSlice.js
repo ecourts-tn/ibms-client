@@ -10,7 +10,7 @@ const initialState = {
 export const getPrisons =  createAsyncThunk(
     'prisons/getPrisons',
     async () => {
-        const response = await api.get("api/base/prison/")
+        const response = await api.get("base/prison/")
         return response.data
     }
 )

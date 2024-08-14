@@ -3,7 +3,8 @@ import { ToastContainer, toast } from 'react-toastify'
 import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import api, {apiUrl} from '../../api';
+import api from '../../api';
+import config from '../../config'
 
 
 const DocumentContainer = ({petition}) => {
@@ -140,7 +141,7 @@ const DocumentContainer = ({petition}) => {
                                     <td>{ index+1}</td>
                                     <td>{ document.title }</td>
                                     <td>
-                                        <a href={`${apiUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
+                                        <a href={`${config.apiUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
                                         <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(document)}>Delete</button>
                                     </td>
                                 </tr>    

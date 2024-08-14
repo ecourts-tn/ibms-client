@@ -27,14 +27,8 @@ const Relaxation = () => {
         setAdvocates(newAdvocate)
     }
 
-    const deleteRespondent = (respondent) => {
-        const newRespondent = respondents.filter((res) => { return res.id !== respondent.id })
-        setRespondents(newRespondent)
-    }
-
-
     const initialState = {
-        cino: '',
+        efile_no: '',
         case_no: '',
         court_type: '',
         bench_type:'',
@@ -156,7 +150,7 @@ const Relaxation = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -171,21 +165,21 @@ const Relaxation = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("api/bail/petition/detail/", {params: {cino:form.cino}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
-                    setPetitioners(response.data.petitioner)
-                    setRespondents(response.data.respondent)
+                    setPetitioners(response.data.litigant.filter(l=>l.titigant_type===1))
+                    setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        if(form.cino !== ''){
+        if(form.efile_no !== ''){
             fetchDetails()
         }
-    },[form.cino])
+    },[form.efile_no])
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -308,18 +302,18 @@ const Relaxation = () => {
                                                         <div className="form-group row">
                                                             <div className="col-sm-12">
                                                                 <select 
-                                                                    name="cino" 
+                                                                    name="efile_no" 
                                                                     className="form-control"
-                                                                    value={form.cino}
+                                                                    value={form.efile_no}
                                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
-                                                                        <option value={c.petition.cino} key={index}><>{c.petition.cino}</> - { c.petitioner.map((p, index) => (
-                                                                            <>{index+1}. {p.petitioner_name}</>
+                                                                        <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                                                            <>{index+1}. {p.litigant_name}</>
                                                                             ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                                            { c.respondent.map((res, index) => (
-                                                                            <>{res.respondent_name} rep by {res.designation}</>
+                                                                            { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                                            <>{res.litigant_name} {res.designation}</>
                                                                             ))} 
                                                                         </option>
                                                                     ))}
@@ -398,7 +392,7 @@ const Relaxation = () => {
                                                         { form.cino !== '' && (
                                                             <>
                                                             { Object.keys(petition).length > 0 && (
-                                                                <table className="table table-bordered table-striped">
+                                                                <table className="table table-bordered table-striped table-sm">
                                                                     { petition && (
                                                                     <>
                                                                         <tr>
@@ -439,7 +433,7 @@ const Relaxation = () => {
                                                                 </table>
                                                             )}
                                                             { Object.keys(petitioners).length > 0 && (
-                                                                <table className="table table-bordered table-striped">
+                                                                <table className="table table-bordered table-striped table-sm">
                                                                     <thead>
                                                                         <tr className="bg-secondary">
                                                                             <td colSpan={6}>Petitioner Details</td>
@@ -468,7 +462,7 @@ const Relaxation = () => {
                                                                 </table>
                                                             )}
                                                             { Object.keys(respondents).length > 0 && (
-                                                                <table className=" table table-bordered table-striped">
+                                                                <table className=" table table-bordered table-striped table-sm">
                                                                     <thead>
                                                                         <tr className="bg-secondary">
                                                                             <td colSpan={6}><strong>Respondent Details</strong></td>
@@ -485,7 +479,7 @@ const Relaxation = () => {
                                                                         { respondents.map((respondent, index) => (
                                                                             <tr>
                                                                                 <td>{index+1}</td>
-                                                                                <td>{respondent.respondent_name}</td>
+                                                                                <td>{respondent.litigant_name}</td>
                                                                                 <td>{respondent.designation}</td>
                                                                                 <td>{respondent.address}</td>
                                                                                 <td>{respondent.district}</td>
@@ -495,7 +489,7 @@ const Relaxation = () => {
                                                                 </table>
                                                             )}
                                                             { Object.keys(advocates).length > 0 && (
-                                                            <table className=" table table-bordered table-striped">
+                                                            <table className=" table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-secondary">
                                                                         <td colSpan={6}><strong>Advocate Details</strong>

@@ -5,7 +5,8 @@ import ViewDocument from './ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { formatDate, formatLitigant } from '../../utils'
-import api, {apiUrl} from '../../api'
+import api from '../../api'
+import config from '../../config'
 
 const DraftList = () => {
 
@@ -149,7 +150,7 @@ const DraftList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <>
-                                                <span key={index}><a href={`${apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                <span key={index}><a href={`${config.apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
                                                 {/* <Link
                                                     onClick={handleShowDocument}
                                                 >{d.title}</Link>

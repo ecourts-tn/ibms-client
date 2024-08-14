@@ -4,7 +4,7 @@ import api from "../../api";
 export const getStates = createAsyncThunk(
     'states/getStates',
     async () => {
-      const response = await api.get('api/base/state/');
+      const response = await api.get('base/state/');
       return response.data;
     }
 );

@@ -10,7 +10,7 @@ const initialState = {
 export const saveFiling = createAsyncThunk(
     'filing/saveFiling',
     async (filing) => {
-        const response = await api.post("api/bail/filing/", filing)
+        const response = await api.post("bail/filing/", filing)
         return response.data
     }
 )

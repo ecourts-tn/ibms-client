@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import api from '../../api';
-
+import config from '../../config'
 
 const DocumentContainer = ({petition}) => {
 

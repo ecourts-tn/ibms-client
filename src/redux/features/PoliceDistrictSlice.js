@@ -10,7 +10,7 @@ const initialState = {
 export const getPoliceDistricts = createAsyncThunk(
     'police_districts/getPoliceDistricts',
     async () => {
-        const response = await api.get("api/external/get-tn-districts/")
+        const response = await api.get("external/get-tn-districts/")
         return JSON.parse(response.data)
     }
 );

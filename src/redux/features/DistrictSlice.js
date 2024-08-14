@@ -10,7 +10,7 @@ const initialState = {
 export const getDistricts = createAsyncThunk(
     'districts/getDistricts',
     async () => {
-        const response = await api.get("api/base/district/")
+        const response = await api.get("base/district/")
         return response.data
     }
 );
@@ -19,7 +19,7 @@ export const getDistricts = createAsyncThunk(
 export const getDistrictByStateCode = createAsyncThunk(
     'district/getDistrictByState',
     async (state) => {
-        const response = await api.get(`api/base/state/${state}/district/`)
+        const response = await api.get(`base/state/${state}/district/`)
         return response.data
     }
 )
