@@ -1,5 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom'
+import { toast, ToastContainer } from 'react-toastify';
+import { Navigate } from 'react-router-dom';
+import api from '../../api';
+import { REFRESH_TOKEN } from "../../constants";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
@@ -19,8 +23,23 @@ const Header = () => {
       setUser(localStorage.getItem("user"))
   },[])
 
+  const handleLogout = async(e) => {
+    const response = await api.post('auth/logout/', {
+      refresh: localStorage.getItem(REFRESH_TOKEN)
+    })
+    localStorage.clear()
+    if(response.status === 200){
+        toast.success("You are logged out successfully", {
+            theme:"colored"
+        })
+        localStorage.clear()
+        return <Navigate to="/" />
+    }
+  }
+
   return (
       <>
+        <ToastContainer />
         <nav className="navbar navbar-expand-lg public-navbar">
           <div className="container">
             <a className="navbar-brand" href="#">Integrated Bail Management System</a>
@@ -84,7 +103,7 @@ const Header = () => {
                       <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                         <Link to="/auth/profile" className="nav-link">Profile</Link>
                         <Link to="/auth/change-password" className="nav-link">Change Password</Link>
-                        <Link to="/logout" className="nav-link">Logout</Link>
+                        <Link onClick={handleLogout} className="nav-link">Logout</Link>
                       </div>
                     </li>
                     : 

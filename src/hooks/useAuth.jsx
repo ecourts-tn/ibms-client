@@ -15,6 +15,9 @@ export const AuthProvider = ({ children }) => {
 
   // call this function to sign out logged in user
   const logout = () => {
+    localStorage.removeItem("access")
+    localStorage.removeItem("refresh")
+    localStorage.removeItem("user")
     setUser(null);
     navigate("/auth/login", {replace: true });
   };

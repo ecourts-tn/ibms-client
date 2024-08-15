@@ -142,7 +142,7 @@ const Login = () => {
                 <img className="mb-2" src={highcourtlogo} alt width={70} height={70} />
                 <h1 className="h4 mb-3 font-weight-bold">Sign In</h1>
             </div>    
-            <form className="form-signin" onSubmit={handleSubmit} style={{boxShadow:'none'}}>
+            <form onSubmit={handleSubmit}>
                 <RadioGroup
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
@@ -187,38 +187,16 @@ const Login = () => {
                         <Button 
                             variant="contained" 
                             endIcon={<LoginIcon />}
-                            onClick={handleSubmit}
+                            type="submit"
                             color="success"
                         >Sign In</Button>
                     </FormControl>
-                    {/* <input  
-                        type="text" 
-                        id="username" 
-                        className="form-control" 
-                        name="username"
-                        placeholder="Mobile/Email/Bar Code"  
-                        value={form.username}
-                        onChange={(e) => setForm({...form, username: e.target.value})}
-                    /> */}
                 </div>
-                {/* <div className="form-group mb-3">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password"
-                        className="form-control" 
-                        placeholder="Password"  
-                        value={form.password}
-                        onChange={(e) => setForm({...form, password: e.target.value})}
-                    />              
-                </div> */}
-
                 { loading && (
                     <div className="d-flex justify-content-center pt-1 pb-3">
                         <Spinner animation="border" variant="primary" style={{ height:50, width:50}}/>
                     </div>
                 )}
-                {/* <button className="btn btn-block btn-signin">Sign in</button> */}
                 <div className="mt-1">
                     <p><a href="#">Forgot&nbsp;password?</a></p>
                     <p className="d-flex justify-content-end">Don't have an account?&nbsp;<Link to="user/registration"> Register</Link></p>

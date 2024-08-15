@@ -200,3 +200,21 @@ legend > span {
     border-radius:0px;
     box-shadow: none;
 }
+
+.badge {
+    border-radius: 0;
+    font-size: 16px;
+    line-height: 1;
+    padding: .375rem .5625rem;
+    font-weight: bold
+}
+
+.badge-outline-primary {
+   background-color: #405189;
+   border: 1px solid #405189;
+   color:#FAFAFA;
+}
+
+.badge-pill {
+   border-radius: 10rem;
+}
