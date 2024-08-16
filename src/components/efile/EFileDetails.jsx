@@ -13,7 +13,7 @@ const EFileDetails = () => {
         async function fetchData(){
             try{
                 const efile_no = localStorage.getItem("efile_no")
-                const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setLitigants(response.data.litigant)

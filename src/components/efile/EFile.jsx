@@ -20,7 +20,7 @@ const EFile = () => {
         const efile_no = localStorage.getItem("efile_no")
         if(efile_no){
             try{
-                const response = await api.get("api/case/filing/final-submit/", {
+                const response = await api.get("case/filing/final-submit/", {
                     params: {
                         efile_no
                     }
@@ -35,7 +35,7 @@ const EFile = () => {
                         setIsFinalSubmit(false)
                     }else{
                         try{
-                            const result = await api.put(`api/case/filing/${efile_no}/final-submit/`)
+                            const result = await api.put(`case/filing/${efile_no}/final-submit/`)
                             if(result.status === 200){
                                 toast.success("Petition filed successfully", {
                                     theme:"colored"

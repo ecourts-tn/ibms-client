@@ -25,6 +25,7 @@
 const config = {
   development: {
     apiUrl: "http://localhost:8000/api/",
+    docUrl: "http://localhost:8000/",
     featureFlag: true,
   },
   staging: {

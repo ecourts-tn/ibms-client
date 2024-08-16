@@ -1,0 +1,10 @@
+.pdf-container{
+    background-color:#FAFAFA;
+    padding:100px;
+    font-size:20px;
+    font-family:'sans-serif'
+}
+.pdf-container li{
+    margin-top:25px;
+    text-align:justify
+}

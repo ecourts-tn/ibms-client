@@ -64,7 +64,7 @@ const DocumentContainer = ({petition}) => {
         const fetchDocuments = async() => {
             try{
                 const efile_no = localStorage.getItem("efile_no")
-                const response = await api.get("api/case/document/list/", {params:{efile_no}})
+                const response = await api.get("case/document/list/", {params:{efile_no}})
                 if(response.status === 200){
                     setDocuments(response.data)
                 }
@@ -81,7 +81,7 @@ const DocumentContainer = ({petition}) => {
             const newDocuments = documents.filter((g) => {
                 return g.id !== document.id
             })
-            const response = await api.delete("api/case/document/delete/", {params:{id:document.id}})
+            const response = await api.delete("case/document/delete/", {params:{id:document.id}})
             if(response.status === 204){
                 setDocuments(newDocuments)
                 toast.error("Documents deleted successfully", {
@@ -100,7 +100,7 @@ const DocumentContainer = ({petition}) => {
         // form_data.append('supporting_document', documents.supporting_document, documents.supporting_document.name);
         try{
             const efile_no = localStorage.getItem("efile_no")
-            const response = await api.post(`api/case/document/create/`, form, {
+            const response = await api.post(`case/document/create/`, form, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     // 'X-CSRFTOKEN': CSRF_TOKEN
@@ -141,7 +141,7 @@ const DocumentContainer = ({petition}) => {
                                     <td>{ index+1}</td>
                                     <td>{ document.title }</td>
                                     <td>
-                                        <a href={`${config.apiUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
+                                        <a href={`${config.docUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
                                         <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(document)}>Delete</button>
                                     </td>
                                 </tr>    

@@ -165,7 +165,7 @@ const BasicContainer = ({setActiveStep}) => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("api/case/filing/create/", petition)
+            const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 localStorage.setItem("efile_no", response.data.efile_number)
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
@@ -180,7 +180,7 @@ const BasicContainer = ({setActiveStep}) => {
                         is_primary: true
                     }
                     const efile_no = localStorage.getItem("efile_no")
-                    const res = await api.post(`api/advocate/create/`, advocate, {params: {efile_no}})
+                    const res = await api.post(`advocate/create/`, advocate, {params: {efile_no}})
                 }
             }
             setPetition(initialState)

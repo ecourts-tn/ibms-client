@@ -96,7 +96,7 @@ const Payment = () => {
     const handleSubmit = async () => {
         try{
             const efile_no = localStorage.getItem("efile_no")
-            const response = await api.post(`api/payment/court-fee/`, payment, {params:{efile_no}})
+            const response = await api.post(`payment/court-fee/`, payment, {params:{efile_no}})
             if(response.status === 201){
                 toast.success("Payment completed successfully", {
                     theme: "colored"

@@ -23,7 +23,7 @@ const PetitionList = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -37,7 +37,7 @@ const PetitionList = () => {
     const handleSubmit = async(cino) => {
         try{
             if(window.confirm("Are you sure you want to submit the petition")){
-                const response = await api.put(`api/bail/filing/${cino}/update/`, {is_draft:false})
+                const response = await api.put(`bail/filing/${cino}/update/`, {is_draft:false})
                 if(response.status === 200){
                     toast.success("Petition submitted successfully",{
                         theme:"colored"
@@ -99,7 +99,7 @@ const PetitionList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <>
-                                                <span key={index}><a href={`${config.apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                <span key={index}><a href={`${config.docUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
                                                 {/* <Link
                                                     onClick={handleShowDocument}
                                                 >{d.title}</Link>

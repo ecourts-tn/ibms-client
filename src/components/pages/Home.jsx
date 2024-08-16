@@ -24,11 +24,11 @@ const Home = () => {
 
     return (
         <>
-            <Container fluid className="px-5">
+            <Container fluid className="px-5" style={{minHeight:'600px'}}>
                 <Row className='py-2 mt-5'>
                     <Col md={3} className="">
                         <ToastContainer />
-                        { !isAuth ? <Login /> : <Sidebar />}  
+                        { !isAuth ? <Login /> : <Login />}  
                     </Col>
                     {/* <Col md={6} className="mt-5">
                         <Feed />

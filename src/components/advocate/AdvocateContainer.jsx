@@ -12,7 +12,7 @@ const AdvocateContainer = () => {
         async function fetchAdvocates(){
             try{
                 const efile_no = localStorage.getItem("efile_no")
-                const response = await api.get(`api/advocate/list/`, {params: {efile_no}})
+                const response = await api.get(`advocate/list/`, {params: {efile_no}})
                 if(response.status === 200){
                     setAdvocates(response.data)
                 }
@@ -27,7 +27,7 @@ const AdvocateContainer = () => {
     const addAdvocate = async (advocate) => {
         try{
             const efile_no = localStorage.getItem("efile_no")
-            const response = await api.post(`api/advocate/create/`, advocate, {params:{efile_no}})
+            const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
                 toast.success("Advocate details added successfully", {

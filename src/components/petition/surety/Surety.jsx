@@ -125,7 +125,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/case/submitted/list/`)
+                const response = await api.get(`case/submitted/list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -140,7 +140,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchState(){
             try{
-                const response = await api.get(`api/base/state/`)
+                const response = await api.get(`base/state/`)
                 if(response.status === 200){
                     setBusinessStates(response.data)
                 }
@@ -155,7 +155,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchState(){
             try{
-                const response = await api.get(`api/base/state/`)
+                const response = await api.get(`base/state/`)
                 if(response.status === 200){
                     setEmployerStates(response.data)
                 }
@@ -170,7 +170,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchDistrict(){
             try{
-                const response = await api.get(`api/base/state/${form.business_state}/district/`)
+                const response = await api.get(`base/state/${form.business_state}/district/`)
                 if(response.status === 200){
                     setBusinessDistricts(response.data)
                 }
@@ -187,7 +187,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchDistrict(){
             try{
-                const response = await api.get(`api/base/state/${form.employer_state}/district/`)
+                const response = await api.get(`base/state/${form.employer_state}/district/`)
                 if(response.status === 200){
                     setEmployerDistricts(response.data)
                 }
@@ -204,7 +204,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchTaluk(){
             try{
-                const response = await api.get(`api/base/district/${form.business_district}/taluk/`)
+                const response = await api.get(`base/district/${form.business_district}/taluk/`)
                 if(response.status === 200){
                     setBusinessTaluks(response.data)
                     console.log(businessTaluks)
@@ -222,7 +222,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchTaluk(){
             try{
-                const response = await api.get(`api/base/district/${form.employer_district}/taluk/`)
+                const response = await api.get(`base/district/${form.employer_district}/taluk/`)
                 if(response.status === 200){
                     setEmployerTaluks(response.data)
                     console.log(employerTaluks)
@@ -239,7 +239,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchRelation(){
             try{
-                const response = await api.get(`api/base/relation/`)
+                const response = await api.get(`base/relation/`)
                 if(response.status === 200){
                     setRelations(response.data)
                 }
@@ -275,7 +275,7 @@ const Surety = () => {
         e.preventDefault()
         try{
             // await searchSchema.validate(searchForm, { abortEarly:false})
-            const response = await api.get("api/bail/petition/detail/", { params: searchForm})
+            const response = await api.get("bail/petition/detail/", { params: searchForm})
             if(response.status === 200){
                 console.log(response.data)
                 setForm({...form, cino:response.data.petition.cino})
@@ -304,7 +304,7 @@ const Surety = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try{
-            const response = await api.post("api/bail/surety/create/", form, {
+            const response = await api.post("bail/surety/create/", form, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     // 'X-CSRFTOKEN': CSRF_TOKEN
@@ -484,7 +484,7 @@ const Surety = () => {
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
                                                     <div className="row">
-                                                        { form.cino !== '' && (
+                                                        
                                                         <form onSubmit={handleSubmit} encType='multipart/form-data'>
                                                             <div className="row">
                                                                 <div className="col-md-4">
@@ -1301,7 +1301,7 @@ const Surety = () => {
                                                                 >Next</Button>
                                                             </div>
                                                         </form>
-                                                        )}
+                                                     
                                                     </div>
                                                 </div>
                                             </div>

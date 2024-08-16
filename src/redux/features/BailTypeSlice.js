@@ -18,7 +18,7 @@ export const getBailTypes = createAsyncThunk(
 export const getBailTypeByCaseType = createAsyncThunk(
     'bailtype/getBailTypeByCaseType',
     async (id) => {
-        const response = await api.get(`api/base/case-type/${id}/bail-type/`)
+        const response = await api.get(`base/case-type/${id}/bail-type/`)
         return response.data
     }
 )

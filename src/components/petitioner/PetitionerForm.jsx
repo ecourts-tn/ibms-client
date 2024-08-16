@@ -10,6 +10,7 @@ import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
 import { getPrisons } from '../../redux/features/PrisonSlice'
 import { getRelations } from '../../redux/features/RelationSlice';
 import { RequiredField } from '../../utils';
+import api from '../../api';
 import * as Yup from 'yup'
 
 
@@ -25,7 +26,8 @@ const PetitionerForm = ({addPetitioner}) => {
   const accused = useSelector((state) => state.accused.accused)
 
   const stateStatus = useSelector(getStatesStatus)
-
+  const[proofs, setProofs] = useState([])
+  const[country, setCountry] = useState([])
   const initialState = {
       litigant: 'o',
       litigant_name: '',
@@ -43,7 +45,8 @@ const PetitionerForm = ({addPetitioner}) => {
       pincode:'',
       nationality: 1,
       mobile_number:'',
-      aadhar_number:'',
+      identify_proof:'',
+      proof_number:'',
       email_address:'',
       act: '',
       section: '',
@@ -82,7 +85,26 @@ const PetitionerForm = ({addPetitioner}) => {
   }),
   })
 
-  
+  useEffect(() => {
+    const fetchProofs = async() => {
+      const response = await api.get("base/proof/")
+      if(response.status===200){
+        setProofs(response.data)
+      }
+    }
+    fetchProofs()
+  },[])
+
+  useEffect(() => {
+    const fetchCountry = async() => {
+      const response = await api.get("base/country/")
+      if(response.status===200){
+        setCountry(response.data)
+      }
+    }
+    fetchCountry()
+  },[])
+
 
   useEffect(() => {
     if(stateStatus === 'idle'){
@@ -171,9 +193,6 @@ const PetitionerForm = ({addPetitioner}) => {
                     </select>
                 </div>
             </div>
-            <div className="col-md-7 d-flex justify-content-end">
-              <img src="https://t3.ftcdn.net/jpg/06/59/57/56/360_F_659575640_mKCJlXJiCHGxi4v76N4QvDhTUcOCXOAN.jpg" class="rounded float-end" alt="..." style={{height:'170px', width:'160px'}}/>
-            </div>
           </div>
           <p className="text-danger"><strong>*****  Fill the following details if the petitioner name is not listed  *****</strong></p>
           <div className="row mt-2">  
@@ -244,7 +263,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
                 <div className="form-group mb-3">
-                  <label htmlFor="relation">Relation<RequiredField /></label><br />
+                  <label htmlFor="relation">Parentage<RequiredField /></label><br />
                   { litigant.litigant !== 'o' && (
                     <Form.Control 
                       value={litigant.relation}
@@ -260,7 +279,7 @@ const PetitionerForm = ({addPetitioner}) => {
                       value={litigant.relation}
                       onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                       >
-                      <option value="">Select relation</option>
+                      <option value="">Select parantage</option>
                       { relations.map((item, index) => (
                         <option key={index} value={item.relation_name}>{ item.relation_name }</option>
                       )) }
@@ -272,7 +291,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Relation Name<RequiredField /></Form.Label>
+                <Form.Label>Parentage Name<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="relation_name"
@@ -388,7 +407,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 ></Form.Control>
               </Form.Group>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <Form.Group className="mb-3">
                 <Form.Label>Pincode</Form.Label>
                 <Form.Control
@@ -414,22 +433,50 @@ const PetitionerForm = ({addPetitioner}) => {
               </Form.Group>
             </div>
             <div className="col-md-3">
+              <div className="form-group">
+                <label htmlFor="">Identify Proof<RequiredField/></label>
+                <select 
+                  name="identity_proof" 
+                  className="form-control"
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
+                  <option value="">Select proof</option>
+                  { proofs.map((p, index) => (
+                    <option key={index} value={p.id}>{p.proof_name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Aadhaar Number<RequiredField /></Form.Label>
+                <Form.Label>Identity Proof Number<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
-                  name="aadhar_number"
-                  value={litigant.aadhar_number}
-                  readOnly={litigant.nationality !== 1 ? true : false }
-                  className={`${errors.aadhar_number ? 'is-invalid' : ''}`}
+                  name="proof_number"
+                  value={litigant.proof_number}
+                  className={`${errors.proof_number ? 'is-invalid' : ''}`}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
-                <div className="invalid-feedback">{ errors.aadhar_number }</div>
+                <div className="invalid-feedback">{ errors.proof_number }</div>
+              </Form.Group>
+            </div>
+            <div className="col-md-2">
+              <Form.Group>
+                <Form.Label>Country Code<RequiredField /></Form.Label>
+                <select name="country" className="form-control">
+                  <option value="">Select country</option>
+                  {country.map((c, index) => (
+                    <option key={index} value={c.id}>{`+(${c.iso})`} {c.country_name}</option>
+                  ))}
+                </select>
+                <div className="invalid-feedback">
+                  { errors.mobile_number}
+                </div>
               </Form.Group>
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Mobile Number<RequiredField /></Form.Label>
+                <Form.Label>Mobile Number (for Communication)<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
@@ -484,7 +531,7 @@ const PetitionerForm = ({addPetitioner}) => {
                   </div>
                 </div>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label htmlFor="prison">Name of Prison / Jail / Sub Jail</label><br />
                   <select 
@@ -503,7 +550,7 @@ const PetitionerForm = ({addPetitioner}) => {
                   <div className="invalid-feedback">{ errors.prison}</div>
                 </div>
               </div>  
-              <div className="col-md-2">
+              <div className="col-md-2 mt-2">
                 <Form.Group>
                   <Form.Label>No. of days in custody</Form.Label>
                   <Form.Control
@@ -519,7 +566,7 @@ const PetitionerForm = ({addPetitioner}) => {
                   </div>
                 </Form.Group>
               </div>
-              <div className="col-md-2">
+              <div className="col-md-2 mt-2">
                 <div className="form-group">
                   <label>If accused Surrendered<RequiredField /></label><br />
                   <div>

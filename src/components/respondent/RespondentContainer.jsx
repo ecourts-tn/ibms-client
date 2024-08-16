@@ -19,7 +19,7 @@ const RespondentContainer = () => {
         const fetchLitigants =  async() => {
             try{
                 const efile_no = localStorage.getItem("efile_no")
-                const response = await api.get(`api/litigant/list/`, {params:{efile_no}})
+                const response = await api.get(`litigant/list/`, {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((respondent)=> {
                         return respondent.litigant_type === 2
@@ -36,7 +36,7 @@ const RespondentContainer = () => {
     const addRespondent = async(litigant) => {
         const efile_no = localStorage.getItem("efile_no")
         try{
-            const response = await api.post(`api/litigant/create/`, litigant, {
+            const response = await api.post(`litigant/create/`, litigant, {
                 params: {
                 efile_no
                 }
