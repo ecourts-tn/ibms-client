@@ -36,6 +36,7 @@ import InitialInput from './components/petition/bail/InitialInput'
 import Litigant from './components/petition/bail/Litigant'
 
 import config from './config'
+import FormikStepper from './components/FormikStepper'
 
 function App() {
 
@@ -45,6 +46,9 @@ function App() {
  return (
     <>
       <HashRouter>
+        <Routes>
+          <Route path="/formik/stepper" element={<FormikStepper />} />
+        </Routes>
         <AuthProvider>
           <Routes>
             <Route element={<PublicLayout />}>
