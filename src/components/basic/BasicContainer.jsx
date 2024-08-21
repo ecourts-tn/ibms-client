@@ -18,6 +18,8 @@ import api from '../../api';
 import Select from 'react-select'
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { RequiredField } from '../../utils';
+import FIRSearch from '../search/FIRSearch';
+import CaseSearch from '../search/CaseSearch';
 
 const BasicContainer = ({setActiveStep}) => {
 
@@ -422,23 +424,32 @@ const BasicContainer = ({setActiveStep}) => {
                                             </div>    
                                         </div>
                                     </div>
-                                    <div className="form-group row clearfix mb-4">
-                                        <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
-                                        <div className="col-sm-9">
-                                            <div className="icheck-success d-inline mx-2">
-                                                <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
-                                                <label htmlFor="radioPrimary1">Yes</label>
-                                            </div>
-                                            <div className="icheck-danger d-inline mx-2">
-                                                <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
-                                                <label htmlFor="radioPrimary2">No</label>
-                                            </div>
-                                            <div className="icheck-primary d-inline mx-2">
-                                                <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
-                                                <label htmlFor="radioPrimary3">Not Known</label>
+                                    { parseInt(petition.complaint_type) === 1 && (
+                                        <div className="form-group row clearfix mb-4">
+                                            <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
+                                            <div className="col-sm-9">
+                                                <div className="icheck-success d-inline mx-2">
+                                                    <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
+                                                    <label htmlFor="radioPrimary1">Yes</label>
+                                                </div>
+                                                <div className="icheck-danger d-inline mx-2">
+                                                    <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
+                                                    <label htmlFor="radioPrimary2">No</label>
+                                                </div>
+                                                <div className="icheck-primary d-inline mx-2">
+                                                    <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
+                                                    <label htmlFor="radioPrimary3">Not Known</label>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 offset-md-3">
+                                    { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
+                                    
+                                    {/* <CaseSearch /> */}
                                 </div>
                                 <div className="col-md-12 d-flex justify-content-center mt-2">
                                     <Button

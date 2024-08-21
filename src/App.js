@@ -1,4 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
@@ -25,6 +26,7 @@ import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
 import MultiStepForm from './components/petition/bail/MultiStepForm'
 import NotFound from './components/pages/NotFound'
+import { useTranslation } from 'react-i18next';
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";
@@ -36,19 +38,22 @@ import InitialInput from './components/petition/bail/InitialInput'
 import Litigant from './components/petition/bail/Litigant'
 
 import config from './config'
-import FormikStepper from './components/FormikStepper'
+
+import ModificationNew from './components/petition/modification/ModificationNew'
+
+
 
 function App() {
+  
+  const { t, i18n } = useTranslation();
+  
+    const handleLanguageChange = (lng) => {
+      i18n.changeLanguage(lng);
+    };
 
-  const isAuthenticated = false
-  console.log(`API URL: ${config.apiUrl}`);
-  console.log(`Feature Flag: ${config.featureFlag ? 'Enabled' : 'Disabled'}`);
  return (
     <>
       <HashRouter>
-        <Routes>
-          <Route path="/formik/stepper" element={<FormikStepper />} />
-        </Routes>
         <AuthProvider>
           <Routes>
             <Route element={<PublicLayout />}>
@@ -145,7 +150,7 @@ function App() {
                 path="petition/modification" 
                 element={
                   <PrivateRoute>
-                    <Modification />
+                    <ModificationNew />
                   </PrivateRoute>
                 }
               />
@@ -233,7 +238,8 @@ function App() {
             <Route path="decrypt" element={<DecryptForm />} />
           </Routes>
         </AuthProvider>
-      </HashRouter>
+      </HashRouter> 
+
     </>
     
   )

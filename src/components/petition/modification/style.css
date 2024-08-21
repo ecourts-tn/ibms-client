@@ -1,0 +1,86 @@
+.bs-stepper-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .bs-stepper-circle {
+    display: block;
+    margin: 0 auto;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff; /* Step circle color */
+    color: white;
+    text-align: center;
+    line-height: 10px; /* Align number vertically */
+    font-size: 18px;
+  }
+  
+  .bs-stepper-label {
+    display: block;
+    margin-top: 5px; /* Space between circle and label */
+    text-align: center;
+    font-size: 16px;
+    /* color:teal */
+  }
+  
+  .step-trigger {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .step-trigger:focus {
+    outline: none;
+  }
+  
+  .step {
+    flex: 1;
+  }
+ /* Style for the active step circle */
+.bs-stepper-header .step .step-trigger.active .bs-stepper-circle {
+    background-color: #28a745!important; /* Change to your desired color */
+    color: white; /* Text color inside the circle */
+  }
+  
+  /* Style for the label of the active step */
+  .bs-stepper-header .step .step-trigger.active .bs-stepper-label {
+    color: #28a745; /* Change to your desired color */
+  }
+  
+  
+  /* Mobile devices */
+  @media (max-width: 767px) {
+    .bs-stepper-header {
+      flex-direction: column;
+    }
+  
+    .bs-stepper-header .step {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .bs-stepper-circle {
+    display: block;
+      width: 30px;
+      height: 30px;
+      line-height: 10px;
+      font-size: 12px;
+    }
+  
+    .bs-stepper-label {
+        display: block;
+      font-size: 10px;
+      margin-top: 3px;
+    }
+  
+    .bs-stepper-content {
+      padding: 10px;
+    }
+  }
+  
+  

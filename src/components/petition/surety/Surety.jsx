@@ -12,6 +12,7 @@ import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
 import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
 import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import * as Yup from 'yup'
+import { RequiredField } from '../../../utils';
 
 
 const Surety = () => {
@@ -501,14 +502,14 @@ const Surety = () => {
                                                                 </div>
                                                                 <div className="col-md-2">
                                                                     <div className="form-group">
-                                                                        <label htmlFor="">Relation</label>
+                                                                        <label htmlFor="">Parentage</label>
                                                                         <select 
                                                                             name="relation" 
                                                                             className="form-control"
                                                                             value={form.relation}
                                                                             onChange={handleChange}
                                                                         >
-                                                                            <option value="">Select relation</option>
+                                                                            <option value="">Select parentage</option>
                                                                             { relations.map((relation, index) => (
                                                                             <option key={index} value={relation.id}>{relation.relation_name}</option>
                                                                             ))}
@@ -517,7 +518,7 @@ const Surety = () => {
                                                                 </div>
                                                                 <div className="col-md-3">
                                                                     <div className="form-group">
-                                                                        <label>Relative Name of Surety</label>
+                                                                        <label>Name of the parentage</label>
                                                                         <input 
                                                                             type="text" 
                                                                             name="relative_name" 
@@ -760,7 +761,7 @@ const Surety = () => {
                                                             
                                                                 <div className="col-md-3">
                                                                     <div className="form-group">
-                                                                        <label>Type of Employment</label>
+                                                                        <label>Occupation</label>
                                                                         <select 
                                                                             name="employment_type" 
                                                                             value={ form.employment_type } 
@@ -769,8 +770,10 @@ const Surety = () => {
                                                                         >
                                                                             <option value="">Select type</option>
                                                                             <option value="1">Employed</option>
-                                                                            <option value="2">Business</option>
-                                                                            <option value="3">Unemployed</option>
+                                                                            <option value="2">Self Employed</option>
+                                                                            <option value="3">Business</option>
+                                                                            <option value="4">Agriculture</option>
+                                                                            <option value="5">Unemployed</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -1094,9 +1097,9 @@ const Surety = () => {
                                                                                 <div className="col-md-2">
                                                                                     <input
                                                                                         type="text"
-                                                                                        name="amount"
-                                                                                        placeholder="Amount"
-                                                                                        value={form.amount}
+                                                                                        name="ifsc_code"
+                                                                                        placeholder="IFSC Code"
+                                                                                        value={form.ifsc_code}
                                                                                         onChange={(e) => handleBankAccountChange(e)}
                                                                                         className="form-control"
                                                                                     />
@@ -1124,7 +1127,7 @@ const Surety = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-3">
                                                                             <div className="form-group">
-                                                                                <label>Known Accused Duration</label>
+                                                                                <label>Acquaintance duration</label>
                                                                                 <div className="input-group">
                                                                                     <div className="input-group-prepend">
                                                                                         <input
@@ -1149,7 +1152,7 @@ const Surety = () => {
                                                                         </div>
                                                                         <div className="col-md-3">
                                                                             <div className="form-group">
-                                                                                <label>Related to Accused</label>
+                                                                                <label>Related to accused?</label>
                                                                                 <div>
                                                                                     <div className="icheck-success d-inline mx-2">
                                                                                     <input 
@@ -1190,7 +1193,7 @@ const Surety = () => {
                                                                         </div>
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label>Surety for Others</label>
+                                                                                <label>Whether surety has furnished any other cases</label>
                                                                                 <textarea 
                                                                                     name="others_surety" 
                                                                                     value={form.others_surety} 
@@ -1240,7 +1243,20 @@ const Surety = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label>Upload Photo</label>
+                                                                                <label>Upload Aadhar<RequiredField /></label>
+                                                                                <input 
+                                                                                    type="file" 
+                                                                                    name="aadhar"
+                                                                                    className="form-control"
+                                                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="row">
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label>Upload Photo<RequiredField /></label>
                                                                                 <input 
                                                                                     type="file" 
                                                                                     name="photo"
@@ -1253,7 +1269,7 @@ const Surety = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label>Upload Signature</label>
+                                                                                <label>Upload Signature<RequiredField/></label>
                                                                                 <input 
                                                                                     type="file" 
                                                                                     name="signature"

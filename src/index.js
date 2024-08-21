@@ -8,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import TimeAgo from 'javascript-time-ago'
 
 import en from 'javascript-time-ago/locale/en'
+import './i18n';
 
 TimeAgo.addDefaultLocale(en)
 

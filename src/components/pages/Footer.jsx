@@ -2,13 +2,14 @@ import React from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
+import './footer.css'
 
 
 const Footer = () => {
   return (
         <>
-            <Container fluid className="pt-5" style={{backgroundColor: '#44B78B',color:'#FAFAFA', minHeight:'200px'}}>
-                <Container className="sub-footer">
+            <Container fluid className="sub-footer">
+                <Container className="">
                     <Row>
                     <Col>
                         <h6>IMPORTANT LINKS</h6>
@@ -38,7 +39,7 @@ const Footer = () => {
                     </Row>
                 </Container>
             </Container>
-            <Container fluid style={{ backgroundColor:'#0c4b33', minHeight:'50px', color:'#FAFAFA', verticalAlign:'middle'}}>
+            <Container fluid className='footer'>
                 <Row>
                 <Col>
                     <div className="d-flex justify-content-center">
