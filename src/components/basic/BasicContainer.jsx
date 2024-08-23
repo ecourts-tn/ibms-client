@@ -21,10 +21,11 @@ import { RequiredField } from '../../utils';
 import FIRSearch from '../search/FIRSearch';
 import CaseSearch from '../search/CaseSearch';
 
+
 const BasicContainer = ({setActiveStep}) => {
 
     const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
+    const stateStatus       = useSelector(getStatesStatus)
     const complaintStatus   = useSelector(getComplaintTypeStatus)
     const caseTypeStatus    = useSelector(getCaseTypeStatus)
     const courtTypeStatus   = useSelector(getCourtTypeStatus)
@@ -209,258 +210,230 @@ const BasicContainer = ({setActiveStep}) => {
             <ToastContainer />
             <div className="row">
                 <div className="col-md-12">
-                    <div className="">
-                        {/* <div className="card-header">
-                            <h3 className="text-center card-title">
-                                <i className="fa fa-pencil-alt mr-2"></i>
-                                <strong>Basic Details</strong>
-                            </h3>
-                        </div> */}
-                        <div className="">
-                            <div className="row mt-4">
-                                <div className="col-md-6 offset-md-3">
-                                    <Form.Group className="row mb-4">
-                                        <Form.Label className="col-sm-3">Court Type<RequiredField /></Form.Label>
-                                        <div className="col-sm-9">
-                                            <select 
-                                                name="court_type" 
-                                                id="court_type" 
-                                                className="form-control" 
-                                                value={petition.court_type} 
-                                                onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                            >
-                                                { courttypes.map((type, index) => (
-                                                    <option key={index} value={type.id}>{type.court_type}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                    <div className="row mt-4">
+                        <div className="col-md-8 offset-md-2">
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <Form.Group className="mb-3">
+                                        <Form.Label>Court Type<RequiredField /></Form.Label>
+                                        <select 
+                                            name="court_type" 
+                                            id="court_type" 
+                                            className="form-control" 
+                                            value={petition.court_type} 
+                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                        >
+                                            { courttypes.map((type, index) => (
+                                                <option key={index} value={type.id}>{type.court_type}</option>
+                                            ))}
+                                        </select>
                                     </Form.Group>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group mb-3">
+                                        <label htmlFor="bench_type">High Court Bench<RequiredField /></label>
+                                        <select 
+                                            name="bench_type" 
+                                            className={`form-control ${errors.bench_type ? 'is-invalid' : ''} `}
+                                            value={petition.bench_type}
+                                            disabled={ parseInt(petition.court_type) === 2 ? true : false}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                        >
+                                            <option value="">Select bench</option>
+                                            { benchtypes.map((bench, index) => (
+                                                <option key={index} value={bench.id}>{ bench.bench_type}</option>
+                                            ))}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.bench_type }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="col-md-6 offset-md-3">
-                                    { petition.court_type == 1 && (
-                                    <div className="form-group row mb-4">
-                                        <label htmlFor="bench_type" className="col-sm-3">High Court Bench<RequiredField /></label>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="bail_type">Bail Type<RequiredField /></label>
+                                        <select 
+                                            name="bail_type" 
+                                            id="bail_type" 
+                                            className={`form-control ${errors.bail_type ? 'is-invalid' : null}`}
+                                            value={petition.bail_type}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                        >
+                                            <option value="">Select type</option>
+                                            { bailtypes.map((item, index) => (
+                                            <option key={index} value={item.id}>{ item.type_name }</option>
+                                            ))}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.bail_type}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group mb-3">
+                                        <label htmlFor="complaint_type">Complaint Type<RequiredField /></label>
+                                        <select 
+                                            name="complaint_type" 
+                                            id="complaint_type"
+                                            className={`form-control ${errors.complaint_type ? 'is-invalid' : null}`}   
+                                            value={petition.complaint_type}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
+                                        >
+                                            <option value="">Select type</option>
+                                            { complainttypes.map((item, index) => (
+                                                <option key={index} value={item.id}>{ item.type_name }</option>
+                                            ))}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.complaint_type }
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12">                            
+                                { parseInt(petition.complaint_type) === 1 && (
+                                    <div className="form-group row my-2">
+                                        <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
                                         <div className="col-sm-9">
-                                            <select 
-                                                name="bench_type" 
-                                                className={`form-control ${errors.bench_type ? 'is-invalid' : ''} `}
-                                                value={petition.bench_type}
-                                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                                            >
-                                                <option value="">Select bench</option>
-                                                { benchtypes.map((bench, index) => (
-                                                    <option key={index} value={bench.id}>{ bench.bench_type}</option>
-                                                ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { errors.bench_type }
+                                            <div className="icheck-success d-inline mx-2">
+                                                <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
+                                                <label htmlFor="radioPrimary1">Yes</label>
+                                            </div>
+                                            <div className="icheck-danger d-inline mx-2">
+                                                <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
+                                                <label htmlFor="radioPrimary2">No</label>
+                                            </div>
+                                            <div className="icheck-primary d-inline mx-2">
+                                                <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
+                                                <label htmlFor="radioPrimary3">Not Known</label>
                                             </div>
                                         </div>
                                     </div>
-                                    )}
+                                )}
                                 </div>
-                            </div>  
+                            </div> 
                             { petition.court_type == 2 && (
-                            <div className="row">
-                                <div className="col-md-8 offset-md-2">
-                                    <div className="row mb-4">
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label htmlFor="state">State<RequiredField /></label>
-                                                <select 
-                                                    name="state" 
-                                                    className={`form-control ${errors.state ? 'is-invalid': null }`}
-                                                    value={petition.state} onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}>
-                                                    <option value="">Select state</option>
-                                                    { states.map( (item, index) => (
-                                                        <option key={index} value={item.state_code}>{item.state_name}</option>)
-                                                    )}
-                                                </select>
-                                                <div className="invalid-feedback">
-                                                    { errors.state }
-                                                </div>
-                                            </div>
+                            <div className="row mb-4">
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="state">State<RequiredField /></label>
+                                        <select 
+                                            name="state" 
+                                            className={`form-control ${errors.state ? 'is-invalid': null }`}
+                                            value={petition.state} onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}>
+                                            <option value="">Select state</option>
+                                            { states.map( (item, index) => (
+                                                <option key={index} value={item.state_code}>{item.state_name}</option>)
+                                            )}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.state }
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label htmlFor="district">District<RequiredField /></label>
-                                                {/* <select 
-                                                    id="basic_district"
-                                                    name="district" 
-                                                    className={`form-control ${errors.district ? 'is-invalid' : null}`}
-                                                    value={petition.district}
-                                                    onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                                >
-                                                    <option value="">Select district</option>
-                                                    { districts.map( (item, index) => (
-                                                        <option key={index} value={item.district_code}>{item.district_name}</option>)
-                                                    )}
-                                                </select> */}
-                                                <Select 
-                                                    name="district"
-                                                    options={districtOptions} 
-                                                    className={`${errors.district ? 'is-invalid' : null}`}
-                                                    onChange={(e) => setPetition({...petition, district:e.value})}
-                                                />
-                                                <div className="invalid-feedback">
-                                                    { errors.district }
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="district">District<RequiredField /></label>
+                                        {/* <select 
+                                            id="basic_district"
+                                            name="district" 
+                                            className={`form-control ${errors.district ? 'is-invalid' : null}`}
+                                            value={petition.district}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                        >
+                                            <option value="">Select district</option>
+                                            { districts.map( (item, index) => (
+                                                <option key={index} value={item.district_code}>{item.district_name}</option>)
+                                            )}
+                                        </select> */}
+                                        <Select 
+                                            name="district"
+                                            options={districts.map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                                            className={`${errors.district ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, district:e.value})}
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.district }
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label htmlFor="establishment">Establishment Name<RequiredField /></label>
-                                                <select 
-                                                    name="establishment" 
-                                                    id="establishment" 
-                                                    className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
-                                                    value={petition.establishment}
-                                                    onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                                >
-                                                    <option value="">Select Establishment</option>
-                                                    {
-                                                        establishments.filter((establishment) => {
-                                                            return establishment.bail_filing && establishment.display
-                                                        })
-                                                        .map((item, index) => (
-                                                            <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                                        ))
-                                                    }
-                                                </select>
-                                                <div className="invalid-feedback">
-                                                    { errors.establishment }
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="establishment">Establishment Name<RequiredField /></label>
+                                        <Select 
+                                            name="establishment"
+                                            options={establishments.map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
+                                            className={`${errors.establishment ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, establishment:e.value})}
+                                        />
+                                        {/* <select 
+                                            name="establishment" 
+                                            id="establishment" 
+                                            className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
+                                            value={petition.establishment}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                        >
+                                            <option value="">Select Establishment</option>
+                                            {
+                                                establishments.filter((establishment) => {
+                                                    return establishment.bail_filing && establishment.display
+                                                })
+                                                .map((item, index) => (
+                                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
+                                                ))
+                                            }
+                                        </select> */}
+                                        <div className="invalid-feedback">
+                                            { errors.establishment }
                                         </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label htmlFor="court">Court Name<RequiredField /></label>
-                                                <select 
-                                                    name="court" 
-                                                    id="court" 
-                                                    className={`form-control ${errors.court ? 'is-invalid' : null }`}
-                                                    value={petition.court}
-                                                    onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                                                >
-                                                    <option value="">Select court</option>
-                                                    {   courts.filter((court) => {
-                                                            return court.bail_filing && court.display
-                                                        })
-                                                        .map((item, index) => (
-                                                            <option key={index} value={item.court_code}>{ item.court_name}</option>
-                                                        ))
-                                                    }
-                                                </select>
-                                                <div className="invalid-feedback">
-                                                    { errors.court }
-                                                </div>
-                                            </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="court">Court Name<RequiredField /></label>
+                                        <Select 
+                                            name="court"
+                                            options={courts.map((est) => { return { value:est.court_code, label:est.court_name}})} 
+                                            className={`${errors.court ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, court:e.value})}
+                                        />
+                                        {/* <select 
+                                            name="court" 
+                                            id="court" 
+                                            className={`form-control ${errors.court ? 'is-invalid' : null }`}
+                                            value={petition.court}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                        >
+                                            <option value="">Select court</option>
+                                            {   courts.filter((court) => {
+                                                    return court.bail_filing && court.display
+                                                })
+                                                .map((item, index) => (
+                                                    <option key={index} value={item.court_code}>{ item.court_name}</option>
+                                                ))
+                                            }
+                                        </select> */}
+                                        <div className="invalid-feedback">
+                                            { errors.court }
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             )}
-                            <div className="row">
-                                <div className="col-md-6 offset-md-3">
-                                    <div className="form-group row mb-4">
-                                        <label htmlFor="caseType" className="col-sm-3">Case Type<RequiredField /></label>
-                                        <div className="col-sm-9">
-                                            <select 
-                                                name="case_type" 
-                                                id="case_type" 
-                                                className={`form-control ${errors.case_type ? 'is-invalid' : null}`} 
-                                                value={petition.case_type} 
-                                                onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                            >
-                                                <option value="">Select type</option>
-                                                { casetypes.map( (item, index) => (
-                                                <option key={index} value={item.id}>{item.type_full_form}</option>)
-                                                )}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { errors.case_type }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row mb-4">
-                                        <label htmlFor="bail_type" className="col-sm-3">Bail Type<RequiredField /></label>
-                                        <div className="col-sm-9">
-                                            <select 
-                                                name="bail_type" 
-                                                id="bail_type" 
-                                                className={`form-control ${errors.bail_type ? 'is-invalid' : null}`}
-                                                value={petition.bail_type}
-                                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                                            >
-                                                <option value="">Select type</option>
-                                                { bailtypes.map((item, index) => (
-                                                <option key={index} value={item.id}>{ item.type_name }</option>
-                                                ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { errors.bail_type}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row mb-4">
-                                        <label htmlFor="complaint_type" className="col-sm-3">Complaint Type<RequiredField /></label>
-                                        <div className="col-sm-9">
-                                            <select 
-                                                name="complaint_type" 
-                                                id="complaint_type"
-                                                className={`form-control ${errors.complaint_type ? 'is-invalid' : null}`}   
-                                                value={petition.complaint_type}
-                                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
-                                            >
-                                                <option value="">Select type</option>
-                                                { complainttypes.map((item, index) => (
-                                                    <option key={index} value={item.id}>{ item.type_name }</option>
-                                                ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { errors.complaint_type }
-                                            </div>    
-                                        </div>
-                                    </div>
-                                    { parseInt(petition.complaint_type) === 1 && (
-                                        <div className="form-group row clearfix mb-4">
-                                            <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
-                                            <div className="col-sm-9">
-                                                <div className="icheck-success d-inline mx-2">
-                                                    <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
-                                                    <label htmlFor="radioPrimary1">Yes</label>
-                                                </div>
-                                                <div className="icheck-danger d-inline mx-2">
-                                                    <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
-                                                    <label htmlFor="radioPrimary2">No</label>
-                                                </div>
-                                                <div className="icheck-primary d-inline mx-2">
-                                                    <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
-                                                    <label htmlFor="radioPrimary3">Not Known</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-md-6 offset-md-3">
-                                    { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
-                                    
-                                    {/* <CaseSearch /> */}
-                                </div>
-                                <div className="col-md-12 d-flex justify-content-center mt-2">
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        onClick={handleSubmit}
-                                    >
-                                        Submit
-                                    </Button>
-                                </div>
-                            </div>
+                            { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
+                            { parseInt(petition.complaint_type) === 2 || parseInt(petition.complaint_type) === 3 && <CaseSearch />}
+                        </div>                       
+                        <div className="col-md-12 d-flex justify-content-center mt-2">
+                            <Button
+                                variant="contained"
+                                color="success"
+                                onClick={handleSubmit}
+                            >
+                                Submit
+                            </Button>
                         </div>
                     </div>
                 </div>

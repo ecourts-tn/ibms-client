@@ -10,8 +10,6 @@ const FIRDetails = ({fir}) => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const[allChecked, setAllChecked] =  useState(true)
-    const[isConfirm, setIsConfirm] = useState(false)
 
     return (
         <>
@@ -19,9 +17,8 @@ const FIRDetails = ({fir}) => {
                 <div className="col-md-12 d-flex justify-content-center">
                     <Button
                         variant="contained"
-                        color="success"
+                        color="warning"
                         onClick={handleShow}
-                        disabled={ !allChecked }
                     >   
                         <i className="fa fa-paper-plane mr-2"></i>
                         View FIR Details

@@ -13,6 +13,7 @@ import FIRDetails from '../FIRDetails'
 import Loader from '../Loader'
 import * as Yup from 'yup'
 import { RequiredField } from '../../utils'
+import Select from 'react-select'
 
 
 const FIRSearch = () => {
@@ -69,7 +70,7 @@ const FIRSearch = () => {
     }, [petition.crime_state, dispatch])
 
     useEffect(() => {
-        if(petition.crime_district){
+        if(petition.crime_district !== ''){
             dispatch(getPoliceSationByDistrict(petition.crime_district))
         }
     }, [petition.crime_district, dispatch])
@@ -119,30 +120,38 @@ const FIRSearch = () => {
     }
 
     return (
-        <div className="container">
+        <>
             <div className="row">
                 <div className="col-md-3">
-                    <label htmlFor="crime_state">State<RequiredField/></label>
-                    <select 
-                        name="crime_state" 
-                        id="crime_state" 
-                        className={ `form-control ${errors.crime_state ? 'is-invalid': ''}`}
-                        value={petition.crime_state}
-                        onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}    
-                    >
-                       <option value="">Select state</option>
-                       { states.map((item, index) => (
-                         <option key={index} value={item.state_code }>{ item.state_name }</option>
-                       ))}
-                    </select>
-                    <div className="invalid-feedback">
-                        { errors.crime_state }
+                    <div className="form-group">
+                        <label htmlFor="crime_state">State<RequiredField/></label>
+                        <select 
+                            name="crime_state" 
+                            id="crime_state" 
+                            className={ `form-control ${errors.crime_state ? 'is-invalid': ''}`}
+                            value={petition.crime_state}
+                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}    
+                        >
+                        <option value="">Select state</option>
+                        { states.map((item, index) => (
+                            <option key={index} value={item.state_code }>{ item.state_name }</option>
+                        ))}
+                        </select>
+                        <div className="invalid-feedback">
+                            { errors.crime_state }
+                        </div>
                     </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-4">
                     <div className="form-group">
                         <label htmlFor="crime_district">District<RequiredField/></label><br />
-                        <select 
+                        <Select 
+                            name="crime_district"
+                            options={districts.map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            className={`${errors.district ? 'is-invalid' : null}`}
+                            onChange={(e) => setPetition({...petition, crime_district:e.value})}
+                        />
+                        {/* <select 
                             name="crime_district" 
                             id="crime_district" 
                             className={`form-control ${errors.crime_district ? 'is-invalid' : ''}`}
@@ -153,16 +162,22 @@ const FIRSearch = () => {
                             { districts.map((item, index) => (
                             <option key={index} value={item.district_code }>{ item.district_name }</option>
                             ))}
-                        </select>
+                        </select> */}
                         <div className="invalid-feedback">
                             { errors.crime_district }
                         </div>
                     </div>
                 </div>
-                <div className="col-md-6">
-                <div className="form-group">
+                <div className="col-md-5">
+                    <div className="form-group">
                     <label htmlFor="police_station">Police Station<RequiredField/></label><br />
-                    <select 
+                    <Select 
+                        name="police_station"
+                        options={policeStations.map((station) => { return { value:station.id, label:station.station_name}})} 
+                        className={`${errors.district ? 'is-invalid' : null}`}
+                        onChange={(e) => setPetition({...petition, police_station:e.value})}
+                    />
+                    {/* <select 
                         name="police_station" 
                         id="police_station" 
                         className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
@@ -173,12 +188,11 @@ const FIRSearch = () => {
                         { policeStations.map((item, index) => (
                             <option key={index} value={item.id}>{ item.station_name}</option>
                         ))}
-                    </select>
+                    </select> */}
                     <div className="invalid-feedback">{ errors.police_station }</div>
                     </div>
                 </div>
                 <div className="col-md-2 offset-4">
-                    <div className="form-group">
                     <Form.Group className="mb-3">
                         <Form.Label>FIR Number<RequiredField/></Form.Label>
                         <Form.Control 
@@ -190,7 +204,6 @@ const FIRSearch = () => {
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.crime_number }</div>
                     </Form.Group>
-                    </div>
                 </div>
                 <div className="col-md-2">
                     <Form.Group>
@@ -220,7 +233,7 @@ const FIRSearch = () => {
             { showAdditionalFields && (
                 <FIRDetails fir={petition}/>
             )}
-        </div>    
+        </>    
     )
 }
 
