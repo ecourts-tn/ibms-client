@@ -1,114 +1,116 @@
-import React, { useEffect } from 'react'
+import React, { useContext } from 'react'
 import { useState } from 'react'
 import api from '../../api'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getPoliceSationByDistrict } from '../../redux/features/PoliceStationSlice'
-import { getBasicDetails, getFirStatus } from '../../redux/features/FIRSeachSlice'
-import { getAccusedDetails } from '../../redux/features/AccusedSlice'
-import FIRDetails from '../FIRDetails'
+import FIRDetails from './FIRDetails'
 import Loader from '../Loader'
 import * as Yup from 'yup'
 import { RequiredField } from '../../utils'
 import Select from 'react-select'
+import { BaseContext } from '../../contexts/BaseContext'
 
 
 const FIRSearch = () => {
 
-    const stateStatus = useSelector(getStatesStatus)
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
+    const {
+        states, 
+        districts, 
+        policeStations, 
+        fir, 
+        setFir, 
+        accused, 
+        setAccused
+    } = useContext(BaseContext)
+
+    // const stateStatus = useSelector(getStatesStatus)
+    // const states = useSelector((state) => state.states.states)
+    // const districts = useSelector((state) => state.districts.districts)
+    // const policeStations = useSelector((state) => state.police_stations.police_stations)
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)
     const[errors, setErrors] = useState({})
-
-    const[petition, setPetition] = useState({
-        crime_state: '',
-        crime_district: '',
-        police_station: '',
-        crime_number: null,
-        crime_year: null,
-        date_of_occurrence  : null,
-        investigation_officer:'',
-        fir_date_time: null,
-        place_of_occurrence: '',
-        gist_of_fir: '',
-        gist_in_local: '',
-        complainant_age: null,
-        complainant_guardian:null,
-        complainant_guardian_name: '',
-        complainant_name:'',
-        investigation_officer_rank:'',
-        no_of_accused: null
-    })
+    const initialState = {
+        state: '',
+        district: '',
+        police_station : '',
+        crime_number:'',
+        year:''
+    }
+    const[form, setForm] = useState(initialState)
 
     const validationSchema = Yup.object({
-        crime_state: Yup.string().required("Please select state"),
-        crime_district: Yup.string().required("Please select district"),
+        state: Yup.string().required("Please select state"),
+        district: Yup.string().required("Please select district"),
         police_station: Yup.string().required("Please select police station"),
         crime_number: Yup.number().required("Please enter FIR number").typeError("This field should be numeric"),
-        crime_year: Yup.number().required("Please enter year").typeError("This field should be numeric")
+        year: Yup.number().required("Please enter year").typeError("This field should be numeric")
     })
 
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-            dispatch(getStates())
-        }
-    }, [stateStatus, dispatch])
+    // useEffect(() => {
+    //     if(stateStatus === 'idle'){
+    //         dispatch(getStates())
+    //     }
+    // }, [stateStatus, dispatch])
 
-    useEffect(() => {
-        if(petition.crime_state){
-            dispatch(getDistrictByStateCode(petition.crime_state))
-        }
-    }, [petition.crime_state, dispatch])
+    // useEffect(() => {
+    //     if(petition.crime_state){
+    //         dispatch(getDistrictByStateCode(petition.crime_state))
+    //     }
+    // }, [petition.crime_state, dispatch])
 
-    useEffect(() => {
-        if(petition.crime_district !== ''){
-            dispatch(getPoliceSationByDistrict(petition.crime_district))
-        }
-    }, [petition.crime_district, dispatch])
+    // useEffect(() => {
+    //     if(petition.crime_district !== ''){
+    //         dispatch(getPoliceSationByDistrict(petition.crime_district))
+    //     }
+    // }, [petition.crime_district, dispatch])
+
+    console.log(accused)
 
     const handleSearch = async (e) => {
         e.preventDefault()
         try{
-            await validationSchema.validate(petition, { abortEarly:false})
+            await validationSchema.validate(form, { abortEarly:false})
             setLoading(true)
             setShowAdditionalFields(false)
-            const {data} = await api.get("external/police/tamilnadu/fir-details/")
-            if(data){
-                setPetition({
-                    ...petition,
-                    fir_number : petition.crime_number,
-                    fir_year    : petition.crime_year,
-                    date_of_occurrence: data.date_of_Occurrence,
-                    investigation_officer :data.investigation_officer_name,
-                    fir_date_time: data.FIR_DATE_Time,
-                    place_of_occurrence: data.place_of_occurence,
-                    gist_of_fir: data.gist_of_FIR,
-                    gist_in_local: data.gist_of_FIR_local_language,
-                    complainant_age: data.complainant_age,
-                    complainant_guardian_name: data.complainant_guardian_name,
-                    complainant_name: data.complaintant_name,
-                    investigation_officer_rank: data.investigation_officer_rank,
-                    no_of_accused: data.no_of_accused,
-                    complainant_guardian: data.complainant_guardian
+            const response = await api.get("external/police/tamilnadu/fir-details/", {
+                params: form
+            })
+            if(response.status === 200){
+                setLoading(false)
+                setFir({...fir,
+                    state: form.state,
+                    district: form.district,
+                    police_station: form.police_station,
+                    fir_number: form.crime_number,
+                    fir_year: form.year,
+                    date_of_occurrence  : response.data.date_of_Occurrence,
+                    investigation_officer: response.data.investigation_officer_name,
+                    fir_date_time: response.data.FIR_DATE_Time,
+                    place_of_occurrence: response.data.place_of_occurence,
+                    gist_of_fir: response.data.gist_of_FIR,
+                    gist_in_local: response.data.gist_of_FIR_local_language,
+                    complainant_age: response.data.complainant_age,
+                    complainant_guardian: response.data.complainant_guardian,
+                    complainant_guardian_name: response.data.complainant_guardian_name,
+                    complainant_name:response.data.complaintant_name,
+                    investigation_officer_rank:response.data.investigation_officer_rank,
+                    no_of_accused: response.data.no_of_accused
                 })
-                if(petition.no_of_accused){
-                    const efile_no = localStorage.getItem("efile_no")
-                    const update = await api.post(`case/crime/details/create/`, petition, {params:{efile_no}})
-                    setLoading(false)
-                    setShowAdditionalFields(true)
-                    dispatch(getAccusedDetails())
-                }
+                setShowAdditionalFields(true)
+            }
+            const response2 = await api.get("external/police/tamilnadu/accused-details/", {
+                params: form
+            })
+            if(response2.status === 200){
+                setAccused(response2.data)
             }
         }catch(error){
+            console.log(error.inner)
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -121,16 +123,19 @@ const FIRSearch = () => {
 
     return (
         <>
-            <div className="row">
+            <div className="row" style={{border:"1px solid #ffc107"}}>
+                <div className="col-md-12 p-0">
+                    <p className="bg-warning py-1 px-3"><strong>FIR Search</strong></p>
+                </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="crime_state">State<RequiredField/></label>
+                        <label htmlFor="state">State<RequiredField/></label>
                         <select 
-                            name="crime_state" 
-                            id="crime_state" 
-                            className={ `form-control ${errors.crime_state ? 'is-invalid': ''}`}
-                            value={petition.crime_state}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}    
+                            name="state" 
+                            id="state" 
+                            className={ `form-control ${errors.state ? 'is-invalid': ''}`}
+                            value={form.state}
+                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}    
                         >
                         <option value="">Select state</option>
                         { states.map((item, index) => (
@@ -138,18 +143,18 @@ const FIRSearch = () => {
                         ))}
                         </select>
                         <div className="invalid-feedback">
-                            { errors.crime_state }
+                            { errors.state }
                         </div>
                     </div>
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label htmlFor="crime_district">District<RequiredField/></label><br />
+                        <label htmlFor="district">District<RequiredField/></label><br />
                         <Select 
-                            name="crime_district"
-                            options={districts.map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            name="district"
+                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
                             className={`${errors.district ? 'is-invalid' : null}`}
-                            onChange={(e) => setPetition({...petition, crime_district:e.value})}
+                            onChange={(e) => setForm({...form, district:e.value})}
                         />
                         {/* <select 
                             name="crime_district" 
@@ -164,7 +169,7 @@ const FIRSearch = () => {
                             ))}
                         </select> */}
                         <div className="invalid-feedback">
-                            { errors.crime_district }
+                            { errors.district }
                         </div>
                     </div>
                 </div>
@@ -173,9 +178,9 @@ const FIRSearch = () => {
                     <label htmlFor="police_station">Police Station<RequiredField/></label><br />
                     <Select 
                         name="police_station"
-                        options={policeStations.map((station) => { return { value:station.id, label:station.station_name}})} 
+                        options={policeStations.filter(p=>parseInt(p.revenue_district)===parseInt(form.district)).map((station) => { return { value:station.station_code, label:station.station_name}})} 
                         className={`${errors.district ? 'is-invalid' : null}`}
-                        onChange={(e) => setPetition({...petition, police_station:e.value})}
+                        onChange={(e) => setForm({...form, police_station:e.value})}
                     />
                     {/* <select 
                         name="police_station" 
@@ -199,8 +204,8 @@ const FIRSearch = () => {
                             type="text"
                             name="crime_number"
                             className={`${errors.crime_number ? 'is-invalid': ''}`}
-                            value={petition.crime_number}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            value={form.crime_number}
+                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.crime_number }</div>
                     </Form.Group>
@@ -210,12 +215,12 @@ const FIRSearch = () => {
                         <Form.Label>Year<RequiredField/></Form.Label>
                         <Form.Control 
                             type="text"
-                            name="crime_year"
-                            className={`${errors.crime_year ? 'is-invalid' : ''}`}
-                            value={petition.crime_year}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            name="year"
+                            className={`${errors.year ? 'is-invalid' : ''}`}
+                            value={form.year}
+                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                         ></Form.Control>
-                        <div className="invalid-feedback">{ errors.crime_year }</div>
+                        <div className="invalid-feedback">{ errors.year }</div>
                     </Form.Group>   
                 </div>  
                 <div className="col-md-2 mt-4 pt-2">
@@ -229,10 +234,12 @@ const FIRSearch = () => {
                 { loading && (
                     <Loader />
                 )}
+                <div className="col-md-12 d-flex justify-content-center">
+                    { showAdditionalFields && (
+                        <FIRDetails/>
+                    )}
+                </div>
             </div>
-            { showAdditionalFields && (
-                <FIRDetails fir={petition}/>
-            )}
         </>    
     )
 }

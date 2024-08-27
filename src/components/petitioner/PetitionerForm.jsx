@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify';
@@ -12,22 +12,35 @@ import { getRelations } from '../../redux/features/RelationSlice';
 import { RequiredField } from '../../utils';
 import api from '../../api';
 import * as Yup from 'yup'
+import { BaseContext } from '../../contexts/BaseContext';
+import { LocalConvenienceStoreOutlined } from '@mui/icons-material';
 
 
 const PetitionerForm = ({addPetitioner}) => {
 
+  const {
+    states, 
+    districts, 
+    taluks, 
+    relations,
+    prisons,
+    accused,
+    proofs,
+    countries
+  } = useContext(BaseContext)
+
   const dispatch = useDispatch()
 
-  const states = useSelector((state) => state.states.states)
-  const districts = useSelector((state) => state.districts.districts)
-  const taluks = useSelector((state) => state.taluks.taluks)
-  const relations = useSelector(state => state.relations.relations)
-  const prisons = useSelector((state) => state.prisons.prisons)
-  const accused = useSelector((state) => state.accused.accused)
+  // const states = useSelector((state) => state.states.states)
+  // const districts = useSelector((state) => state.districts.districts)
+  // const taluks = useSelector((state) => state.taluks.taluks)
+  // const relations = useSelector(state => state.relations.relations)
+  // const prisons = useSelector((state) => state.prisons.prisons)
+  // const accused = useSelector((state) => state.accused.accused)
 
-  const stateStatus = useSelector(getStatesStatus)
-  const[proofs, setProofs] = useState([])
-  const[country, setCountry] = useState([])
+  // const stateStatus = useSelector(getStatesStatus)
+  // const[proofs, setProofs] = useState([])
+  // const[country, setCountry] = useState([])
   const initialState = {
       litigant: 'o',
       litigant_name: '',
@@ -69,15 +82,15 @@ const PetitionerForm = ({addPetitioner}) => {
     gender: Yup.string().required(),
     address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
-    aadhar_number: Yup.number().required("Aadhaar number is required").typeError("This is field should be numeric"),
+    proof_number: Yup.string().required("Identify proof number is required"),
     act: Yup.string().required(),
     section: Yup.string().required(),
     address: Yup.string().required(),
-    prison: Yup.string().when("is_custody", (is_custody, schema) => {
-      if(is_custody){
-          return schema.required("Please select the prison")
-      }
-    }),
+    // prison: Yup.string().when("is_custody", (is_custody, schema) => {
+    //   if(is_custody){
+    //       return schema.required("Please select the prison")
+    //   }
+    // }),
     custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
       if(is_custody){
           return schema.required()
@@ -85,54 +98,54 @@ const PetitionerForm = ({addPetitioner}) => {
   }),
   })
 
-  useEffect(() => {
-    const fetchProofs = async() => {
-      const response = await api.get("base/proof/")
-      if(response.status===200){
-        setProofs(response.data)
-      }
-    }
-    fetchProofs()
-  },[])
+  // useEffect(() => {
+  //   const fetchProofs = async() => {
+  //     const response = await api.get("base/proof/")
+  //     if(response.status===200){
+  //       setProofs(response.data)
+  //     }
+  //   }
+  //   fetchProofs()
+  // },[])
 
-  useEffect(() => {
-    const fetchCountry = async() => {
-      const response = await api.get("base/country/")
-      if(response.status===200){
-        setCountry(response.data)
-      }
-    }
-    fetchCountry()
-  },[])
+  // useEffect(() => {
+  //   const fetchCountry = async() => {
+  //     const response = await api.get("base/country/")
+  //     if(response.status===200){
+  //       setCountry(response.data)
+  //     }
+  //   }
+  //   fetchCountry()
+  // },[])
 
 
-  useEffect(() => {
-    if(stateStatus === 'idle'){
-      dispatch(getStates())
-    }
-  },[stateStatus, dispatch])
+  // useEffect(() => {
+  //   if(stateStatus === 'idle'){
+  //     dispatch(getStates())
+  //   }
+  // },[stateStatus, dispatch])
   
-  useEffect(() => {
-    if(litigant.state !== ''){
-      dispatch(getDistrictByStateCode(litigant.state))
-    }
-  },[litigant.state, dispatch])
+  // useEffect(() => {
+  //   if(litigant.state !== ''){
+  //     dispatch(getDistrictByStateCode(litigant.state))
+  //   }
+  // },[litigant.state, dispatch])
 
-  useEffect(() => {
-    if(litigant.district !== ''){
-      dispatch(getTalukByDistrictCode(litigant.district))
-    }
-  },[litigant.district, dispatch])
+  // useEffect(() => {
+  //   if(litigant.district !== ''){
+  //     dispatch(getTalukByDistrictCode(litigant.district))
+  //   }
+  // },[litigant.district, dispatch])
 
-  useEffect(() => {
-    if(litigant.is_custody){
-      dispatch(getPrisons())
-    }
-  },[litigant.is_custody, dispatch])
+  // useEffect(() => {
+  //   if(litigant.is_custody){
+  //     dispatch(getPrisons())
+  //   }
+  // },[litigant.is_custody, dispatch])
 
-  useEffect(() => {
-    dispatch(getRelations())
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(getRelations())
+  // }, [dispatch])
 
 
   useEffect(() => {
@@ -165,6 +178,7 @@ const PetitionerForm = ({addPetitioner}) => {
       await validationSchema.validate(litigant, { abortEarly:false})
       addPetitioner(litigant)
     }catch(error){
+      console.log(error.inner)
       if(error.inner){
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -181,6 +195,7 @@ const PetitionerForm = ({addPetitioner}) => {
   return (
     <>
       <ToastContainer />
+        { accused.length > 0 && (
           <div className="row">
             <div className="col-md-4 mb-3">
                 <div className="form-group">
@@ -193,8 +208,11 @@ const PetitionerForm = ({addPetitioner}) => {
                     </select>
                 </div>
             </div>
+            <div className="col-md-8 pt-4">
+              <p className="text-danger"><strong>*****  Fill the following details if the petitioner name is not listed  *****</strong></p>
+            </div>
           </div>
-          <p className="text-danger"><strong>*****  Fill the following details if the petitioner name is not listed  *****</strong></p>
+        )}
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
@@ -373,7 +391,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select District</option>
-                    { districts.map((item, index) => (
+                    { districts.filter(district=>parseInt(district.state)===parseInt(litigant.state)).map((item, index) => (
                       <option value={item.district_code} key={index}>{item.district_name}</option>
                     ))}
                   </select>
@@ -390,7 +408,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select Taluk</option>
-                    { taluks.map((item, index) => (
+                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.taluk)).map((item, index) => (
                       <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
                     ))}
                   </select>
@@ -465,7 +483,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <Form.Label>Country Code<RequiredField /></Form.Label>
                 <select name="country" className="form-control">
                   <option value="">Select country</option>
-                  {country.map((c, index) => (
+                  {countries.map((c, index) => (
                     <option key={index} value={c.id}>{`+(${c.iso})`} {c.country_name}</option>
                   ))}
                 </select>

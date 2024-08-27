@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
@@ -20,26 +20,41 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { RequiredField } from '../../utils';
 import FIRSearch from '../search/FIRSearch';
 import CaseSearch from '../search/CaseSearch';
+import { BaseContext } from '../../contexts/BaseContext';
 
 
-const BasicContainer = ({setActiveStep}) => {
+const BasicContainer = () => {
+
+    const{
+        states, 
+        districts, 
+        establishments, 
+        courttypes,
+        benchtypes,
+        courts, 
+        bailtypes, 
+        complainttypes,  
+        efile_no, 
+        setEfileNo,
+        fir
+    } = useContext(BaseContext)
 
     const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus)
-    const complaintStatus   = useSelector(getComplaintTypeStatus)
-    const caseTypeStatus    = useSelector(getCaseTypeStatus)
-    const courtTypeStatus   = useSelector(getCourtTypeStatus)
-    const benchTypeStatus   = useSelector(getBenchTypeStatus)
+    // const stateStatus       = useSelector(getStatesStatus)
+    // const complaintStatus   = useSelector(getComplaintTypeStatus)
+    // const caseTypeStatus    = useSelector(getCaseTypeStatus)
+    // const courtTypeStatus   = useSelector(getCourtTypeStatus)
+    // const benchTypeStatus   = useSelector(getBenchTypeStatus)
 
-    const states            = useSelector((state) => state.states.states)
-    const districts         = useSelector((state) => state.districts.districts)
-    const casetypes         = useSelector((state) => state.casetypes.casetypes)
-    const bailtypes         = useSelector((state) => state.bailtypes.bailtypes)
-    const establishments    = useSelector((state) => state.establishments.establishments)
-    const courts            = useSelector((state) => state.courts.courts)
-    const complainttypes    = useSelector((state) => state.complainttypes.complainttypes)
-    const courttypes        = useSelector((state) => state.courttypes.courttypes)
-    const benchtypes        = useSelector((state) => state.benchtypes.benchtypes)
+    // const states            = useSelector((state) => state.states.states)
+    // const districts         = useSelector((state) => state.districts.districts)
+    // const casetypes         = useSelector((state) => state.casetypes.casetypes)
+    // // const bailtypes         = useSelector((state) => state.bailtypes.bailtypes)
+    // const establishments    = useSelector((state) => state.establishments.establishments)
+    // const courts            = useSelector((state) => state.courts.courts)
+    // const complainttypes    = useSelector((state) => state.complainttypes.complainttypes)
+    // const courttypes        = useSelector((state) => state.courttypes.courttypes)
+    // const benchtypes        = useSelector((state) => state.benchtypes.benchtypes)
 
     const initialState = {
         court_type: 1,
@@ -48,13 +63,11 @@ const BasicContainer = ({setActiveStep}) => {
         district:'',
         establishment: '',
         court:'',
-        case_type: '',
+        case_type: 1,
         bail_type: '',
         complaint_type:'',
         crime_registered: '',
     }
-
-    
     const[petition, setPetition] = useState(initialState)
     
     // useEffect(() => {
@@ -75,7 +88,6 @@ const BasicContainer = ({setActiveStep}) => {
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 
-    console.log(user.user)
 
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
@@ -104,66 +116,63 @@ const BasicContainer = ({setActiveStep}) => {
                 return schema.required("Please select the court")
             }
         }),
-        case_type: Yup.string().required("Please select the case type"),
         bail_type: Yup.string().required("Please select the bail type"),
         complaint_type: Yup.string().required("Please select the complaint type"),
-        crime_registered: Yup.string().required("Please choose any one option")
     })
 
-    useEffect(() => {
-        if(courtTypeStatus === 'idle'){
-            dispatch(getCourtTypes())
-        }
-    },[dispatch]) 
+    // useEffect(() => {
+    //     if(courtTypeStatus === 'idle'){
+    //         dispatch(getCourtTypes())
+    //     }
+    // },[dispatch]) 
 
-    useEffect(() => {
-        if(benchTypeStatus === 'idle' && petition.court_type !== ''){
-            dispatch(getBenchTypes())
-        }
-    }, [benchTypeStatus, dispatch])
+    // useEffect(() => {
+    //     if(benchTypeStatus === 'idle' && petition.court_type !== ''){
+    //         dispatch(getBenchTypes())
+    //     }
+    // }, [benchTypeStatus, dispatch])
 
-    useEffect(() => {
-        if(caseTypeStatus === 'idle'){
-          dispatch(getCaseTypes())
-        }
-    }, [caseTypeStatus, dispatch])
+    // useEffect(() => {
+    //     if(caseTypeStatus === 'idle'){
+    //       dispatch(getCaseTypes())
+    //     }
+    // }, [caseTypeStatus, dispatch])
 
-    useEffect(() => {
-        if(complaintStatus === 'idle'){
-            dispatch(getComplaintTypes())
-        }
-    }, [complaintStatus, dispatch])
+    // useEffect(() => {
+    //     if(complaintStatus === 'idle'){
+    //         dispatch(getComplaintTypes())
+    //     }
+    // }, [complaintStatus, dispatch])
     
-    useEffect(() => {
-        if(petition.case_type !== ''){
-            dispatch(getBailTypeByCaseType(petition.case_type));
-        }
-    }, [petition.case_type, dispatch]);
+    // useEffect(() => {
+    //     if(petition.case_type !== ''){
+    //         dispatch(getBailTypeByCaseType(petition.case_type));
+    //     }
+    // }, [petition.case_type, dispatch]);
     
-    useEffect(() => {
-    if(stateStatus === 'idle'){
-        dispatch(getStates())
-    }
-    }, [stateStatus, dispatch])
+    // useEffect(() => {
+    // if(stateStatus === 'idle'){
+    //     dispatch(getStates())
+    // }
+    // }, [stateStatus, dispatch])
     
-    useEffect(() => {
-    if(petition.state !== ''){
-        dispatch(getDistrictByStateCode(petition.state))
-    }
-    }, [petition.state, dispatch])
+    // useEffect(() => {
+    // if(petition.state !== ''){
+    //     dispatch(getDistrictByStateCode(petition.state))
+    // }
+    // }, [petition.state, dispatch])
     
-    useEffect(() => {
-        if( petition.district !== ''){
-            dispatch(getEstablishmentByDistrict(petition.district))
-        }
-    },[petition.district, dispatch])
+    // useEffect(() => {
+    //     if( petition.district !== ''){
+    //         dispatch(getEstablishmentByDistrict(petition.district))
+    //     }
+    // },[petition.district, dispatch])
 
-    useEffect(() => {
-        if(petition.establishment !== ''){
-          dispatch(getCourtsByEstablishmentCode(petition.establishment))
-        }
-    },[petition.establishment, dispatch])
-
+    // useEffect(() => {
+    //     if(petition.establishment !== ''){
+    //       dispatch(getCourtsByEstablishmentCode(petition.establishment))
+    //     }
+    // },[petition.establishment, dispatch])
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
@@ -174,19 +183,30 @@ const BasicContainer = ({setActiveStep}) => {
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme:"colored"
                 })
-                if(parseInt(user.user.user_type) === 1){
-                    const advocate = {
-                        advocate_name: user.user.username,
-                        advocate_email: user.user.email,
-                        advocate_mobile: user.user.mobile,
-                        enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
-                        is_primary: true
+                const efile_no = localStorage.getItem("efile_no")
+                if(efile_no){
+                    if(Object.keys(fir).length > 0){
+                        const response2 = await api.post(`case/crime/details/create/`, fir, {params:{efile_no}})
+                        if(response2.status === 200){
+                            console.log(response2.message)
+                        }
                     }
-                    const efile_no = localStorage.getItem("efile_no")
-                    const res = await api.post(`advocate/create/`, advocate, {params: {efile_no}})
+                    if(parseInt(user.user.user_type) === 1){
+                        const advocate = {
+                            advocate_name: user.user.username,
+                            advocate_email: user.user.email,
+                            advocate_mobile: user.user.mobile,
+                            enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
+                            is_primary: true
+                        }
+                        const response3 = await api.post(`advocate/create/`, advocate, {params: {efile_no}})
+                        if(response3.status === 200){
+                            console.log(response3.message)
+                        }
+                    }        
                 }
+               
             }
-            setPetition(initialState)
           }catch(error){
             if (error.inner){
                 const newErrors = {};
@@ -198,16 +218,10 @@ const BasicContainer = ({setActiveStep}) => {
         }
     }
 
-    const districtOptions = districts.map((district, index) => {
-        return {
-            value : district.district_code,
-            label : district.district_name
-        }
-    })
-
     return (
         <>
             <ToastContainer />
+            {/* <Steps /> */}
             <div className="row">
                 <div className="col-md-12">
                     <div className="row mt-4">
@@ -250,6 +264,114 @@ const BasicContainer = ({setActiveStep}) => {
                                     </div>
                                 </div>
                             </div>
+                            { petition.court_type == 2 && (
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="state">State<RequiredField /></label>
+                                        <select 
+                                            name="state" 
+                                            className={`form-control ${errors.state ? 'is-invalid': null }`}
+                                            value={petition.state} onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}>
+                                            <option value="">Select state</option>
+                                            { states.map( (item, index) => (
+                                                <option key={index} value={item.state_code}>{item.state_name}</option>)
+                                            )}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            { errors.state }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="district">District<RequiredField /></label>
+                                        {/* <select 
+                                            id="basic_district"
+                                            name="district" 
+                                            className={`form-control ${errors.district ? 'is-invalid' : null}`}
+                                            value={petition.district}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                        >
+                                            <option value="">Select district</option>
+                                            { districts.map( (item, index) => (
+                                                <option key={index} value={item.district_code}>{item.district_name}</option>)
+                                            )}
+                                        </select> */}
+                                        <Select 
+                                            name="district"
+                                            options={districts.filter(district=>parseInt(district.state)===parseInt(petition.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                                            className={`${errors.district ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, district:e.value})}
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.district }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="establishment">Establishment Name<RequiredField /></label>
+                                        <Select 
+                                            name="establishment"
+                                            options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
+                                            className={`${errors.establishment ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, establishment:e.value})}
+                                        />
+                                        {/* <select 
+                                            name="establishment" 
+                                            id="establishment" 
+                                            className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
+                                            value={petition.establishment}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                        >
+                                            <option value="">Select Establishment</option>
+                                            {
+                                                establishments.filter((establishment) => {
+                                                    return establishment.bail_filing && establishment.display
+                                                })
+                                                .map((item, index) => (
+                                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
+                                                ))
+                                            }
+                                        </select> */}
+                                        <div className="invalid-feedback">
+                                            { errors.establishment }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="court">Court Name<RequiredField /></label>
+                                        <Select 
+                                            name="court"
+                                            options={courts.filter(c=>c.establishment===petition.establishment).map((est) => { return { value:est.court_code, label:est.court_name}})} 
+                                            className={`${errors.court ? 'is-invalid' : null}`}
+                                            onChange={(e) => setPetition({...petition, court:e.value})}
+                                        />
+                                        {/* <select 
+                                            name="court" 
+                                            id="court" 
+                                            className={`form-control ${errors.court ? 'is-invalid' : null }`}
+                                            value={petition.court}
+                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                        >
+                                            <option value="">Select court</option>
+                                            {   courts.filter((court) => {
+                                                    return court.bail_filing && court.display
+                                                })
+                                                .map((item, index) => (
+                                                    <option key={index} value={item.court_code}>{ item.court_name}</option>
+                                                ))
+                                            }
+                                        </select> */}
+                                        <div className="invalid-feedback">
+                                            { errors.court }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            )}
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
@@ -262,7 +384,7 @@ const BasicContainer = ({setActiveStep}) => {
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select type</option>
-                                            { bailtypes.map((item, index) => (
+                                            { bailtypes.filter(type=>parseInt(type.case_type)===parseInt(petition.case_type)).map((item, index) => (
                                             <option key={index} value={item.id}>{ item.type_name }</option>
                                             ))}
                                         </select>
@@ -315,114 +437,6 @@ const BasicContainer = ({setActiveStep}) => {
                                 )}
                                 </div>
                             </div> 
-                            { petition.court_type == 2 && (
-                            <div className="row mb-4">
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label htmlFor="state">State<RequiredField /></label>
-                                        <select 
-                                            name="state" 
-                                            className={`form-control ${errors.state ? 'is-invalid': null }`}
-                                            value={petition.state} onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}>
-                                            <option value="">Select state</option>
-                                            { states.map( (item, index) => (
-                                                <option key={index} value={item.state_code}>{item.state_name}</option>)
-                                            )}
-                                        </select>
-                                        <div className="invalid-feedback">
-                                            { errors.state }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label htmlFor="district">District<RequiredField /></label>
-                                        {/* <select 
-                                            id="basic_district"
-                                            name="district" 
-                                            className={`form-control ${errors.district ? 'is-invalid' : null}`}
-                                            value={petition.district}
-                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                        >
-                                            <option value="">Select district</option>
-                                            { districts.map( (item, index) => (
-                                                <option key={index} value={item.district_code}>{item.district_name}</option>)
-                                            )}
-                                        </select> */}
-                                        <Select 
-                                            name="district"
-                                            options={districts.map((district) => { return { value:district.district_code, label:district.district_name}})} 
-                                            className={`${errors.district ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, district:e.value})}
-                                        />
-                                        <div className="invalid-feedback">
-                                            { errors.district }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label htmlFor="establishment">Establishment Name<RequiredField /></label>
-                                        <Select 
-                                            name="establishment"
-                                            options={establishments.map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
-                                            className={`${errors.establishment ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, establishment:e.value})}
-                                        />
-                                        {/* <select 
-                                            name="establishment" 
-                                            id="establishment" 
-                                            className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
-                                            value={petition.establishment}
-                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
-                                        >
-                                            <option value="">Select Establishment</option>
-                                            {
-                                                establishments.filter((establishment) => {
-                                                    return establishment.bail_filing && establishment.display
-                                                })
-                                                .map((item, index) => (
-                                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                                ))
-                                            }
-                                        </select> */}
-                                        <div className="invalid-feedback">
-                                            { errors.establishment }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-6">
-                                    <div className="form-group">
-                                        <label htmlFor="court">Court Name<RequiredField /></label>
-                                        <Select 
-                                            name="court"
-                                            options={courts.map((est) => { return { value:est.court_code, label:est.court_name}})} 
-                                            className={`${errors.court ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, court:e.value})}
-                                        />
-                                        {/* <select 
-                                            name="court" 
-                                            id="court" 
-                                            className={`form-control ${errors.court ? 'is-invalid' : null }`}
-                                            value={petition.court}
-                                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                                        >
-                                            <option value="">Select court</option>
-                                            {   courts.filter((court) => {
-                                                    return court.bail_filing && court.display
-                                                })
-                                                .map((item, index) => (
-                                                    <option key={index} value={item.court_code}>{ item.court_name}</option>
-                                                ))
-                                            }
-                                        </select> */}
-                                        <div className="invalid-feedback">
-                                            { errors.court }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            )}
                             { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
                             { parseInt(petition.complaint_type) === 2 || parseInt(petition.complaint_type) === 3 && <CaseSearch />}
                         </div>                       

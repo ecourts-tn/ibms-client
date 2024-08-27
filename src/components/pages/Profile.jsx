@@ -1,16 +1,21 @@
 import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import profile_pic from '../../profile.jpg'
+import { useAuth } from '../../hooks/useAuth'
 import * as Yup from 'yup'
 import api from '../../api'
 import './header.css'
 
 const Profile = () => {
 
+    const{user} = useAuth()
+
+    console.log(user)
+
     const initialState = {
-        mobile_number    : '8344381139',
-        email_address    : 'deenadayalan17@gmail.com',
-        username         : 'Deenadayalan M'
+        mobile_number    : user.user.mobile,
+        email_address    : user.user.email,
+        username         : user.user.username
     }
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
@@ -69,7 +74,7 @@ const Profile = () => {
                         <div class="card" style={{width: '18rem'}}>
                             <img src={profile_pic} alt="" />
                             <div className="card-body text-center">
-                                <p className="card-text"><strong>ADM20240000001<br/>Deenadayalan M<br/>deenadayalan17@gmail.com</strong></p>
+                                <p className="card-text"><strong>{user.user.username}<br/>{user.user.mobile}<br/>{user.user.email}</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>
                             </div>
                         </div>

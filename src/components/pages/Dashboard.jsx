@@ -149,7 +149,7 @@ const Dashboard = () => {
                                 </div>
                                 <div className="card-body">
                                 <ul className="todo-list" data-widget="todo-list">
-                                { cases.map((c, index) => (
+                                    { cases.map((c, index) => (
                                             <li key={index}>
                                                 <span className="handle">
                                                     <i className="fas fa-ellipsis-v" />
@@ -187,7 +187,7 @@ const Dashboard = () => {
 
                                                 </div>
                                             </li>
-                                        ))}
+                                    ))}
                                 </ul>
                                 </div>
                             </div>

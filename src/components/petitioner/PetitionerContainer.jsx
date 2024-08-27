@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import Badge from 'react-bootstrap/Badge'
 import Button from 'react-bootstrap/Button'
@@ -13,37 +13,39 @@ const PetitionerContainer = () => {
     const[petitioners, setPetitioners] = useState([])
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-
+    const efile_no = localStorage.getItem("efile_no")
     useEffect(() => {
         const fetchPetitioners = async() => {
-            const efile_no = localStorage.getItem("efile_no")
-            const response = await api.get("litigant/list", {params:{efile_no}})
-            if(response.status === 200){
-                const filtered_data = response.data.filter((petitioner)=> {
-                    return petitioner.litigant_type === 1
-                })
-                setPetitioners(filtered_data)
+            if(efile_no){
+                const response = await api.get("litigant/list", {params:{efile_no}})
+                if(response.status === 200){
+                    const filtered_data = response.data.filter((petitioner)=> {
+                        return petitioner.litigant_type === 1
+                    })
+                    setPetitioners(filtered_data)
+                }
             }
         }
         fetchPetitioners()
     },[])
 
     const addPetitioner = async(litigant) => {
-        const efile_no = localStorage.getItem("efile_no")
-        try{
-            const response = await api.post(`litigant/create/`, litigant, {
-                params: {
-                efile_no
-                }
-            })
-            if(response.status === 201){
-                setPetitioners(petitioners => [...petitioners, litigant])
-                toast.success(`Petitioner ${response.data.litigant_id} added successfully`, {
-                theme:"colored"
+        if(efile_no){
+            try{
+                const response = await api.post(`litigant/create/`, litigant, {
+                    params: {
+                    efile_no
+                    }
                 })
+                if(response.status === 201){
+                    setPetitioners(petitioners => [...petitioners, litigant])
+                    toast.success(`Petitioner ${response.data.litigant_id} added successfully`, {
+                    theme:"colored"
+                    })
+                }
+            }catch(error){
+                console.error(error)
             }
-        }catch(error){
-            console.error(error)
         }
     }
 
@@ -63,7 +65,7 @@ const PetitionerContainer = () => {
     }
      
     return (
-        <div className="container">
+        <div className="container mt-4">
             <div className="card card-outline card-danger">
                 <div className="card-header">
                     <div className="d-flex justify-content-between">

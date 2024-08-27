@@ -19,6 +19,7 @@ import { CaseNumberProvider } from '../../hooks/useCaseNumber'
 import EFile from '../efile/EFile'
 import api from '../../api'
 import { useSearchParams } from 'react-router-dom'
+import './style.css'
 
 function Litigants(props){
     const {
@@ -34,10 +35,6 @@ function Litigants(props){
 
     return (
         <>
-            <CaseDetails 
-                petition={petition}
-                setPetition={setPetition}
-            />
             <PetitionerContainer 
                 petitioners={petitioners} 
                 addPetitioner={addPetitioner}

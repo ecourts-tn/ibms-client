@@ -41,6 +41,10 @@ import config from './config'
 
 import ModificationNew from './components/petition/modification/ModificationNew'
 
+import { BaseProvider } from './contexts/BaseContext';
+import Steps from './components/Steps';
+import BasicContainer from './components/basic/BasicContainer';
+
 
 
 function App() {
@@ -55,188 +59,190 @@ function App() {
     <>
       <HashRouter>
         <AuthProvider>
-          <Routes>
-            <Route element={<PublicLayout />}>
-              <Route path="/auth/login" element={<Home />} />
-              <Route index element={<Home />} />
-              <Route path="pdf" element={<PdfGenerator />} />
-              <Route
-                path="/dashboard"
-                element={
+          <BaseProvider>
+            <Routes>
+              <Route element={<PublicLayout />}>
+                <Route path="/auth/login" element={<Home />} />
+                <Route index element={<Home />} />
+                <Route path="pdf" element={<PdfGenerator />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/petition/draft"
+                  element={
+                    <PrivateRoute>
+                      <DraftList />
+                    </PrivateRoute>
+                  }
+                />
+                <Route 
+                  path="petition/list" element={
                   <PrivateRoute>
-                    <Dashboard />
+                    <PetitionList />
                   </PrivateRoute>
-                }
-              />
-              <Route
-                path="/petition/draft"
-                element={
+                } />
+                <Route 
+                  path="petition/detail" 
+                  element={
+                    <PrivateRoute>
+                      <PetitionDetail />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/pdf" 
+                  element={
+                    <PrivateRoute>
+                      <PdfGenerator />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/payment" 
+                  element={
+                    <PrivateRoute>
+                      <Payment />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/bail" 
+                  element={
+                    <PrivateRoute>
+                      <BailFiling />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/bail/initial-input" 
+                  element={
+                    <PrivateRoute>
+                      <InitialInput />
+                    </PrivateRoute>       
+                  } 
+                />
+                <Route 
+                  path="petition/bail/litigant" 
+                  element={
+                    
+                      <Litigant />
+                    
+                  } 
+                />
+                <Route 
+                  path="petition/relaxation" 
+                  element={
+                    <PrivateRoute>
+                      <Relaxation />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/intervene" 
+                  element={
+                    <PrivateRoute>
+                      <IntervenePetition />
+                    </PrivateRoute>
+                  }
+                />
+                <Route 
+                  path="petition/modification" 
+                  element={
+                    <PrivateRoute>
+                      <ModificationNew />
+                    </PrivateRoute>
+                  }
+                />
+                <Route 
+                  path="petition/surety" 
+                  element={
                   <PrivateRoute>
-                    <DraftList />
+                    <Surety />
                   </PrivateRoute>
-                }
-              />
-              <Route 
-                path="petition/list" element={
-                <PrivateRoute>
-                  <PetitionList />
-                </PrivateRoute>
-              } />
-              <Route 
-                path="petition/detail" 
-                element={
-                  <PrivateRoute>
-                    <PetitionDetail />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/pdf" 
-                element={
-                  <PrivateRoute>
-                    <PdfGenerator />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/payment" 
-                element={
-                  <PrivateRoute>
-                    <Payment />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/bail" 
-                element={
-                  <PrivateRoute>
-                    <BailFiling />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/bail/initial-input" 
-                element={
-                  <PrivateRoute>
-                    <InitialInput />
-                  </PrivateRoute>       
-                } 
-              />
-              <Route 
-                path="petition/bail/litigant" 
-                element={
-                  
-                    <Litigant />
-                  
-                } 
-              />
-              <Route 
-                path="petition/relaxation" 
-                element={
-                  <PrivateRoute>
-                    <Relaxation />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/intervene" 
-                element={
-                  <PrivateRoute>
-                    <IntervenePetition />
-                  </PrivateRoute>
-                }
-              />
-              <Route 
-                path="petition/modification" 
-                element={
-                  <PrivateRoute>
-                    <ModificationNew />
-                  </PrivateRoute>
-                }
-              />
-              <Route 
-                path="petition/surety" 
-                element={
-                <PrivateRoute>
-                  <Surety />
-                </PrivateRoute>
-                }
-              />
-              <Route 
-                path="petition/surety-discharge" 
-                element={
-                  <PrivateRoute>
-                    <DischargeSurety />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/extension-time" 
-                element={
-                  <PrivateRoute>
-                    <Extension />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="petition/return-passport" 
-                element={
-                  <PrivateRoute>
-                    <ReturnPassport />
-                  </PrivateRoute>
-                } 
-              />
-              <Route
-                path="status/filing-number"
-                element={<FilingSearch />}
-              />
-              <Route
-                path="status/registration-number"
-                element={<RegistrationSearch />}
-              />
-              <Route
-                path="status/cnr-number"
-                element={<CNRSearch />}
-              />
-              <Route
-                path="status/fir-number"
-                element={<FIRSearch />}
-              />
-              <Route
-                path="status/party-name"
-                element={<PartyNameSearch />}
-              />
-              <Route 
-                path="auth/change-password" 
-                element={
-                  <PrivateRoute>
-                    <ChangePassword />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="auth/profile" 
-                element={
-                  <PrivateRoute>
-                    <Profile />
-                  </PrivateRoute>
-                } 
-              />
-              <Route 
-                path="logout" 
-                element={
-                  <PrivateRoute>
-                    <Logout />
-                  </PrivateRoute>
-                } 
-              />
-              <Route path="user/registration" element={<Register />} />
-              <Route path="filing/kiosk" element={<CaseStatus />} />
-              <Route path="stepper" element={<MultiStepForm />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-            <Route path="decrypt" element={<DecryptForm />} />
-          </Routes>
+                  }
+                />
+                <Route 
+                  path="petition/surety-discharge" 
+                  element={
+                    <PrivateRoute>
+                      <DischargeSurety />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/extension-time" 
+                  element={
+                    <PrivateRoute>
+                      <Extension />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="petition/return-passport" 
+                  element={
+                    <PrivateRoute>
+                      <ReturnPassport />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route
+                  path="status/filing-number"
+                  element={<FilingSearch />}
+                />
+                <Route
+                  path="status/registration-number"
+                  element={<RegistrationSearch />}
+                />
+                <Route
+                  path="status/cnr-number"
+                  element={<CNRSearch />}
+                />
+                <Route
+                  path="status/fir-number"
+                  element={<FIRSearch />}
+                />
+                <Route
+                  path="status/party-name"
+                  element={<PartyNameSearch />}
+                />
+                <Route 
+                  path="auth/change-password" 
+                  element={
+                    <PrivateRoute>
+                      <ChangePassword />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="auth/profile" 
+                  element={
+                    <PrivateRoute>
+                      <Profile />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route 
+                  path="logout" 
+                  element={
+                    <PrivateRoute>
+                      <Logout />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route path="user/registration" element={<Register />} />
+                <Route path="filing/kiosk" element={<CaseStatus />} />
+                <Route path="stepper" element={<MultiStepForm />} />
+                <Route path="*" element={<NotFound />} />
+              </Route>
+              <Route path="decrypt" element={<DecryptForm />} />
+            </Routes>
+          </BaseProvider>
         </AuthProvider>
       </HashRouter> 
 

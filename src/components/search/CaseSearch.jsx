@@ -123,37 +123,38 @@ const CaseSearch = () => {
 
     return (
         <>
-            <div className="row mt-4">
-                <div className="col-md-12 d-flex justify-content-center">
-                    <div className="form-group clearfix">
-                        <label htmlFor="" className="mr-2">Search Case By:</label>
-                        <div className="icheck-info d-inline mx-2">
-                            <input 
-                                type="radio" 
-                                name="search" 
-                                id="case_search_basic" 
-                                onClick={(e) => setSearch(1)} 
-                                checked={ search === 1 }
-                            />
-                            <label htmlFor="case_search_basic">Basic Search</label>
-                        </div>
-                        <div className="icheck-warning d-inline mx-2">
-                            <input 
-                                type="radio" 
-                                name="search" 
-                                id="case_search_advanced" 
-                                onClick={(e) => setSearch(2)}
-                                checked={ search === 2 }
-                            />
-                            <label htmlFor="case_search_advanced">Advance Search</label>
+            <div className="row p-0" style={{border:"1px solid #ffc107"}}>
+                    <div className="col-md-12 p-0">
+                        <p className="bg-warning py-2 px-3"><strong>Case Search</strong></p>
+                    </div>
+                    <div className="col-md-12 d-flex justify-content-center">
+                        <div className="form-group clearfix">
+                            <label htmlFor="" className="mr-2">Search Case By:</label>
+                            <div className="icheck-info d-inline mx-2">
+                                <input 
+                                    type="radio" 
+                                    name="search" 
+                                    id="case_search_basic" 
+                                    onClick={(e) => setSearch(1)} 
+                                    checked={ search === 1 }
+                                />
+                                <label htmlFor="case_search_basic">Basic Search</label>
+                            </div>
+                            <div className="icheck-warning d-inline mx-2">
+                                <input 
+                                    type="radio" 
+                                    name="search" 
+                                    id="case_search_advanced" 
+                                    onClick={(e) => setSearch(2)}
+                                    checked={ search === 2 }
+                                />
+                                <label htmlFor="case_search_advanced">Advance Search</label>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>  
-            <div className="row mb-3">
-                { search === 1 && (
+                    { search === 1 && (
                     <div className="col-md-6 offset-md-3">
-                        <Form.Group className="row mt-2">
+                        <Form.Group className="row">
                             <Form.Label className="col-sm-4 text-right">CNR&nbsp;Number</Form.Label>
                             <div className="col-sm-8">
                                 <Form.Control
@@ -167,135 +168,135 @@ const CaseSearch = () => {
                             </div>
                         </Form.Group>
                     </div>
-                )}
-                { search === 2 && (
-                <>
-                    <div className="col-md-3">
-                        <div className="form-group">
-                            <label htmlFor="case_state">State</label>
-                            <select 
-                                name="case_state" 
-                                id="case_state" 
-                                className={`form-control ${errors.case_state ? 'is-invalid' : ''}`}
-                                value={ form.case_state} 
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            >
-                                <option value="">Select state</option>
-                                { states.map( (item, index) => (
-                                    <option key={index} value={item.state_code}>{item.state_name}</option>)
-                                )}
-                            </select>
-                            <div className="invalid-feedback">{ errors.case_state }</div>
+                    )}
+                    { search === 2 && (
+                    <div className="row mb-3 px-2">
+                        <div className="col-md-3">
+                            <div className="form-group">
+                                <label htmlFor="case_state">State</label>
+                                <select 
+                                    name="case_state" 
+                                    id="case_state" 
+                                    className={`form-control ${errors.case_state ? 'is-invalid' : ''}`}
+                                    value={ form.case_state} 
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                >
+                                    <option value="">Select state</option>
+                                    { states.map( (item, index) => (
+                                        <option key={index} value={item.state_code}>{item.state_name}</option>)
+                                    )}
+                                </select>
+                                <div className="invalid-feedback">{ errors.case_state }</div>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <div className="form-group">
+                                <label htmlFor="case_district">District</label>
+                                <select 
+                                    name="case_district" 
+                                    id="case_district" 
+                                    className={`form-control ${errors.case_district ? 'is-invalid' : ''}`}
+                                    value={ form.case_district }
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                >
+                                    <option value="">Select district</option>
+                                    { districts.map( (item, index) => (
+                                        <option key={index} value={item.district_code}>{item.district_name}</option>)
+                                    )}
+                                </select>
+                                <div className="invalid-feedback">{ errors.case_district }</div>
+                            </div>
+                        </div>
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="case_establishment">Establishment Name</label>
+                                <select 
+                                    name="case_establishment" 
+                                    id="case_establishment" 
+                                    className={`form-control ${errors.case_establishment ? 'is-invalid' : ''}`}
+                                    value={form.case_establishment}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                >
+                                    <option value="">Select Establishment</option>
+                                    { establishments.map((item, index) => (
+                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
+                                    ))}
+                                </select>
+                                <div className="invalid-feedback">{ errors.case_establishment }</div>
+                            </div>
+                        </div>
+                        <div className="col-md-5">
+                            <div className="form-group">
+                                <label htmlFor="court">Court Name</label>
+                                <select 
+                                    name="case_court" 
+                                    id="case_court" 
+                                    className={`form-control ${errors.case_court ? 'is-invalid' : ''}`}
+                                    value={ form.case_court}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                >
+                                    <option value="">Select Court</option>
+                                    { courts.map((item, index) => (
+                                        <option key={index} value={item.court_code}>{ item.court_name}</option>
+                                    ))}
+                                </select>
+                                <div className="invalid-feedback">{ errors.court }</div>
+                            </div>
+                        </div>
+                        <div className="col-md-3">
+                            <Form.Group>
+                                <Form.Label>Case Type</Form.Label>
+                                <select 
+                                    name="case_case_type" 
+                                    className={`form-control ${errors.case_case_type ? 'is-invalid' : ''}`}
+                                    value={form.case_case_type}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}    
+                                >
+                                    <option value="">Select case type</option>
+                                    <option value="1">CRLMP</option>
+                                </select>
+                                <div className="invalid-feedback">{ errors.case_case_type }</div>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-2">
+                            <Form.Group>
+                                <Form.Label>Case Number</Form.Label>
+                                <Form.Control
+                                    name="case_number"
+                                    value={form.case_number}
+                                    className={`${errors.case_number ? 'is-invalid' : ''}`}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                ></Form.Control>
+                                <div className="invalid-feedback">{ errors.case_number }</div>
+                            </Form.Group>
+                        </div>
+                        <div className="col-md-2">
+                            <Form.Group>
+                                <Form.Label>Case Year</Form.Label>
+                                <Form.Control
+                                    name="case_year"
+                                    value={form.case_year}
+                                    className={`${errors.case_state ? 'is-invalid' : ''}`}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                ></Form.Control>
+                                <div className="invalid-feedback">{ errors.case_year }</div>
+                            </Form.Group>
                         </div>
                     </div>
-                    <div className="col-md-3">
-                        <div className="form-group">
-                            <label htmlFor="case_district">District</label>
-                            <select 
-                                name="case_district" 
-                                id="case_district" 
-                                className={`form-control ${errors.case_district ? 'is-invalid' : ''}`}
-                                value={ form.case_district }
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            >
-                                <option value="">Select district</option>
-                                { districts.map( (item, index) => (
-                                    <option key={index} value={item.district_code}>{item.district_name}</option>)
-                                )}
-                            </select>
-                            <div className="invalid-feedback">{ errors.case_district }</div>
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label htmlFor="case_establishment">Establishment Name</label>
-                            <select 
-                                name="case_establishment" 
-                                id="case_establishment" 
-                                className={`form-control ${errors.case_establishment ? 'is-invalid' : ''}`}
-                                value={form.case_establishment}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            >
-                                <option value="">Select Establishment</option>
-                                { establishments.map((item, index) => (
-                                <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                ))}
-                            </select>
-                            <div className="invalid-feedback">{ errors.case_establishment }</div>
-                        </div>
-                    </div>
-                    <div className="col-md-5">
-                        <div className="form-group">
-                            <label htmlFor="court">Court Name</label>
-                            <select 
-                                name="case_court" 
-                                id="case_court" 
-                                className={`form-control ${errors.case_court ? 'is-invalid' : ''}`}
-                                value={ form.case_court}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            >
-                                <option value="">Select Court</option>
-                                { courts.map((item, index) => (
-                                    <option key={index} value={item.court_code}>{ item.court_name}</option>
-                                ))}
-                            </select>
-                            <div className="invalid-feedback">{ errors.court }</div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
+                    )}
+                    <div className="col-md-12 text-center my-3">
                         <Form.Group>
-                            <Form.Label>Case Type</Form.Label>
-                            <select 
-                                name="case_case_type" 
-                                className={`form-control ${errors.case_case_type ? 'is-invalid' : ''}`}
-                                value={form.case_case_type}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}    
-                            >
-                                <option value="">Select case type</option>
-                                <option value="1">CRLMP</option>
-                            </select>
-                            <div className="invalid-feedback">{ errors.case_case_type }</div>
+                            <Button 
+                                variant="info"
+                                onClick={handleSearch}
+                            ><i className="fa fa-search mr-2"></i>Search</Button>
                         </Form.Group>
                     </div>
-                    <div className="col-md-2">
-                        <Form.Group>
-                            <Form.Label>Case Number</Form.Label>
-                            <Form.Control
-                                name="case_number"
-                                value={form.case_number}
-                                className={`${errors.case_number ? 'is-invalid' : ''}`}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                            ></Form.Control>
-                            <div className="invalid-feedback">{ errors.case_number }</div>
-                        </Form.Group>
-                    </div>
-                    <div className="col-md-2">
-                        <Form.Group>
-                            <Form.Label>Case Year</Form.Label>
-                            <Form.Control
-                                name="case_year"
-                                value={form.case_year}
-                                className={`${errors.case_state ? 'is-invalid' : ''}`}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            ></Form.Control>
-                            <div className="invalid-feedback">{ errors.case_year }</div>
-                        </Form.Group>
-                    </div>
-                </>
-                )}
-                <div className="col-md-12 text-center mt-3">
-                    <Form.Group>
-                        <Button 
-                            variant="info"
-                            onClick={handleSearch}
-                        ><i className="fa fa-search mr-2"></i>Search</Button>
-                    </Form.Group>
-                </div>
-                { loading && (
-                    <Loader />
-                )}
-            </div>           
-        </>
+                    { loading && (
+                        <Loader />
+                    )}
+                </div>           
+            </>
   )
 }
 
