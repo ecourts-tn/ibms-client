@@ -63,7 +63,7 @@ function App() {
             <Routes>
               <Route element={<PublicLayout />}>
                 <Route path="/auth/login" element={<Home />} />
-                <Route index element={<Home />} />
+                <Route index element={<Steps />} />
                 <Route path="pdf" element={<PdfGenerator />} />
                 <Route
                   path="/dashboard"
