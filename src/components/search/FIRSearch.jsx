@@ -49,28 +49,6 @@ const FIRSearch = () => {
         year: Yup.number().required("Please enter year").typeError("This field should be numeric")
     })
 
-    const dispatch = useDispatch()
-
-    // useEffect(() => {
-    //     if(stateStatus === 'idle'){
-    //         dispatch(getStates())
-    //     }
-    // }, [stateStatus, dispatch])
-
-    // useEffect(() => {
-    //     if(petition.crime_state){
-    //         dispatch(getDistrictByStateCode(petition.crime_state))
-    //     }
-    // }, [petition.crime_state, dispatch])
-
-    // useEffect(() => {
-    //     if(petition.crime_district !== ''){
-    //         dispatch(getPoliceSationByDistrict(petition.crime_district))
-    //     }
-    // }, [petition.crime_district, dispatch])
-
-    console.log(accused)
-
     const handleSearch = async (e) => {
         e.preventDefault()
         try{
@@ -80,6 +58,7 @@ const FIRSearch = () => {
             const response = await api.get("external/police/tamilnadu/fir-details/", {
                 params: form
             })
+            console.log(typeof(response.data))
             if(response.status === 200){
                 setLoading(false)
                 setFir({...fir,
@@ -178,7 +157,7 @@ const FIRSearch = () => {
                     <label htmlFor="police_station">Police Station<RequiredField/></label><br />
                     <Select 
                         name="police_station"
-                        options={policeStations.filter(p=>parseInt(p.revenue_district)===parseInt(form.district)).map((station) => { return { value:station.station_code, label:station.station_name}})} 
+                        options={policeStations.filter(p=>parseInt(p.revenue_district)===parseInt(form.district)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
                         className={`${errors.district ? 'is-invalid' : null}`}
                         onChange={(e) => setForm({...form, police_station:e.value})}
                     />

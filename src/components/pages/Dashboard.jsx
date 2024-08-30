@@ -11,15 +11,26 @@ const Dashboard = () => {
 
     useEffect(() => {
         const fecthCases = async() =>{
-            const response = await api.get("case/dashboard/")
-            if(response.status === 200){
-                setCases(response.data.petitions)
-                setCount({
-                    'draft': response.data.draft,
-                    'submitted': response.data.submitted,
-                    'approved': response.data.approved,
-                    'returned': response.data.returned,
-                })
+            try{
+                const response = await api.get("case/dashboard/")
+                if(response.status === 200){
+                    setCases(response.data.petitions)
+                    setCount({
+                        'draft': response.data.draft,
+                        'submitted': response.data.submitted,
+                        'approved': response.data.approved,
+                        'returned': response.data.returned,
+                    })
+                }
+            }catch(error){
+                if (!error.response) {
+                    // Network error or request could not be made
+                    console.error('Network error: Unable to reach the server. Please try again later.');
+                } else {
+                    // Handle other types of errors
+                    console.error(`Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
+                }
+                console.error('Error fetching data:', error);
             }
         }
         fecthCases();

@@ -36,7 +36,7 @@ const PreviousCaseForm = () => {
 
     const handleSubmit = async (e) => {
         try{
-            const cino = localStorage.getItem("cino")
+            const cino = sessionStorage.getItem("efile_no")
             const response = await api.put(`api/bail/filing/${cino}/update/`, petition)
             if(response.status === 200){
                 toast.success("Previous case details updated successfully", {

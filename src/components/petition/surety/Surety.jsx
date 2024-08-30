@@ -126,7 +126,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/submitted/list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -405,11 +405,11 @@ const Surety = () => {
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
-                                                                        <option value={c.petition.cino} key={index}><>{c.petition.cino}</> - { c.petitioner.map((p, index) => (
-                                                                            <>{index+1}. {p.petitioner_name}</>
+                                                                        <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                                                            <>{index+1}. {p.litigant_name}</>
                                                                             ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                                            { c.respondent.map((res, index) => (
-                                                                            <>{res.respondent_name} rep by {res.designation}</>
+                                                                            { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                                            <>{res.litigant_name} {res.designation}</>
                                                                             ))} 
                                                                         </option>
                                                                     ))}
@@ -490,7 +490,7 @@ const Surety = () => {
                                                             <div className="row">
                                                                 <div className="col-md-4">
                                                                     <div className="form-group">
-                                                                        <label>Name of Surety</label>
+                                                                        <label>Name of Surety<RequiredField /></label>
                                                                         <input 
                                                                             type="text" 
                                                                             name="surety_name" 
@@ -502,7 +502,7 @@ const Surety = () => {
                                                                 </div>
                                                                 <div className="col-md-2">
                                                                     <div className="form-group">
-                                                                        <label htmlFor="">Parentage</label>
+                                                                        <label htmlFor="">Parentage <RequiredField/></label>
                                                                         <select 
                                                                             name="relation" 
                                                                             className="form-control"
@@ -518,7 +518,7 @@ const Surety = () => {
                                                                 </div>
                                                                 <div className="col-md-3">
                                                                     <div className="form-group">
-                                                                        <label>Name of the parentage</label>
+                                                                        <label>Name of the parentage <RequiredField/></label>
                                                                         <input 
                                                                             type="text" 
                                                                             name="relative_name" 

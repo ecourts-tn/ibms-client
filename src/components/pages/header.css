@@ -220,3 +220,24 @@ legend > span {
 .badge-pill {
    border-radius: 10rem;
 }
+.navbar-toggler {
+    background-color: #2af5c2; /* Background color */
+    border: px solid #ffffff; /* Border color and width */
+    padding: 1px 10px; /* Adjust padding */
+    border-radius: 4px; /* Rounded corners */
+}
+.navbar-toggler-icon {
+    width: 1.5em;  /* Adjust width */
+    height: 1.5em; /* Adjust height */
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler:hover {
+    background-color: #495057; /* Hover background */
+    border-color: #adb5bd; /* Hover border */
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Focus shadow */
+    outline: none; /* Remove outline */
+}

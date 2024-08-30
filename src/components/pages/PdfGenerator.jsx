@@ -143,11 +143,12 @@ const PdfGenerator = () => {
                             <p>Submitted on: {formatDate(petition.petition.created_at)}</p>
                         </div>
                         <div className="col-md-6 mt-5" style={{textAlign:'right'}}>
-                            <p>Advocates<br></br>
+                            <p>Advocates</p>
+                            <p>
                             { petition.advocate.map((adv, index) => (
-                                <span><strong>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}, &nbsp;</strong></span>
-                            ))}</p>
-                            <p></p>
+                               <span><strong>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}</strong><br/></span>
+                            ))}
+                            </p>
                         </div>
                     </div>
                 </div>

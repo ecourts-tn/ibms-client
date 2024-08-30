@@ -37,15 +37,9 @@ import Profile from './components/pages/Profile'
 import InitialInput from './components/petition/bail/InitialInput'
 import Litigant from './components/petition/bail/Litigant'
 
-import config from './config'
-
 import ModificationNew from './components/petition/modification/ModificationNew'
 
 import { BaseProvider } from './contexts/BaseContext';
-import Steps from './components/Steps';
-import BasicContainer from './components/basic/BasicContainer';
-
-
 
 function App() {
   
@@ -63,7 +57,7 @@ function App() {
             <Routes>
               <Route element={<PublicLayout />}>
                 <Route path="/auth/login" element={<Home />} />
-                <Route index element={<Steps />} />
+                <Route index element={<Home />} />
                 <Route path="pdf" element={<PdfGenerator />} />
                 <Route
                   path="/dashboard"
@@ -120,10 +114,10 @@ function App() {
                   } 
                 />
                 <Route 
-                  path="petition/bail/initial-input" 
+                  path="petition/anticipatory/bail" 
                   element={
                     <PrivateRoute>
-                      <InitialInput />
+                      <BailFiling />
                     </PrivateRoute>       
                   } 
                 />

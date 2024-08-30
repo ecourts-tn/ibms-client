@@ -13,7 +13,7 @@ const PetitionerContainer = () => {
     const[petitioners, setPetitioners] = useState([])
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    const efile_no = localStorage.getItem("efile_no")
+    const efile_no = sessionStorage.getItem("efile_no")
     useEffect(() => {
         const fetchPetitioners = async() => {
             if(efile_no){

@@ -138,7 +138,7 @@ const Modification = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -153,7 +153,7 @@ const Modification = () => {
     useEffect(() => {
         async function fetchDetails(){
             try{
-                const response = await api.get("api/bail/petition/detail/", {params: {cino:form.cino}})
+                const response = await api.get("case/petition/detail/", {params: {efile_no:form.efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setPetitioners(response.data.petitioner)

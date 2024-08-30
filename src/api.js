@@ -3,14 +3,14 @@ import config from './config';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
 const api = axios.create({
-    baseURL: config.apiUrl
+    baseURL: "http://192.168.100.135:8000/api/"
 });
 
 let refresh = false;
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
+    const token = sessionStorage.getItem(ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -28,7 +28,7 @@ api.interceptors.response.use(resp => resp, async error => {
   if (error.response.status === 401 && !refresh) {     
     refresh = true;
     const response = await api.post('auth/token/refresh/', {      
-      refresh:localStorage.getItem(REFRESH_TOKEN)
+      refresh:sessionStorage.getItem(REFRESH_TOKEN)
     },{ 
       headers: {'Content-Type': 'application/json'}
     },{
@@ -36,8 +36,8 @@ api.interceptors.response.use(resp => resp, async error => {
     });    
     if (response.status === 200) {
       api.defaults.headers.common['Authorization'] = `Bearer ${response.data['access']}`;       
-      localStorage.setItem(ACCESS_TOKEN, response.data.access);       
-      localStorage.setItem(REFRESH_TOKEN, response.data.refresh);       
+      sessionStorage.setItem(ACCESS_TOKEN, response.data.access);       
+      sessionStorage.setItem(REFRESH_TOKEN, response.data.refresh);       
       return axios(error.config);
     }  
   }

@@ -121,7 +121,7 @@ const RespondentForm = ({addRespondent}) => {
                         >
                             <option value="">Select station</option>
                             { policeStations.map((item, index) => (
-                                <option key={index} value={item.uniform_code}>{ item.station_name}</option>
+                                <option key={index} value={item.cctns_code}>{ item.station_name}</option>
                             ))}
                         </select>
                         <div className="invalid-feedback">

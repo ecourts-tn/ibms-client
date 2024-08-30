@@ -12,6 +12,11 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Editor  from 'react-simple-wysiwyg';
 import Select from 'react-select'
 import * as Yup from 'yup'
+import Form from 'react-bootstrap/Form';
+import InitialInput from '../InitialInput';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 
 
 const Relaxation = () => {
@@ -167,8 +172,9 @@ const Relaxation = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
                 if(response.status === 200){
+                    console.log(response.data)
                     setPetition(response.data.petition)
-                    setPetitioners(response.data.litigant.filter(l=>l.titigant_type===1))
+                    setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
                     setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
                 }
@@ -180,6 +186,7 @@ const Relaxation = () => {
             fetchDetails()
         }
     },[form.efile_no])
+
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -388,286 +395,344 @@ const Relaxation = () => {
                                                     )}
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
-                                                    <div className="row">
-                                                        { form.cino !== '' && (
-                                                            <>
-                                                            { Object.keys(petition).length > 0 && (
-                                                                <table className="table table-bordered table-striped table-sm">
-                                                                    { petition && (
-                                                                    <>
-                                                                        <tr>
-                                                                            <td colSpan={4} className="bg-secondary"><strong>Basic Details</strong></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Court Type</td>
-                                                                            <td>{ petition.court_type.court_type }</td>
-                                                                            <td>Bench Type</td>
-                                                                            <td>{ petition.bench_type ? petition.bench_type.bench_type : '-'}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>State</td>
-                                                                            <td>{ petition.state.state_name }</td>
-                                                                            <td>District</td>
-                                                                            <td>{ petition.district.district_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Establishment</td>
-                                                                            <td>{ petition.establishment.establishment_name }</td>
-                                                                            <td>Court</td>
-                                                                            <td>{ petition.court.court_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Case Type</td>
-                                                                            <td>{ petition.case_type.type_name }</td>
-                                                                            <td>Bail Type</td>
-                                                                            <td>{ petition.bail_type.type_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Crime Registered</td>
-                                                                            <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
-                                                                            <td>Compliant Type</td>
-                                                                            <td>{ petition.complaint_type.type_name }</td>
-                                                                        </tr>
-                                                                    </>
-                                                                    )}
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(petitioners).length > 0 && (
-                                                                <table className="table table-bordered table-striped table-sm">
-                                                                    <thead>
-                                                                        <tr className="bg-secondary">
-                                                                            <td colSpan={6}>Petitioner Details</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>S.No</th>
-                                                                            <th>Petitioner Name</th>
-                                                                            <th>Age</th>
-                                                                            <th>Rank</th>
-                                                                            <th>Relation</th>
-                                                                            <th>Relation Name</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        { petitioners.map((petitioner, index) => (
-                                                                        <tr>
-                                                                            <td>{ index+1 }</td>
-                                                                            <td>{ petitioner.petitioner_name }</td>
-                                                                            <td>{ petitioner.age }</td>
-                                                                            <td>{ petitioner.rank }</td>
-                                                                            <td>{ petitioner.relation }</td>
-                                                                            <td>{ petitioner.relation_name }</td>
-                                                                        </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(respondents).length > 0 && (
-                                                                <table className=" table table-bordered table-striped table-sm">
-                                                                    <thead>
-                                                                        <tr className="bg-secondary">
-                                                                            <td colSpan={6}><strong>Respondent Details</strong></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>S.No.</th>
-                                                                            <th>Respondent Name</th>
-                                                                            <th>Designation</th>
-                                                                            <th>Police Station</th>
-                                                                            <th>District</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        { respondents.map((respondent, index) => (
-                                                                            <tr>
-                                                                                <td>{index+1}</td>
-                                                                                <td>{respondent.litigant_name}</td>
-                                                                                <td>{respondent.designation}</td>
-                                                                                <td>{respondent.address}</td>
-                                                                                <td>{respondent.district}</td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(advocates).length > 0 && (
-                                                            <table className=" table table-bordered table-striped table-sm">
+                                                    { form.cino !== '' && (
+                                                        <>
+                                                        { Object.keys(petition).length > 0 && (
+                                                            <InitialInput petition={petition} />
+                                                        )}
+                                                        { Object.keys(petitioners).length > 0 && (
+                                                            <table className="table table-bordered">
                                                                 <thead>
-                                                                    <tr className="bg-secondary">
-                                                                        <td colSpan={6}><strong>Advocate Details</strong>
-                                                                            <div className="float-right">
-                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
-                                                                            </div>
-                                                                        </td>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={7}><strong>Petitioner Details</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>S.No.</th>
-                                                                        <th>Advocate Name</th>
-                                                                        <th>Enrolment Number</th>
-                                                                        <th>Mobile Number</th>
-                                                                        <th>Email Address</th>
-                                                                        <th width={120}>Action</th>
+                                                                        <th>Select</th>
+                                                                        <th>Petitioner Name</th>
+                                                                        <th>Age</th>
+                                                                        <th>Rank</th>
+                                                                        <th>Act</th>
+                                                                        <th>Section</th>
+                                                                        <th>Father/Husband/Guardian Name</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    { advocates.map((advocate, index) => (
-                                                                        <tr>
-                                                                            <td>{index+1}</td>
-                                                                            <td>{advocate.advocate_name}</td>
-                                                                            <td>{advocate.enrolment_number}</td>
-                                                                            <td>{advocate.advocate_mobile}</td>
-                                                                            <td>{advocate.advocate_email}</td>
+                                                                    { petitioners.map((petitioner, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <div className="icheck-success">
+                                                                                <input type="checkbox" id={`checkboxSuccess${index+1}`} />
+                                                                                <label htmlFor={`checkboxSuccess${index+1}`}></label>
+                                                                            </div>                                                                            </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.litigant_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.age}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.rank}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={ petitioner.act}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.section}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.relation_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                    </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        )}
+                                                        { Object.keys(respondents).length > 0 && (
+                                                            <table className=" table table-bordered">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>Respondent Details</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Respondent Name</th>
+                                                                        <th>Designation</th>
+                                                                        <th>Police Station</th>
+                                                                        <th>District</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { respondents.map((res, index) => (
+                                                                        <tr key={index}>
                                                                             <td>
-                                                                                <i 
-                                                                                    className="fa fa-pencil-alt text-primary"
-                                                                                    
-                                                                                ></i>
-                                                                                <i 
-                                                                                    className="fa fa-trash-alt text-danger ml-3"
-                                                                                    onClick={() => deleteAdvocate(advocate)}
-                                                                                ></i>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.litigant_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.designation}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.address}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.district.district_name}
+                                                                                    readOnly={true}
+                                                                                />
                                                                             </td>
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
-                                                            )}
-                                                            {/* <>
-                                                                <Select
-                                                                    isMulti={true}
-                                                                    name="district"
-                                                                    options={petitionerOptions}
-                                                                    className={`${errors.district ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => {}}
-                                                                ></Select>
-                                                            </> */}
-                                                            { Object.keys(petition).length > 0 && (
-                                                                <>  
-                                                                    <div className="form-group">
-                                                                        <label htmlFor="">Grounds</label>
-                                                                        <Editor 
-                                                                            value={form.ground} 
-                                                                            onChange={(e) => setForm({...form, ground: e.target.value })} 
-                                                                        />
-                                                                        <div className="invalid-feedback">
-                                                                            { errors.ground }
+                                                        )}
+                                                        { Object.keys(advocates).length > 0 && (
+                                                        <table className=" table table-bordered">
+                                                            <thead>
+                                                                <tr className="bg-navy">
+                                                                    <td colSpan={6}><strong>Advocate Details</strong>
+                                                                        <div className="float-right">
+                                                                            <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Advocate Name</th>
+                                                                    <th>Enrolment Number</th>
+                                                                    <th>Mobile Number</th>
+                                                                    <th>Email Address</th>
+                                                                    <th width={120}>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                { advocates.map((advocate, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.enrolment_number}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_mobile}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_email}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            { !advocate.is_primary && (
+                                                                                <>
+                                                                                    <IconButton aria-label="delete" disabled color="primary">
+                                                                                        <EditIcon color='info'/>
+                                                                                    </IconButton>
+                                                                                    <IconButton aria-label="delete">
+                                                                                        <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
+                                                                                    </IconButton>
+                                                                                
+                                                                                </>
+                                                                            )}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                        )}
+                                                        { Object.keys(petition).length > 0 && (
+                                                            <>  
+                                                                <div className="row">
+                                                                    <div className="col-md-12">
+                                                                        <div className="form-group">
+                                                                            <p className="bg-navy" style={{padding:"12px 10px", marginBottom:'0px'}}><strong>Grounds</strong></p>
+                                                                            <Editor 
+                                                                                value={form.ground} 
+                                                                                onChange={(e) => setForm({...form, ground: e.target.value })} 
+                                                                            />
+                                                                            <div className="invalid-feedback">
+                                                                                { errors.ground }
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="row">
-                                                                        { parseInt(searchPetition) === 1 && (
-                                                                        <div className="col-md-12 mt-4"> 
-                                                                            <div className="form-group">
-                                                                            <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="vakalath"
-                                                                                className="form-control"
-                                                                                // value={petition.vakalath}
-                                                                                onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                            />
-                                                                            </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    { parseInt(searchPetition) === 1 && (
+                                                                    <div className="col-md-12 mt-4"> 
+                                                                        <div className="form-group">
+                                                                        <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
+                                                                        <input 
+                                                                            type="file" 
+                                                                            name="vakalath"
+                                                                            className="form-control"
+                                                                            // value={petition.vakalath}
+                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                        />
                                                                         </div>
-                                                                        )}
-                                                                        <div className="col-md-12 mt-4"> 
-                                                                            <div className="form-group">
-                                                                            <label htmlFor="document">Supporting Documents</label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="supporting_document" 
-                                                                                className="form-control"
-                                                                                // value={petition.supporting_document}
-                                                                                onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                            />
-                                                                            </div>
+                                                                    </div>
+                                                                    )}
+                                                                    <div className="col-md-12 mt-4"> 
+                                                                        <div className="form-group">
+                                                                        <label htmlFor="document">Supporting Documents</label>
+                                                                        <input 
+                                                                            type="file" 
+                                                                            name="supporting_document" 
+                                                                            className="form-control"
+                                                                            // value={petition.supporting_document}
+                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                        />
                                                                         </div>
-                                                                        <div className="col-md-4">
-                                                                            <div className="form-group">
-                                                                                <label htmlFor="">Enrolment Number</label>
-                                                                                <div className="row">
-                                                                                    <div className="col-md-4">
-                                                                                        <input 
-                                                                                            type="text" 
-                                                                                            className="form-control" 
-                                                                                            placeholder='MS'
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div className="col-md-4">
-                                                                                        <input 
-                                                                                            type="text" 
-                                                                                            className="form-control" 
-                                                                                            placeholder='Reg. No.'
-                                                                                        />
-                                                                                    </div>
-                                                                                    <div className="col-md-4">
-                                                                                        <input 
-                                                                                            type="text" 
-                                                                                            className="form-control" 
-                                                                                            placeholder='Reg. Year'
-                                                                                        />
-                                                                                    </div>
+                                                                    </div>
+                                                                    <div className="col-md-4">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Enrolment Number</label>
+                                                                            <div className="row">
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='MS'
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='Reg. No.'
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='Reg. Year'
+                                                                                    />
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-                                                                    <div className="col-md-2 mt-4 pt-2">
-                                                                        <Button 
-                                                                            variant="contained"
-                                                                            color="primary"
-                                                                            onClick={sendMobileOTP}
-                                                                            endIcon={<SendIcon />}
-                                                                        >Sworn Affidavit</Button>
                                                                     </div>
-                            
-                                                                    {/* { !mobileVerified && (
-                                                                        <div className="col-sm-2">
-                                                                        <Button 
-                                                                            variant="contained"
-                                                                            color="primary" 
-                                                                            onClick={sendMobileOTP}
-                                                                        >
-                                                                            Send OTP</Button>
+                                                                <div className="col-md-2 mt-4 pt-2">
+                                                                    <Button 
+                                                                        variant="contained"
+                                                                        color="primary"
+                                                                        onClick={sendMobileOTP}
+                                                                        endIcon={<SendIcon />}
+                                                                    >Sworn Affidavit</Button>
+                                                                </div>
+                        
+                                                                {/* { !mobileVerified && (
+                                                                    <div className="col-sm-2">
+                                                                    <Button 
+                                                                        variant="contained"
+                                                                        color="primary" 
+                                                                        onClick={sendMobileOTP}
+                                                                    >
+                                                                        Send OTP</Button>
+                                                                </div>
+                                                                )} */}
+                                                                { mobileOtp && !mobileVerified && (
+                                                                <>
+                                                                    <div className="col-md-1 mt-3 pt-2">
+                                                                        <input 
+                                                                            type="password" 
+                                                                            className="form-control mt-2" 
+                                                                            placeholder="OTP" 
+                                                                            value={otp}
+                                                                            onChange={(e) => setOtp(e.target.value)}
+                                                                        />
                                                                     </div>
-                                                                    )} */}
-                                                                    { mobileOtp && !mobileVerified && (
-                                                                    <>
-                                                                        <div className="col-md-1 mt-3 pt-2">
-                                                                            <input 
-                                                                                type="password" 
-                                                                                className="form-control mt-2" 
-                                                                                placeholder="OTP" 
-                                                                                value={otp}
-                                                                                onChange={(e) => setOtp(e.target.value)}
-                                                                            />
-                                                                        </div>
-                                                                        <div className="col-md-2 mt-3 pt-2">
-                                                                            <button 
-                                                                                type="button" 
-                                                                                className="btn btn-success px-5 mt-2"
-                                                                                onClick={() => verifyMobile(otp)}
-                                                                            >Verify</button>
-                                                                        </div>
-                                                                    </>
-                                                                    )}
-                                                                        { mobileVerified && (
-                                                                            <p className="mt-4 pt-3">
-                                                                                <CheckCircleRoundedIcon color="success"/>
-                                                                                <span className="text-success ml-1"><strong>Verified</strong></span>
-                                                                            </p>
-                                                                        )}
-                                                                        <div className="col-md-12">
-                                                                            <div className="d-flex justify-content-center">
-                                                                                <Button
-                                                                                    variant="contained"
-                                                                                    color="success"
-                                                                                    onClick={handleSubmit}
-                                                                                >
-                                                                                    Submit
-                                                                                </Button>
-                                                                            </div>
-                                                                        </div>
+                                                                    <div className="col-md-2 mt-3 pt-2">
+                                                                        <button 
+                                                                            type="button" 
+                                                                            className="btn btn-success px-5 mt-2"
+                                                                            onClick={() => verifyMobile(otp)}
+                                                                        >Verify</button>
                                                                     </div>
                                                                 </>
-                                                            )}
+                                                                )}
+                                                                    { mobileVerified && (
+                                                                        <p className="mt-4 pt-3">
+                                                                            <CheckCircleRoundedIcon color="success"/>
+                                                                            <span className="text-success ml-1"><strong>Verified</strong></span>
+                                                                        </p>
+                                                                    )}
+                                                                    <div className="col-md-12">
+                                                                        <div className="d-flex justify-content-center">
+                                                                            <Button
+                                                                                variant="contained"
+                                                                                color="success"
+                                                                                onClick={handleSubmit}
+                                                                            >
+                                                                                Submit
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </>
                                                         )}
-                                                    </div>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

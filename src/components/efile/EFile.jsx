@@ -17,7 +17,7 @@ const EFile = () => {
     const[isConfirm, setIsConfirm] = useState(false)
 
     const handleSubmit = async () => {
-        const efile_no = localStorage.getItem("efile_no")
+        const efile_no = sessionStorage.getItem("efile_no")
         if(efile_no){
             try{
                 const response = await api.get("case/filing/final-submit/", {
@@ -41,7 +41,7 @@ const EFile = () => {
                                     theme:"colored"
                                 })
                             }
-                            localStorage.removeItem("efile_no")
+                            sessionStorage.removeItem("efile_no")
                             navigate('/dashboard')
                         }catch(error){
                             console.error(error)

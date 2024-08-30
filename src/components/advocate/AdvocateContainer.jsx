@@ -11,7 +11,7 @@ const AdvocateContainer = () => {
     useEffect(() => {
         async function fetchAdvocates(){
             try{
-                const efile_no = localStorage.getItem("efile_no")
+                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get(`advocate/list/`, {params: {efile_no}})
                 if(response.status === 200){
                     setAdvocates(response.data)
@@ -26,7 +26,7 @@ const AdvocateContainer = () => {
 
     const addAdvocate = async (advocate) => {
         try{
-            const efile_no = localStorage.getItem("efile_no")
+            const efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])

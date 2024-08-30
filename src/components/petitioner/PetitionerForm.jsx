@@ -13,7 +13,6 @@ import { RequiredField } from '../../utils';
 import api from '../../api';
 import * as Yup from 'yup'
 import { BaseContext } from '../../contexts/BaseContext';
-import { LocalConvenienceStoreOutlined } from '@mui/icons-material';
 
 
 const PetitionerForm = ({addPetitioner}) => {
@@ -228,7 +227,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
             </div>
-            <div className="col-md-1">
+            <div className="col-md-2">
               <Form.Group className="mb-3">
                 <Form.Label>Gender<RequiredField /></Form.Label>
                 { litigant.litigant !== 'o' && (
@@ -244,6 +243,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     className="form-control"
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
+                    <option value="">Select Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
@@ -251,7 +251,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 )}
               </Form.Group>
             </div>
-            <div className="col-md-1">
+            <div className="col-md-2">
               <Form.Group className="mb-3">
                 <Form.Label>Age<RequiredField /></Form.Label>
                 <Form.Control
@@ -279,7 +279,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.rank }</div>
               </Form.Group>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
                 <div className="form-group mb-3">
                   <label htmlFor="relation">Parentage<RequiredField /></label><br />
                   { litigant.litigant !== 'o' && (
@@ -321,7 +321,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-4">
               <Form.Group className="mb-3">
                 <Form.Label>Act<RequiredField /></Form.Label>
                 <Form.Control
@@ -335,7 +335,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.act }</div>
               </Form.Group>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-5">
               <Form.Group className="mb-3">
                 <Form.Label>Section<RequiredField /></Form.Label>
                 <Form.Control
@@ -349,7 +349,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.section }</div>
               </Form.Group>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-12">
               <Form.Group className="mb-3">
                 <Form.Label>Address<RequiredField /></Form.Label>
                 <Form.Control

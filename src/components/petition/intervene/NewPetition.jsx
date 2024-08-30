@@ -22,7 +22,7 @@ const NewPetition = () => {
     const[errors, setErrors] = useState({})
 
     const initialState = {
-        cino: '',
+        efile_no: '',
     }
 
     const[form, setForm] = useState(initialState);
@@ -72,7 +72,7 @@ const NewPetition = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -83,24 +83,26 @@ const NewPetition = () => {
         fetchData();
     },[])
 
+    console.log(cases)
+
     useEffect(() => {
         async function fetchDetails(){
             try{
-                const response = await api.get("api/bail/petition/detail/", {params: {cino:form.cino}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
-                    setPetitioners(response.data.petitioner)
-                    setRespondents(response.data.respondent)
+                    setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
+                    setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        if(form.cino!== ''){
+        if(form.efile_no!== ''){
             fetchDetails()
         }
-    },[form.cino])
+    },[form.efile_no])
 
     console.log(petition)
     const handleSearch = async(e) => {
@@ -229,18 +231,18 @@ const NewPetition = () => {
                                                         <div className="form-group row">
                                                             <div className="col-sm-12">
                                                                 <select 
-                                                                    name="cino" 
+                                                                    name="efile_no" 
                                                                     className="form-control"
-                                                                    value={searchForm.cino}
+                                                                    value={searchForm.efile_no}
                                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
-                                                                        <option value={c.petition.cino} key={index}><>{c.petition.cino}</> - { c.petitioner.map((p, index) => (
-                                                                            <>{index+1}. {p.petitioner_name}</>
+                                                                        <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                                                            <>{index+1}. {p.litigant_name}</>
                                                                             ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                                            { c.respondent.map((res, index) => (
-                                                                            <>{res.respondent_name} rep by {res.designation}</>
+                                                                            { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                                            <>{res.litigant_name} {res.designation}</>
                                                                             ))} 
                                                                         </option>
                                                                     ))}
@@ -384,7 +386,7 @@ const NewPetition = () => {
                                                                                 <td>{respondent.respondent_name}</td>
                                                                                 <td>{respondent.designation}</td>
                                                                                 <td>{respondent.address}</td>
-                                                                                <td>{respondent.district}</td>
+                                                                                <td>{respondent.district.district_name}</td>
                                                                                 <td>
                                                                                     <i className="fa fa-pencil-alt text-primary"></i>
                                                                                     <i 
@@ -424,10 +426,7 @@ const NewPetition = () => {
                                                                             <td>{advocate.advocate_mobile}</td>
                                                                             <td>{advocate.advocate_email}</td>
                                                                             <td>
-                                                                                <i 
-                                                                                    className="fa fa-pencil-alt text-primary"
-                                                                                    
-                                                                                ></i>
+                                                                                <i className="fa fa-pencil-alt text-primary"></i>
                                                                                 <i 
                                                                                     className="fa fa-trash-alt text-danger ml-3"
                                                                                     onClick={() => deleteAdvocate(advocate)}
@@ -440,9 +439,8 @@ const NewPetition = () => {
                                                             )}
                                                             { Object.keys(petition).length > 0 && (
                                                                 <>  
-                                                                    
                                                                     <GroundsContainer grounds={grounds}/>
-                                                                    <DocumentContainer />
+                                                                    <DocumentContainer petition={petition}/>
                                                                 </>
                                                             )}
                                                             </>

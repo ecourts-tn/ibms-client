@@ -36,8 +36,8 @@ const Home = () => {
                     <Col md={3} className="mt-5">
                         <Notification />
                     </Col> */}
-                    <Col md={8} className="">
-                        <div className="ml-5">
+                    <Col md={8}>
+                        <div className="ml-md-5">
                             <h2 className="section-heading">Integrated Bail Management System (IBMS)</h2>
                             <p className="text-justify" style={{lineHeight: '1.5rem'}}>Integrated Bail Management System is a complete end to end solution developed for online filing of various applications such as Bail Applications, Anticipatory Bail Applications, Condition Relaxation, Intervene Petition, Modification Petition, Discharge of Surety, Return of Passport, Extension of Time and Cancellation of Bail. All the applications can be filed before Madras High Court or District Courts of Tamil Nadu. It is designed in Bilingual (English and local language) to reach wider group covering advocates/litigants.<br /><br />
                             <strong>IBMS system provides several benefits;</strong> 

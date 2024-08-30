@@ -63,7 +63,7 @@ const DocumentContainer = ({petition}) => {
     useEffect(() => {
         const fetchDocuments = async() => {
             try{
-                const efile_no = localStorage.getItem("efile_no")
+                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get("case/document/list/", {params:{efile_no}})
                 if(response.status === 200){
                     setDocuments(response.data)
@@ -99,7 +99,7 @@ const DocumentContainer = ({petition}) => {
         // form_data.append('vakalath', documents.vakalath, documents.vakalath.name);
         // form_data.append('supporting_document', documents.supporting_document, documents.supporting_document.name);
         try{
-            const efile_no = localStorage.getItem("efile_no")
+            const efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`case/document/create/`, form, {
                 headers: {
                     'content-type': 'multipart/form-data',

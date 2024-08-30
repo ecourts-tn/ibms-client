@@ -1,9 +1,12 @@
 import React, {createContext, useState, useEffect} from 'react'
 import api from '../api'
+import { useLocation } from 'react-router-dom'
 
 const BaseContext = createContext()
 
 const BaseProvider = ({children}) => {
+
+    const location = useLocation()
 
     const[states, setStates] = useState([])
     const[districts, setDistricts] = useState([])

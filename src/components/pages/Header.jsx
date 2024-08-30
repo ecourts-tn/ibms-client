@@ -12,20 +12,23 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (localStorage.getItem("access") !== null) {
+    if (sessionStorage.getItem("access") !== null) {
       setIsAuth(true);
-      setUser(JSON.parse(localStorage.getItem("user"))); // Assuming user is stored as a JSON object
+      setUser(JSON.parse(sessionStorage.getItem("user"))); // Assuming user is stored as a JSON object
     }
   }, []);
 
   const handleLogout = async (e) => {
     const response = await api.post('auth/logout/', {
-      refresh: localStorage.getItem(REFRESH_TOKEN),
+      refresh: sessionStorage.getItem(REFRESH_TOKEN),
     });
-    if (response.status === 200) {
-      localStorage.clear();
+    if (response.status === 205) {
+      sessionStorage.clear();
+      setIsAuth(false)
       toast.success("You are logged out successfully", { theme: "colored" });
-      navigate('/');
+      setTimeout(() => {
+        navigate('/');
+      },1000)
     }
   };
 
@@ -36,10 +39,10 @@ const Header = () => {
         <div className="container">
           <a className="navbar-brand" href="#">Integrated Bail Management System</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon" />
+            <span className="navbar-toggler-icon"/>
           </button>
-          <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
-            <ul className="navbar-nav">
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav ml-md-5">
               <li className="nav-item active">
                 <Link to="/" className="nav-link">Home</Link>
               </li>
@@ -89,7 +92,7 @@ const Header = () => {
                 <Link to="#" className="nav-link nav-link-order">Verify Order</Link>
               </li>
               <li className="nav-item">
-                {isAuth ? (
+                {isAuth && (
                   <li className="nav-item dropdown">
                     <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <AccountCircleIcon /> {user.user.userlogin || 'User'}
@@ -100,8 +103,6 @@ const Header = () => {
                       <Link onClick={handleLogout} className="nav-link">Logout</Link>
                     </div>
                   </li>
-                ) : (
-                  <Link to="/" className="nav-link">Login</Link>
                 )}
               </li>
             </ul>

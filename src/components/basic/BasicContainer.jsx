@@ -21,10 +21,14 @@ import { RequiredField } from '../../utils';
 import FIRSearch from '../search/FIRSearch';
 import CaseSearch from '../search/CaseSearch';
 import { BaseContext } from '../../contexts/BaseContext';
+import { useLocation } from 'react-router-dom';
 
 
 const BasicContainer = () => {
 
+    const location = useLocation();
+    const currentPath = location.pathname;
+    console.log(currentPath)
     const{
         states, 
         districts, 
@@ -73,7 +77,7 @@ const BasicContainer = () => {
     // useEffect(() => {
     //     const fetchData = async() => {
     //         try{
-    //             const efile_no = "ADM20240000001F2024000001" //localStorage.getItem("efile_no")
+    //             const efile_no = "ADM20240000001F2024000001" //sessionStorage.getItem("efile_no")
     //             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
     //             if(response.status === 200){
     //                 setPetition(response.data.petition)
@@ -87,6 +91,13 @@ const BasicContainer = () => {
 
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
+
+    useEffect(() => {
+        if(currentPath == "petition/anticipatory/bail"){
+            console.log("true")
+            setPetition({...petition, bail_type:2})
+        }
+    }, [])
 
 
     let validationSchema = Yup.object({
@@ -179,11 +190,11 @@ const BasicContainer = () => {
             await validationSchema.validate(petition, { abortEarly:false})
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
-                localStorage.setItem("efile_no", response.data.efile_number)
+                sessionStorage.setItem("efile_no", response.data.efile_number)
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme:"colored"
                 })
-                const efile_no = localStorage.getItem("efile_no")
+                const efile_no = sessionStorage.getItem("efile_no")
                 if(efile_no){
                     if(Object.keys(fir).length > 0){
                         const response2 = await api.post(`case/crime/details/create/`, fir, {params:{efile_no}})
@@ -384,7 +395,7 @@ const BasicContainer = () => {
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select type</option>
-                                            { bailtypes.filter(type=>parseInt(type.case_type)===parseInt(petition.case_type)).map((item, index) => (
+                                            { bailtypes.map((item, index) => (
                                             <option key={index} value={item.id}>{ item.type_name }</option>
                                             ))}
                                         </select>

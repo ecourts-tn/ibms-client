@@ -23,7 +23,7 @@ const GroundsContainer = () => {
     useEffect(() => {
         const fecthGrounds = async() => {
             try{
-                const efile_no = localStorage.getItem("efile_no")
+                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get("case/ground/list/", {params:{efile_no}})
                 if(response.status === 200){
                     setGrounds(response.data)
@@ -38,7 +38,7 @@ const GroundsContainer = () => {
 
     const addGround = async (ground) => {
         try{
-            const efile_no = localStorage.getItem("efile_no")
+            const efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`case/ground/create/`, ground, {params:{efile_no}})
             if(response.status === 201){
                 incrementCount()
