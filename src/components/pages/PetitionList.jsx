@@ -69,7 +69,7 @@ const PetitionList = () => {
                                 <tr>
                                     <th>S. No</th>
                                     <th>eFiling Number</th>
-                                    <th>Filing Date</th>
+                                    <th>E-Filing Date</th>
                                     <th>Case Number</th>
                                     <th>Litigants</th>
                                     <th>View Documents</th>
@@ -81,9 +81,15 @@ const PetitionList = () => {
                                 { cases.map((item, index) => (
                                 <tr>
                                     <td>{ index+1 }</td>
-                                    <td><a href="#/">{ item.petition.efile_number }</a></td>
+                                    <td>
+                                        <Link to="/petition/detail" state={{efile_no:item.petition.efile_number}}>
+                                            { item.petition.efile_number }
+                                        </Link>
+                                    </td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
-                                    <td>{item.petition.reg_type.type_name}/{item.petition.reg_number}/{item.petition.reg_year}</td>
+                                    <td>
+                                        {item.petition.reg_type ? `${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}` : null}
+                                    </td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2">{index+1}. {l.litigant_name}</span>

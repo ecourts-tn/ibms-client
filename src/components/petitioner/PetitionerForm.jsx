@@ -18,6 +18,7 @@ import { BaseContext } from '../../contexts/BaseContext';
 const PetitionerForm = ({addPetitioner}) => {
 
   const {
+    fir,
     states, 
     districts, 
     taluks, 
@@ -40,6 +41,7 @@ const PetitionerForm = ({addPetitioner}) => {
   // const stateStatus = useSelector(getStatesStatus)
   // const[proofs, setProofs] = useState([])
   // const[country, setCountry] = useState([])
+  const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
       litigant: 'o',
       litigant_name: '',
@@ -53,6 +55,7 @@ const PetitionerForm = ({addPetitioner}) => {
       state:'',
       district:'',
       taluk:'',
+      address2: '',
       post_office:'',
       pincode:'',
       nationality: 1,
@@ -90,11 +93,11 @@ const PetitionerForm = ({addPetitioner}) => {
     //       return schema.required("Please select the prison")
     //   }
     // }),
-    custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
-      if(is_custody){
-          return schema.required()
-      }
-  }),
+  //   custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
+  //     if(is_custody){
+  //         return schema.required()
+  //     }
+  // }),
   })
 
   // useEffect(() => {
@@ -148,27 +151,29 @@ const PetitionerForm = ({addPetitioner}) => {
 
 
   useEffect(() => {
-    const result = accused.find((a) => {
-      return a.name_of_accused === litigant.litigant
-    })
-    if(litigant.litigant === 'o'){
-      setLitigant(initialState)
-    }
-    else if(result){
-      setLitigant({
-        ...litigant,
-        litigant_name :result.name_of_accused,
-        rank: result.Rank_of_accused,
-        gender: result.gender,
-        act: result.act,
-        section: result.section.toString(),
-        relation: result.accused_guardian,
-        relation_name: result.accused_guardian_name,
-        age: result.age,
-        address: result.permanent_address,
-        mobile_number: result.mobile_number,
-        email_address: result.email_id,
+    if(accused){
+      const result = accused.find((a) => {
+        return a.name_of_accused === litigant.litigant
       })
+      if(litigant.litigant === 'o'){
+        setLitigant(initialState)
+      }
+      else if(result){
+        setLitigant({
+          ...litigant,
+          litigant_name :result.name_of_accused,
+          rank: result.rank_of_accused,
+          gender: result.gender,
+          act: fir.act,
+          section: fir.section.toString(),
+          relation: result.accused_guardian,
+          relation_name: result.accused_guardian_name,
+          age: result.age,
+          address: result.permanent_address === '' ? '-' :result.permanent_address,
+          mobile_number: result.mobile_number,
+          email_address: result.email_id,
+        })
+      }
     }
   },[litigant.litigant, accused])
 
@@ -363,6 +368,14 @@ const PetitionerForm = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.address }</div>
               </Form.Group>
             </div>
+            <div className="col-md-12">
+              <div className="form-group">
+                <input type="checkbox" name={alternateAddress} onChange={(e) => setAlternateAddress(!alternateAddress)} className="mr-2"/><span className="text-primary"><strong>Add alternate address</strong></span>
+              </div>
+            </div>
+          </div>
+          { alternateAddress && (
+          <div className="row">
             <div className="col-md-3">
                 <div className="form-group">
                   <label htmlFor="state">State</label><br />
@@ -425,6 +438,18 @@ const PetitionerForm = ({addPetitioner}) => {
                 ></Form.Control>
               </Form.Group>
             </div>
+            <div className="col-md-9">
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="address2"
+                  value={litigant.address2}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
+                </Form.Control>
+              </Form.Group>
+            </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
                 <Form.Label>Pincode</Form.Label>
@@ -436,6 +461,9 @@ const PetitionerForm = ({addPetitioner}) => {
                 ></Form.Control>
               </Form.Group>
             </div>
+          </div>
+          )}
+          <div className="row">
             <div className="col-md-3">
               <Form.Group>
                 <Form.Label>Nationality<RequiredField /></Form.Label>

@@ -40,6 +40,7 @@ import Litigant from './components/petition/bail/Litigant'
 import ModificationNew from './components/petition/modification/ModificationNew'
 
 import { BaseProvider } from './contexts/BaseContext';
+import Steps from './components/Steps';
 
 function App() {
   
@@ -232,7 +233,7 @@ function App() {
                 <Route path="user/registration" element={<Register />} />
                 <Route path="filing/kiosk" element={<CaseStatus />} />
                 <Route path="stepper" element={<MultiStepForm />} />
-                <Route path="*" element={<NotFound />} />
+                {/* <Route path="*" element={<NotFound />} /> */}
               </Route>
               <Route path="decrypt" element={<DecryptForm />} />
             </Routes>

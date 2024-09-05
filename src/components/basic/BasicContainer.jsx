@@ -449,7 +449,41 @@ const BasicContainer = () => {
                                 </div>
                             </div> 
                             { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
-                            { parseInt(petition.complaint_type) === 2 || parseInt(petition.complaint_type) === 3 && <CaseSearch />}
+                            { parseInt(petition.complaint_type) === 3 && <CaseSearch />}
+                            { parseInt(petition.complaint_type) === 2 && (
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="">Investigation Agency Name</label>
+                                            <input 
+                                                type="text" 
+                                                name="" 
+                                                className="form-control" 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <div className="form-group">
+                                            <label htmlFor="">Number</label>
+                                            <input 
+                                                type="text" 
+                                                name="" 
+                                                className="form-control" 
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <div className="form-group">
+                                            <label htmlFor="">Year</label>
+                                            <input 
+                                                type="text" 
+                                                name=""
+                                                className="form-control" 
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>                       
                         <div className="col-md-12 d-flex justify-content-center mt-2">
                             <Button

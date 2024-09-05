@@ -16,7 +16,7 @@ const FIRSearch = () => {
 
     const {
         states, 
-        districts, 
+        policeDistricts, 
         policeStations, 
         fir, 
         setFir, 
@@ -55,11 +55,9 @@ const FIRSearch = () => {
             await validationSchema.validate(form, { abortEarly:false})
             setLoading(true)
             setShowAdditionalFields(false)
-            const response = await api.get("external/police/tamilnadu/fir-details/", {
-                params: form
-            })
-            console.log(typeof(response.data))
+            const response = await api.post("external/police/tamilnadu/fir-details/", form)
             if(response.status === 200){
+                console.log(response.data)
                 setLoading(false)
                 setFir({...fir,
                     state: form.state,
@@ -67,9 +65,11 @@ const FIRSearch = () => {
                     police_station: form.police_station,
                     fir_number: form.crime_number,
                     fir_year: form.year,
-                    date_of_occurrence  : response.data.date_of_Occurrence,
+                    act: response.data.act,
+                    section: response.data.section,
+                    date_of_occurrence  : response.data.date_of_occurrence,
                     investigation_officer: response.data.investigation_officer_name,
-                    fir_date_time: response.data.FIR_DATE_Time,
+                    fir_date_time: response.data.FIR_date_time,
                     place_of_occurrence: response.data.place_of_occurence,
                     gist_of_fir: response.data.gist_of_FIR,
                     gist_in_local: response.data.gist_of_FIR_local_language,
@@ -81,13 +81,16 @@ const FIRSearch = () => {
                     no_of_accused: response.data.no_of_accused
                 })
                 setShowAdditionalFields(true)
+                if(response.data.accused_details.length > 0){
+                    setAccused(response.data.accused_details)
+                }
             }
-            const response2 = await api.get("external/police/tamilnadu/accused-details/", {
-                params: form
-            })
-            if(response2.status === 200){
-                setAccused(response2.data)
-            }
+            // const response2 = await api.get("external/police/tamilnadu/accused-details/", {
+            //     params: form
+            // })
+            // if(response2.status === 200){
+            //     setAccused(response2.data)
+            // }
         }catch(error){
             console.log(error.inner)
             if(error.inner){
@@ -99,13 +102,12 @@ const FIRSearch = () => {
             }
         }
     }
-
     return (
         <>
-            <div className="row" style={{border:"1px solid #ffc107"}}>
-                <div className="col-md-12 p-0">
+            <div className="row">
+                {/* <div className="col-md-12 p-0">
                     <p className="bg-warning py-1 px-3"><strong>FIR Search</strong></p>
-                </div>
+                </div> */}
                 <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="state">State<RequiredField/></label>
@@ -131,7 +133,7 @@ const FIRSearch = () => {
                         <label htmlFor="district">District<RequiredField/></label><br />
                         <Select 
                             name="district"
-                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            options={policeDistricts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
                             className={`${errors.district ? 'is-invalid' : null}`}
                             onChange={(e) => setForm({...form, district:e.value})}
                         />
@@ -157,7 +159,7 @@ const FIRSearch = () => {
                     <label htmlFor="police_station">Police Station<RequiredField/></label><br />
                     <Select 
                         name="police_station"
-                        options={policeStations.filter(p=>parseInt(p.revenue_district)===parseInt(form.district)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
+                        options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.district)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
                         className={`${errors.district ? 'is-invalid' : null}`}
                         onChange={(e) => setForm({...form, police_station:e.value})}
                     />

@@ -82,30 +82,32 @@ const FIRDetails = () => {
                                         </td>
                                     </tr>
                                 </table>
-                                <table className="table table-bordered table-sm">
-                                    <thead>
-                                        <tr className="bg-navy">
-                                            <th>#</th>
-                                            <th>Accused Name</th>
-                                            <th>Age</th>
-                                            <th>Rank</th>
-                                            <th>Gender</th>
-                                            <th>Guardian Name</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {accused.map((a, index) => (
-                                        <tr>
-                                            <td>{ index+1 }</td>
-                                            <td>{a.name_of_accused}</td>
-                                            <td>{a.age}</td>
-                                            <td>{a.Rank_of_accused}</td>
-                                            <td>{a.gender}</td>
-                                            <td>{a.accused_guardian_name}</td>
-                                        </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                {accused && (
+                                    <table className="table table-bordered table-sm">
+                                        <thead>
+                                            <tr className="bg-navy">
+                                                <th>#</th>
+                                                <th>Accused Name</th>
+                                                <th>Age</th>
+                                                <th>Rank</th>
+                                                <th>Gender</th>
+                                                <th>Guardian Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {accused.map((a, index) => (
+                                            <tr>
+                                                <td>{ index+1 }</td>
+                                                <td>{a.name_of_accused}</td>
+                                                <td>{a.age}</td>
+                                                <td>{a.Rank_of_accused}</td>
+                                                <td>{a.gender}</td>
+                                                <td>{a.accused_guardian_name}</td>
+                                            </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                )}
                             </Modal.Body>
                             <Modal.Footer style={{ justifyContent: "end", alignItems:"center"}}>
                                 <Button variant="contained" onClick={handleClose}>

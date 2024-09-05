@@ -39,7 +39,7 @@ const EFileDetails = () => {
                         <>
                             <tr>
                                 <td>Court Type</td>
-                                <td>{ petition.court_type.name }</td>
+                                <td>{ petition.court_type.court_type }</td>
                                 <td>Bench Type</td>
                                 <td></td>
                             </tr>
@@ -57,15 +57,15 @@ const EFileDetails = () => {
                             </tr>
                             <tr>
                                 <td>Case Type</td>
-                                <td>{ petition.case_type.name }</td>
+                                <td>{ petition.case_type.type_name }</td>
                                 <td>Bail Type</td>
-                                <td>{ petition.bail_type.name }</td>
+                                <td>{ petition.bail_type.type_name }</td>
                             </tr>
                             <tr>
                                 <td>Crime Registered</td>
                                 <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
                                 <td>Compliant Type</td>
-                                <td>{ petition.complaint_type.name }</td>
+                                <td>{ petition.complaint_type.type_name }</td>
                             </tr>
                         </>
                         )}

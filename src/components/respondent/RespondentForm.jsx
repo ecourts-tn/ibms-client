@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { nanoid } from '@reduxjs/toolkit'
@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import api from '../../api'
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
+import { BaseContext } from '../../contexts/BaseContext'
 
 
 const RespondentForm = ({addRespondent}) => {
@@ -16,18 +17,21 @@ const RespondentForm = ({addRespondent}) => {
     const states = useSelector((state) => state.states.states)
     const districts = useSelector((state) => state.districts.districts)
     const stateStatus = useSelector(getStatesStatus)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
+    // const policeStations = useSelector((state) => state.police_stations.police_stations)
+
+    const {policeDistricts, policeStations} = useContext(BaseContext)
 
     const initialState = {
-        litigant_name: 'State of Tamil Nadu rep by',
+        litigant_name: '',
         litigant_type: 2, 
         designation:'',
         state:'',
-        district:'',
+        police_district:'',
         police_station: '',
         address:'',
     }
     const[litigant, setLitigant] = useState(initialState)
+    const[respondentPolice, setRespondentPolice] = useState(false)
     useEffect(() => {
         if(stateStatus === 'idle'){
             dispatch(getStates())
@@ -51,7 +55,7 @@ const RespondentForm = ({addRespondent}) => {
         litigant_name: Yup.string().required(),
         designation: Yup.string().required(),
         address: Yup.string().required(),
-        district: Yup.string().required()
+        police_district: Yup.string().required()
     })
     const[errors, setErrors] = useState({})
 
@@ -75,6 +79,14 @@ const RespondentForm = ({addRespondent}) => {
         <>
             <ToastContainer />
             <div className="row">
+                <div className="col-md-12">
+                    <div className="form-group">
+                        <input type="checkbox" name={respondentPolice} onChange={(e) => setRespondentPolice(!respondentPolice)} className="mr-2"/><span className="text-primary"><strong>Respondent Police</strong></span>
+                    </div>
+                </div>
+            </div>
+            { respondentPolice && (
+            <div className="row">
                 <div className="col-md-3">
                     <div className="form-group">
                     <label htmlFor="state">State</label><br />
@@ -96,14 +108,14 @@ const RespondentForm = ({addRespondent}) => {
                     <div className="form-group">
                     <label htmlFor="district">District</label><br />
                     <select 
-                        name="district" 
-                        id="district" 
+                        name="police_district" 
+                        id="police_district" 
                         className="form-control"
-                        value={litigant.district}
+                        value={litigant.police_district}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
                         <option value="">Select District</option>
-                        { districts.map((item, index) => (
+                        { policeDistricts.map((item, index) => (
                         <option value={item.district_code} key={index}>{item.district_name}</option>
                         ))}
                     </select>
@@ -120,7 +132,7 @@ const RespondentForm = ({addRespondent}) => {
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}
                         >
                             <option value="">Select station</option>
-                            { policeStations.map((item, index) => (
+                            { policeStations.filter(d=>parseInt(d.district_code)=== parseInt(litigant.police_district)).map((item, index) => (
                                 <option key={index} value={item.cctns_code}>{ item.station_name}</option>
                             ))}
                         </select>
@@ -178,6 +190,67 @@ const RespondentForm = ({addRespondent}) => {
                         <i className="fa fa-plus mr-2"></i>Add Respondent</Button>
                 </div>
             </div>
+            )}
+            {!respondentPolice && (
+            <div className="row">
+                <div className="col-md-3">
+                    <Form.Group>
+                        <Form.Label>Repondent Name</Form.Label>
+                        <Form.Control
+                            name="litigant_name"
+                            value={litigant.litigant_name}
+                            className={`${errors.litigant_name ? 'is-invalid' : ''}`}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        ></Form.Control>
+                        <div className="invalid-feedback">{ errors.litigant_name }</div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-2">
+                    <Form.Group>
+                        <Form.Label>Mobile Number</Form.Label>
+                        <input 
+                            type="text"
+                            name="mobile_number" 
+                            className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}` }
+                            value={litigant.mobile_number}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        />
+                        <div className="invalid-feedback">{ errors.mobile_number }</div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-2">
+                    <Form.Group>
+                        <Form.Label>E-Mail Address</Form.Label>
+                        <input 
+                            type="text"
+                            name="email_address" 
+                            className={`form-control ${errors.email_address ? 'is-invalid' : ''}` }
+                            value={litigant.email_address}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        />
+                        <div className="invalid-feedback">{ errors.email_address }</div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-5">
+                    <Form.Group>
+                        <Form.Label>Address</Form.Label>
+                        <Form.Control
+                            name="address"
+                            value={litigant.address}
+                            className={`${errors.address ? 'is-invalid' : ''}`}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        ></Form.Control>
+                        <div className="invalid-feedback">{ errors.address }</div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-3 mt-4 pt-2">
+                    <Button 
+                        variant="secondary"
+                        onClick={handleSubmit}>
+                        <i className="fa fa-plus mr-2"></i>Add Respondent</Button>
+                </div>
+            </div>
+            )}
         </>
     )
 }

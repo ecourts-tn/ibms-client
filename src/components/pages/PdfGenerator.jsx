@@ -57,7 +57,7 @@ const PdfGenerator = () => {
                             <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.petition.court.court_name}<br/>{petition.petition.establishment.establishment_name}</strong> </h4>
                             <p><strong>{ petition.petition.efile_number }</strong></p>
                             <p className="mb-4">
-                                {`In the matter of Crime number: ${crime.fir_number}/${crime.fir_year} of ${crime.police_station} 
+                                {`In the matter of Crime number: ${crime.fir_number}/${crime.fir_year} of ${crime.police_station.station_name} 
                                 Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.petition.court.court_name}
                                 ${petition.petition.establishment.establishment_name}, ${petition.petition.district.district_name}, ${petition.petition.state.state_name}`}
                             </p>
@@ -104,11 +104,11 @@ const PdfGenerator = () => {
                             <ol style={{lineHeight:'2'}}>
                                 <li>
                                     It is most respectfully submitted that the respondent&nbsp;
-                                    <strong>{respondent[0].litigant_name}&nbsp;&nbsp;{respondent[0].designation},&nbsp;{crime.police_station}</strong> on&nbsp;
+                                    <strong>{respondent[0].litigant_name}&nbsp;&nbsp;{respondent[0].designation},&nbsp;{respondent[0].police_station.station_name}, &nbsp;{respondent[0].police_district.district_name}</strong> on&nbsp;
                                     <strong>{crime.fir_date_time }</strong>&nbsp;has registered a case for the alleged offenses punishable&nbsp;
                                     U/s&nbsp;<strong>{petitioner[0].section }&nbsp;{petitioner[0].act}</strong>&nbsp;
                                     in Crime Number:&nbsp;<strong>{crime.fir_number}/ {crime.fir_year}</strong>&nbsp;of&nbsp;
-                                    <strong>{crime.police_station}</strong>&nbsp;police station against the petitioner(s) 
+                                    <strong>{respondent[0].police_station.station_name}</strong>&nbsp;police station against the petitioner(s) 
                                     { petitioner.map((p, index) => (
                                         <><strong>&nbsp;{index+1}.{p.litigant_name}&nbsp;&nbsp;</strong></>
                                         ))

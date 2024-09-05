@@ -17,6 +17,7 @@ const BaseProvider = ({children}) => {
     const[benchtypes, setBenchtypes] = useState([])
     const[bailtypes, setBailtypes] = useState([])
     const[complainttypes, setComplainttypes] = useState([])
+    const[policeDistricts, setPoliceDistricts] = useState([])
     const[policeStations, setPoliceStations] = useState([])
     const[prisons, setPrisons] = useState([])
     const[relations, setRelations] = useState([])
@@ -167,6 +168,20 @@ const BaseProvider = ({children}) => {
     },[])
 
     useEffect(() => {
+        const fetchPoliceDistricts = async() => {
+            try{
+                const response = await api.get("base/police-district/")
+                if(response.status === 200){
+                    setPoliceDistricts(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        fetchPoliceDistricts();
+    },[])
+
+    useEffect(() => {
         const fetchPrisons = async() => {
             try{
                 const response = await api.get("base/prison/")
@@ -222,6 +237,8 @@ const BaseProvider = ({children}) => {
         fetchCountries();
     },[])
 
+
+
     return(
         <BaseContext.Provider
             value={{
@@ -234,6 +251,7 @@ const BaseProvider = ({children}) => {
                 benchtypes,
                 complainttypes,
                 bailtypes,
+                policeDistricts,
                 policeStations,
                 prisons,
                 relations,

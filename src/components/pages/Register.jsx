@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import Spinner from 'react-bootstrap/Spinner'
-import { getDistricts, getDistrictsStatus } from '../../redux/features/DistrictSlice'
-import { getUserTypes, getUserTypeStatus } from '../../redux/features/UserTypeSlice'
-import { useSelector, useDispatch } from 'react-redux'
 import { toast, ToastContainer } from 'react-toastify'
 import api from '../../api'
 
@@ -19,6 +16,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import { RequiredField } from '../../utils'
 import * as Yup from 'yup'
 
 const VisuallyHiddenInput = styled('input')({
@@ -35,14 +33,7 @@ const VisuallyHiddenInput = styled('input')({
 
 const Register = () => {
 
-    const dispatch = useDispatch()
     const navigate = useNavigate();
-
-    const districtStatus = useSelector(getDistrictsStatus)
-    const userStatus = useSelector(getUserTypeStatus)
-    const districts = useSelector(state => state.districts.districts)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
-    const prisons = useSelector((state) => state.prisons.prisons)
 
     const[user, setUser] =  useState([])
     const [show, setShow] = useState(false);
@@ -51,9 +42,10 @@ const Register = () => {
         setShow(false);
         navigate("/")
     }
-    const [form, setForm] = useState({
+    const initialState = {
         user_type: 1,
         username: '',
+        is_notary: false,
         bar_code:'',
         reg_number:'',
         reg_year:'',
@@ -75,8 +67,19 @@ const Register = () => {
         profile_photo:'',
         identity_proof: '',
         registration_certificate: ''
-    })
+    }
+    const[districts, setDistricts] = useState([])
+    const [form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
+    const[mobileOtp, setMobileOtp] = useState(false)
+    const[emailOtp, setEmailOtp] = useState(false)
+
+    const[mobileLoading, setMobileLoading] = useState(false)
+    const[emailLoading, setEmailLoading] = useState(false)
+
+    const[mobileVerified, setMobileVerified] = useState(false)
+    const[emailVerified, setEmailVerified]   = useState(false)
+
     const validationSchema = Yup.object({
         username: Yup.string().required(),
         date_of_birth: Yup.string().required(),
@@ -87,27 +90,21 @@ const Register = () => {
         mobile: Yup.number().required().typeError("The mobile number should be numeric"),
         email: Yup.string().email().required()
     })
-    console.log(errors)
-    useEffect(() => {
-        if( userStatus === 'idle'){
-            dispatch(getUserTypes())
-        }
-    }, [userStatus, dispatch]);
 
     useEffect(() => {
-        if(districtStatus === 'idle'){
-            dispatch(getDistricts())
+        const fecthDistricts = async() => {
+            try{
+                const response = await api.get("base/district/")
+                if(response.status === 200){
+                    setDistricts(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
         }
-    },[districtStatus, dispatch])
+        fecthDistricts()
+    },[])
 
-    const[mobileOtp, setMobileOtp] = useState(false)
-    const[emailOtp, setEmailOtp] = useState(false)
-
-    const[mobileLoading, setMobileLoading] = useState(false)
-    const[emailLoading, setEmailLoading] = useState(false)
-
-    const[mobileVerified, setMobileVerified] = useState(false)
-    const[emailVerified, setEmailVerified]   = useState(false)
 
     const sendMobileOTP = () => {
         if(form.mobile === ''){
@@ -208,13 +205,6 @@ const Register = () => {
                 })
                 setErrors(newErrors)
             }
-            // const errors = error.response.data 
-            // for(const err in errors){
-            //     toast.error(`${err.toUpperCase()} - ${errors[err]}`, {
-            //         theme: "colored"
-            //     })
-            // }
-
         }
     }
 
@@ -246,7 +236,7 @@ const Register = () => {
                             <div className="card registration-card">
                             <div className="card-header">
                                 <div className="row">
-                                    <div className="col-md-8 offset-2">
+                                    <div className="col-md-8 offset-md-2">
                                         <Alert icon={<PersonAddIcon fontSize="inherit" />} className="registration-alert" severity="success">
                                             New user registration
                                         </Alert>
@@ -269,9 +259,9 @@ const Register = () => {
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
-                                    <div className="col-md-8 offset-2">
+                                    <div className="col-md-8 offset-md-2">
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? 'Advocate Name' : 'Litigant Name' }</label>
+                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? 'Advocate Name' : 'Litigant Name' }<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <input 
                                                     type="text" 
@@ -286,7 +276,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">Gender</label>
+                                            <label htmlFor="" className="col-sm-3 col-form-label">Gender<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <FormControl>
                                                     <RadioGroup
@@ -306,7 +296,7 @@ const Register = () => {
                                                 </FormControl>
                                             </div>
                                             <div className="col-sm-2">
-                                                <label htmlFor="">Date of Birth</label>
+                                                <label htmlFor="">Date of Birth<RequiredField/></label>
                                             </div>
                                             <div className="col-sm-3">
                                                 <input 
@@ -322,7 +312,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">Place of Practice/Litigation</label>
+                                            <label htmlFor="" className="col-sm-3 col-form-label">Place of Practice/Litigation<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <FormControl>
                                                     <RadioGroup
@@ -339,8 +329,9 @@ const Register = () => {
                                             </div>
                                         </div>
                                         { parseInt(form.user_type) === 1 && (
+                                        <>
                                             <div className="form-group row mb-3">
-                                                <label htmlFor="#" className="col-sm-3 col-form-label">Bar Registration Number</label>
+                                                <label htmlFor="#" className="col-sm-3 col-form-label">Bar Registration Number<RequiredField/></label>
                                                 <div className="col-sm-9">
                                                     <div className="row">
                                                         <div className="col-sm-3">
@@ -376,10 +367,82 @@ const Register = () => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div className="form-group row mb-3">
+                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>Bar Registration Certificate<RequiredField/></label>
+                                                <div className="col-sm-9">
+                                                    <Button
+                                                        component="label"
+                                                        role={undefined}
+                                                        variant="contained"
+                                                        tabIndex={-1}
+                                                        color="warning"
+                                                        startIcon={<CloudUploadIcon />}
+                                                        >
+                                                        Upload Bar. Registration
+                                                        <VisuallyHiddenInput 
+                                                            type="file"
+                                                            name="registration_certificate"
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
+                                                        />
+                                                    </Button>
+                                                    <span className="mx-2">{ form.registration_certificate.name }</span>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label htmlFor="" className="col-sm-3">Notary<RequiredField/></label>
+                                                <div className="col-md-9">
+                                                <FormControl>
+                                                    <RadioGroup
+                                                        row
+                                                        aria-labelledby="notary-radios"
+                                                        name="is_notary"
+                                                        value={form.is_notary}
+                                                        onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                                    >
+                                                        <FormControlLabel value={true} control={<Radio />} label="Yes" />
+                                                        <FormControlLabel value={false} control={<Radio />} label="No" />
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                </div>
+                                            </div>
+                                            { form.is_notary === "true" && (
+                                            <div className="form-group row">
+                                                <label htmlFor="" className="col-sm-3">Appointment Date<RequiredField/></label>
+                                                <div className="col-sm-3">
+                                                    <input 
+                                                        type="date"     
+                                                        name="" 
+                                                        className="form-control" 
+                                                    />
+                                                </div>
+                                                <div className="col-md-2">
+                                                    <label htmlFor="">Notary Order<RequiredField/></label>
+                                                </div>
+                                                <div className="col-md-4">
+                                                    <Button
+                                                        component="label"
+                                                        role={undefined}
+                                                        variant="contained"
+                                                        tabIndex={-1}
+                                                        color="warning"
+                                                        startIcon={<CloudUploadIcon />}
+                                                        >
+                                                        Upload Notary Order
+                                                        <VisuallyHiddenInput 
+                                                            type="file"
+                                                            name="notary_order"
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
+                                                        />
+                                                    </Button>
+                                                    <span className="mx-2">{ form.registration_certificate.name }</span>
+                                                </div>
+                                            </div>
+                                            )}
+                                        </>    
                                         )}
                                         { parseInt(form.litigation_place) === 2 && (
                                             <div className="form-group row mb-3">
-                                                <label htmlFor="district" className='col-form-label col-sm-3'>District</label>
+                                                <label htmlFor="district" className='col-form-label col-sm-3'>District<RequiredField/></label>
                                                 <div className="col-sm-6">
                                                     <select 
                                                         name="district" 
@@ -397,7 +460,7 @@ const Register = () => {
                                             </div>
                                         )}
                                         <div className="form-group row">
-                                            <label className="col-form-label col-sm-3 pt-0">Password</label>
+                                            <label className="col-form-label col-sm-3 pt-0">Password<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
                                                     <input
@@ -416,7 +479,7 @@ const Register = () => {
                                         <div className="form-group row" style={{ marginTop:"-20px"}}>
                                             <div className="col-sm-3"></div>   
                                             <div className="col-sm-9">
-                                                <small className="text-primary">
+                                                <small className="text-teal">
                                                     <ul style={{ marginLeft:"-25px", fontWeight:700}}>
                                                         <li>Your password can't be too similar to your other personal information.</li>
                                                         <li>Your password must contain at least 8 characters.</li>
@@ -427,7 +490,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3 pt-0">Confirm Password</label>
+                                            <label className="col-form-label col-sm-3 pt-0">Confirm Password<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
                                                     <input
@@ -444,7 +507,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">Mobile Number</label>
+                                            <label className="col-form-label col-sm-3">Mobile Number<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <FormControl className="mb-3" fullWidth>
                                                     <input 
@@ -502,7 +565,7 @@ const Register = () => {
                                             )}
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">Email Address</label>
+                                            <label className="col-form-label col-sm-3">Email Address<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <input 
                                                     type="email" 
@@ -562,11 +625,11 @@ const Register = () => {
                                                     component="label"
                                                     role={undefined}
                                                     variant="contained"
-                                                    color="secondary"
+                                                    color="warning"
                                                     tabIndex={-1}
                                                     startIcon={<CloudUploadIcon />}
                                                     >
-                                                    Upload file
+                                                    Upload Photo
                                                     <VisuallyHiddenInput 
                                                         type="file" 
                                                         name="profile_photo"
@@ -583,11 +646,11 @@ const Register = () => {
                                                     component="label"
                                                     role={undefined}
                                                     variant="contained"
-                                                    color="secondary"
+                                                    color="warning"
                                                     tabIndex={-1}
                                                     startIcon={<CloudUploadIcon />}
                                                     >
-                                                    Upload file
+                                                    Upload Identity Proof
                                                     <VisuallyHiddenInput 
                                                         type="file"
                                                         name="identity_proof"
@@ -597,29 +660,7 @@ const Register = () => {
                                                 <span className="mx-2">{ form.identity_proof.name }</span>
                                             </div>
                                         </div>
-                                        { form.user_type === 1 && (
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>Bar Registration Certificate</label>
-                                            <div className="col-sm-9">
-                                                <Button
-                                                    component="label"
-                                                    role={undefined}
-                                                    variant="contained"
-                                                    tabIndex={-1}
-                                                    color="secondary"
-                                                    startIcon={<CloudUploadIcon />}
-                                                    >
-                                                    Upload file
-                                                    <VisuallyHiddenInput 
-                                                        type="file"
-                                                        name="registration_certificate"
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
-                                                    />
-                                                </Button>
-                                                <span className="mx-2">{ form.registration_certificate.name }</span>
-                                            </div>
-                                        </div>
-                                        )}
+                                        
                                         <div className="d-flex justify-content-center">
                                             <Button
                                                 variant="contained"

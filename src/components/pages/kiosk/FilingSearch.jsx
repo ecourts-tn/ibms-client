@@ -1,5 +1,4 @@
-import React from 'react'
-import { useState} from 'react'
+import React, {useState, useContext} from 'react'
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
@@ -7,12 +6,18 @@ import SearchIcon from '@mui/icons-material/Search'
 import * as Yup from 'yup'
 import api from '../../../api'
 import { toast, ToastContainer } from 'react-toastify'
+import { BaseContext } from '../../../contexts/BaseContext'
 
 const FilingSearch = () => {
 
-    
+    const {states, districts, establishments} = useContext(BaseContext)
+
+    console.log(states)
 
     const[form, setForm] = useState({
+        state: '', 
+        district: '',
+        establishment: '',
         filing_number:'',
         filing_year:'',
     })
@@ -57,10 +62,55 @@ const FilingSearch = () => {
                             </ol>
                         </nav>
                     </div>
-                    <div className="col-md-12 d-flex justify-content-center">
+                    <div className="col-md-12">
                         <div className="row">
-                            <div className="col-md-10 offset-1">
+                            <div className="col-md-6 offset-md-3">
                                 <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="">State</label>
+                                            <select 
+                                                name="state" 
+                                                className="form-control"
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select state</option>
+                                                { states.map((state, index) => (
+                                                <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="">District</label>
+                                            <select 
+                                                name="district" 
+                                                className="form-control"
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select district</option>
+                                                { districts.filter(district => parseInt(district.state) === parseInt(form.state)).map((district, index) => (
+                                                    <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="form-group">
+                                            <label htmlFor="">Establishment</label>
+                                            <select 
+                                                name="establishment" 
+                                                className="form-control"
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select establishment</option>
+                                                {establishments.filter(est=>parseInt(est.district) === parseInt(form.district)).map((estd, index)=>(
+                                                    <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div className="col-md-5">
                                         <FormControl fullWidth>
                                             <TextField
