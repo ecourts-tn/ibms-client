@@ -18,14 +18,15 @@ const PreviousCaseForm = () => {
 
     const[petition, setPetition] = useState(initialState)
 
-    const[petitions, setPetitions] = useState([])
+    const[history, setHistory] = useState([])
 
     useEffect(() => {
+        const efile_no = sessionStorage.getItem("efile_no")
         async function fetchData(){
             try{
-                const response = await api.get('api/bail/petition/TN20240624000002/previous-history/')
+                const response = await api.get('case/crime/history/',{params: {efile_no}})
                 if(response.status === 200){
-                    setPetitions(response.data)
+                    setHistory(response.data.history)
                 }
             }catch(error){
                 console.log(error)
@@ -33,6 +34,8 @@ const PreviousCaseForm = () => {
         }
         fetchData();
     },[])
+
+    console.log(history)
 
     const handleSubmit = async (e) => {
         try{
@@ -54,35 +57,36 @@ const PreviousCaseForm = () => {
             <ToastContainer />
             <div className="row">
                 <div className="col-md-12">
-                    <div className="alert alert-info"><strong>Previous Application Filed</strong></div>
-                </div>
-                { Object.keys(petitions).length > 0 && (
-                    <>
-                    <table className="table table-bordered table-striped table-sm">
-                        <thead>
+                    { history.map((item, index) => (
+                    <table className="table table-bordered table-sm">
+                       <tbody>
                             <tr>
-                                <th>#</th>
-                                <th>Case Number</th>
-                                <th>Petitioner Name</th>
-                                <th>Court Details</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Order Remarks</th>
+                                <td colSpan={2} className="text-primary"><strong>{index+1}. ATN20240000001F2024000001</strong></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            { petitions.map((petition, index) => (
                             <tr>
-                                <td>{index+1}</td>
-                                <td>{petition.filing_type.type_name}/{petition.filing_number}/{petition.filing_year}</td>
-                                <td></td>
-                                <td>{ petition.court.court_name}, {petition.establishment.establishment_name}, {petition.district.district_name}</td>
+                                <td>
+                                    <strong className='text-danger'>FIR Details</strong><br></br>
+                                    <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
+                                </td>
+                                <td>
+                                    <strong className="text-danger">Filing Details</strong><br/>
+                                    <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
+                                    <strong>eFile Date</strong>: 09-09-2024<br></br>
+                                    <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
+                                </td>
                             </tr>
-                            ))}
-                        </tbody>
+                            <tr>
+                                <td colSpan={2}>
+                                    <strong className="text-danger">Order Details</strong><br></br>
+                                    <strong>Status</strong>: Pending <br></br>
+                                    <strong>Order Date</strong>: 09-09-2024 <br></br>
+                                    <strong>Order Remarks</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
+                                </td>
+                            </tr>
+                       </tbody>
                     </table>
-                    </>
-                )}
+                    ))}
+                </div>
                 <div className="col-md-2">
                     <div className="form-group">
                         <label htmlFor="">Case Number</label>

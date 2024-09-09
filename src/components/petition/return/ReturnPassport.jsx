@@ -385,7 +385,7 @@ const ReturnPassport = () => {
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
                                                     <div className="row">
-                                                        { form.cino !== '' && (
+                                                        { form.cino === '' && (
                                                             <>
                                                             { Object.keys(petition).length > 0 && (
                                                                 <table className="table table-bordered table-striped">

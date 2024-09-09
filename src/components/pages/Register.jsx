@@ -66,7 +66,8 @@ const Register = () => {
         state_code:'',
         profile_photo:'',
         identity_proof: '',
-        registration_certificate: ''
+        registration_certificate: '',
+        notary_order: ''
     }
     const[districts, setDistricts] = useState([])
     const [form, setForm] = useState(initialState)
@@ -144,7 +145,7 @@ const Register = () => {
         }else{
             try{
                 setEmailLoading(true)
-                const response = await api.post("api/base/send-email-otp/", {email_address: form.email})
+                const response = await api.post("base/send-email-otp/", {email_address: form.email})
                 toast.success("OTP has been sent your email address",{
                     theme:"colored"
                 })
@@ -159,7 +160,7 @@ const Register = () => {
 
     const verifyEmail = async (otp) => {
         try{
-            const response = await api.post("api/base/verify-email-otp/", {
+            const response = await api.post("base/verify-email-otp/", {
                 email_address: form.email,
                 otp: parseInt(otp)
             })
@@ -190,7 +191,7 @@ const Register = () => {
                 toast.error("Please verify your email address", {theme:"colored"})
                 return
             }
-            const response = await api.post("/api/auth/user/register/", form)
+            const response = await api.post("auth/user/register/", form)
             setUser(response.data)
             setShow(true)
             toast.success("User registered successfully", {
@@ -411,7 +412,7 @@ const Register = () => {
                                                 <div className="col-sm-3">
                                                     <input 
                                                         type="date"     
-                                                        name="" 
+                                                        name="appointment_date" 
                                                         className="form-control" 
                                                     />
                                                 </div>
@@ -434,7 +435,7 @@ const Register = () => {
                                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
                                                         />
                                                     </Button>
-                                                    <span className="mx-2">{ form.registration_certificate.name }</span>
+                                                    <span className="mx-2">{ form.notary_order.name }</span>
                                                 </div>
                                             </div>
                                             )}

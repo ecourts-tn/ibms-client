@@ -16,25 +16,22 @@ const FIRSearch = () => {
 
     const {
         states, 
-        policeDistricts, 
+        districts, 
+        policeDistricts,
         policeStations, 
         fir, 
         setFir, 
-        accused, 
         setAccused
     } = useContext(BaseContext)
-
-    // const stateStatus = useSelector(getStatesStatus)
-    // const states = useSelector((state) => state.states.states)
-    // const districts = useSelector((state) => state.districts.districts)
-    // const policeStations = useSelector((state) => state.police_stations.police_stations)
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)
     const[errors, setErrors] = useState({})
+    const[notFound, setNotFound] = useState('')
     const initialState = {
         state: '',
-        district: '',
+        rdistrict: '',
+        pdistrict: '',
         police_station : '',
         crime_number:'',
         year:''
@@ -43,7 +40,8 @@ const FIRSearch = () => {
 
     const validationSchema = Yup.object({
         state: Yup.string().required("Please select state"),
-        district: Yup.string().required("Please select district"),
+        rdistrict: Yup.string().required("Please select district"),
+        pdistrict: Yup.string().required("Please select district"),
         police_station: Yup.string().required("Please select police station"),
         crime_number: Yup.number().required("Please enter FIR number").typeError("This field should be numeric"),
         year: Yup.number().required("Please enter year").typeError("This field should be numeric")
@@ -57,42 +55,39 @@ const FIRSearch = () => {
             setShowAdditionalFields(false)
             const response = await api.post("external/police/tamilnadu/fir-details/", form)
             if(response.status === 200){
-                console.log(response.data)
                 setLoading(false)
-                setFir({...fir,
-                    state: form.state,
-                    district: form.district,
-                    police_station: form.police_station,
-                    fir_number: form.crime_number,
-                    fir_year: form.year,
-                    act: response.data.act,
-                    section: response.data.section,
-                    date_of_occurrence  : response.data.date_of_occurrence,
-                    investigation_officer: response.data.investigation_officer_name,
-                    fir_date_time: response.data.FIR_date_time,
-                    place_of_occurrence: response.data.place_of_occurence,
-                    gist_of_fir: response.data.gist_of_FIR,
-                    gist_in_local: response.data.gist_of_FIR_local_language,
-                    complainant_age: response.data.complainant_age,
-                    complainant_guardian: response.data.complainant_guardian,
-                    complainant_guardian_name: response.data.complainant_guardian_name,
-                    complainant_name:response.data.complaintant_name,
-                    investigation_officer_rank:response.data.investigation_officer_rank,
-                    no_of_accused: response.data.no_of_accused
-                })
-                setShowAdditionalFields(true)
-                if(response.data.accused_details.length > 0){
+                if(response.data.FIR_date_time){
+                    setFir({...fir,
+                        state: form.state,
+                        district: form.rdistrict,
+                        police_station: form.police_station,
+                        fir_number: form.crime_number,
+                        fir_year: form.year,
+                        act: response.data.act,
+                        section: response.data.section,
+                        date_of_occurrence  : response.data.date_of_occurrence,
+                        investigation_officer: response.data.investigation_officer_name,
+                        fir_date_time: response.data.FIR_date_time,
+                        place_of_occurrence: response.data.place_of_occurence,
+                        gist_of_fir: response.data.gist_of_FIR,
+                        gist_in_local: response.data.gist_of_FIR_local_language,
+                        complainant_age: response.data.complainant_age,
+                        complainant_guardian: response.data.complainant_guardian,
+                        complainant_guardian_name: response.data.complainant_guardian_name,
+                        complainant_name:response.data.complaintant_name,
+                        investigation_officer_rank:response.data.investigation_officer_rank,
+                        no_of_accused: response.data.no_of_accused
+                    })
+                    setShowAdditionalFields(true)
                     setAccused(response.data.accused_details)
+                    setNotFound('')
+                }
+                else{
+                    setNotFound('FIR details not found!!!.')
+                    setForm(initialState)
                 }
             }
-            // const response2 = await api.get("external/police/tamilnadu/accused-details/", {
-            //     params: form
-            // })
-            // if(response2.status === 200){
-            //     setAccused(response2.data)
-            // }
         }catch(error){
-            console.log(error.inner)
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -130,27 +125,29 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label htmlFor="district">District<RequiredField/></label><br />
+                        <label htmlFor="rdistrict">Revenue District<RequiredField/></label><br />
                         <Select 
-                            name="district"
-                            options={policeDistricts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
-                            className={`${errors.district ? 'is-invalid' : null}`}
-                            onChange={(e) => setForm({...form, district:e.value})}
+                            name="rdistrict"
+                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            className={`${errors.rdistrict ? 'is-invalid' : null}`}
+                            onChange={(e) => setForm({...form, rdistrict:e.value})}
                         />
-                        {/* <select 
-                            name="crime_district" 
-                            id="crime_district" 
-                            className={`form-control ${errors.crime_district ? 'is-invalid' : ''}`}
-                            value={petition.crime_district} 
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}
-                        >
-                            <option value="">Select district</option>
-                            { districts.map((item, index) => (
-                            <option key={index} value={item.district_code }>{ item.district_name }</option>
-                            ))}
-                        </select> */}
                         <div className="invalid-feedback">
-                            { errors.district }
+                            { errors.rdistrict }
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-4">
+                    <div className="form-group">
+                        <label htmlFor="pdistrict">Police District<RequiredField/></label><br />
+                        <Select 
+                            name="pdistrict"
+                            options={policeDistricts.filter(d=>parseInt(d.revenue_district)===parseInt(form.rdistrict)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            className={`${errors.pdistrict ? 'is-invalid' : null}`}
+                            onChange={(e) => setForm({...form, pdistrict:e.value})}
+                        />
+                        <div className="invalid-feedback">
+                            { errors.pdistrict }
                         </div>
                     </div>
                 </div>
@@ -159,26 +156,14 @@ const FIRSearch = () => {
                     <label htmlFor="police_station">Police Station<RequiredField/></label><br />
                     <Select 
                         name="police_station"
-                        options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.district)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
+                        options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
                         className={`${errors.district ? 'is-invalid' : null}`}
                         onChange={(e) => setForm({...form, police_station:e.value})}
                     />
-                    {/* <select 
-                        name="police_station" 
-                        id="police_station" 
-                        className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
-                        value={petition.police_station}
-                        onChange={(e)=> setPetition({...petition, [e.target.name]: e.target.value })}
-                    >
-                        <option value="">Select station</option>
-                        { policeStations.map((item, index) => (
-                            <option key={index} value={item.id}>{ item.station_name}</option>
-                        ))}
-                    </select> */}
                     <div className="invalid-feedback">{ errors.police_station }</div>
                     </div>
                 </div>
-                <div className="col-md-2 offset-4">
+                <div className="col-md-2">
                     <Form.Group className="mb-3">
                         <Form.Label>FIR Number<RequiredField/></Form.Label>
                         <Form.Control 
@@ -221,6 +206,9 @@ const FIRSearch = () => {
                     )}
                 </div>
             </div>
+            { notFound !== '' && (
+                <div className="alert alert-danger">{notFound}</div>
+            )}
         </>    
     )
 }
