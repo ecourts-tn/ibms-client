@@ -68,6 +68,9 @@ const Header = () => {
                       <Link to="/petition/return-property" className="nav-link">Return of Property</Link>
                     </div>
                   </li>
+                  <li className="nav-item">
+                    <Link to="pleadings" className="nav-link">Pleadings</Link>
+                  </li>
                 </>
               )}
               <li className="nav-item dropdown">

@@ -19,7 +19,6 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
     })
 
     const initialState = {
-        id: nanoid(),
         description: ''
     }
     const[ground, setGround] = useState(initialState)

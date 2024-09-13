@@ -4,6 +4,23 @@ import Form from 'react-bootstrap/Form'
 const InitialInput = ({petition}) => {
     return (
         <div className="row mb-4">
+            {/* <div className="col-md-6">
+                <table className="table table-bordered table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Case Type</td>
+                            <td>{petition.court_type.court_type}</td>
+                        </tr>
+                        <tr>
+                            <td>Bench Type</td>
+                            <td>{ petition.bench_type.bench_type}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div className="col-md-6">
+
+            </div> */}
             <div className="col-md-6">
                 <Form.Group className="mb-3">
                     <Form.Label>Court Type</Form.Label>
@@ -15,14 +32,12 @@ const InitialInput = ({petition}) => {
             </div>
             <div className="col-md-6">
                 { petition.court_type.id === 1 && (
-                <div className="form-group row">
-                    <label htmlFor="bench_type" className="col-sm-3">High Court Bench</label>
-                    <div className="col-sm-9">
-                        <Form.Control
-                            value={petition.bench_type.bench_type}
-                            readOnly={true}
-                            ></Form.Control>
-                    </div>
+                <div className="form-group">
+                    <Form.Label>Bench Type</Form.Label>
+                    <Form.Control
+                        value={petition.bench_type.bench_type}
+                        readOnly={true}
+                    ></Form.Control>
                 </div>
                 )}
             </div>

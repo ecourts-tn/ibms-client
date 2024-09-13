@@ -41,20 +41,23 @@ const EFileDetails = () => {
                                 <td>Court Type</td>
                                 <td>{ petition.court_type.court_type }</td>
                                 <td>Bench Type</td>
-                                <td></td>
+                                <td>{ petition.bench_type ?  petition.bench_type.bench_type : null}</td>
                             </tr>
-                            <tr>
-                                <td>State</td>
-                                <td>{ petition.state.state_name }</td>
-                                <td>District</td>
-                                <td>{ petition.district.district_name }</td>
-                            </tr>
-                            <tr>
-                                <td>Establishment</td>
-                                <td>{ petition.establishment.establishment_name }</td>
-                                <td>Court</td>
-                                <td>{ petition.court.court_name }</td>
-                            </tr>
+                            { petition.court_type.id === 2 && (
+                            <>
+                                <tr>
+                                    <td>State</td>
+                                    <td>{ petition.state.state_name }</td>
+                                    <td>District</td>
+                                    <td>{ petition.district.district_name }</td>
+                                </tr>
+                                <tr>
+                                    <td>Establishment</td>
+                                    <td>{ petition.establishment.establishment_name }</td>
+                                    <td>Court</td>
+                                    <td>{ petition.court.court_name }</td>
+                                </tr>
+                            </>)}
                             <tr>
                                 <td>Case Type</td>
                                 <td>{ petition.case_type.type_name }</td>

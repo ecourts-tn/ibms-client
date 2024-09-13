@@ -24,23 +24,24 @@ import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
-import MultiStepForm from './components/petition/bail/MultiStepForm'
 import NotFound from './components/pages/NotFound'
 import { useTranslation } from 'react-i18next';
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";
 import Logout from './components/pages/Logout'
-import DecryptForm from './components/DecryptForm'
 import ChangePassword from './components/pages/ChangePassword'
 import Profile from './components/pages/Profile'
-import InitialInput from './components/petition/bail/InitialInput'
-import Litigant from './components/petition/bail/Litigant'
+
+import Litigant from './components/petition/antibail/Litigant'
 
 import ModificationNew from './components/petition/modification/ModificationNew'
 
 import { BaseProvider } from './contexts/BaseContext';
 import Steps from './components/Steps';
+import ABail from 'components/petition/antibail/ABail';
+import ReturnProperty from 'components/petition/return/ReturnProperty';
+import Pleadings from 'components/pages/Pleadings';
 
 function App() {
   
@@ -118,7 +119,7 @@ function App() {
                   path="petition/anticipatory/bail" 
                   element={
                     <PrivateRoute>
-                      <BailFiling />
+                      <ABail />
                     </PrivateRoute>       
                   } 
                 />
@@ -186,6 +187,22 @@ function App() {
                     </PrivateRoute>
                   } 
                 />
+                <Route 
+                  path="petition/return-property" 
+                  element={
+                    <PrivateRoute>
+                      <ReturnProperty />
+                    </PrivateRoute>
+                  } 
+                />
+                <Route
+                  path="pleadings"
+                  element={
+                    <PrivateRoute>
+                      <Pleadings />
+                    </PrivateRoute>
+                  }
+                ></Route>
                 <Route
                   path="status/filing-number"
                   element={<FilingSearch />}
@@ -232,10 +249,8 @@ function App() {
                 />
                 <Route path="user/registration" element={<Register />} />
                 <Route path="filing/kiosk" element={<CaseStatus />} />
-                <Route path="stepper" element={<MultiStepForm />} />
-                {/* <Route path="*" element={<NotFound />} /> */}
               </Route>
-              <Route path="decrypt" element={<DecryptForm />} />
+             
             </Routes>
           </BaseProvider>
         </AuthProvider>

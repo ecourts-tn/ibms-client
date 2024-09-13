@@ -192,11 +192,17 @@ const Register = () => {
                 return
             }
             const response = await api.post("auth/user/register/", form)
-            setUser(response.data)
-            setShow(true)
-            toast.success("User registered successfully", {
-                theme:"colored"
-            })
+            if(response.status === 201){
+                setUser(response.data)
+                setShow(true)
+                toast.success("User registered successfully", {
+                    theme:"colored"
+                })
+            }
+            if(response.status === 400){
+                console.log(response)
+            }
+
         }
         catch(error){
             if(error.inner){
@@ -205,6 +211,9 @@ const Register = () => {
                     newErrors[err.path] = err.message
                 })
                 setErrors(newErrors)
+            }
+            if(error){
+                console.log(error)
             }
         }
     }

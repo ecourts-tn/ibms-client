@@ -55,19 +55,10 @@ const Steps = () => {
               <div className="step" data-target={`#step-${index + 1}`}>
                 <Link to={item.url}>
                   <button className="step-trigger">
-                    <span
-                      className="bs-stepper-circle"
-                      style={{
-                        backgroundColor: item.completed ? 'green' : isActive ? 'blue' : '',
-                        color: isActive ? 'white' : ''
-                      }}>
+                    <span className="bs-stepper-circle" style={{backgroundColor: item.completed ? 'green' : isActive ? 'blue' : '',color: isActive ? 'white' : ''}}>
                       {index + 1}
                     </span>
-                    <span
-                      className="bs-stepper-label"
-                      style={{
-                        color: item.completed ? 'green' : isActive ? 'blue' : ''
-                      }}>
+                    <span className="bs-stepper-label" style={{color: item.completed ? 'green' : isActive ? 'blue' : ''}}>
                       {item.title}
                     </span>
                   </button>
@@ -79,8 +70,9 @@ const Steps = () => {
         })}
       </div>
 
-      <div className="bs-stepper-content">
-        <Routes>
+      <div className="bs-stepper-content content">
+        {/* Make sure Routes match the correct path */}
+        {/* <Routes>
           <Route path="/bail/initial-input" element={<div id="step-1"><BasicContainer /></div>} />
           <Route path="/bail/litigant" element={<div id="step-2"><BasicContainer /></div>} />
           <Route path="/bail/ground" element={<div id="step-3"><BasicContainer /></div>} />
@@ -89,8 +81,8 @@ const Steps = () => {
           <Route path="/bail/documents" element={<div id="step-6"><BasicContainer /></div>} />
           <Route path="/bail/payment" element={<div id="step-7"><BasicContainer /></div>} />
           <Route path="/bail/efile" element={<div id="step-8"><BasicContainer /></div>} />
-        </Routes>
-
+        </Routes> */}
+fsfsfds
         <button
           className="btn btn-primary float-right"
           type="button"

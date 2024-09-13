@@ -2,29 +2,19 @@ import React, { useEffect, useState, useContext } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode, loadDistricts } from '../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../redux/features/StateSlice';
-import { getCaseTypeStatus,getCaseTypes } from '../../redux/features/CaseTypeSlice';
-import { getBailTypeByCaseType } from '../../redux/features/BailTypeSlice';
-import { getCourtsByEstablishmentCode } from '../../redux/features/CourtSlice';
-import { getEstablishmentByDistrict } from '../../redux/features/EstablishmentSlice';
-import { getComplaintTypes, getComplaintTypeStatus } from '../../redux/features/ComplaintTypeSlice';
-import { getCourtTypes, getCourtTypeStatus } from '../../redux/features/CourtTypeSlice';
-import { getBenchTypes, getBenchTypeStatus } from '../../redux/features/BenchTypeSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
-import api from '../../api';
 import Select from 'react-select'
-import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { RequiredField } from '../../utils';
-import FIRSearch from '../search/FIRSearch';
-import CaseSearch from '../search/CaseSearch';
-import { BaseContext } from '../../contexts/BaseContext';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import { RequiredField } from '../../../utils';
+import FIRSearch from '../../search/FIRSearch';
+import CaseSearch from '../../search/CaseSearch';
+import { BaseContext } from '../../../contexts/BaseContext';
 import { useLocation } from 'react-router-dom';
+import api from '../../../api';
 
 
-const BasicContainer = () => {
+const InitialInput = () => {
 
     const location = useLocation();
     const currentPath = location.pathname;
@@ -43,22 +33,6 @@ const BasicContainer = () => {
         fir
     } = useContext(BaseContext)
 
-    const dispatch = useDispatch()
-    // const stateStatus       = useSelector(getStatesStatus)
-    // const complaintStatus   = useSelector(getComplaintTypeStatus)
-    // const caseTypeStatus    = useSelector(getCaseTypeStatus)
-    // const courtTypeStatus   = useSelector(getCourtTypeStatus)
-    // const benchTypeStatus   = useSelector(getBenchTypeStatus)
-
-    // const states            = useSelector((state) => state.states.states)
-    // const districts         = useSelector((state) => state.districts.districts)
-    // const casetypes         = useSelector((state) => state.casetypes.casetypes)
-    // // const bailtypes         = useSelector((state) => state.bailtypes.bailtypes)
-    // const establishments    = useSelector((state) => state.establishments.establishments)
-    // const courts            = useSelector((state) => state.courts.courts)
-    // const complainttypes    = useSelector((state) => state.complainttypes.complainttypes)
-    // const courttypes        = useSelector((state) => state.courttypes.courttypes)
-    // const benchtypes        = useSelector((state) => state.benchtypes.benchtypes)
 
     const initialState = {
         court_type: 1,
@@ -131,59 +105,6 @@ const BasicContainer = () => {
         complaint_type: Yup.string().required("Please select the complaint type"),
     })
 
-    // useEffect(() => {
-    //     if(courtTypeStatus === 'idle'){
-    //         dispatch(getCourtTypes())
-    //     }
-    // },[dispatch]) 
-
-    // useEffect(() => {
-    //     if(benchTypeStatus === 'idle' && petition.court_type !== ''){
-    //         dispatch(getBenchTypes())
-    //     }
-    // }, [benchTypeStatus, dispatch])
-
-    // useEffect(() => {
-    //     if(caseTypeStatus === 'idle'){
-    //       dispatch(getCaseTypes())
-    //     }
-    // }, [caseTypeStatus, dispatch])
-
-    // useEffect(() => {
-    //     if(complaintStatus === 'idle'){
-    //         dispatch(getComplaintTypes())
-    //     }
-    // }, [complaintStatus, dispatch])
-    
-    // useEffect(() => {
-    //     if(petition.case_type !== ''){
-    //         dispatch(getBailTypeByCaseType(petition.case_type));
-    //     }
-    // }, [petition.case_type, dispatch]);
-    
-    // useEffect(() => {
-    // if(stateStatus === 'idle'){
-    //     dispatch(getStates())
-    // }
-    // }, [stateStatus, dispatch])
-    
-    // useEffect(() => {
-    // if(petition.state !== ''){
-    //     dispatch(getDistrictByStateCode(petition.state))
-    // }
-    // }, [petition.state, dispatch])
-    
-    // useEffect(() => {
-    //     if( petition.district !== ''){
-    //         dispatch(getEstablishmentByDistrict(petition.district))
-    //     }
-    // },[petition.district, dispatch])
-
-    // useEffect(() => {
-    //     if(petition.establishment !== ''){
-    //       dispatch(getCourtsByEstablishmentCode(petition.establishment))
-    //     }
-    // },[petition.establishment, dispatch])
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
@@ -501,4 +422,4 @@ const BasicContainer = () => {
     )
 }
 
-export default BasicContainer
+export default InitialInput

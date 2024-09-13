@@ -7,25 +7,20 @@ import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
-import GroundsContainer from '../../grounds/GroundsContainer';
-import DocumentContainer from '../../documents/DocumentContainer';
+import SendIcon from '@mui/icons-material/Send';
+import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
+import Editor  from 'react-simple-wysiwyg';
+import Select from 'react-select'
 import * as Yup from 'yup'
+import Form from 'react-bootstrap/Form';
+import InitialInput from '../InitialInput';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 
 
-const ReturnPassport = () => {
+const Relaxation = () => {
 
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-
-    const states    = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks    = useSelector((state) => state.taluks.taluks)
-
-    const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
     const[petitioners, setPetitioners] = useState([])
     const[respondents, setRespondents] = useState([])
@@ -37,65 +32,58 @@ const ReturnPassport = () => {
         setAdvocates(newAdvocate)
     }
 
-    const deleteRespondent = (respondent) => {
-        const newRespondent = respondents.filter((res) => { return res.id !== respondent.id })
-        setRespondents(newRespondent)
-    }
-
-
     const initialState = {
-        cino: '',
-        surety_name: '',
-        relation: '',
-        relative_name:'',
-        aadhar_number: '',
-        address: '',
+        efile_no: '',
+        case_no: '',
+        court_type: '',
+        bench_type:'',
         state: '',
-        district: '',
-        taluk: '',
-        pincode: '',
-        phone_number: '',
-        email_address: '',
-        residing_years: '',
-        property_type: '',
-        survey_number: '',
-        site_location:'',
-        site_area:'',
-        site_valuation:'',
-        rent_bill_surety_name: false,
-        property_document:'',
-        employment_type: '',
-        business_address: '',
-        business_state: '',
-        business_district: '',
-        business_taluk: '',
-        business_nature: '',
-        business_rent_paid: '',
-        is_rent_bill_name: false,
-        business_document:'',
-        employer_name: '',
-        designation: '',
-        employer_address: '',
-        employer_state: '',
-        employer_district: '',
-        employer_taluk: '',
-        service_length: '',
-        pf_amount: '',
-        property_details: '',
-        income_tax_paid: '',
-        employment_document: '',
-        bank_accounts: [],
-        accused_duration_year: '',
-        accused_duration_month: '',
-        is_related: false,
-        relation_details: '',
-        others_surety:'',
-        litigation_details: '',
-        other_particulars: '',
-        surety_amount: '',
-        photo: '',
-        signature:'',
-        identity_proof:''
+        district:'',
+        establishment: '',
+        court:'',
+        case_type: '',
+        bail_type: '',
+        complaint_type:'',
+        crime_registered: '',
+        crime_state: null,
+        crime_district: null,
+        police_station:null,
+        crime_number: null,
+        crime_year: null,
+        case_state: null,
+        case_district: null,
+        case_establishment: null,
+        case_court: null,
+        case_case_type:  null,
+        case_number: null,
+        case_year: null,
+        cnr_number: null,
+        date_of_occurrence:'',
+        fir_date_time:'',
+        place_of_occurrence:'',
+        investigation_officer:'',
+        complaintant_name:'',
+        gist_of_fir:'',
+        gist_in_local:'',
+        grounds:'',
+        is_details_correct: true,
+        remarks:'',
+        is_previous_pending: false,
+        advocate_name:'',
+        enrolment_number: null,
+        advocate_mobile: '',
+        advocate_email:'',
+        prev_case_number: '',
+        prev_case_year: '',
+        prev_case_status:'',
+        prev_disposal_date:'',
+        prev_proceedings:'',
+        prev_is_correct:false,
+        prev_remarks:'',
+        prev_is_pending:false,
+        vakalath: '',
+        supporting_document:''
+        
     }
 
     const[form, setForm] = useState(initialState);
@@ -123,22 +111,51 @@ const ReturnPassport = () => {
         });
     }, []);
 
-    const addBankAccount = () => {}
+    const[otp, setOtp] = useState('')
 
-    const handleBankAccountChange = () =>{}
+    const[mobileOtp, setMobileOtp] = useState(false)
+    const[mobileVerified, setMobileVerified] = useState(false)
 
-    const removeBankAccount = () => {}
+    const sendMobileOTP = () => {
+        // if(otp === ''){
+        //     toast.error("Please enter valid mobile number",{
+        //         theme:"colored"
+        //     })
+        // }else{
+            // setMobileLoading(true)
+        if(mobileOtp){
+            toast.success("OTP already verified successfully.", {
+                theme: "colored"
+            })
+            return
+        }
+            toast.success("OTP has been sent your mobile number",{
+                theme:"colored"
+            })
+            setMobileOtp(true)
+        // }
+    }
 
-    const handleChange = (e) => {
-            const {name, value} = e.target
-            setForm({...form, [name]:value})
+    const verifyMobile = (otp) => {
+        if(parseInt(otp) === 123456){
+            toast.success("Mobile otp verified successfully",{
+                theme:"colored"
+            })
+            setMobileVerified(true)
+        }else{
+            toast.error("Invalid OTP. Please enter valid OTP",{
+                theme:"colored"
+            })
+            setMobileVerified(false)
+            setMobileOtp(true)
+        }
     }
 
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`api/bail/petition/submitted/list/`)
+                const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -151,23 +168,25 @@ const ReturnPassport = () => {
 
 
     useEffect(() => {
-        async function fetchDetails(){
+        const fetchDetails = async() => {
             try{
-                const response = await api.get("api/bail/petition/detail/", {params: {cino:form.cino}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
                 if(response.status === 200){
+                    console.log(response.data)
                     setPetition(response.data.petition)
-                    setPetitioners(response.data.petitioner)
-                    setRespondents(response.data.respondent)
+                    setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
+                    setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        if(form.cino!== ''){
+        if(form.efile_no !== ''){
             fetchDetails()
         }
-    },[form.cino])
+    },[form.efile_no])
+
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -202,24 +221,16 @@ const ReturnPassport = () => {
         }
     }
 
+    const petitionerOptions = petitioners.map((petitioner, index) => {
+        return {
+            value : petitioner.petitioner_id,
+            label : petitioner.petitioner_name
+        }
+    })
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try{
-            const response = await api.post("api/bail/surety/create/", form, {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    // 'X-CSRFTOKEN': CSRF_TOKEN
-                  }
-            })
-            if(response.status === 201){
-                toast.success("Petition submitted successfully", {
-                    theme:'colored'
-                })
-                setForm(initialState)
-            }
-        }catch(error){
-            console.log(error)
-        }
+        
     }
 
     return(
@@ -227,6 +238,89 @@ const ReturnPassport = () => {
             <ToastContainer />
             <div className="container-fluid px-md-5">
                 <div className="row">
+                    {/* <div className="col-md-12">
+                        <div className="card">
+                            <div className="card-header">
+                                <h3 className="card-title">Collapsible Accordion</h3>
+                            </div>
+                            <div className="card-body">
+                                <div id="accordion">
+                                    <div className="card card-primary">
+                                        <div className="card-header">
+                                        <h4 className="card-title w-100">
+                                            <a className="d-block w-100" data-toggle="collapse" href="#collapseOne">
+                                            Collapsible Group Item #1
+                                            </a>
+                                        </h4>
+                                        </div>
+                                        <div id="collapseOne" className="collapse show" data-parent="#accordion">
+                                        <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+                                            3
+                                            wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                                            laborum
+                                            eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee
+                                            nulla
+                                            assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
+                                            nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
+                                            beer
+                                            farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
+                                            labore sustainable VHS.
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header">
+                                        <h4 className="card-title w-100">
+                                            <a className="d-block w-100" data-toggle="collapse" href="#collapseTwo">
+                                            Collapsible Group Danger
+                                            </a>
+                                        </h4>
+                                        </div>
+                                        <div id="collapseTwo" className="collapse" data-parent="#accordion">
+                                        <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+                                            3
+                                            wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                                            laborum
+                                            eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee
+                                            nulla
+                                            assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
+                                            nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
+                                            beer
+                                            farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
+                                            labore sustainable VHS.
+                                        </div>
+                                        </div>
+                                    </div>
+                                    <div className="card">
+                                        <div className="card-header">
+                                        <h4 className="card-title w-100">
+                                            <a className="d-block w-100" data-toggle="collapse" href="#collapseThree">
+                                            Collapsible Group Success
+                                            </a>
+                                        </h4>
+                                        </div>
+                                        <div id="collapseThree" className="collapse" data-parent="#accordion">
+                                        <div className="card-body">
+                                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+                                            3
+                                            wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt
+                                            laborum
+                                            eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee
+                                            nulla
+                                            assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred
+                                            nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft
+                                            beer
+                                            farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
+                                            labore sustainable VHS.
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> */}
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
@@ -298,18 +392,18 @@ const ReturnPassport = () => {
                                                         <div className="form-group row">
                                                             <div className="col-sm-12">
                                                                 <select 
-                                                                    name="cino" 
+                                                                    name="efile_no" 
                                                                     className="form-control"
-                                                                    value={form.cino}
+                                                                    value={form.efile_no}
                                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
-                                                                        <option value={c.petition.cino} key={index}><>{c.petition.cino}</> - { c.petitioner.map((p, index) => (
-                                                                            <>{index+1}. {p.petitioner_name}</>
+                                                                        <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                                                            <>{index+1}. {p.litigant_name}</>
                                                                             ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                                            { c.respondent.map((res, index) => (
-                                                                            <>{res.respondent_name} rep by {res.designation}</>
+                                                                            { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                                            <>{res.litigant_name} {res.designation}</>
                                                                             ))} 
                                                                         </option>
                                                                     ))}
@@ -384,160 +478,367 @@ const ReturnPassport = () => {
                                                     )}
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
-                                                    <div className="row">
-                                                        { form.cino === '' && (
-                                                            <>
-                                                            { Object.keys(petition).length > 0 && (
-                                                                <table className="table table-bordered table-striped">
-                                                                    { petition && (
-                                                                    <>
-                                                                        <tr>
-                                                                            <td colSpan={4} className="bg-secondary"><strong>Basic Details</strong></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Court Type</td>
-                                                                            <td>{ petition.court_type.court_type }</td>
-                                                                            <td>Bench Type</td>
-                                                                            <td>{ petition.bench_type ? petition.bench_type.bench_type : '-'}</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>State</td>
-                                                                            <td>{ petition.state.state_name }</td>
-                                                                            <td>District</td>
-                                                                            <td>{ petition.district.district_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Establishment</td>
-                                                                            <td>{ petition.establishment.establishment_name }</td>
-                                                                            <td>Court</td>
-                                                                            <td>{ petition.court.court_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Case Type</td>
-                                                                            <td>{ petition.case_type.type_name }</td>
-                                                                            <td>Bail Type</td>
-                                                                            <td>{ petition.bail_type.type_name }</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Crime Registered</td>
-                                                                            <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
-                                                                            <td>Compliant Type</td>
-                                                                            <td>{ petition.complaint_type.type_name }</td>
-                                                                        </tr>
-                                                                    </>
-                                                                    )}
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(petitioners).length > 0 && (
-                                                                <table className="table table-bordered table-striped">
-                                                                    <thead>
-                                                                        <tr className="bg-secondary">
-                                                                            <td colSpan={6}>Petitioner Details</td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>S.No</th>
-                                                                            <th>Petitioner Name</th>
-                                                                            <th>Age</th>
-                                                                            <th>Relation</th>
-                                                                            <th>Relation Name</th>
-                                                                            <th>Select</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        { petitioners.map((petitioner, index) => (
-                                                                        <tr>
-                                                                            <td>{ index+1 }</td>
-                                                                            <td>{ petitioner.petitioner_name }</td>
-                                                                            <td>{ petitioner.age }</td>
-                                                                            <td>{ petitioner.relation }</td>
-                                                                            <td>{ petitioner.relation_name }</td>
-                                                                            <td>
-                                                                                <input type="checkbox" />
-                                                                            </td>
-                                                                        </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(respondents).length > 0 && (
-                                                                <table className=" table table-bordered table-striped">
-                                                                    <thead>
-                                                                        <tr className="bg-secondary">
-                                                                            <td colSpan={6}><strong>Respondent Details</strong></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <th>S.No.</th>
-                                                                            <th>Respondent Name</th>
-                                                                            <th>Designation</th>
-                                                                            <th>Police Station</th>
-                                                                            <th>District</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        { respondents.map((respondent, index) => (
-                                                                            <tr>
-                                                                                <td>{index+1}</td>
-                                                                                <td>{respondent.respondent_name}</td>
-                                                                                <td>{respondent.designation}</td>
-                                                                                <td>{respondent.address}</td>
-                                                                                <td>{respondent.district}</td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </tbody>
-                                                                </table>
-                                                            )}
-                                                            { Object.keys(advocates).length > 0 && (
-                                                            <table className=" table table-bordered table-striped">
+                                                    { form.cino !== '' && (
+                                                        <>
+                                                        { Object.keys(petition).length > 0 && (
+                                                            <InitialInput petition={petition} />
+                                                        )}
+                                                        { Object.keys(petitioners).length > 0 && (
+                                                            <table className="table table-bordered">
                                                                 <thead>
-                                                                    <tr className="bg-secondary">
-                                                                        <td colSpan={6}><strong>Advocate Details</strong>
-                                                                            <div className="float-right">
-                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
-                                                                            </div>
-                                                                        </td>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={7}><strong>Petitioner Details</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>S.No.</th>
-                                                                        <th>Advocate Name</th>
-                                                                        <th>Enrolment Number</th>
-                                                                        <th>Mobile Number</th>
-                                                                        <th>Email Address</th>
-                                                                        <th width={120}>Action</th>
+                                                                        <th>Select</th>
+                                                                        <th>Petitioner Name</th>
+                                                                        <th>Age</th>
+                                                                        <th>Rank</th>
+                                                                        <th>Act</th>
+                                                                        <th>Section</th>
+                                                                        <th>Father/Husband/Guardian Name</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    { advocates.map((advocate, index) => (
-                                                                        <tr>
-                                                                            <td>{index+1}</td>
-                                                                            <td>{advocate.advocate_name}</td>
-                                                                            <td>{advocate.enrolment_number}</td>
-                                                                            <td>{advocate.advocate_mobile}</td>
-                                                                            <td>{advocate.advocate_email}</td>
+                                                                    { petitioners.map((petitioner, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <div className="icheck-success">
+                                                                                <input type="checkbox" id={`checkboxSuccess${index+1}`} />
+                                                                                <label htmlFor={`checkboxSuccess${index+1}`}></label>
+                                                                            </div>                                                                            </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.litigant_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.age}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.rank}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={ petitioner.act}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.section}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.relation_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                    </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        )}
+                                                        <table className="table table-bordered table-striped">
+                                                            <thead>
+                                                                <tr className='bg-navy'>
+                                                                    <td colSpan={5}><strong>Passport Details</strong></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Nationality</th>
+                                                                    <th>Passport Type</th>
+                                                                    <th>Passport Authority</th>
+                                                                    <th>Issued Date</th>
+                                                                    <th>Expiry Date</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td><input type="text" className='form-control'/></td>
+                                                                    <td><input type="text" className='form-control'/></td>
+                                                                    <td><input type="text" className='form-control'/></td>
+                                                                    <td><input type="text" className='form-control'/></td>
+                                                                    <td><input type="text" className='form-control'/></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        { Object.keys(respondents).length > 0 && (
+                                                            <table className=" table table-bordered">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>Respondent Details</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Respondent Name</th>
+                                                                        <th>Designation</th>
+                                                                        <th>Police Station</th>
+                                                                        <th>District</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { respondents.map((res, index) => (
+                                                                        <tr key={index}>
                                                                             <td>
-                                                                                <i 
-                                                                                    className="fa fa-pencil-alt text-primary"
-                                                                                    
-                                                                                ></i>
-                                                                                <i 
-                                                                                    className="fa fa-trash-alt text-danger ml-3"
-                                                                                    onClick={() => deleteAdvocate(advocate)}
-                                                                                ></i>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.litigant_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.designation}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.address}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.district.district_name}
+                                                                                    readOnly={true}
+                                                                                />
                                                                             </td>
                                                                         </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
-                                                            )}
-                                                            { Object.keys(petition).length > 0 && (
-                                                                <>  
-                                                                    
-                                                                    <GroundsContainer grounds={grounds}/>
-                                                                    <DocumentContainer />
+                                                        )}
+                                                        { Object.keys(advocates).length > 0 && (
+                                                        <table className=" table table-bordered">
+                                                            <thead>
+                                                                <tr className="bg-navy">
+                                                                    <td colSpan={6}><strong>Advocate Details</strong>
+                                                                        <div className="float-right">
+                                                                            <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <th>Advocate Name</th>
+                                                                    <th>Enrolment Number</th>
+                                                                    <th>Mobile Number</th>
+                                                                    <th>Email Address</th>
+                                                                    <th width={120}>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                { advocates.map((advocate, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.enrolment_number}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_mobile}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={advocate.advocate_email}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            { !advocate.is_primary && (
+                                                                                <>
+                                                                                    <IconButton aria-label="delete" disabled color="primary">
+                                                                                        <EditIcon color='info'/>
+                                                                                    </IconButton>
+                                                                                    <IconButton aria-label="delete">
+                                                                                        <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
+                                                                                    </IconButton>
+                                                                                
+                                                                                </>
+                                                                            )}
+                                                                        </td>
+                                                                    </tr>
+                                                                ))}
+                                                            </tbody>
+                                                        </table>
+                                                        )}
+                                                        { Object.keys(petition).length > 0 && (
+                                                            <>  
+                                                                <div className="row">
+                                                                    <div className="col-md-12">
+                                                                        <div className="form-group">
+                                                                            <p className="bg-navy" style={{padding:"12px 10px", marginBottom:'0px'}}><strong>Grounds</strong></p>
+                                                                            <Editor 
+                                                                                value={form.ground} 
+                                                                                onChange={(e) => setForm({...form, ground: e.target.value })} 
+                                                                            />
+                                                                            <div className="invalid-feedback">
+                                                                                { errors.ground }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    { parseInt(searchPetition) === 1 && (
+                                                                    <div className="col-md-12 mt-4"> 
+                                                                        <div className="form-group">
+                                                                        <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
+                                                                        <input 
+                                                                            type="file" 
+                                                                            name="vakalath"
+                                                                            className="form-control"
+                                                                            // value={petition.vakalath}
+                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                        />
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    <div className="col-md-12 mt-4"> 
+                                                                        <div className="form-group">
+                                                                        <label htmlFor="document">Supporting Documents</label>
+                                                                        <input 
+                                                                            type="file" 
+                                                                            name="supporting_document" 
+                                                                            className="form-control"
+                                                                            // value={petition.supporting_document}
+                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
+                                                                        />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-md-4">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Enrolment Number</label>
+                                                                            <div className="row">
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='MS'
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='Reg. No.'
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="col-md-4">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className="form-control" 
+                                                                                        placeholder='Reg. Year'
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                <div className="col-md-2 mt-4 pt-2">
+                                                                    <Button 
+                                                                        variant="contained"
+                                                                        color="primary"
+                                                                        onClick={sendMobileOTP}
+                                                                        endIcon={<SendIcon />}
+                                                                    >Sworn Affidavit</Button>
+                                                                </div>
+                        
+                                                                {/* { !mobileVerified && (
+                                                                    <div className="col-sm-2">
+                                                                    <Button 
+                                                                        variant="contained"
+                                                                        color="primary" 
+                                                                        onClick={sendMobileOTP}
+                                                                    >
+                                                                        Send OTP</Button>
+                                                                </div>
+                                                                )} */}
+                                                                { mobileOtp && !mobileVerified && (
+                                                                <>
+                                                                    <div className="col-md-1 mt-3 pt-2">
+                                                                        <input 
+                                                                            type="password" 
+                                                                            className="form-control mt-2" 
+                                                                            placeholder="OTP" 
+                                                                            value={otp}
+                                                                            onChange={(e) => setOtp(e.target.value)}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="col-md-2 mt-3 pt-2">
+                                                                        <button 
+                                                                            type="button" 
+                                                                            className="btn btn-success px-5 mt-2"
+                                                                            onClick={() => verifyMobile(otp)}
+                                                                        >Verify</button>
+                                                                    </div>
                                                                 </>
-                                                            )}
+                                                                )}
+                                                                    { mobileVerified && (
+                                                                        <p className="mt-4 pt-3">
+                                                                            <CheckCircleRoundedIcon color="success"/>
+                                                                            <span className="text-success ml-1"><strong>Verified</strong></span>
+                                                                        </p>
+                                                                    )}
+                                                                    <div className="col-md-12">
+                                                                        <div className="d-flex justify-content-center">
+                                                                            <Button
+                                                                                variant="contained"
+                                                                                color="success"
+                                                                                onClick={handleSubmit}
+                                                                            >
+                                                                                Submit
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </>
                                                         )}
-                                                    </div>
+                                                        </>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -576,4 +877,4 @@ const ReturnPassport = () => {
     )
 }
 
-export default ReturnPassport;
+export default Relaxation;

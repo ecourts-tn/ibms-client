@@ -5,7 +5,6 @@ import Col from 'react-bootstrap/Col';
 import { ToastContainer } from 'react-toastify';
 import './header.css'
 import Login from './Login';
-import Sidebar from './Sidebar';
 
 const imgLink = "";
 

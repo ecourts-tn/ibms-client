@@ -155,13 +155,22 @@ const DocumentContainer = ({petition}) => {
                             <div className="col-md-5 mt-4"> 
                                 <div className="form-group">
                                 <label htmlFor="title">Document Title</label>
-                                <input 
+                                {/* <input 
                                     type="text" 
                                     name="title"
                                     className="form-control"
                                     value={form.title}
                                     onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
-                                />
+                                /> */}
+                                <select 
+                                    name="title" 
+                                    className="form-control"
+                                    onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                >
+                                    <option value="">Select </option>
+                                    <option value="Vakalath">Vakalath</option>
+                                    <option value="Supporting Documents">Supporting Documents</option>
+                                </select>
                                 </div>
                             </div>
                             <div className="col-md-5 mt-4"> 
@@ -188,7 +197,7 @@ const DocumentContainer = ({petition}) => {
                                     </div>
                                 </div>
                         </div>
-                        { parseInt(petition.case_type) !== 1 && (
+                        {/* { parseInt(petition.case_type) !== 1 && (
                             <div className="row">
                                 <div className="col-md-4">
                                     <div className="form-group">
@@ -226,17 +235,7 @@ const DocumentContainer = ({petition}) => {
                                         endIcon={<SendIcon />}
                                     >Sworn Affidavit</Button>
                                 </div>
-                                
-                                {/* { !mobileVerified && (
-                                    <div className="col-sm-2">
-                                    <Button 
-                                        variant="contained"
-                                        color="primary" 
-                                        onClick={sendMobileOTP}
-                                    >
-                                        Send OTP</Button>
-                                </div>
-                                )} */}
+
                                 { mobileOtp && !mobileVerified && (
                                 <>
                                     <div className="col-md-1 mt-3 pt-2">
@@ -264,7 +263,7 @@ const DocumentContainer = ({petition}) => {
                                     </p>
                                 )}
                             </div>
-                        )}
+                        )} */}
                     </form>
                 </div>    
             </div>  

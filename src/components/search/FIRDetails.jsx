@@ -40,74 +40,78 @@ const FIRDetails = () => {
                                 >&times;</button>
                             </Modal.Header>
                             <Modal.Body>
-                                <table className="table table-bordered table-striped table-sm">
-                                    <tr>
-                                        <td>Date&nbsp;of&nbsp;Occurrence</td>
-                                        <td>{ fir.date_of_occurrence }</td>
-                                        <td>FIR Date & Time</td>
-                                        <td>{ fir.fir_date_time }</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Place of Occurence</td>
-                                        <td colSpan={3}>{ fir.place_of_occurrence }</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Investigation Officer</td>
-                                        <td>{ fir.investigation_officer }</td>
-                                        <td>Investigation Officer Rank</td>
-                                        <td>{ fir.investigation_officer_rank }</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Complaintant&nbsp;Name</td>
-                                        <td>{ fir.complainant_name }</td>
-                                        <td>Complaintant&nbsp;Age</td>
-                                        <td>{ fir.complainant_age }</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Complaintant&nbsp;Guardian</td>
-                                        <td>{ fir.complainant_guardian }</td>
-                                        <td>Complaintant&nbsp;Guardian Name</td>
-                                        <td>{ fir.complainant_guardian_name }</td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={4}>
-                                            <p><strong>Gist of FIR / Allegations</strong></p>
-                                            <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_of_fir)}></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={4}>
-                                            <p><strong>Gist of FIR / Allegations (In Local Language)</strong></p>
-                                            <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
-                                        </td>
-                                    </tr>
-                                </table>
-                                {accused && (
-                                    <table className="table table-bordered table-sm">
-                                        <thead>
-                                            <tr className="bg-navy">
-                                                <th>#</th>
-                                                <th>Accused Name</th>
-                                                <th>Age</th>
-                                                <th>Rank</th>
-                                                <th>Gender</th>
-                                                <th>Guardian Name</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {accused.map((a, index) => (
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <table className="table table-bordered table-striped table-sm">
                                             <tr>
-                                                <td>{ index+1 }</td>
-                                                <td>{a.name_of_accused}</td>
-                                                <td>{a.age}</td>
-                                                <td>{a.Rank_of_accused}</td>
-                                                <td>{a.gender}</td>
-                                                <td>{a.accused_guardian_name}</td>
+                                                <td>Date&nbsp;of&nbsp;Occurrence</td>
+                                                <td>{ fir.date_of_occurrence }</td>
+                                                <td>FIR Date & Time</td>
+                                                <td>{ fir.fir_date_time }</td>
                                             </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                )}
+                                            <tr>
+                                                <td>Place of Occurence</td>
+                                                <td colSpan={3}>{ fir.place_of_occurrence }</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Investigation Officer</td>
+                                                <td>{ fir.investigation_officer }</td>
+                                                <td>Investigation Officer Rank</td>
+                                                <td>{ fir.investigation_officer_rank }</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Complaintant&nbsp;Name</td>
+                                                <td>{ fir.complainant_name }</td>
+                                                <td>Complaintant&nbsp;Age</td>
+                                                <td>{ fir.complainant_age }</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Complaintant&nbsp;Guardian</td>
+                                                <td>{ fir.complainant_guardian }</td>
+                                                <td>Complaintant&nbsp;Guardian Name</td>
+                                                <td>{ fir.complainant_guardian_name }</td>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan={4}>
+                                                    <p><strong>Gist of FIR / Allegations</strong></p>
+                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_of_fir)}></span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colSpan={4} width="500">
+                                                    <p><strong>Gist of FIR / Allegations (In Local Language)</strong></p>
+                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        {accused && (
+                                            <table className="table table-bordered table-striped table-sm">
+                                                <thead>
+                                                    <tr className="bg-navy">
+                                                        <th>#</th>
+                                                        <th>Accused Name</th>
+                                                        <th>Age</th>
+                                                        <th>Rank</th>
+                                                        <th>Gender</th>
+                                                        <th>Guardian Name</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {accused.map((a, index) => (
+                                                    <tr>
+                                                        <td>{ index+1 }</td>
+                                                        <td>{a.name_of_accused}</td>
+                                                        <td>{a.age}</td>
+                                                        <td>{a.Rank_of_accused}</td>
+                                                        <td>{a.gender}</td>
+                                                        <td>{a.accused_guardian_name}</td>
+                                                    </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        )}
+                                    </div>
+                                </div>
                             </Modal.Body>
                             <Modal.Footer style={{ justifyContent: "end", alignItems:"center"}}>
                                 <Button variant="contained" onClick={handleClose}>

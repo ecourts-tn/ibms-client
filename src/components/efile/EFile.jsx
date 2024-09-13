@@ -70,12 +70,23 @@ const EFile = () => {
                     <Button
 
                         variant="contained"
-                        color="success"
+                        color="warning"
                         onClick={ isFinalSubmit ? handleSubmit : handleShow}
                         disabled={ !allChecked }
                     >   
                         <i className="fa fa-paper-plane mr-2"></i>
-                        { isFinalSubmit ? "Final Submit" : "Submit"}
+                        { isFinalSubmit ? "Final Submit" : "View Draft"}
+                    </Button>
+                    <Button
+
+                        variant="contained"
+                        color="success"
+                        className='ml-2'
+                        onClick={ isFinalSubmit ? handleSubmit : handleShow}
+                        disabled={ !allChecked }
+                    >   
+                        <i className="fa fa-paper-plane mr-2"></i>
+                        Submit
                     </Button>
                 </div>
             </div>
@@ -87,7 +98,7 @@ const EFile = () => {
                     size="xl"
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title><strong>Draft Application</strong></Modal.Title>234324
+                        <Modal.Title><strong>Draft Application</strong></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <EFileDetails />

@@ -10,16 +10,16 @@ import { toast, ToastContainer } from 'react-toastify';
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Editor  from 'react-simple-wysiwyg';
-import Select from 'react-select'
 import * as Yup from 'yup'
-import Form from 'react-bootstrap/Form';
 import InitialInput from '../InitialInput';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import MaterialDetails from 'components/petition/return/MaterialDetails';
+import VehicleDetails from 'components/petition/return/VehicleDetails'
 
 
-const Relaxation = () => {
+const ReturnProperty = () => {
 
     const[petition, setPetition] = useState({})
     const[petitioners, setPetitioners] = useState([])
@@ -31,6 +31,27 @@ const Relaxation = () => {
         const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
         setAdvocates(newAdvocate)
     }
+
+    const materialState = {
+        name: '',
+        quantity:'',
+        nature:'',
+        is_produced: '',
+        produced_date: '',
+        reason: ''
+    }
+    const[material, setMaterial] = useState(materialState)
+    const[materialErrors, setMaterialErrors] = useState({})
+    const[materials, setMaterials] = useState([])
+    const vehicleState = {
+        vehicle_name: '',
+        owner_details: '',
+        vehicle_number: '',
+        fastag_details: '',
+        is_owner_accused: ''
+    }
+    const[vehicle, setVehicle] = useState(vehicleState)
+    const[vehicles, setVehicles] = useState([])
 
     const initialState = {
         efile_no: '',
@@ -89,6 +110,7 @@ const Relaxation = () => {
     const[form, setForm] = useState(initialState);
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
+    const[propertyType, setPropertyType] = useState(1)
     const[searchForm, setSearchForm] = useState({
         case_type:null,
         case_number: undefined,
@@ -233,6 +255,8 @@ const Relaxation = () => {
         
     }
 
+    const addMaterial = () => {}
+
     return(
         <>
             <ToastContainer />
@@ -243,7 +267,7 @@ const Relaxation = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#">Home</a></li>
                                 <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Condition Relaxation</li>
+                                <li className="breadcrumb-item active" aria-current="page">Return of Property</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -477,27 +501,50 @@ const Relaxation = () => {
                                                                 </tbody>
                                                             </table>
                                                         )}
-                                                        <table className="table table-bordered table-striped">
-                                                            <thead>
-                                                                <tr className='bg-navy'>
-                                                                    <td colSpan={4}><strong>Condition Details</strong></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Bail Order Data</th>
-                                                                    <th>Released Date</th>
-                                                                    <th>No. of Days Present</th>
-                                                                    <th>No. of Days Absent</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
+                                                        <div className="card card-navy">
+                                                            <div className="card-header">
+                                                                <strong>Property Details</strong>
+                                                            </div>
+                                                            <div className="card-body">
+                                                                <div className="row">
+                                                                    <div className="col-md-12">
+                                                                        <div className="form-group row">
+                                                                            <label htmlFor="" className='col-sm-2 form-label'>Propterty Type</label>
+                                                                            <div className="col-sm-9">
+                                                                                <div className="icheck-primary d-inline mx-2">
+                                                                                <input 
+                                                                                    type="radio" 
+                                                                                    name="property_type" 
+                                                                                    id="propertyTypeYes" 
+                                                                                    value={propertyType}
+                                                                                    checked={ parseInt(propertyType) === 1 ? true : false}
+                                                                                    onChange={(e) => setPropertyType(1)} 
+                                                                                />
+                                                                                <label htmlFor="propertyTypeYes">Material</label>
+                                                                                </div>
+                                                                                <div className="icheck-primary d-inline mx-2">
+                                                                                <input 
+                                                                                    type="radio" 
+                                                                                    id="propertyTypeNo" 
+                                                                                    name="property_type" 
+                                                                                    value={propertyType}
+                                                                                    checked={ parseInt(propertyType) === 2 ? true : false } 
+                                                                                    onChange={(e) => setPropertyType(2)}
+                                                                                />
+                                                                                <label htmlFor="propertyTypeNo">Vehicle</label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        { parseInt(propertyType) === 1 && (
+                                                                            <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
+                                                                        )}
+                                                                        { parseInt(propertyType) === 2 && (
+                                                                            <VehicleDetails  vehicle={vehicle} setVehicle={setVehicle}/>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                         { Object.keys(respondents).length > 0 && (
                                                             <table className=" table table-bordered">
                                                                 <thead>
@@ -792,4 +839,4 @@ const Relaxation = () => {
     )
 }
 
-export default Relaxation;
+export default ReturnProperty;

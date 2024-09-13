@@ -35,7 +35,6 @@ const GroundsContainer = () => {
         fecthGrounds()
     }, [])
 
-
     const addGround = async (ground) => {
         try{
             const efile_no = sessionStorage.getItem("efile_no")
@@ -51,6 +50,7 @@ const GroundsContainer = () => {
     }
 
     const deleteGround = async(ground) => {
+        console.log(ground)
         try{
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id

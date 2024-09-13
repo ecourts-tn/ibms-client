@@ -26,7 +26,8 @@ const PreviousCaseForm = () => {
             try{
                 const response = await api.get('case/crime/history/',{params: {efile_no}})
                 if(response.status === 200){
-                    setHistory(response.data.history)
+                    console.log(response.data)
+                    setHistory(response.data)
                 }
             }catch(error){
                 console.log(error)
@@ -58,33 +59,62 @@ const PreviousCaseForm = () => {
             <div className="row">
                 <div className="col-md-12">
                     { history.map((item, index) => (
-                    <table className="table table-bordered table-sm">
-                       <tbody>
-                            <tr>
-                                <td colSpan={2} className="text-primary"><strong>{index+1}. ATN20240000001F2024000001</strong></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong className='text-danger'>FIR Details</strong><br></br>
-                                    <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
-                                </td>
-                                <td>
-                                    <strong className="text-danger">Filing Details</strong><br/>
-                                    <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
-                                    <strong>eFile Date</strong>: 09-09-2024<br></br>
-                                    <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan={2}>
-                                    <strong className="text-danger">Order Details</strong><br></br>
-                                    <strong>Status</strong>: Pending <br></br>
-                                    <strong>Order Date</strong>: 09-09-2024 <br></br>
-                                    <strong>Order Remarks</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
-                                </td>
-                            </tr>
-                       </tbody>
-                    </table>
+                        <>
+                            <table className="table table-bordered table-sm">
+                            <tbody>
+                                    <tr>
+                                        <td colSpan={2} className="text-primary"><strong>{index+1}. ATN20240000001F2024000001</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong className='text-danger'>FIR Details</strong><br></br>
+                                            <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
+                                        </td>
+                                        <td>
+                                            <strong className="text-danger">Filing Details</strong><br/>
+                                            <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
+                                            <strong>eFile Date</strong>: 09-09-2024<br></br>
+                                            <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={2}>
+                                            <strong className="text-danger">Business/Order Details</strong><br></br>
+                                            <strong>Status</strong>: Pending <br></br>
+                                            <strong>Business/Order Date</strong>: 09-09-2024 <br></br>
+                                            <strong>Proceeding</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
+                                        </td>
+                                    </tr>
+                            </tbody>
+                            </table>
+                            <table className="table table-bordered table-sm">
+                            <tbody>
+                                <tr>
+                                    <td colSpan={2} className="text-primary"><strong>{index+2}. ATN20240000001F2024000002</strong></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong className='text-danger'>FIR Details</strong><br></br>
+                                        <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
+                                    </td>
+                                    <td>
+                                        <strong className="text-danger">Filing Details</strong><br/>
+                                        <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
+                                        <strong>eFile Date</strong>: 09-09-2024<br></br>
+                                        <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colSpan={2}>
+                                        <strong className="text-danger">Business/Order Details</strong><br></br>
+                                        <strong>Status</strong>: Pending <br></br>
+                                        <strong>Business/Order Date</strong>: 09-09-2024 <br></br>
+                                        <strong>Proceeding</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                        </>
                     ))}
                 </div>
                 <div className="col-md-2">
