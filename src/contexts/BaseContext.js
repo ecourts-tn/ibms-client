@@ -27,52 +27,46 @@ const BaseProvider = ({children}) => {
     const[accused, setAccused] = useState([])
 
     useEffect(() => {
-        if (states.length === 0){
-            const fetchStates = async() => {
-                try{
-                    const response = await api.get("base/state/")
-                    if(response.status === 200){
-                        setStates(response.data)
-                    }
-                }catch(error){
-                    console.error(error)
+        const fetchStates = async() => {
+            try{
+                const response = await api.get("base/state/")
+                if(response.status === 200){
+                    setStates(response.data)
                 }
+            }catch(error){
+                console.error(error)
             }
-            fetchStates();
         }
-    },[states])
+        fetchStates();
+    },[])
 
     useEffect(() => {
-        if(districts.lenght === 0){
-            const fetchDistricts = async() => {
-                try{
-                    const response = await api.get("base/district/")
-                    if(response.status === 200){
-                        setDistricts(response.data)
-                    }
-                }catch(error){
-                    console.error(error)
+        const fetchDistricts = async() => {
+            try{
+                const response = await api.get("base/district/")
+                if(response.status === 200){
+                    setDistricts(response.data)
                 }
+            }catch(error){
+                console.error(error)
             }
-            fetchDistricts();
         }
-    },[districts])
+        fetchDistricts();
+    },[])
 
     useEffect(() => {
-        if(taluks.length === 0){
-            const fetchTaluks = async() => {
-                try{
-                    const response = await api.get("base/taluk/")
-                    if(response.status === 200){
-                        setTaluks(response.data)
-                    }
-                }catch(error){
-                    console.error(error)
+        const fetchTaluks = async() => {
+            try{
+                const response = await api.get("base/taluk/")
+                if(response.status === 200){
+                    setTaluks(response.data)
                 }
+            }catch(error){
+                console.error(error)
             }
-            fetchTaluks();
         }
-    },[taluks])
+        fetchTaluks();
+    },[])
 
     useEffect(() => {
         const fetchEstablishments = async() => {

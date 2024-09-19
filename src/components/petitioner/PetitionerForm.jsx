@@ -509,14 +509,18 @@ const PetitionerForm = ({addPetitioner}) => {
             <div className="col-md-2">
               <Form.Group>
                 <Form.Label>Country Code<RequiredField /></Form.Label>
-                <select name="country" className="form-control">
+                <select 
+                  name="country_code" 
+                  className="form-control"
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
                   <option value="">Select country</option>
                   {countries.map((c, index) => (
-                    <option key={index} value={c.id}>{`+(${c.iso})`} {c.country_name}</option>
+                    <option key={index} value={c.iso}>{`+(${c.iso})`} {c.country_name}</option>
                   ))}
                 </select>
                 <div className="invalid-feedback">
-                  { errors.mobile_number}
+                  { errors.country_code}
                 </div>
               </Form.Group>
             </div>

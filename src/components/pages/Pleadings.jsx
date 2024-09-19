@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Button from '@mui/material/Button'
-import api from 'api';
-import Payment from 'components/pages/Payment';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
+import api from 'api';
+import Button from '@mui/material/Button'
 import Stepper from 'bs-stepper';
+import Payment from 'components/pages/Payment';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import Editor  from 'react-simple-wysiwyg';
-
+import * as Yup from 'yup'
 
 const Pleadings = () => {
 
@@ -17,11 +17,6 @@ const Pleadings = () => {
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
-
-    const deleteAdvocate = (advocate) => {
-        const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
-        setAdvocates(newAdvocate)
-    }
 
     const initialState = {
         efile_no: '',
@@ -91,7 +86,7 @@ const Pleadings = () => {
         case_year: Yup.number().required("Please enter the case year")
     })
 
-    const[searchErrors, setSearchErrors]            = useState({})
+    const[searchErrors, setSearchErrors] = useState({})
 
     const stepperRef = useRef(null);
 
@@ -234,7 +229,7 @@ const Pleadings = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#">Home</a></li>
                                 <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Condition Relaxation</li>
+                                <li className="breadcrumb-item active" aria-current="page">Pleadings</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -385,16 +380,22 @@ const Pleadings = () => {
                                                     </form>
                                                     )}
                                                 </div>
-                                                <div className="container-fluid mt-5 px-5">
+                                                <div className="container-fluid mt-2">
                                                     { form.cino !== '' && (
                                                         <>
                                                         { Object.keys(petition).length > 0 && (
                                                             <>  
                                                                 <div className="row">
-                                                                    <div className="col-md-12">
+                                                                    <div className="col-md-8 offset-md-2">
+                                                                        <p>Next Hearing : 19-09-2024</p>
+                                                                        <p>Purpose: </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    <div className="col-md-8 offset-md-2">
                                                                         <div className="card">
                                                                             <div className="card-header bg-navy">
-                                                                                Grounds
+                                                                                <strong>Pleading / Written Arguments</strong>
                                                                             </div>
                                                                             <div className="card-body p-1">
                                                                                 <Editor 
@@ -407,27 +408,29 @@ const Pleadings = () => {
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-3"> 
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="vakkalat">Document Name</label>
-                                                                            <input type="text" className="form-control" />
+                                                                    <div className="col-md-8 offset-md-2">
+                                                                        <div className="row">
+                                                                            <div className="col-md-5"> 
+                                                                                <div className="form-group">
+                                                                                    <label htmlFor="vakkalat">Document Name</label>
+                                                                                    <input type="text" className="form-control" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-5">
+                                                                                <label htmlFor="">Document</label>
+                                                                                <input type="file" className="form-control" />
+                                                                            </div>
+                                                                            <div className="col-md-2 pt-4 mt-2">
+                                                                                <Button
+                                                                                    variant='contained'
+                                                                                    color="primary"
+                                                                                >Add Document</Button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                    <div className="col-md-3">
-                                                                        <label htmlFor="">Document</label>
-                                                                        <input type="file" className="form-control" />
-                                                                    </div>
                                                                 </div>
-                                                                <div className='row'>
-                                                                    <div className="col-md-6 d-flex justify-content-center">
-                                                                        <Button
-                                                                            variant='contained'
-                                                                            color="primary"
-                                                                        >Add Document</Button>
-                                                                    </div>
-                                                                    <div className="col-md-12">
+                                                                <div className="row">
+                                                                    <div className="col-md-12 mt-3">
                                                                         <div className="d-flex justify-content-center">
                                                                             <Button
                                                                                 variant="contained"

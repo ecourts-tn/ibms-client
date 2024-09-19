@@ -97,6 +97,8 @@ const FIRSearch = () => {
             }
         }
     }
+    console.log(states)
+    console.log(districts)
     return (
         <>
             <div className="row">
