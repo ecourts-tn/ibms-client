@@ -25,6 +25,7 @@ const BaseProvider = ({children}) => {
     const[efile_no, setEfileNo] = useState(null)
     const[fir, setFir] = useState({})
     const[accused, setAccused] = useState([])
+    const[groundCount, setGroundCount] = useState(0)
 
     useEffect(() => {
         const fetchStates = async() => {
@@ -261,7 +262,9 @@ const BaseProvider = ({children}) => {
                 fir,
                 setFir,
                 accused,
-                setAccused
+                setAccused,
+                groundCount, 
+                setGroundCount
             }}
         >
             {children}

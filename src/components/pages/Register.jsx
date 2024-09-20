@@ -66,7 +66,8 @@ const Register = () => {
         state_code:'',
         profile_photo:'',
         identity_proof: '',
-        registration_certificate: '',
+        reg_certificate: '',
+        address: '',
         notary_order: ''
     }
     const[districts, setDistricts] = useState([])
@@ -391,11 +392,11 @@ const Register = () => {
                                                         Upload Bar. Registration
                                                         <VisuallyHiddenInput 
                                                             type="file"
-                                                            name="registration_certificate"
+                                                            name="reg_certificate"
                                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
                                                         />
                                                     </Button>
-                                                    <span className="mx-2">{ form.registration_certificate.name }</span>
+                                                    <span className="mx-2">{ form.reg_certificate.name }</span>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -627,6 +628,17 @@ const Register = () => {
                                                 <span className="text-success ml-1"><strong>Verified</strong></span>
                                             </p>
                                             )}
+                                        </div>
+                                        <div className="form-group row">
+                                            <label htmlFor="address" className="col form-label col-sm 3">Address</label>
+                                            <div className="col-sm-9">
+                                                <textarea 
+                                                    name="address"
+                                                    className="form-control"
+                                                    value={form.address}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                ></textarea>
+                                            </div>
                                         </div>
                                         <div className="form-group row mb-3">
                                             <label htmlFor="photo" className='col-form-label col-sm-3'>Upload Photo</label>

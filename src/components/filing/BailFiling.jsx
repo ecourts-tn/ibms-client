@@ -15,6 +15,8 @@ import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
 import Payment from '../pages/Payment'
 import { CaseNumberProvider } from '../../hooks/useCaseNumber'
+import Advocate from 'components/Advocate'
+import Document from 'components/Document'
 
 import EFile from '../efile/EFile'
 import api from '../../api'
@@ -303,7 +305,7 @@ const BailFiling = () => {
                 />;
             }
             case 4: {
-                return <AdvocateContainer
+                return <Advocate
                     petition={petition}
                     setPetition={setPetition}
                     advocates={advocates}
@@ -312,9 +314,8 @@ const BailFiling = () => {
                 />;
             }                
             case 5: {
-                return <DocumentContainer 
-                    petition={petition}
-                    setPetition={setPetition}
+                return <Document 
+                    swornRequired={true}
                 />
             }
             case 6: {

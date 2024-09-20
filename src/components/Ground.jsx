@@ -1,0 +1,204 @@
+import React, { useEffect } from 'react'
+import { useState } from 'react'
+import api from 'api'
+import {toast, ToastContainer} from 'react-toastify'
+import { CreateMarkup } from 'utils'
+
+
+const GroundsContainer = () => {
+
+    const[grounds, setGrounds] = useState([])
+    const[count, setCount] = useState(0)
+
+    const incrementCount = () => {
+        setCount(count+1)
+    }
+
+    const decrementCount = () => {
+        setCount(count-1)
+    }
+    
+    useEffect(() => {
+        const fecthGrounds = async() => {
+            try{
+                const efile_no = sessionStorage.getItem("efile_no")
+                const response = await api.get("case/ground/list/", {params:{efile_no}})
+                if(response.status === 200){
+                    setGrounds(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        fecthGrounds()
+    }, [])
+
+    const addGround = async (ground) => {
+        try{
+            const efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`case/ground/create/`, ground, {params:{efile_no}})
+            if(response.status === 201){
+                incrementCount()
+                setGrounds(grounds => [...grounds, ground])
+                toast.success("Grounds added successfully", {theme:"colored"})
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    const deleteGround = async(ground) => {
+        console.log(ground)
+        try{
+            const newGrounds = grounds.filter((g) => {
+                return g.id !== ground.id
+            })
+            const response = await api.delete("case/ground/delete", {params:{id:ground.id}})
+            if(response.status === 204){
+                setGrounds(newGrounds)
+                decrementCount()
+                toast.error("Grounds deleted successfully", {
+                    theme: "colored"
+                })
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
+    return (
+        <div className="container-fluid m-0">
+            <div className="card">
+                <div className="card-header">
+                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>Grounds</strong></h3>
+                </div>
+                <div className="card-body p-1">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <GroundsList 
+                                grounds={grounds} 
+                                deleteGround={deleteGround} 
+                                count={count}
+                                decrementCount={decrementCount}
+                            />
+                        </div>   
+                        <div className="col-md-12"> 
+                            <GroundsForm 
+                                addGround={addGround} 
+                                count={count}
+                                incrementCount={incrementCount}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+     )
+}
+
+export default GroundsContainer
+
+
+import React, { useEffect } from 'react'
+import Button from '@mui/material/Button'
+import { useState } from 'react'
+import { nanoid } from '@reduxjs/toolkit'
+import { ToastContainer } from 'react-toastify'
+import * as Yup from 'yup'
+import api from '../../api'
+import Editor from 'react-simple-wysiwyg';
+// import { Editor } from '@tinymce/tinymce-react';
+import { useRef } from 'react';
+import './style.css'
+
+
+const GroundsForm = ({addGround, count, incrementCount}) => {
+
+    const editorRef = useRef(null);
+    const validationSchema = Yup.object({
+        description: Yup.string().required("The description field may not be blank").max(3000, "Description should not be more than 3000 characters")
+    })
+
+    const initialState = {
+        description: ''
+    }
+    const[ground, setGround] = useState(initialState)
+    const[errors, setErrors] = useState(false)
+
+    const saveGround = async () => {
+        try{
+            await  validationSchema.validate(ground, {abortEarly: false})     
+            addGround(ground)
+            setGround(initialState)
+        }catch(error){
+            const newErrors = {};
+            error.inner.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            setErrors(newErrors);
+        }
+    }
+
+    return (
+        <>  
+            { count < 3 && (
+            <>
+                <ToastContainer />
+                {/* <textarea name="" id="summernote"></textarea> */}
+                <div className="form-group">
+                    {/* <label htmlFor="" className='text-left'>Grounds</label> */}
+                    <Editor 
+                        value={ground.description} 
+                        onChange={(e) => setGround({...ground, description: e.target.value })} 
+                        style={{ minHeight:'300px'}}
+                    />
+                    <div className="invalid-feedback">
+                        { errors.description }
+                    </div>
+                </div>
+                <div className="form-group">
+                    <Button 
+                        variant="contained"
+                        color="success"
+                        onClick={saveGround}
+                    >
+                        <i className="fa fa-plus mr-2"></i>
+                    Add Ground</Button>
+                </div>    
+            </>
+            )}
+        </>
+    )
+}
+
+const GroundsList = ({grounds, deleteGround}) => {
+    return (
+        <>
+            { grounds.map((ground, index) => (
+                <div className="card" key={index}>
+                    <div className="card-body" dangerouslySetInnerHTML={CreateMarkup(ground.description)}>
+
+                    </div>
+                    <div className="card-footer d-flex justify-content-end" style={{backgroundColor:"inherit", borderTop:"none", marginTop:"-20px"}}>
+                    <Button 
+                            variant="primary" 
+                            size="sm" 
+                            className="mr-2"
+                        >
+                            <i className="fa fa-pencil-alt mr-2"></i>
+                        Edit</Button>
+                        <Button 
+                            variant="danger" 
+                            size="sm" 
+                            onClick={()=>deleteGround(ground) }
+                        >
+                            <i className="fa fa-trash mr-2"></i>
+                        Delete</Button>
+                    </div>
+                </div>
+            ))}
+        </>
+    )
+}
+
+
