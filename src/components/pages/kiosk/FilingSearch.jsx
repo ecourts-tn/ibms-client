@@ -4,15 +4,17 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
 import * as Yup from 'yup'
-import api from '../../../api'
+import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
-import { BaseContext } from '../../../contexts/BaseContext'
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
+import { EstablishmentContext } from 'contexts/EstablishmentContext'
 
 const FilingSearch = () => {
 
-    const {states, districts, establishments} = useContext(BaseContext)
-
-    console.log(states)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
 
     const[form, setForm] = useState({
         state: '', 

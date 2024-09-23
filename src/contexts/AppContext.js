@@ -1,35 +1,55 @@
 import React from "react";
-import { StateProvider } from "./StateContext";
-import { DistrictProvider } from "./DistrictContext";
-import { TalukProvider } from "./TalukContext";
-import { EstablishmentProvider } from "./EstablishmentContext";
-import { CourtProvider } from "./CourtContext";
-import { CourtTypeProvider } from "./CourtTypeContext";
-import { BenchTypeProvider } from "./BenchTypeContext";
-import { BailTypeProvider } from "./BailTypeContext";
-import { ComplaintTypeProvider } from "./ComplaintTypeContext";
-
+import { StateProvider } from "contexts/StateContext";
+import { DistrictProvider } from "contexts/DistrictContext";
+import { TalukProvider } from "contexts/TalukContext";
+import { EstablishmentProvider } from "contexts/EstablishmentContext";
+import { CourtProvider } from "contexts/CourtContext";
+import { CourtTypeProvider } from "contexts/CourtTypeContext";
+import { BenchTypeProvider } from "contexts/BenchTypeContext";
+import { BailTypeProvider } from "contexts/BailTypeContext";
+import { ComplaintTypeProvider } from "contexts/ComplaintTypeContext";
+import { PoliceDistrictProvider } from "contexts/PoliceDistrictContext";
+import { PoliceStationProvider } from "contexts/PoliceStationContext";
+import { PrisonProvider } from "contexts/PrisonContext";
+import { ProofProvider } from "contexts/ProofContext"
+import { RelationProvider } from "contexts/RelationContext";
+import { CountryProvider } from "contexts/CountryContext";
+import { BaseProvider } from "./BaseContext";
 
 export const AppProvider = ({children}) => {
     return(
-        <StateProvider>
-            <DistrictProvider>
-                <TalukProvider>
-                    <EstablishmentProvider>
-                        <CourtProvider>
-                            <CourtTypeProvider>
-                                <BenchTypeProvider>
-                                    <BailTypeProvider>
-                                        <ComplaintTypeProvider>
-                                            {children}
-                                        </ComplaintTypeProvider>
-                                    </BailTypeProvider>
-                                </BenchTypeProvider>
-                            </CourtTypeProvider>
-                        </CourtProvider>
-                    </EstablishmentProvider>
-                </TalukProvider>
-            </DistrictProvider>
-        </StateProvider>
+        <BaseProvider>
+            <StateProvider>
+                <DistrictProvider>
+                    <TalukProvider>
+                        <EstablishmentProvider>
+                            <CourtProvider>
+                                <CourtTypeProvider>
+                                    <BenchTypeProvider>
+                                        <BailTypeProvider>
+                                            <ComplaintTypeProvider>
+                                                <PoliceDistrictProvider>
+                                                    <PoliceStationProvider>
+                                                        <PrisonProvider>
+                                                            <ProofProvider>
+                                                                <RelationProvider>
+                                                                    <CountryProvider>
+                                                                        {children}
+                                                                    </CountryProvider>
+                                                                </RelationProvider>
+                                                            </ProofProvider>
+                                                        </PrisonProvider>
+                                                    </PoliceStationProvider>
+                                                </PoliceDistrictProvider>
+                                            </ComplaintTypeProvider>
+                                        </BailTypeProvider>
+                                    </BenchTypeProvider>
+                                </CourtTypeProvider>
+                            </CourtProvider>
+                        </EstablishmentProvider>
+                    </TalukProvider>
+                </DistrictProvider>
+            </StateProvider>
+        </BaseProvider>
     )
 }

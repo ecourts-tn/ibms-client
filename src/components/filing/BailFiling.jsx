@@ -22,6 +22,7 @@ import EFile from '../efile/EFile'
 import api from '../../api'
 import { useSearchParams } from 'react-router-dom'
 import './style.css'
+import InitialInput from 'components/InitialInput'
 
 function Litigants(props){
     const {
@@ -269,7 +270,7 @@ const BailFiling = () => {
             case 0: {
                 return (
                     <CaseNumberProvider>
-                        <BasicContainer 
+                        <InitialInput 
                             setActiveStep={setActiveStep}
                         />;
                     </CaseNumberProvider>

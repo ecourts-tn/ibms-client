@@ -1,44 +1,36 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import 'react-toastify/dist/ReactToastify.css';
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode} from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getCaseTypeStatus,getCaseTypes } from '../../../redux/features/CaseTypeSlice';
-import { getBailTypeByCaseType } from '../../../redux/features/BailTypeSlice';
-import { getCourtsByEstablishmentCode } from '../../../redux/features/CourtSlice';
-import { getEstablishmentByDistrict } from '../../../redux/features/EstablishmentSlice';
-import { getComplaintTypes, getComplaintTypeStatus } from '../../../redux/features/ComplaintTypeSlice';
-import { getCourtTypes, getCourtTypeStatus } from '../../../redux/features/CourtTypeSlice';
-import { getBenchTypes, getBenchTypeStatus } from '../../../redux/features/BenchTypeSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
 import api from '../../../api';
 import Select from 'react-select'
-import { useLocalStorage } from "../../../hooks/useLocalStorage";
+import { useLocalStorage } from "hooks/useLocalStorage";
+import { BaseContext } from 'contexts/BaseContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { StateContext } from 'contexts/StateContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { CourtContext } from 'contexts/CourtContext';
+import { CourtTypeContext } from 'contexts/CourtTypeContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { BailTypeContext } from 'contexts/BailTypeContext';
+import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 
 const InitialInput = () => {
 
     const navigate = useNavigate()
 
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-    const complaintStatus   = useSelector(getComplaintTypeStatus)
-    const caseTypeStatus    = useSelector(getCaseTypeStatus)
-    const courtTypeStatus   = useSelector(getCourtTypeStatus)
-    const benchTypeStatus   = useSelector(getBenchTypeStatus)
-
-    const states            = useSelector((state) => state.states.states)
-    const districts         = useSelector((state) => state.districts.districts)
-    const casetypes         = useSelector((state) => state.casetypes.casetypes)
-    const bailtypes         = useSelector((state) => state.bailtypes.bailtypes)
-    const establishments    = useSelector((state) => state.establishments.establishments)
-    const courts            = useSelector((state) => state.courts.courts)
-    const complainttypes    = useSelector((state) => state.complainttypes.complainttypes)
-    const courttypes        = useSelector((state) => state.courttypes.courttypes)
-    const benchtypes        = useSelector((state) => state.benchtypes.benchtypes)
+    const {efile_no, setEfileNo, fir} = useContext(BaseContext)
+    const {states}          = useContext(StateContext)
+    const {districts}       = useContext(DistrictContext)
+    const {establishments}  = useContext(EstablishmentContext)
+    const {courts}          = useContext(CourtContext)
+    const {courttypes}      = useContext(CourtTypeContext)
+    const {benchtypes}      = useContext(BenchTypeContext)
+    const {bailtypes}       = useContext(BailTypeContext)
+    const {complainttypes}  = useContext(ComplaintTypeContext)
 
     const initialState = {
         court_type: 1,
@@ -93,59 +85,6 @@ const InitialInput = () => {
         crime_registered: Yup.string().required("Please choose any one option")
     })
 
-    useEffect(() => {
-        if(courtTypeStatus === 'idle'){
-            dispatch(getCourtTypes())
-        }
-    },[dispatch]) 
-
-    useEffect(() => {
-        if(benchTypeStatus === 'idle' && petition.court_type !== ''){
-            dispatch(getBenchTypes())
-        }
-    }, [benchTypeStatus, dispatch])
-
-    useEffect(() => {
-        if(caseTypeStatus === 'idle'){
-          dispatch(getCaseTypes())
-        }
-    }, [caseTypeStatus, dispatch])
-
-    useEffect(() => {
-        if(complaintStatus === 'idle'){
-            dispatch(getComplaintTypes())
-        }
-    }, [complaintStatus, dispatch])
-    
-    useEffect(() => {
-        if(petition.case_type !== ''){
-            dispatch(getBailTypeByCaseType(petition.case_type));
-        }
-    }, [petition.case_type, dispatch]);
-    
-    useEffect(() => {
-    if(stateStatus === 'idle'){
-        dispatch(getStates())
-    }
-    }, [stateStatus, dispatch])
-    
-    useEffect(() => {
-    if(petition.state !== ''){
-        dispatch(getDistrictByStateCode(petition.state))
-    }
-    }, [petition.state, dispatch])
-    
-    useEffect(() => {
-        if( petition.district !== ''){
-            dispatch(getEstablishmentByDistrict(petition.district))
-        }
-    },[petition.district, dispatch])
-
-    useEffect(() => {
-        if(petition.establishment !== ''){
-          dispatch(getCourtsByEstablishmentCode(petition.establishment))
-        }
-    },[petition.establishment, dispatch])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -216,9 +155,9 @@ const InitialInput = () => {
                                                 value={petition.court_type} 
                                                 onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                             >
-                                                { courttypes.map((type, index) => (
+                                                {/* { courttypes.map((type, index) => (
                                                     <option key={index} value={type.id}>{type.court_type}</option>
-                                                ))}
+                                                ))} */}
                                             </select>
                                         </div>
                                     </Form.Group>

@@ -1,10 +1,10 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const BenchTypeContext = createContext()
 
 export const BenchTypeProvider = ({children}) => {
-    const[benchTypes, setBenchTypes] = useState([])
+    const[benchtypes, setBenchTypes] = useState([])
 
     useEffect(() => {
         const fetchBenchTypes = async() => {
@@ -20,8 +20,10 @@ export const BenchTypeProvider = ({children}) => {
         fetchBenchTypes();
     },[])
 
+    const contextValue = useMemo(() =>({benchtypes, setBenchTypes}), [benchtypes])
+
     return (
-        <BenchTypeContext.Provider value={{benchTypes, setBenchTypes}}>
+        <BenchTypeContext.Provider value={contextValue}>
             {children}
         </BenchTypeContext.Provider>
     )

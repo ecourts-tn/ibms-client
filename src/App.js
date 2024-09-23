@@ -42,6 +42,7 @@ import Steps from './components/Steps';
 import ABail from 'components/petition/antibail/ABail';
 import ReturnProperty from 'components/petition/return/ReturnProperty';
 import Pleadings from 'components/pages/Pleadings';
+import { AppProvider } from 'contexts/AppContext';
 
 function App() {
   
@@ -55,7 +56,7 @@ function App() {
     <>
       <HashRouter>
         <AuthProvider>
-          <BaseProvider>
+          <AppProvider>
             <Routes>
               <Route element={<PublicLayout />}>
                 <Route path="/auth/login" element={<Home />} />
@@ -250,9 +251,9 @@ function App() {
                 <Route path="user/registration" element={<Register />} />
                 <Route path="filing/kiosk" element={<CaseStatus />} />
               </Route>
-             
+            
             </Routes>
-          </BaseProvider>
+          </AppProvider>
         </AuthProvider>
       </HashRouter> 
 

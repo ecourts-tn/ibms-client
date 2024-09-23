@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const DistrictContext = createContext()
@@ -20,8 +20,10 @@ export const DistrictProvider = ({children}) => {
         fetchDistricts();
     },[])
 
+    const contextValue = useMemo(() => ({districts, setDistricts}), [districts])
+
     return (
-        <DistrictContext.Provider value={{districts, setDistricts}}>
+        <DistrictContext.Provider value={contextValue}>
             {children}
         </DistrictContext.Provider>
     )

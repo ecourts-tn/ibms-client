@@ -1,10 +1,10 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const BailTypeContext = createContext()
 
 export const BailTypeProvider = ({children}) => {
-    const[bailTypes, setBailTypes] = useState([])
+    const[bailtypes, setBailTypes] = useState([])
 
     useEffect(() => {
         const fetchBailTypes = async() => {
@@ -20,8 +20,10 @@ export const BailTypeProvider = ({children}) => {
         fetchBailTypes();
     },[])
 
+    const contextValue = useMemo(() => ({bailtypes, setBailTypes}), [bailtypes])
+
     return (
-        <BailTypeContext.Provider value={{bailTypes, setBailTypes}}>
+        <BailTypeContext.Provider value={contextValue}>
             {children}
         </BailTypeContext.Provider>
     )

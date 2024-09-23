@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const PrisonContext = createContext()
@@ -20,8 +20,10 @@ export const PrisonProvider = ({children}) => {
         fetchPrisons();
     },[])
 
+    const contextValue = useMemo(() => ({prisons, setPrisons}), [prisons])
+
     return (
-        <PrisonContext.Provider value={{prisons, setPrisons}}>
+        <PrisonContext.Provider value={contextValue}>
             {children}
         </PrisonContext.Provider>
     )

@@ -3,26 +3,25 @@ import { useState } from 'react'
 import api from '../../api'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { useSelector, useDispatch } from 'react-redux'
 import FIRDetails from './FIRDetails'
 import Loader from '../Loader'
 import * as Yup from 'yup'
 import { RequiredField } from '../../utils'
 import Select from 'react-select'
 import { BaseContext } from '../../contexts/BaseContext'
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
+import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
 
 
 const FIRSearch = () => {
 
-    const {
-        states, 
-        districts, 
-        policeDistricts,
-        policeStations, 
-        fir, 
-        setFir, 
-        setAccused
-    } = useContext(BaseContext)
+    const {fir, setFir, setAccused} = useContext(BaseContext)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {policeDistricts} = useContext(PoliceDistrictContext)
+    const {policeStations} = useContext(PoliceStationContext)
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)

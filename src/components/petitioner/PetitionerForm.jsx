@@ -3,44 +3,29 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
-import { getPrisons } from '../../redux/features/PrisonSlice'
-import { getRelations } from '../../redux/features/RelationSlice';
 import { RequiredField } from '../../utils';
-import api from '../../api';
 import * as Yup from 'yup'
 import { BaseContext } from '../../contexts/BaseContext';
+import { RelationContext } from 'contexts/RelationContext';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { PrisonContext } from 'contexts/PrisonContext';
+import { ProofContext } from 'contexts/ProofContext';
+import { CountryContext } from 'contexts/CountryContext';
 
 
 const PetitionerForm = ({addPetitioner}) => {
 
-  const {
-    fir,
-    states, 
-    districts, 
-    taluks, 
-    relations,
-    prisons,
-    accused,
-    proofs,
-    countries
-  } = useContext(BaseContext)
+  const {fir, accused} = useContext(BaseContext)
+  const {states} = useContext(StateContext)
+  const {districts} = useContext(DistrictContext)
+  const {taluks} = useContext(TalukContext)
+  const {relations} = useContext(RelationContext)
+  const {prisons} = useContext(PrisonContext)
+  const {proofs} = useContext(ProofContext)
+  const {countries} = useContext(CountryContext)
 
-  const dispatch = useDispatch()
-
-  // const states = useSelector((state) => state.states.states)
-  // const districts = useSelector((state) => state.districts.districts)
-  // const taluks = useSelector((state) => state.taluks.taluks)
-  // const relations = useSelector(state => state.relations.relations)
-  // const prisons = useSelector((state) => state.prisons.prisons)
-  // const accused = useSelector((state) => state.accused.accused)
-
-  // const stateStatus = useSelector(getStatesStatus)
-  // const[proofs, setProofs] = useState([])
-  // const[country, setCountry] = useState([])
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
       litigant: 'o',
@@ -75,80 +60,41 @@ const PetitionerForm = ({addPetitioner}) => {
   const[litigant, setLitigant] = useState(initialState)
   const[errors, setErrors] = useState({})
 
-  const validationSchema = Yup.object({
-    litigant_name: Yup.string().required(),
-    relation: Yup.string().required(),
-    relation_name: Yup.string().required(),
-    age: Yup.number().required().typeError("This is field should be numeric"),
-    rank: Yup.string().required(),
-    gender: Yup.string().required(),
-    address: Yup.string().required(),
-    mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
-    proof_number: Yup.string().required("Identify proof number is required"),
-    act: Yup.string().required(),
-    section: Yup.string().required(),
-    address: Yup.string().required(),
-    // prison: Yup.string().when("is_custody", (is_custody, schema) => {
-    //   if(is_custody){
-    //       return schema.required("Please select the prison")
-    //   }
-    // }),
-  //   custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
-  //     if(is_custody){
-  //         return schema.required()
-  //     }
-  // }),
-  })
-
-  // useEffect(() => {
-  //   const fetchProofs = async() => {
-  //     const response = await api.get("base/proof/")
-  //     if(response.status===200){
-  //       setProofs(response.data)
-  //     }
-  //   }
-  //   fetchProofs()
-  // },[])
-
-  // useEffect(() => {
-  //   const fetchCountry = async() => {
-  //     const response = await api.get("base/country/")
-  //     if(response.status===200){
-  //       setCountry(response.data)
-  //     }
-  //   }
-  //   fetchCountry()
-  // },[])
-
-
-  // useEffect(() => {
-  //   if(stateStatus === 'idle'){
-  //     dispatch(getStates())
-  //   }
-  // },[stateStatus, dispatch])
   
-  // useEffect(() => {
-  //   if(litigant.state !== ''){
-  //     dispatch(getDistrictByStateCode(litigant.state))
-  //   }
-  // },[litigant.state, dispatch])
-
-  // useEffect(() => {
-  //   if(litigant.district !== ''){
-  //     dispatch(getTalukByDistrictCode(litigant.district))
-  //   }
-  // },[litigant.district, dispatch])
-
-  // useEffect(() => {
-  //   if(litigant.is_custody){
-  //     dispatch(getPrisons())
-  //   }
-  // },[litigant.is_custody, dispatch])
-
-  // useEffect(() => {
-  //   dispatch(getRelations())
-  // }, [dispatch])
-
+  const validationSchema = Yup.object({
+    litigant_name: Yup.string().required('Litigant name is required'),
+    relation: Yup.string().required('Relation is required'),
+    relation_name: Yup.string().required('Relation name is required'),
+    age: Yup.number()
+      .required('Age is required')
+      .typeError('Age must be a number'),
+    rank: Yup.string().required('Rank is required'),
+    gender: Yup.string().required('Gender is required'),
+    address: Yup.string().required('Address is required'),
+    mobile_number: Yup.number()
+      .required('Mobile number is required')
+      .typeError('Mobile number must be numeric'),
+    proof_number: Yup.string().required('Identify proof number is required'),
+    act: Yup.string().required('Act is required'),
+    section: Yup.string().required('Section is required'),
+    is_custody: Yup.boolean().required('Custody status is required'),
+  
+    // prison: Yup.string()
+    //   .when('is_custody', {
+    //     is: true,
+    //     then: Yup.string().required('Details are required when custody is true'),
+    //     otherwise: Yup.string().notRequired(),
+    //   })
+    //   .nullable(),
+  
+    // custody_days: Yup.string()
+    //   .when('is_custody', {
+    //     is: true,
+    //     then: Yup.string().required('Number of custody days is required'),
+    //     otherwise: Yup.string().notRequired(),
+    //   })
+    //   .nullable(),
+  });
 
   useEffect(() => {
     if(accused){
@@ -177,24 +123,28 @@ const PetitionerForm = ({addPetitioner}) => {
     }
   },[litigant.litigant, accused])
 
-  const handleSubmit = async() => {
-    try{
-      await validationSchema.validate(litigant, { abortEarly:false})
-      addPetitioner(litigant)
-    }catch(error){
-      console.log(error.inner)
-      if(error.inner){
+  const handleSubmit = async () => {
+    try {
+      await validationSchema.validate(litigant, { abortEarly: false });
+      addPetitioner(litigant);
+    } catch (error) {
+      console.log(error);
+      if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {
-            newErrors[err.path] = err.message;
+          newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
+      } else {
+        console.error("Unexpected validation error:", error);
+        toast.error("Validation failed. Please check your input.", { theme: "colored" });
       }
-      if(error){
-        toast.error(error.response, {theme:"colored"})
+      if (error.response) {
+        toast.error(error.response, { theme: "colored" });
       }
     }
-  }
+  };
+  
 
   return (
     <>
@@ -421,7 +371,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
                     <option value="">Select Taluk</option>
-                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.taluk)).map((item, index) => (
+                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.district)).map((item, index) => (
                       <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
                     ))}
                   </select>

@@ -8,18 +8,34 @@ import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import GroundsContainer from '../../grounds/GroundsContainer';
-import { BaseContext } from '../../../contexts/BaseContext';
 import InitialInput from 'components/petition/intervene/InitialInput'
 import Petitioner from 'components/petition/intervene/Petitioner'
 import AccusedDetails from 'components/petition/intervene/AccusedDetails'
 import Respondent from 'components/petition/intervene/Respondent'
 import Documents from 'components/petition/intervene/Documents'
+import { BaseContext } from 'contexts/BaseContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { StateContext } from 'contexts/StateContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { CourtContext } from 'contexts/CourtContext';
+import { CourtTypeContext } from 'contexts/CourtTypeContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { BailTypeContext } from 'contexts/BailTypeContext';
+import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import * as Yup from 'yup'
 
 
 const ABail = () => {
 
-    const {states, districts, establishments, courts, benchtypes, bailtypes, complainttypes, courttypes} = useContext(BaseContext)
+    const{efile_no, setEfileNo, fir} = useContext(BaseContext)
+    const {states}          = useContext(StateContext)
+    const {districts}       = useContext(DistrictContext)
+    const {establishments}  = useContext(EstablishmentContext)
+    const {courts}          = useContext(CourtContext)
+    const {courttypes}      = useContext(CourtTypeContext)
+    const {benchtypes}      = useContext(BenchTypeContext)
+    const {bailtypes}       = useContext(BailTypeContext)
+    const {complainttypes}  = useContext(ComplaintTypeContext)
 
     const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})

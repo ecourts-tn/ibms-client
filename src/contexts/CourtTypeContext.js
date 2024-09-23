@@ -1,10 +1,10 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const CourtTypeContext = createContext()
 
 export const CourtTypeProvider = ({children}) => {
-    const[courtTypes, setCourtTypes] = useState([])
+    const[courttypes, setCourtTypes] = useState([])
 
     useEffect(() => {
         const fetchCourtTypes = async() => {
@@ -20,8 +20,10 @@ export const CourtTypeProvider = ({children}) => {
         fetchCourtTypes();
     },[])
 
+    const contextValue = useMemo(()=>({courttypes, setCourtTypes}), [courttypes])
+
     return (
-        <CourtTypeContext.Provider value={{courtTypes, setCourtTypes}}>
+        <CourtTypeContext.Provider value={contextValue}>
             {children}
         </CourtTypeContext.Provider>
     )

@@ -7,21 +7,24 @@ import { RequiredField } from 'utils';
 import api from 'api';
 import * as Yup from 'yup'
 import { BaseContext } from 'contexts/BaseContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { StateContext } from 'contexts/StateContext';
+import { ProofContext } from 'contexts/ProofContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { CountryContext } from 'contexts/CountryContext';
+import { RelationContext } from 'contexts/RelationContext';
 
 
 const Petitioner = ({addPetitioner}) => {
 
-  const {
-    fir,
-    states, 
-    districts, 
-    taluks, 
-    relations,
-    prisons,
-    accused,
-    proofs,
-    countries
-  } = useContext(BaseContext)
+  const {efile_no, setEfileNo, fir, accused} = useContext(BaseContext)
+  const {states}      = useContext(StateContext)
+  const {districts}   = useContext(DistrictContext)
+  const {proofs}      = useContext(ProofContext)
+  const {taluks}      = useContext(TalukContext)
+  const {countries}   = useContext(CountryContext)
+  const {relations}   = useContext(RelationContext)
+  
 
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {

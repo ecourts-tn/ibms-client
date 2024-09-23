@@ -1,25 +1,22 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Loader from '../Loader';
-import { useSelector, useDispatch } from 'react-redux';
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice';
-import { getStatesStatus, getStates } from '../../redux/features/StateSlice';
-import { getCourtsByEstablishmentCode } from '../../redux/features/CourtSlice';
-import { getEstablishmentByDistrict } from '../../redux/features/EstablishmentSlice';
 import * as Yup from 'yup';
 import api from '../../api';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { CourtContext } from 'contexts/CourtContext';
+import Select from 'react-select'
 
 const CaseSearch = () => {
 
-    const stateStatus = useSelector(getStatesStatus)
-
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const establishments = useSelector(state => state.establishments.establishments)
-    const courts = useSelector((state) => state.courts.courts)
-    const dispatch = useDispatch()
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {courts} = useContext(CourtContext)
 
     const[search, setSearch] = useState(1)
     const[form, setForm] = useState({
@@ -35,30 +32,6 @@ const CaseSearch = () => {
 
     const[loading, setLoading] = useState(false)
     const[errors, setErrors] = useState({})
-
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-          dispatch(getStates())
-        }
-      }, [stateStatus, dispatch])
-    
-    useEffect(() => {
-        if(form.case_state !== null){
-            dispatch(getDistrictByStateCode(form.case_state))
-        }
-    }, [form.case_state, dispatch])
-    
-    useEffect(() => {
-        if( form.case_district !== null){
-            dispatch(getEstablishmentByDistrict(form.case_district))
-        }
-    },[form.case_district, dispatch])
-
-    useEffect(() => {
-        if(form.case_establishment !== null){
-          dispatch(getCourtsByEstablishmentCode(form.case_establishment))
-        }
-    },[form.case_establishment, dispatch])
 
     const validationSchema = Yup.object({
         case_search: Yup.string().required(),
@@ -192,54 +165,36 @@ const CaseSearch = () => {
                         <div className="col-md-3">
                             <div className="form-group">
                                 <label htmlFor="case_district">District</label>
-                                <select 
-                                    name="case_district" 
-                                    id="case_district" 
-                                    className={`form-control ${errors.case_district ? 'is-invalid' : ''}`}
-                                    value={ form.case_district }
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                >
-                                    <option value="">Select district</option>
-                                    { districts.map( (item, index) => (
-                                        <option key={index} value={item.district_code}>{item.district_name}</option>)
-                                    )}
-                                </select>
+                                <Select 
+                                    name="case_district"
+                                    options={districts.filter(district=>parseInt(district.state)===parseInt(form.case_state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                                    className={`${errors.district ? 'is-invalid' : null}`}
+                                    onChange={(e) => setForm({...form, case_district:e.value})}
+                                />
                                 <div className="invalid-feedback">{ errors.case_district }</div>
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="case_establishment">Establishment Name</label>
-                                <select 
-                                    name="case_establishment" 
-                                    id="case_establishment" 
-                                    className={`form-control ${errors.case_establishment ? 'is-invalid' : ''}`}
-                                    value={form.case_establishment}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                                >
-                                    <option value="">Select Establishment</option>
-                                    { establishments.map((item, index) => (
-                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                    ))}
-                                </select>
+                                <Select 
+                                    name="case_establishment"
+                                    options={establishments.filter(e=>parseInt(e.district)=== parseInt(form.case_district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
+                                    className={`${errors.establishment ? 'is-invalid' : null}`}
+                                    onChange={(e) => setForm({...form, case_establishment:e.value})}
+                                />
                                 <div className="invalid-feedback">{ errors.case_establishment }</div>
                             </div>
                         </div>
                         <div className="col-md-5">
                             <div className="form-group">
                                 <label htmlFor="court">Court Name</label>
-                                <select 
-                                    name="case_court" 
-                                    id="case_court" 
-                                    className={`form-control ${errors.case_court ? 'is-invalid' : ''}`}
-                                    value={ form.case_court}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                                >
-                                    <option value="">Select Court</option>
-                                    { courts.map((item, index) => (
-                                        <option key={index} value={item.court_code}>{ item.court_name}</option>
-                                    ))}
-                                </select>
+                                <Select 
+                                    name="court"
+                                    options={courts.filter(c=>c.establishment===form.case_establishment).map((est) => { return { value:est.court_code, label:est.court_name}})} 
+                                    className={`${errors.court ? 'is-invalid' : null}`}
+                                    onChange={(e) => setForm({...form, court:e.value})}
+                                />
                                 <div className="invalid-feedback">{ errors.court }</div>
                             </div>
                         </div>

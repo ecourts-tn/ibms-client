@@ -1,10 +1,10 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const ComplaintTypeContext = createContext()
 
 export const ComplaintTypeProvider = ({children}) => {
-    const[complaintTypes, setComplaintTypes] = useState([])
+    const[complainttypes, setComplaintTypes] = useState([])
 
     useEffect(() => {
         const fetchComplaintTypes = async() => {
@@ -20,8 +20,10 @@ export const ComplaintTypeProvider = ({children}) => {
         fetchComplaintTypes();
     },[])
 
+    const contextValue = useMemo(() => ({complainttypes, setComplaintTypes}), [complainttypes])
+
     return (
-        <ComplaintTypeContext.Provider value={{complaintTypes, setComplaintTypes}}>
+        <ComplaintTypeContext.Provider value={contextValue}>
             {children}
         </ComplaintTypeContext.Provider>
     )

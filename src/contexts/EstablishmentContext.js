@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const EstablishmentContext = createContext()
@@ -20,8 +20,10 @@ export const EstablishmentProvider = ({children}) => {
         fetchEstablishments();
     },[])
 
+    const contextValue = useMemo(() => ({establishments, setEstablishments}), [establishments])
+
     return (
-        <EstablishmentContext.Provider value={{establishments, setEstablishments}}>
+        <EstablishmentContext.Provider value={contextValue}>
             {children}
         </EstablishmentContext.Provider>
     )

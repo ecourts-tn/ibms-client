@@ -1,25 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { nanoid } from '@reduxjs/toolkit'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getPoliceSationByDistrict } from '../../redux/features/PoliceStationSlice'
-import { useSelector, useDispatch } from 'react-redux'
-import api from '../../api'
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
 import { BaseContext } from '../../contexts/BaseContext'
+import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
 
 
 const RespondentForm = ({addRespondent}) => {
-    const dispatch = useDispatch()
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const stateStatus = useSelector(getStatesStatus)
-    // const policeStations = useSelector((state) => state.police_stations.police_stations)
-
-    const {policeDistricts, policeStations} = useContext(BaseContext)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {policeDistricts} = useContext(PoliceDistrictContext)
+    const {policeStations}  = useContext(PoliceStationContext)
 
     const initialState = {
         litigant_name: '',
@@ -31,25 +26,7 @@ const RespondentForm = ({addRespondent}) => {
         address:'',
     }
     const[litigant, setLitigant] = useState(initialState)
-    const[respondentPolice, setRespondentPolice] = useState(false)
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-            dispatch(getStates())
-        }
-    },[stateStatus, dispatch])
-      
-    useEffect(() => {
-        if(litigant.state !== ''){
-          dispatch(getDistrictByStateCode(litigant.state))
-        }
-    },[litigant.state, dispatch])
-
-    useEffect(() => {
-        if(litigant.district){
-            dispatch(getPoliceSationByDistrict(litigant.district))
-        }
-    }, [litigant.district, dispatch])
-    
+    const[respondentPolice, setRespondentPolice] = useState(false)  
 
     const validationSchema = Yup.object({
         litigant_name: Yup.string().required(),

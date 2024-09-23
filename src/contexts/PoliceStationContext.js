@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const PoliceStationContext = createContext()
@@ -20,8 +20,10 @@ export const PoliceStationProvider = ({children}) => {
         fetchPoliceStations();
     },[])
 
+    const contextValue = useMemo(()=>({policeStations, setPoliceStations}), [policeStations])
+
     return (
-        <PoliceStationContext.Provider value={{policeStations, setPoliceStations}}>
+        <PoliceStationContext.Provider value={contextValue}>
             {children}
         </PoliceStationContext.Provider>
     )

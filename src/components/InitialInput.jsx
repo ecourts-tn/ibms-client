@@ -4,14 +4,14 @@ import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
-import Select from 'react-select'
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { RequiredField } from '../../../utils';
-import FIRSearch from '../../search/FIRSearch';
-import CaseSearch from '../../search/CaseSearch';
-import { useLocation } from 'react-router-dom';
 import api from 'api';
+import Select from 'react-select'
+import { useLocalStorage } from "hooks/useLocalStorage";
+import { RequiredField } from 'utils';
+import FIRSearch from 'components/search/FIRSearch';
+import CaseSearch from 'components/search/CaseSearch';
 import { BaseContext } from 'contexts/BaseContext';
+import { useLocation } from 'react-router-dom';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
@@ -26,7 +26,6 @@ const InitialInput = () => {
 
     const location = useLocation();
     const currentPath = location.pathname;
-
     const {efile_no, setEfileNo, fir} = useContext(BaseContext)
     const {states}          = useContext(StateContext)
     const {districts}       = useContext(DistrictContext)
@@ -113,6 +112,7 @@ const InitialInput = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
+            // setPetition({...petition, adv_code:user.user.userlogin})
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 sessionStorage.setItem("efile_no", response.data.efile_number)
@@ -123,7 +123,7 @@ const InitialInput = () => {
                 if(efile_no){
                     if(Object.keys(fir).length > 0){
                         const response2 = await api.post(`case/crime/details/create/`, fir, {params:{efile_no}})
-                        if(response2.status === 200){
+                        if(response2.status === 201){
                             console.log(response2.message)
                         }
                     }

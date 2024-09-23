@@ -1,4 +1,4 @@
-import React, {useState, useEffect, createContext} from 'react'
+import React, {useState, useEffect, createContext, useMemo} from 'react'
 import api from 'api'
 
 export const TalukContext = createContext()
@@ -20,8 +20,10 @@ export const TalukProvider = ({children}) => {
         fetchTaluks();
     },[])
 
+    const contextValue = useMemo(()=>({taluks, setTaluks}), [taluks])
+
     return (
-        <TalukContext.Provider value={{taluks, setTaluks}}>
+        <TalukContext.Provider value={contextValue}>
             {children}
         </TalukContext.Provider>
     )
