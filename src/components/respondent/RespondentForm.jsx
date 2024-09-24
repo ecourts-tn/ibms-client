@@ -13,7 +13,6 @@ import { DistrictContext } from 'contexts/DistrictContext'
 const RespondentForm = ({addRespondent}) => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
-    const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
 
     const initialState = {
@@ -21,7 +20,7 @@ const RespondentForm = ({addRespondent}) => {
         litigant_type: 2, 
         designation:'',
         state:'',
-        police_district:'',
+        district:'',
         police_station: '',
         address:'',
     }
@@ -32,7 +31,7 @@ const RespondentForm = ({addRespondent}) => {
         litigant_name: Yup.string().required(),
         designation: Yup.string().required(),
         address: Yup.string().required(),
-        police_district: Yup.string().required()
+        district: Yup.string().required()
     })
     const[errors, setErrors] = useState({})
 
@@ -85,14 +84,14 @@ const RespondentForm = ({addRespondent}) => {
                     <div className="form-group">
                     <label htmlFor="district">District</label><br />
                     <select 
-                        name="police_district" 
-                        id="police_district" 
+                        name="district" 
+                        id="district" 
                         className="form-control"
-                        value={litigant.police_district}
+                        value={litigant.district}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
                         <option value="">Select District</option>
-                        { policeDistricts.map((item, index) => (
+                        { districts.map((item, index) => (
                         <option value={item.district_code} key={index}>{item.district_name}</option>
                         ))}
                     </select>
@@ -109,7 +108,7 @@ const RespondentForm = ({addRespondent}) => {
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}
                         >
                             <option value="">Select station</option>
-                            { policeStations.filter(d=>parseInt(d.district_code)=== parseInt(litigant.police_district)).map((item, index) => (
+                            { policeStations.filter(d=>parseInt(d.revenue_district)=== parseInt(litigant.district)).map((item, index) => (
                                 <option key={index} value={item.cctns_code}>{ item.station_name}</option>
                             ))}
                         </select>

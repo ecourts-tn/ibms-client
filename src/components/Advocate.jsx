@@ -142,6 +142,11 @@ const AdvocateForm = ({setAdvocates}) => {
         <>
             <ToastContainer />
             <div className="row">
+                {/* <div className="col-md-4 offset-md-4 mb-3">
+                    <select name="" className='form-control'>
+                        <option value="">Test</option>
+                    </select>
+                </div> */}
                 <div className="col-md-6 offset-md-3">
                     <Form.Group className="row mb-3">
                         <Form.Label  className="col-sm-3">Advocate Name</Form.Label>

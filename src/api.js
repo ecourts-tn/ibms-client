@@ -3,7 +3,7 @@ import config from './config';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 
 const api = axios.create({
-    baseURL: "http://192.168.100.135:8000/api/"
+    baseURL: "http://117.193.76.243:8088/api/"
 });
 
 let refresh = false;
