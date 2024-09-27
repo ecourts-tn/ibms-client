@@ -272,7 +272,7 @@ const BailFiling = () => {
                     <CaseNumberProvider>
                         <InitialInput 
                             setActiveStep={setActiveStep}
-                        />;
+                        />
                     </CaseNumberProvider>
                 )
             }  

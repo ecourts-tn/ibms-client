@@ -10,8 +10,6 @@ const Profile = () => {
 
     const{user} = useAuth()
 
-    console.log(user)
-
     const initialState = {
         mobile_number    : user.user.mobile,
         email_address    : user.user.email,
@@ -71,7 +69,7 @@ const Profile = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-4 d-flex justify-content-center profile">
-                        <div class="card" style={{width: '18rem'}}>
+                        <div className="card" style={{width: '18rem'}}>
                             <img src={profile_pic} alt="" />
                             <div className="card-body text-center">
                                 <p className="card-text"><strong>{user.user.username}<br/>{user.user.mobile}<br/>{user.user.email}</strong></p>

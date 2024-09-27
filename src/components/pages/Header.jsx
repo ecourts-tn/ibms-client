@@ -82,7 +82,7 @@ const Header = () => {
                   <Link to="/status/registration-number" className="nav-link">Registration Number</Link>
                   <Link to="/status/cnr-number" className="nav-link">CNR Number</Link>
                   <Link to="/status/fir-number" className="nav-link">FIR Number</Link>
-                  <Link to="/status/party-name" className="nav-link">Party Name</Link>
+                  {/* <Link to="/status/party-name" className="nav-link">Party Name</Link> */}
                 </div>
               </li>
               <li className="nav-item">
@@ -94,20 +94,18 @@ const Header = () => {
               <li className="nav-item">
                 <Link to="#" className="nav-link nav-link-order">Verify Order</Link>
               </li>
-              <li className="nav-item">
-                {isAuth && (
-                  <li className="nav-item dropdown">
-                    <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <AccountCircleIcon /> {user.user.userlogin || 'User'}
-                    </a>
-                    <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                      <Link to="/auth/profile" className="nav-link">Profile</Link>
-                      <Link to="/auth/change-password" className="nav-link">Change Password</Link>
-                      <Link onClick={handleLogout} className="nav-link">Logout</Link>
-                    </div>
-                  </li>
-                )}
-              </li>
+              { isAuth && (
+                <li className="nav-item dropdown">
+                  <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <AccountCircleIcon /> {user.user.userlogin || 'User'}
+                  </a>
+                  <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <Link to="/auth/profile" className="nav-link">Profile</Link>
+                    <Link to="/auth/change-password" className="nav-link">Change Password</Link>
+                    <Link onClick={handleLogout} className="nav-link">Logout</Link>
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
         </div>

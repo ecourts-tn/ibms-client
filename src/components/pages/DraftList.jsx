@@ -131,19 +131,19 @@ const DraftList = () => {
                             </thead>
                             <tbody>
                                 { cases.map((item, index) => (
-                                <tr>
+                                <tr key={index}>
                                     <td>{ index+1 }</td>
                                     <td><a href="#/">{ item.petition.efile_number }</a></td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))
                                         }
                                         <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation}</span>
                                         ))
                                         }
                                     </td>
@@ -167,7 +167,7 @@ const DraftList = () => {
                                     </td>
                                     <td>
                                         { item.fees.map((fee, index) => (
-                                            <span>Rs.{fee.amount}<br/></span>
+                                            <span key={index}>Rs.{fee.amount}<br/></span>
                                         ))}
                                     </td>
                                     <td>

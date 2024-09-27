@@ -39,7 +39,7 @@ const InitialInput = () => {
 
     const initialState = {
         court_type: 1,
-        bench_type: null,
+        bench_type: '',
         state: '',
         district:'',
         establishment: '',
@@ -51,21 +51,21 @@ const InitialInput = () => {
     }
     const[petition, setPetition] = useState(initialState)
     
-    // useEffect(() => {
-    //     const fetchData = async() => {
-    //         try{
-    //             const efile_no = "ADM20240000001F2024000001" //sessionStorage.getItem("efile_no")
-    //             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
-    //             if(response.status === 200){
-    //                 setPetition(response.data.petition)
-    //             }
-    //         }catch(error){
-    //             console.error(error)
-    //         }
-    //     }
-    //     fetchData()
-    // },[])
-
+    useEffect(() => {
+        const fetchData = async() => {
+            try{
+                const efile_no = "ATN20240000001F2024000001" //sessionStorage.getItem("efile_no")
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+                if(response.status === 200){
+                    setPetition({...petition, bench_type: response.data.petition.bench_type})
+                    
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        fetchData()
+    },[])
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 

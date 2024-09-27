@@ -1,23 +1,36 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState } from 'react'
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
 import * as Yup from 'yup'
-import api from '../../../api'
+import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
 
 
 const FIRSearch = () => {
 
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {policeStations} = useContext(PoliceStationContext)
+
     const[form, setForm] = useState({
+        state:'',
+        district:'',
+        police_station:'',
         fir_number:'',
         fir_year:''
     })
     const[errors, setErrors] = useState({})
     const[petition, setPetition] = useState({})
     const validationSchema = Yup.object({
+        state: Yup.string().required("Please select state"),
+        district: Yup.string().required("Please select district"),
+        police_station: Yup.string().required("Please select police station"),
         fir_number: Yup.number().typeError("This field should be numeric").required(),
         fir_year:   Yup.number().typeError("This field should be numeric").required()
     })
@@ -58,6 +71,62 @@ const FIRSearch = () => {
                     <div className="col-md-12 d-flex justify-content-center">
                         <div className="row">
                             <div className="col-md-8 offset-2">
+                            <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="">State</label>
+                                            <select 
+                                                name="state" 
+                                                className={`form-control ${errors.state ? 'is-invalid': ''}`}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select state</option>
+                                                { states.map((state, index) => (
+                                                <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                ))}
+                                            </select>
+                                            <div className="invalid-feedback">
+                                                { errors.state }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="">District</label>
+                                            <select 
+                                                name="district" 
+                                                className={`form-control ${errors.district ? 'is-invalid' : ''}`}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select district</option>
+                                                { districts.filter(district => parseInt(district.state) === parseInt(form.state)).map((district, index) => (
+                                                    <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                ))}
+                                            </select>
+                                            <div className="invalid-feedback">
+                                                { errors.district }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-12">
+                                        <div className="form-group">
+                                            <label htmlFor="">Police Station</label>
+                                            <select 
+                                                name="police_station" 
+                                                className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            >
+                                                <option value="">Select police station</option>
+                                                {policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(form.district)).map((ps, index)=>(
+                                                    <option key={index} value={ps.cctns_code}>{ps.station_name}</option>
+                                                ))}
+                                            </select>
+                                            <div className="invalid-feedback">
+                                                { errors.police_station }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="row">
                                     <div className="col-md-5">
                                         <FormControl fullWidth>

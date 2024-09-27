@@ -43,7 +43,7 @@ const BasicContainer = () => {
 
     const initialState = {
         court_type: 1,
-        bench_type: null,
+        bench_type: '',
         state: '',
         district:'',
         establishment: '',

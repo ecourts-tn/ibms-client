@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import CryptoJS from 'crypto-js';
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import Modal from 'react-bootstrap/Modal'
@@ -9,19 +10,63 @@ import * as Yup from 'yup'
 
 const Payment = () => {
 
+const [hmac, setHmac] = useState('');
+
+   
+
+  const generateHmac = () => {
+    const login = "tnhgcourt";
+    const pass = "ourttnh";
+    const ttype = "NBFundTransfer";
+    const prodid = "EPS-TN-102";
+    const txnid = "PAY202409260000001";
+    const amt = "30.00";
+    const scamt = "0.00";
+    const txnDate ="2024-09-26"
+    const reqHashKey = "653861302req996313560";
+    
+    // Concatenating the required strings
+    const sampleStr = login + pass + ttype + prodid + txnid + amt + scamt + txnDate;
+
+    // Generating the HMAC using SHA-512
+    const hmacGenerated = CryptoJS.HmacSHA512(sampleStr, reqHashKey).toString(CryptoJS.enc.Hex);
+    return hmacGenerated
+    // Setting the generated HMAC
+    // setHmac(hmacGenerated);
+  };
+
+//   https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?
+//   login=phhgcourt&pass=Test@123&txnType=NA&
+//   prodid=PHCFEE&
+//   txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&
+//   ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&
+//   udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
+
     const initialState = {
-        petitioner_name: '',
-        mobile_number:null,
-        amount: null,
+        login: "tnhgcourt",
+        pass: "ourttnh",
+        txnType: "NA",
+        prodid:"EPS-TN-102",
+        txnid:"PAY202409260000001",
+        amt:"20",
+        scamt:"0.00",
+        txndate:"2024-09-26",
+        ru:"https://ecourts-tn.github.io/ibms-client/",
+        signature:generateHmac(), 
+        udf1:"deenadayalan",
+        udf2:"deenadayalan17@gmail.com",
+        udf3:"8344381139",
     }
 
     const validationSchema = Yup.object({
-        payer_name: Yup.string().required("Please selete the payer"),
-        mobile_number: Yup.number("Enter valid number").required("Please enter the mobile number"),
-        amount: Yup.number("Enter amount").required("Please enter amount")
+        udf1: Yup.string().required("Please selete the payer"),
+        udf3: Yup.number("Enter valid number").required("Please enter the mobile number"),
+        amt: Yup.number("Enter amount").required("Please enter amount")
     })
 
     const[payment, setPayment] = useState(initialState)
+
+    console.log(payment)
     const[error, setError] = useState({})
     const[paymentHistory, setPaymentHistory] = useState([])
     const[show, setShow] = useState(false);
@@ -70,13 +115,6 @@ const Payment = () => {
         }
     }
 
-    useEffect(() => {
-        setPayment({
-            ...payment,
-            efile_no: sessionStorage.getItem("efile_no")
-        })
-    },[])
-
     // useEffect(() => {
     //     async function fetchData(){
     //         try{
@@ -95,16 +133,23 @@ const Payment = () => {
 
     const handleSubmit = async () => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`payment/court-fee/`, payment, {params:{efile_no}})
-            if(response.status === 201){
-                toast.success("Payment completed successfully", {
-                    theme: "colored"
-                })
-                setPayment(initialState)
-                setMobileOtp(false)
-                setMobileVerified(false)
+            // const efile_no = sessionStorage.getItem("efile_no")
+            // const response = await api.post(`payment/court-fee/`, payment, {params:{efile_no}})
+            // if(response.status === 201){
+            //     toast.success("Payment completed successfully", {
+            //         theme: "colored"
+            //     })
+            //     setPayment(initialState)
+            //     setMobileOtp(false)
+            //     setMobileVerified(false)
+            // }
+            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?", payment)
+            const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=tnhgcourt&pass=ourttnh&txnType=NA&prodid=EPS-TN-102&txnid=TS201822061010540&amt=505&scamt=0&txndate=26-Sep-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c8d835547dab1d015560c40fa2be193737cfece204428e8f08e312f298af260121d5b943c6695ed1cd2ba8936612d095f7c518ce8cf5355956a24ec3ef4a44b7&udf1=deena&udf2=deenadayalan17@gmail.com&udf3=8344381139&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=1")
+            console.log(response.status)
+            if(response.status === 200){
+                console.log("success")
             }
+            // https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=phhgcourt&pass=Test@123&txnType=NA&prodid=PHCFEE&txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
         }catch(error){
             console.log(error)
         }
@@ -153,22 +198,11 @@ const Payment = () => {
                                 <div className="col-md-6 offset-md-3">
                                     <div className="form-group mb-3">
                                         <label htmlFor="">Payer Name</label>
-                                        {/* <select 
-                                            name="petitioner_name" 
-                                            className="form-control"
-                                            value={payment.petitioner_name}
-                                            onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
-                                        >
-                                            <option value="">Select payer</option>
-                                            { petitioner.map((p, index) => (
-                                            <option value={p.petitioner_name} key={index}>{p.petitioner_name}</option>
-                                            ))}
-                                        </select> */}
                                         <input 
                                             type="text"
-                                            name="payer_name" 
-                                            className={`form-control ${error.payer_name ? 'is-invalid' : null }`}
-                                            value={payment.payer_name}
+                                            name="udf1" 
+                                            className={`form-control ${error.udf1 ? 'is-invalid' : null }`}
+                                            value={payment.udf1}
                                             onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                             // readOnly={true}
                                         />
@@ -186,13 +220,13 @@ const Payment = () => {
                                                 <label htmlFor="">Mobile Number</label>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${error.mobile_number ? 'is-invalid' : null }`}
-                                                    name="mobile_number"
-                                                    value={payment.mobile_number}
+                                                    className={`form-control ${error.udf3 ? 'is-invalid' : null }`}
+                                                    name="udf3"
+                                                    value={payment.udf3}
                                                     onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
-                                                    { error.mobile_number }
+                                                    { error.udf3 }
                                                 </div>
                                             </div>
                                         </div>
@@ -201,13 +235,13 @@ const Payment = () => {
                                                 <label htmlFor="">Amount</label>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${error.amount ? 'is-invalid' : null}`}
-                                                    name="amount"
-                                                    value={payment.amount}
+                                                    className={`form-control ${error.amt ? 'is-invalid' : null}`}
+                                                    name="amt"
+                                                    value={payment.amt}
                                                     onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
-                                                    { error.amount }
+                                                    { error.amt }
                                                 </div>
                                             </div>
                                         </div>
