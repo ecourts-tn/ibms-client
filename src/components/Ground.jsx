@@ -1,8 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useState } from 'react'
 import api from 'api'
-import {toast, ToastContainer} from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import { CreateMarkup } from 'utils'
+import Editor from 'react-simple-wysiwyg'
+import Button from '@mui/material/Button'
+import * as Yup from 'yup'
 
 
 const GroundsContainer = () => {
@@ -97,19 +100,6 @@ const GroundsContainer = () => {
 }
 
 export default GroundsContainer
-
-
-import React, { useEffect } from 'react'
-import Button from '@mui/material/Button'
-import { useState } from 'react'
-import { nanoid } from '@reduxjs/toolkit'
-import { ToastContainer } from 'react-toastify'
-import * as Yup from 'yup'
-import api from '../../api'
-import Editor from 'react-simple-wysiwyg';
-// import { Editor } from '@tinymce/tinymce-react';
-import { useRef } from 'react';
-import './style.css'
 
 
 const GroundsForm = ({addGround, count, incrementCount}) => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button'
-import api from '../../../api';
-import Payment from '../../pages/Payment';
+import api from 'api';
+import Payment from 'components/pages/Payment';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
@@ -17,12 +17,17 @@ import InitialInput from '../InitialInput';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import Document from 'components/Document';
+import GroundsContainer from 'components/Ground';
 
 
 const Relaxation = () => {
 
     const[petition, setPetition] = useState({})
+    const[selectedCase, setSelectedCase] = useState('')
+    const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
+    const[selectedPetitioner, setSelectedPetitioner] = useState([])
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
@@ -33,8 +38,6 @@ const Relaxation = () => {
     }
 
     const initialState = {
-        efile_no: '',
-        case_no: '',
         court_type: '',
         bench_type:'',
         state: '',
@@ -43,49 +46,11 @@ const Relaxation = () => {
         court:'',
         case_type: '',
         bail_type: '',
-        complaint_type:'',
+        complaint_type: '',
         crime_registered: '',
-        crime_state: null,
-        crime_district: null,
-        police_station:null,
-        crime_number: null,
-        crime_year: null,
-        case_state: null,
-        case_district: null,
-        case_establishment: null,
-        case_court: null,
-        case_case_type:  null,
-        case_number: null,
-        case_year: null,
-        cnr_number: null,
-        date_of_occurrence:'',
-        fir_date_time:'',
-        place_of_occurrence:'',
-        investigation_officer:'',
-        complaintant_name:'',
-        gist_of_fir:'',
-        gist_in_local:'',
-        grounds:'',
-        is_details_correct: true,
-        remarks:'',
-        is_previous_pending: false,
-        advocate_name:'',
-        enrolment_number: null,
-        advocate_mobile: '',
-        advocate_email:'',
-        prev_case_number: '',
-        prev_case_year: '',
-        prev_case_status:'',
-        prev_disposal_date:'',
-        prev_proceedings:'',
-        prev_is_correct:false,
-        prev_remarks:'',
-        prev_is_pending:false,
-        vakalath: '',
-        supporting_document:''
-        
     }
 
+    const [grounds, setGrounds] = useState('')
     const[form, setForm] = useState(initialState);
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
@@ -100,7 +65,7 @@ const Relaxation = () => {
         case_year: Yup.number().required("Please enter the case year")
     })
 
-    const[searchErrors, setSearchErrors]            = useState({})
+    const[searchErrors, setSearchErrors] = useState({})
 
     const stepperRef = useRef(null);
 
@@ -111,47 +76,18 @@ const Relaxation = () => {
         });
     }, []);
 
-    const[otp, setOtp] = useState('')
-
-    const[mobileOtp, setMobileOtp] = useState(false)
-    const[mobileVerified, setMobileVerified] = useState(false)
-
-    const sendMobileOTP = () => {
-        // if(otp === ''){
-        //     toast.error("Please enter valid mobile number",{
-        //         theme:"colored"
-        //     })
-        // }else{
-            // setMobileLoading(true)
-        if(mobileOtp){
-            toast.success("OTP already verified successfully.", {
-                theme: "colored"
-            })
-            return
+    const handleCheckBoxChange = (petitioner) => {
+        if (selectedPetitioner.includes(petitioner)) {
+          // If already selected, remove the petitioner from the selected list
+          setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
+        } else {
+          // Otherwise, add the petitioner to the selected list
+          setSelectedPetitioner([...selectedPetitioner, petitioner]);
         }
-            toast.success("OTP has been sent your mobile number",{
-                theme:"colored"
-            })
-            setMobileOtp(true)
-        // }
-    }
+    };
 
-    const verifyMobile = (otp) => {
-        if(parseInt(otp) === 123456){
-            toast.success("Mobile otp verified successfully",{
-                theme:"colored"
-            })
-            setMobileVerified(true)
-        }else{
-            toast.error("Invalid OTP. Please enter valid OTP",{
-                theme:"colored"
-            })
-            setMobileVerified(false)
-            setMobileOtp(true)
-        }
-    }
-
-
+    const isSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_id === petitioner.litigant_id);
+    
     useEffect(() => {
         async function fetchData(){
             try{
@@ -170,10 +106,21 @@ const Relaxation = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:selectedCase}})
                 if(response.status === 200){
-                    console.log(response.data)
-                    setPetition(response.data.petition)
+                    setIsPetition(true)
+                    setPetition({...form, 
+                        court_type: response.data.petition.court_type,
+                        bench_type: response.data.petition.bench_type,
+                        state: response.data.petition.state,
+                        district: response.data.petition.district,
+                        establishment: response.data.petition.establishment,
+                        court: response.data.petition.court,
+                        case_type: 3,
+                        bail_type: null,
+                        complaint_type: response.data.petition.complaint_type,
+                        crime_registered: response.data.petition.crime_registered,
+                    })
                     setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
                     setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
@@ -182,30 +129,55 @@ const Relaxation = () => {
                 console.log(error)
             }
         }
-        if(form.efile_no !== ''){
+        if(selectedCase !== ''){
             fetchDetails()
+        }else{
+            setIsPetition(false)
+            setPetition({})
+            setPetitioners([])
+            setRespondents([])
+            setAdvocates([])
         }
-    },[form.efile_no])
+    },[selectedCase])
 
 
     const handleSearch = async(e) => {
         e.preventDefault()
         try{
             // await searchSchema.validate(searchForm, { abortEarly:false})
-            const response = await api.get("api/bail/petition/detail/", { params: searchForm})
+            const response = await api.get("case/bail/approved/single/", { params: searchForm})
+
             if(response.status === 200){
-                setPetition(response.data.petition)
-                setPetitioners(response.data.petitioner)
-                setRespondents(response.data.respondent)
-                setAdvocates(response.data.advocate)
-                setForm({...form, cino:response.data.petition.cino})
-            }
-            if(response.status === 404){
-                toast.error("Petition details not found",{
-                    theme:"colored"
+                setPetition({...form, 
+                    court_type: response.data.petition.court_type,
+                    bench_type: response.data.petition.bench_type,
+                    state: response.data.petition.state,
+                    district: response.data.petition.district,
+                    establishment: response.data.petition.establishment,
+                    court: response.data.petition.court,
+                    case_type: 3,
+                    bail_type: null,
+                    complaint_type: response.data.petition.complaint_type,
+                    crime_registered: response.data.petition.crime_registered,
                 })
+                setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
+                setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
+                setAdvocates(response.data.advocate)
+                setForm({...form, efile_no:response.data.petition.efile_number})
             }
+
         }catch(error){
+            if(error.response){
+                if(error.response.status === 404){
+                    setPetition({})
+                    setPetitioners([])
+                    setRespondents([])
+                    setAdvocates([])
+                    toast.error(error.response.data.message, {
+                        theme:"colored"
+                    })
+                }
+            }
             const newError = {}
             if(error.inner){
                 error.inner.forEach((err) => {
@@ -221,16 +193,18 @@ const Relaxation = () => {
         }
     }
 
-    const petitionerOptions = petitioners.map((petitioner, index) => {
-        return {
-            value : petitioner.petitioner_id,
-            label : petitioner.petitioner_name
+    const handleInitialSubmit = async() => {
+        const post_data = {
+            petition: form,
+            petitioner:selectedPetitioner,
+            respondents,
         }
-    })
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
+        const response = await api.post("case/filing/relaxation/", post_data)
+        if(response.status === 201){
+            toast.success("Condition Relaxation petition submitted successfully",{
+                theme: "colored"
+            })
+        }
     }
 
     return(
@@ -257,16 +231,30 @@ const Relaxation = () => {
                                             </button>
                                         </div>
                                         <div className="line"></div>
-                                        <div className="step" data-target="#payment">
+                                        <div className="step" data-target="#ground">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
+                                            <span className="bs-stepper-label">Ground</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#documents">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">3</span>
+                                            <span className="bs-stepper-label">Documents</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#payment">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">4</span>
                                             <span className="bs-stepper-label">Payment</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
-                                            <span className="bs-stepper-circle">3</span>
+                                            <span className="bs-stepper-circle">5</span>
                                             <span className="bs-stepper-label">E-File</span>
                                             </button>
                                         </div>
@@ -311,8 +299,8 @@ const Relaxation = () => {
                                                                 <select 
                                                                     name="efile_no" 
                                                                     className="form-control"
-                                                                    value={form.efile_no}
-                                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                                    value={selectedCase}
+                                                                    onChange={(e) => setSelectedCase(e.target.value)}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
@@ -395,13 +383,10 @@ const Relaxation = () => {
                                                     )}
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
-                                                    { form.cino !== '' && (
+                                                    { isPetition && (
                                                         <>
-                                                        { Object.keys(petition).length > 0 && (
                                                             <InitialInput petition={petition} />
-                                                        )}
-                                                        { Object.keys(petitioners).length > 0 && (
-                                                            <table className="table table-bordered">
+                                                            <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
                                                                         <td colSpan={7}><strong>Petitioner Details</strong></td>
@@ -409,11 +394,11 @@ const Relaxation = () => {
                                                                     <tr>
                                                                         <th>Select</th>
                                                                         <th>Petitioner Name</th>
+                                                                        <th>Father/Husband/Guardian Name</th>
                                                                         <th>Age</th>
                                                                         <th>Rank</th>
                                                                         <th>Act</th>
                                                                         <th>Section</th>
-                                                                        <th>Father/Husband/Guardian Name</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -421,14 +406,27 @@ const Relaxation = () => {
                                                                     <tr key={index}>
                                                                         <td>
                                                                             <div className="icheck-success">
-                                                                                <input type="checkbox" id={`checkboxSuccess${index+1}`} />
-                                                                                <label htmlFor={`checkboxSuccess${index+1}`}></label>
+                                                                                <input 
+                                                                                    type="checkbox" 
+                                                                                    id={`checkboxSuccess${petitioner.litigant_id}`} 
+                                                                                    checked={isSelected(petitioner)}
+                                                                                    onChange={() => handleCheckBoxChange(petitioner)}
+                                                                                />
+                                                                                <label htmlFor={`checkboxSuccess${petitioner.litigant_id}`}></label>
                                                                             </div>                                                                            </td>
                                                                         <td>
                                                                             <input 
                                                                                 type="text" 
                                                                                 className="form-control" 
                                                                                 value={petitioner.litigant_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.relation_name}
                                                                                 readOnly={true}
                                                                             />
                                                                         </td>
@@ -464,42 +462,32 @@ const Relaxation = () => {
                                                                                 readOnly={true}
                                                                             />
                                                                         </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={petitioner.relation_name}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
                                                                     </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
-                                                        )}
-                                                        <table className="table table-bordered table-striped">
-                                                            <thead>
-                                                                <tr className='bg-navy'>
-                                                                    <td colSpan={4}><strong>Condition Details</strong></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Bail Order Data</th>
-                                                                    <th>Released Date</th>
-                                                                    <th>No. of Days Present</th>
-                                                                    <th>No. of Days Absent</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                    <td><input type="text" className='form-control' readOnly={true} /></td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                        { Object.keys(respondents).length > 0 && (
-                                                            <table className=" table table-bordered">
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className='bg-navy'>
+                                                                        <td colSpan={4}><strong>Condition Details</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>Bail Order Date</th>
+                                                                        <th>Released Date</th>
+                                                                        <th>No. of Days Present</th>
+                                                                        <th>No. of Days Absent</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
                                                                         <td colSpan={6}><strong>Respondent Details</strong></td>
@@ -550,210 +538,86 @@ const Relaxation = () => {
                                                                     ))}
                                                                 </tbody>
                                                             </table>
-                                                        )}
-                                                        { Object.keys(advocates).length > 0 && (
-                                                        <table className=" table table-bordered">
-                                                            <thead>
-                                                                <tr className="bg-navy">
-                                                                    <td colSpan={6}><strong>Advocate Details</strong>
-                                                                        <div className="float-right">
-                                                                            <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Advocate Name</th>
-                                                                    <th>Enrolment Number</th>
-                                                                    <th>Mobile Number</th>
-                                                                    <th>Email Address</th>
-                                                                    <th width={120}>Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                { advocates.map((advocate, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_name}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.enrolment_number}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_mobile}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_email}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            { !advocate.is_primary && (
-                                                                                <>
-                                                                                    <IconButton aria-label="delete" disabled color="primary">
-                                                                                        <EditIcon color='info'/>
-                                                                                    </IconButton>
-                                                                                    <IconButton aria-label="delete">
-                                                                                        <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
-                                                                                    </IconButton>
-                                                                                
-                                                                                </>
-                                                                            )}
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>Advocate Details</strong>
+                                                                            <div className="float-right">
+                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                        )}
-                                                        { Object.keys(petition).length > 0 && (
-                                                            <>  
-                                                                <div className="row">
-                                                                    <div className="col-md-12">
-                                                                        <div className="form-group">
-                                                                            <p className="bg-navy" style={{padding:"12px 10px", marginBottom:'0px'}}><strong>Grounds</strong></p>
-                                                                            <Editor 
-                                                                                value={form.ground} 
-                                                                                onChange={(e) => setForm({...form, ground: e.target.value })} 
-                                                                            />
-                                                                            <div className="invalid-feedback">
-                                                                                { errors.ground }
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    { parseInt(searchPetition) === 1 && (
-                                                                    <div className="col-md-12 mt-4"> 
-                                                                        <div className="form-group">
-                                                                        <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            name="vakalath"
-                                                                            className="form-control"
-                                                                            // value={petition.vakalath}
-                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                        />
-                                                                        </div>
-                                                                    </div>
-                                                                    )}
-                                                                    <div className="col-md-12 mt-4"> 
-                                                                        <div className="form-group">
-                                                                        <label htmlFor="document">Supporting Documents</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            name="supporting_document" 
-                                                                            className="form-control"
-                                                                            // value={petition.supporting_document}
-                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                        />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-4">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">Enrolment Number</label>
-                                                                            <div className="row">
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='MS'
-                                                                                    />
-                                                                                </div>
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='Reg. No.'
-                                                                                    />
-                                                                                </div>
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='Reg. Year'
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                <div className="col-md-2 mt-4 pt-2">
-                                                                    <Button 
-                                                                        variant="contained"
-                                                                        color="primary"
-                                                                        onClick={sendMobileOTP}
-                                                                        endIcon={<SendIcon />}
-                                                                    >Sworn Affidavit</Button>
-                                                                </div>
-                        
-                                                                {/* { !mobileVerified && (
-                                                                    <div className="col-sm-2">
-                                                                    <Button 
-                                                                        variant="contained"
-                                                                        color="primary" 
-                                                                        onClick={sendMobileOTP}
-                                                                    >
-                                                                        Send OTP</Button>
-                                                                </div>
-                                                                )} */}
-                                                                { mobileOtp && !mobileVerified && (
-                                                                <>
-                                                                    <div className="col-md-1 mt-3 pt-2">
-                                                                        <input 
-                                                                            type="password" 
-                                                                            className="form-control mt-2" 
-                                                                            placeholder="OTP" 
-                                                                            value={otp}
-                                                                            onChange={(e) => setOtp(e.target.value)}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="col-md-2 mt-3 pt-2">
-                                                                        <button 
-                                                                            type="button" 
-                                                                            className="btn btn-success px-5 mt-2"
-                                                                            onClick={() => verifyMobile(otp)}
-                                                                        >Verify</button>
-                                                                    </div>
-                                                                </>
-                                                                )}
-                                                                    { mobileVerified && (
-                                                                        <p className="mt-4 pt-3">
-                                                                            <CheckCircleRoundedIcon color="success"/>
-                                                                            <span className="text-success ml-1"><strong>Verified</strong></span>
-                                                                        </p>
-                                                                    )}
-                                                                    <div className="col-md-12">
-                                                                        <div className="d-flex justify-content-center">
-                                                                            <Button
-                                                                                variant="contained"
-                                                                                color="success"
-                                                                                onClick={handleSubmit}
-                                                                            >
-                                                                                Submit
-                                                                            </Button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </>
-                                                        )}
+                                                                    <tr>
+                                                                        <th>Advocate Name</th>
+                                                                        <th>Enrolment Number</th>
+                                                                        <th>Mobile Number</th>
+                                                                        <th>Email Address</th>
+                                                                        <th width={120}>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { advocates.map((advocate, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.enrolment_number}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_mobile}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_email}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                { !advocate.is_primary && (
+                                                                                    <>
+                                                                                        <IconButton aria-label="delete" disabled color="primary">
+                                                                                            <EditIcon color='info'/>
+                                                                                        </IconButton>
+                                                                                        <IconButton aria-label="delete">
+                                                                                            <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
+                                                                                        </IconButton>
+                                                                                    
+                                                                                    </>
+                                                                                )}
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
                                                         </>
                                                     )}
+                                                    <div className="d-flex justify-content-center">
+                                                        <Button
+                                                            variant="contained"
+                                                            color="success"
+                                                            onClick={handleInitialSubmit}
+                                                        >
+                                                            Submit
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -773,6 +637,25 @@ const Relaxation = () => {
                                                     endIcon={<ArrowForward />}
                                                 >Next</Button>
                                             </div>
+                                        </div>
+                                        <div id="ground" className="content text-center">
+                                            <GroundsContainer />
+                                            {/* <div className="row">
+                                                <div className="col-md-12">
+                                                    <div className="form-group">
+                                                        <Editor 
+                                                            value={form.grounds} 
+                                                            onChange={(e) => setForm({...form, grounds: e.target.value })} 
+                                                        />
+                                                        <div className="invalid-feedback">
+                                                            { errors.ground }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                        <div id="documents" className="content text-center">
+                                            <Document />
                                         </div>
                                         <div id="efile" className="content text-center">
                                             <Button

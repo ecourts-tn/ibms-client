@@ -66,7 +66,6 @@ const [hmac, setHmac] = useState('');
 
     const[payment, setPayment] = useState(initialState)
 
-    console.log(payment)
     const[error, setError] = useState({})
     const[paymentHistory, setPaymentHistory] = useState([])
     const[show, setShow] = useState(false);
@@ -145,7 +144,6 @@ const [hmac, setHmac] = useState('');
             // }
             // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?", payment)
             const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=tnhgcourt&pass=ourttnh&txnType=NA&prodid=EPS-TN-102&txnid=TS201822061010540&amt=505&scamt=0&txndate=26-Sep-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c8d835547dab1d015560c40fa2be193737cfece204428e8f08e312f298af260121d5b943c6695ed1cd2ba8936612d095f7c518ce8cf5355956a24ec3ef4a44b7&udf1=deena&udf2=deenadayalan17@gmail.com&udf3=8344381139&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=1")
-            console.log(response.status)
             if(response.status === 200){
                 console.log("success")
             }
