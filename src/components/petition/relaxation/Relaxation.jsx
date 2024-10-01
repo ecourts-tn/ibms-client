@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Button from '@mui/material/Button'
 import api from 'api';
 import Payment from 'components/pages/Payment';
@@ -7,58 +7,48 @@ import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import SendIcon from '@mui/icons-material/Send';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import Editor  from 'react-simple-wysiwyg';
-import Select from 'react-select'
 import * as Yup from 'yup'
-import Form from 'react-bootstrap/Form';
 import InitialInput from '../InitialInput';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import SearchIcon from '@mui/icons-material/Search'
 import Document from 'components/Document';
 import GroundsContainer from 'components/Ground';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
 
 
 const Relaxation = () => {
 
-    const[petition, setPetition] = useState({})
-    const[selectedCase, setSelectedCase] = useState('')
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {benchtypes} = useContext(BenchTypeContext)
+    const[bail, setBail] = useState({})
+    const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
-
-    const deleteAdvocate = (advocate) => {
-        const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
-        setAdvocates(newAdvocate)
-    }
-
-    const initialState = {
-        court_type: '',
-        bench_type:'',
-        state: '',
-        district:'',
-        establishment: '',
-        court:'',
-        case_type: '',
-        bail_type: '',
-        complaint_type: '',
-        crime_registered: '',
-    }
-
     const [grounds, setGrounds] = useState('')
-    const[form, setForm] = useState(initialState);
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
-        case_type:null,
-        case_number: undefined,
-        case_year: undefined
+        court_type:1,
+        bench_type:'',
+        state:'',
+        district:'',
+        establishment:'',
+        case_type: '',
+        reg_number: '',
+        reg_year: ''
     })
+    const[petition, setPetition] = useState({})
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -106,39 +96,36 @@ const Relaxation = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:selectedCase}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
                     setIsPetition(true)
-                    setPetition({...form, 
-                        court_type: response.data.petition.court_type,
-                        bench_type: response.data.petition.bench_type,
-                        state: response.data.petition.state,
-                        district: response.data.petition.district,
-                        establishment: response.data.petition.establishment,
-                        court: response.data.petition.court,
-                        case_type: 3,
-                        bail_type: null,
-                        complaint_type: response.data.petition.complaint_type,
-                        crime_registered: response.data.petition.crime_registered,
-                    })
+                    setBail(response.data.petition)
                     setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
                     setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(response.data.advocate)
+                    setPetition({...petition,
+                        court_type: response.data.petition.court_type.id,
+                        bench_type: response.data.petition.bench_type ? response.data.petition.bench_type.bench_code : null,
+                        state: response.data.petition.state ? response.data.petition.state.state_code : null,
+                        district:response.data.petition.district ? response.data.petition.district.district_code : null,
+                        establishment: response.data.establishment ? response.data.petition.establishment.establishment_code : null,
+                        case_type: 3,
+                        bail_type: null,
+                        complaint_type: response.data.petition.complaint_type.id,
+                        crime_registered: response.data.petition.crime_registered,
+                    })
+                    console.log(response.data.petition.state)
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        if(selectedCase !== ''){
+        if(eFileNumber !== ''){
             fetchDetails()
         }else{
-            setIsPetition(false)
-            setPetition({})
-            setPetitioners([])
-            setRespondents([])
-            setAdvocates([])
+            resetPage()
         }
-    },[selectedCase])
+    },[eFileNumber])
 
 
     const handleSearch = async(e) => {
@@ -146,33 +133,19 @@ const Relaxation = () => {
         try{
             // await searchSchema.validate(searchForm, { abortEarly:false})
             const response = await api.get("case/bail/approved/single/", { params: searchForm})
-
+            console.log(response.data)
             if(response.status === 200){
-                setPetition({...form, 
-                    court_type: response.data.petition.court_type,
-                    bench_type: response.data.petition.bench_type,
-                    state: response.data.petition.state,
-                    district: response.data.petition.district,
-                    establishment: response.data.petition.establishment,
-                    court: response.data.petition.court,
-                    case_type: 3,
-                    bail_type: null,
-                    complaint_type: response.data.petition.complaint_type,
-                    crime_registered: response.data.petition.crime_registered,
-                })
+                setIsPetition(true)
+                setPetition(response.data.petition)
                 setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
                 setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
                 setAdvocates(response.data.advocate)
-                setForm({...form, efile_no:response.data.petition.efile_number})
             }
 
         }catch(error){
             if(error.response){
                 if(error.response.status === 404){
-                    setPetition({})
-                    setPetitioners([])
-                    setRespondents([])
-                    setAdvocates([])
+                    resetPage()
                     toast.error(error.response.data.message, {
                         theme:"colored"
                     })
@@ -195,17 +168,36 @@ const Relaxation = () => {
 
     const handleInitialSubmit = async() => {
         const post_data = {
-            petition: form,
+            petition: petition,
             petitioner:selectedPetitioner,
             respondents,
         }
+        if (Object.keys(selectedPetitioner).length === 0){
+            alert("Please select atleast one petitioner")
+            return
+        }
         const response = await api.post("case/filing/relaxation/", post_data)
         if(response.status === 201){
-            toast.success("Condition Relaxation petition submitted successfully",{
+            resetPage()
+            toast.success(`${response.data.efile_number} details submitted successfully`,{
                 theme: "colored"
             })
         }
     }
+
+    const resetPage = () => {
+        setSearchForm({...searchForm, reg_number: '', reg_year: ''})
+        seteFileNumber('')
+        setIsPetition(false)
+        setPetition({})
+        setPetitioners([])
+        setRespondents([])
+        setAdvocates([])
+    }
+
+    useEffect(() => {
+        resetPage()
+    },[searchForm.court_type, searchPetition])
 
     return(
         <>
@@ -231,31 +223,38 @@ const Relaxation = () => {
                                             </button>
                                         </div>
                                         <div className="line"></div>
-                                        <div className="step" data-target="#ground">
+                                        <div className="step" data-target="#litigant">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Ground</span>
+                                            <span className="bs-stepper-label">Litigants</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#ground">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">3</span>
+                                            <span className="bs-stepper-label">Grounds</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#documents">
                                             <button className="step-trigger">
-                                            <span className="bs-stepper-circle">3</span>
+                                            <span className="bs-stepper-circle">4</span>
                                             <span className="bs-stepper-label">Documents</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
-                                            <span className="bs-stepper-circle">4</span>
+                                            <span className="bs-stepper-circle">5</span>
                                             <span className="bs-stepper-label">Payment</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
-                                            <span className="bs-stepper-circle">5</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-circle">6</span>
+                                            <span className="bs-stepper-label">   E-File   </span>
                                             </button>
                                         </div>
                                     </div>
@@ -295,12 +294,12 @@ const Relaxation = () => {
                                                 <div className="col-md-8 offset-2">
                                                     { parseInt(searchPetition) === 1 && (
                                                         <div className="form-group row">
-                                                            <div className="col-sm-12">
+                                                            <div className="col-sm-8 offset-md-2">
                                                                 <select 
                                                                     name="efile_no" 
                                                                     className="form-control"
-                                                                    value={selectedCase}
-                                                                    onChange={(e) => setSelectedCase(e.target.value)}
+                                                                    value={eFileNumber}
+                                                                    onChange={(e) => seteFileNumber(e.target.value)}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
@@ -319,64 +318,178 @@ const Relaxation = () => {
                                                 </div>
                                                 <div className="col-md-8 offset-2">
                                                     { parseInt(searchPetition) === 2 && (
-                                                    <form onSubmit={handleSearch}>
+                                                    <form>
                                                         <div className="row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_type">Case Type</label>
-                                                                    <select 
-                                                                        name="case_type" 
-                                                                        className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
-                                                                        value={searchForm.case_type}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    >
-                                                                        <option value="">Select Case Type</option>
-                                                                        <option value="1">Bail Petition</option>
-                                                                    </select>
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_type }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_number">Case Number</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
-                                                                        name="case_number"
-                                                                        value={searchForm.case_number}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_number }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_year">Year</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
-                                                                        name="case_year"
-                                                                        value={searchForm.case_year}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_year }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                             <div className="col-md-12 d-flex justify-content-center">
-                                                                { parseInt(searchPetition) === 2 && (
-                                                                <Button
-                                                                    variant='contained'
-                                                                    type="submit"
-                                                                    color="success"
-                                                                    onClick={handleSearch}
-                                                                >Search</Button>
+                                                                <div className="form-group">
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            name="court_type" 
+                                                                            id="court_type_hc" 
+                                                                            value={ searchForm.court_type }
+                                                                            checked={parseInt(searchForm.court_type) === 1 ? true : false }
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
+                                                                        />
+                                                                        <label htmlFor="court_type_hc">High Court</label>
+                                                                    </div>
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            id="court_type_dc" 
+                                                                            name="court_type" 
+                                                                            value={searchForm.court_type}
+                                                                            checked={parseInt(searchForm.court_type) === 2 ? true : false } 
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
+                                                                        />
+                                                                        <label htmlFor="court_type_dc">District Court</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 offset-md-3">
+                                                                { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="row">
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">State</label>
+                                                                                <select 
+                                                                                    name="state" 
+                                                                                    className={`form-control ${errors.state ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select state</option>
+                                                                                    { states.map((state, index) => (
+                                                                                    <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.state }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">District</label>
+                                                                                <select 
+                                                                                    name="district" 
+                                                                                    className={`form-control ${errors.district ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select district</option>
+                                                                                    { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
+                                                                                        <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.district }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 )}
+                                                                <div className="row">
+                                                                    { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Establishment</label>
+                                                                            <select 
+                                                                                name="establishment" 
+                                                                                className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select establishment</option>
+                                                                                {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
+                                                                                    <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.establishment }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    { parseInt(searchForm.court_type) === 1 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Bench</label>
+                                                                            <select 
+                                                                                name="bench_type" 
+                                                                                className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select bench</option>
+                                                                                {benchtypes.map((b, index)=>(
+                                                                                    <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.bench_type }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    <div className="col-md-4">
+                                                                        <label htmlFor="case_type">Case Type</label>
+                                                                        <select 
+                                                                            name="case_type" 
+                                                                            id="case_type" 
+                                                                            className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
+                                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                        >
+                                                                            <option value="">Select case type</option>
+                                                                            <option value="1">Bail Application</option>
+                                                                        </select>
+                                                                        <div className="invalid-feedback">
+                                                                            { searchErrors.case_type }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    <div className="col-md-10 offset-md-1">
+                                                                        <div className="row">
+                                                                            <div className="col-md-5">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_number ? 'is-invalid': ''}`}
+                                                                                        name="reg_number"
+                                                                                        value={searchForm.reg_number}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder='Registration Number'
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_number }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-4">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_year ? 'is-invalid': ''}`}
+                                                                                        name="reg_year"
+                                                                                        value={searchForm.reg_year}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder='Registration Year'
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_year }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-3">
+                                                                                <Button 
+                                                                                    variant='contained'
+                                                                                    color="primary"
+                                                                                    endIcon={<SearchIcon />}
+                                                                                    onClick={handleSearch}
+                                                                                >
+                                                                                    Search
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -385,7 +498,7 @@ const Relaxation = () => {
                                                 <div className="container-fluid mt-5 px-5">
                                                     { isPetition && (
                                                         <>
-                                                            <InitialInput petition={petition} />
+                                                            <InitialInput petition={bail} />
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
@@ -597,7 +710,7 @@ const Relaxation = () => {
                                                                                             <EditIcon color='info'/>
                                                                                         </IconButton>
                                                                                         <IconButton aria-label="delete">
-                                                                                            <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
+                                                                                            <DeleteIcon color='error' />
                                                                                         </IconButton>
                                                                                     
                                                                                     </>
@@ -609,17 +722,22 @@ const Relaxation = () => {
                                                             </table>
                                                         </>
                                                     )}
-                                                    <div className="d-flex justify-content-center">
-                                                        <Button
-                                                            variant="contained"
-                                                            color="success"
-                                                            onClick={handleInitialSubmit}
-                                                        >
-                                                            Submit
-                                                        </Button>
-                                                    </div>
+                                                    { isPetition && (
+                                                        <div className="d-flex justify-content-center">
+                                                            <Button
+                                                                variant="contained"
+                                                                color="success"
+                                                                onClick={handleInitialSubmit}
+                                                            >
+                                                                Submit
+                                                            </Button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div id="litigant" className="content">
+
                                         </div>
                                         <div id="payment" className="content">
                                             <Payment />
