@@ -32,6 +32,7 @@ const Relaxation = () => {
     const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
+    const[selectedRespondent, setSelectedRespondent] = useState([])
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
@@ -66,17 +67,50 @@ const Relaxation = () => {
         });
     }, []);
 
-    const handleCheckBoxChange = (petitioner) => {
+    const handlePetitionerCheckBoxChange = (petitioner) => {
         if (selectedPetitioner.includes(petitioner)) {
           // If already selected, remove the petitioner from the selected list
           setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
         } else {
           // Otherwise, add the petitioner to the selected list
-          setSelectedPetitioner([...selectedPetitioner, petitioner]);
+          setSelectedPetitioner([...selectedPetitioner, {
+            litigant_name :petitioner.litigant_name,
+            litigant_type :1, 
+            rank: petitioner.rank,
+            gender: petitioner.gender,
+            act: petitioner.act,
+            section: petitioner.section,
+            relation: petitioner.relation,
+            relation_name: petitioner.relation_name,
+            age: petitioner.age,
+            address: petitioner.address,
+            mobile_number: petitioner.mobile_number,
+            email_address: petitioner.email_address,
+            nationality: petitioner.nationality,
+          }]);
         }
     };
 
-    const isSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_id === petitioner.litigant_id);
+    const handleRespondentCheckBoxChange = (respondent) => {
+        if (selectedRespondent.includes(respondent)) {
+          // If already selected, remove the respondent from the selected list
+          setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
+        } else {
+          // Otherwise, add the respondent to the selected list
+          setSelectedRespondent([...selectedRespondent, {
+            litigant_name: respondent.litigant_name,
+            litigant_type: 2, 
+            designation: respondent.designation,
+            state: respondent.state.state_code,
+            district: respondent.district.district_code,
+            police_station: respondent.police_station.cctns_code,
+            address: respondent.address,
+          }]);
+        }
+    };
+
+    const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
+    const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
     
     useEffect(() => {
         async function fetchData(){
@@ -98,23 +132,24 @@ const Relaxation = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
+                    const {petition:pet, litigant, advocate} = response.data
                     setIsPetition(true)
-                    setBail(response.data.petition)
-                    setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
-                    setAdvocates(response.data.advocate)
+                    setBail(pet)
+                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
+                    setRespondents(litigant.filter(l=>l.litigant_type===2))
+                    setAdvocates(advocate)
                     setPetition({...petition,
-                        court_type: response.data.petition.court_type.id,
-                        bench_type: response.data.petition.bench_type ? response.data.petition.bench_type.bench_code : null,
-                        state: response.data.petition.state ? response.data.petition.state.state_code : null,
-                        district:response.data.petition.district ? response.data.petition.district.district_code : null,
-                        establishment: response.data.establishment ? response.data.petition.establishment.establishment_code : null,
+                        court_type: pet.court_type.id,
+                        bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
+                        state: pet.state ? pet.state.state_code : null,
+                        district:pet.district ? pet.district.district_code : null,
+                        establishment: pet.establishment ? pet.establishment.establishment_code : null,
+                        court: pet.court ? pet.court.court_code : null,
                         case_type: 3,
-                        bail_type: null,
-                        complaint_type: response.data.petition.complaint_type.id,
-                        crime_registered: response.data.petition.crime_registered,
+                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
+                        complaint_type: pet.complaint_type.id,
+                        crime_registered: pet.crime_registered,
                     })
-                    console.log(response.data.petition.state)
                 }
             }catch(error){
                 console.log(error)
@@ -126,6 +161,12 @@ const Relaxation = () => {
             resetPage()
         }
     },[eFileNumber])
+
+    const petitionDetails = () => {
+        return{
+            
+        }
+    }
 
 
     const handleSearch = async(e) => {
@@ -170,7 +211,7 @@ const Relaxation = () => {
         const post_data = {
             petition: petition,
             petitioner:selectedPetitioner,
-            respondents,
+            respondent: selectedRespondent,
         }
         if (Object.keys(selectedPetitioner).length === 0){
             alert("Please select atleast one petitioner")
@@ -179,6 +220,9 @@ const Relaxation = () => {
         const response = await api.post("case/filing/relaxation/", post_data)
         if(response.status === 201){
             resetPage()
+            setSelectedPetitioner([])
+            setSelectedRespondent([])
+            sessionStorage.setItem("efile_no", response.data.efile_number)
             toast.success(`${response.data.efile_number} details submitted successfully`,{
                 theme: "colored"
             })
@@ -215,7 +259,7 @@ const Relaxation = () => {
                         <div className="card">
                             <div className="card-body p-1" style={{minHeight:'500px'}}>
                                 <div id="stepper1" className="bs-stepper">
-                                    <div className="bs-stepper-header mb-3" style={{backgroundColor:'#ebf5fb'}}>
+                                    <div className="bs-stepper-header mb-3">
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
@@ -254,7 +298,7 @@ const Relaxation = () => {
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">6</span>
-                                            <span className="bs-stepper-label">   E-File   </span>
+                                            <span className="bs-stepper-label">E-File</span>
                                             </button>
                                         </div>
                                     </div>
@@ -522,8 +566,8 @@ const Relaxation = () => {
                                                                                 <input 
                                                                                     type="checkbox" 
                                                                                     id={`checkboxSuccess${petitioner.litigant_id}`} 
-                                                                                    checked={isSelected(petitioner)}
-                                                                                    onChange={() => handleCheckBoxChange(petitioner)}
+                                                                                    checked={isPetitionerSelected(petitioner)}
+                                                                                    onChange={() => handlePetitionerCheckBoxChange(petitioner)}
                                                                                 />
                                                                                 <label htmlFor={`checkboxSuccess${petitioner.litigant_id}`}></label>
                                                                             </div>                                                                            </td>
@@ -615,6 +659,17 @@ const Relaxation = () => {
                                                                 <tbody>
                                                                     { respondents.map((res, index) => (
                                                                         <tr key={index}>
+                                                                            <td>
+                                                                                <div className="icheck-success">
+                                                                                    <input 
+                                                                                        type="checkbox" 
+                                                                                        id={`checkboxSuccess${res.litigant_id}`} 
+                                                                                        checked={isRespondentSelected(res)}
+                                                                                        onChange={() => handleRespondentCheckBoxChange(res)}
+                                                                                    />
+                                                                                    <label htmlFor={`checkboxSuccess${res.litigant_id}`}></label>
+                                                                                </div>                                                                            
+                                                                            </td>
                                                                             <td>
                                                                                 <input 
                                                                                     type="text" 
@@ -756,7 +811,7 @@ const Relaxation = () => {
                                                 >Next</Button>
                                             </div>
                                         </div>
-                                        <div id="ground" className="content text-center">
+                                        <div id="ground" className="content">
                                             <GroundsContainer />
                                             {/* <div className="row">
                                                 <div className="col-md-12">

@@ -51,12 +51,11 @@ const GroundsContainer = () => {
     }
 
     const deleteGround = async(ground) => {
-        console.log(ground)
         try{
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id
             })
-            const response = await api.delete("case/ground/delete", {params:{id:ground.id}})
+            const response = await api.delete(`case/ground/delete/`, {params:{id:ground.id}})
             if(response.status === 204){
                 setGrounds(newGrounds)
                 decrementCount()
@@ -170,15 +169,17 @@ const GroundsList = ({grounds, deleteGround}) => {
 
                     </div>
                     <div className="card-footer d-flex justify-content-end" style={{backgroundColor:"inherit", borderTop:"none", marginTop:"-20px"}}>
-                    <Button 
-                            variant="primary" 
+                        <Button 
+                            variant="contained"
+                            color="primary" 
                             size="sm" 
                             className="mr-2"
                         >
                             <i className="fa fa-pencil-alt mr-2"></i>
                         Edit</Button>
                         <Button 
-                            variant="danger" 
+                            variant="contained"
+                            color="error" 
                             size="sm" 
                             onClick={()=>deleteGround(ground) }
                         >

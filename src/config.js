@@ -24,8 +24,8 @@
 
 const config = {
   development: {
-    apiUrl: "http://117.193.76.243:8088/api/",
-    docUrl: "http://117.193.76.243:8088/",
+    apiUrl: "http://127.0.0.1:8000/api/",
+    docUrl: "http://127.0.0.1:8000/",
     featureFlag: true,
   },
   staging: {
@@ -33,7 +33,7 @@ const config = {
     featureFlag: false,
   },
   production: {
-    apiUrl: "http://117.193.76.243:8000/api/",
+    apiUrl: "http://127.0.0.1:8000/api/",
     featureFlag: false,
   },
 };

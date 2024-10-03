@@ -17,7 +17,7 @@ const PetitionerContainer = () => {
     useEffect(() => {
         const fetchPetitioners = async() => {
             if(efile_no){
-                const response = await api.get("litigant/list", {params:{efile_no}})
+                const response = await api.get("litigant/list/", {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((petitioner)=> {
                         return petitioner.litigant_type === 1
