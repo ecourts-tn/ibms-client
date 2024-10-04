@@ -6,10 +6,10 @@ import { ToastContainer, toast } from 'react-toastify'
 
 const AdvocateForm = ({addAdvocate}) => {
     const initialAdvocate = {
-        advocate_name: '',
-        advocate_email: '',
-        advocate_mobile: '',
-        enrolment_number: '',
+        adv_name: '',
+        adv_email: '',
+        adv_mobile: '',
+        adv_reg: '',
         is_primary: false
     }
 
@@ -35,8 +35,8 @@ const AdvocateForm = ({addAdvocate}) => {
                         <Form.Label  className="col-sm-3">Advocate Name</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
-                                name="advocate_name"
-                                value={advocate.advocate_name}
+                                name="adv_name"
+                                value={advocate.adv_name}
                                 onChange={ handleChange }
                             ></Form.Control>
                         </div>
@@ -45,8 +45,8 @@ const AdvocateForm = ({addAdvocate}) => {
                         <Form.Label className="col-sm-3">Enrollment Number</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
-                                name="enrolment_number"
-                                value={advocate.enrolment_number}
+                                name="adv_reg"
+                                value={advocate.adv_reg}
                                 onChange={ handleChange }
                                 placeholder='MS/----/----'
                             ></Form.Control>
@@ -56,8 +56,8 @@ const AdvocateForm = ({addAdvocate}) => {
                         <Form.Label className="col-sm-3">Mobile Number</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
-                                name="advocate_mobile"
-                                value={advocate.advocate_mobile}
+                                name="adv_mobile"
+                                value={advocate.adv_mobile}
                                 onChange={ handleChange }
                             ></Form.Control>
                         </div>
@@ -66,8 +66,8 @@ const AdvocateForm = ({addAdvocate}) => {
                         <Form.Label className="col-sm-3">E-Mail Address</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
-                                name="advocate_email"
-                                value={advocate.advocate_email}
+                                name="adv_email"
+                                value={advocate.adv_email}
                                 onChange={ handleChange }
                             ></Form.Control>
                          </div>

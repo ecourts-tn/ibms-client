@@ -9,7 +9,6 @@ import * as Yup from 'yup'
 const Advocate = () => {
     
     const[advocates, setAdvocates] = useState([])
-    const efile_no = "ATN20240000001F2024000001";
     useEffect(() => {
         async function fetchAdvocates(){
             try{
@@ -45,7 +44,7 @@ const Advocate = () => {
         const newAdvocate = advocates.filter((a) => {
             return a.id !== advocate.id
         })
-        const response = await api.delete(`advocate/delete`, advocate.id) 
+        const response = await api.delete(`advocate/${advocate.adv_code}/delete/`) 
         if(response.status === 200){
             toast.success("Advocate details deleted successfully", {
                 theme:"colored"
@@ -117,7 +116,7 @@ const AdvocateForm = ({setAdvocates}) => {
     const handleSubmit = async() => {
         try{
             await validationSchema.validate(advocate, { abortEarly:false})
-            const efile_no = "ATN20240000001F2024000002" //sessionStorage.getItem("efile_no")
+            const efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
@@ -235,10 +234,10 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
               { advocates.map((advocate, index) => (
                 <tr key={index}>
                   <td>{ index+1 }</td>
-                  <td>{ advocate.advocate_name }</td>
-                  <td>{ advocate.enrolment_number }</td>
-                  <td>{ advocate.advocate_mobile }</td>
-                  <td>{ advocate.advocate_email }</td>
+                  <td>{ advocate.adv_name }</td>
+                  <td>{ advocate.adv_reg }</td>
+                  <td>{ advocate.adv_mobile }</td>
+                  <td>{ advocate.adv_email }</td>
                   <td>
                     { !advocate.is_primary && (
                       <>

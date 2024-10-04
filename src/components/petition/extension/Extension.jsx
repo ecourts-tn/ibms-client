@@ -162,12 +162,6 @@ const Extension = () => {
         }
     },[eFileNumber])
 
-    const petitionDetails = () => {
-        return{
-            
-        }
-    }
-
 
     const handleSearch = async(e) => {
         e.preventDefault()

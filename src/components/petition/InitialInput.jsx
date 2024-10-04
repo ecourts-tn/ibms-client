@@ -4,23 +4,6 @@ import Form from 'react-bootstrap/Form'
 const InitialInput = ({petition}) => {
     return (
         <div className="row mb-4">
-            {/* <div className="col-md-6">
-                <table className="table table-bordered table-sm">
-                    <tbody>
-                        <tr>
-                            <td>Case Type</td>
-                            <td>{petition.court_type.court_type}</td>
-                        </tr>
-                        <tr>
-                            <td>Bench Type</td>
-                            <td>{ petition.bench_type.bench_type}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div className="col-md-6">
-
-            </div> */}
             <div className="col-md-6">
                 <Form.Group className="mb-3">
                     <Form.Label>Court Type</Form.Label>
@@ -31,15 +14,13 @@ const InitialInput = ({petition}) => {
                 </Form.Group>
             </div>
             <div className="col-md-6">
-                { petition.court_type.id === 1 && (
                 <div className="form-group">
                     <Form.Label>Bench Type</Form.Label>
                     <Form.Control
-                        value={petition.bench_type.bench_type}
+                        value={petition.bench_type ? petition.bench_type.bench_type : null}
                         readOnly={true}
                     ></Form.Control>
                 </div>
-                )}
             </div>
             { petition.court_type.id === 2 && (
             <>
@@ -81,7 +62,7 @@ const InitialInput = ({petition}) => {
                 </div>
             </>
             )}
-            <div className="col-md-3">
+            {/* <div className="col-md-3">
                 <div className="form-group">
                     <label htmlFor="caseType">Case Type</label>
                     <Form.Control
@@ -124,7 +105,7 @@ const InitialInput = ({petition}) => {
                     <label htmlFor="radioPrimary3">Not Known</label>
                 </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

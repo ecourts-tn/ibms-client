@@ -25,6 +25,7 @@ const PetitionList = () => {
             try{
                 const response = await api.get(`case/filing/submitted-list/`)
                 if(response.status === 200){
+                    console.log(response.data)
                     setCases(response.data)
                 }
             }catch(error){

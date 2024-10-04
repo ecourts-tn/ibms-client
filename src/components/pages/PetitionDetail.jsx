@@ -76,7 +76,7 @@ const PetitionDetail = () => {
                                         <td>Registration Number</td>
                                         <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
                                         <td>Registration Date</td>
-                                        <td>{  petition.date_of_registration }</td>
+                                        <td>{  petition.registration_date }</td>
                                     </tr>
                                     {  petition.court_type.code === 2 && (
                                     <>

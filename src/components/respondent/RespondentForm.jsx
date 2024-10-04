@@ -51,13 +51,22 @@ const RespondentForm = ({addRespondent}) => {
         }
     }
 
+    const handleRespondentChange = () => {
+        setRespondentPolice(!respondentPolice)
+        if(!respondentPolice){
+            setLitigant({...litigant, litigant_name:'State of Tamil Nadu rep by'})
+        }else{
+            setLitigant({...litigant, litigant_name:''})
+        }
+    }
+
     return (
         <>
             <ToastContainer />
             <div className="row">
                 <div className="col-md-12">
                     <div className="form-group">
-                        <input type="checkbox" name={respondentPolice} onChange={(e) => setRespondentPolice(!respondentPolice)} className="mr-2"/><span className="text-primary"><strong>Respondent Police</strong></span>
+                        <input type="checkbox" name={respondentPolice} onChange={handleRespondentChange} className="mr-2"/><span className="text-primary"><strong>Respondent Police</strong></span>
                     </div>
                 </div>
             </div>
@@ -125,6 +134,7 @@ const RespondentForm = ({addRespondent}) => {
                             value={litigant.litigant_name}
                             className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                            readOnly={respondentPolice}
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.litigant_name }</div>
                     </Form.Group>

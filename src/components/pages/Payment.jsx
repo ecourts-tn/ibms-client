@@ -132,21 +132,26 @@ const [hmac, setHmac] = useState('');
 
     const handleSubmit = async () => {
         try{
-            // const efile_no = sessionStorage.getItem("efile_no")
-            // const response = await api.post(`payment/court-fee/`, payment, {params:{efile_no}})
-            // if(response.status === 201){
-            //     toast.success("Payment completed successfully", {
-            //         theme: "colored"
-            //     })
-            //     setPayment(initialState)
-            //     setMobileOtp(false)
-            //     setMobileVerified(false)
-            // }
-            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?", payment)
-            const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=tnhgcourt&pass=ourttnh&txnType=NA&prodid=EPS-TN-102&txnid=TS201822061010540&amt=505&scamt=0&txndate=26-Sep-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c8d835547dab1d015560c40fa2be193737cfece204428e8f08e312f298af260121d5b943c6695ed1cd2ba8936612d095f7c518ce8cf5355956a24ec3ef4a44b7&udf1=deena&udf2=deenadayalan17@gmail.com&udf3=8344381139&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=1")
-            if(response.status === 200){
-                console.log("success")
+            const efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`payment/court-fee/`,{
+                efile_no:efile_no,
+                payer_name:payment.udf1,
+                mobile_number: payment.udf3,
+                amount:payment.amt
+            }, {params:{efile_no}})
+            if(response.status === 201){
+                toast.success("Payment completed successfully", {
+                    theme: "colored"
+                })
+                setPayment(initialState)
+                setMobileOtp(false)
+                setMobileVerified(false)
             }
+            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?", payment)
+            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=tnhgcourt&pass=ourttnh&txnType=NA&prodid=EPS-TN-102&txnid=TS201822061010540&amt=505&scamt=0&txndate=26-Sep-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c8d835547dab1d015560c40fa2be193737cfece204428e8f08e312f298af260121d5b943c6695ed1cd2ba8936612d095f7c518ce8cf5355956a24ec3ef4a44b7&udf1=deena&udf2=deenadayalan17@gmail.com&udf3=8344381139&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=1")
+            // if(response.status === 200){
+            //     console.log("success")
+            // }
             // https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=phhgcourt&pass=Test@123&txnType=NA&prodid=PHCFEE&txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
         }catch(error){
             console.log(error)

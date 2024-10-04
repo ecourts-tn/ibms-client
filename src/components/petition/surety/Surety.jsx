@@ -1,29 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Button from '@mui/material/Button'
-import api from '../../../api';
-import Payment from '../../pages/Payment';
+import api from 'api';
+import Payment from 'components/pages/Payment';
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import * as Yup from 'yup'
-import { RequiredField } from '../../../utils';
+import { RequiredField } from 'utils';
+import SearchIcon from '@mui/icons-material/Search'
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import InitialInput from 'components/petition/InitialInput';
+import SuretyForm from './SuretyForm';
+import { useLocalStorage } from 'hooks/useLocalStorage';
 
 
 const Surety = () => {
-
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-
-    const states    = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks    = useSelector((state) => state.taluks.taluks)
-
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
+    const {benchtypes} = useContext(BenchTypeContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const[searchForm, setSearchForm] = useState({
+        court_type:1,
+        bench_type:'',
+        state:'',
+        district:'',
+        establishment:'',
+        case_type: '',
+        reg_number: '',
+        reg_year: ''
+    })
     const initialState = {
         cino: '',
         surety_name: '',
@@ -80,27 +92,32 @@ const Surety = () => {
     }
 
     const[form, setForm] = useState(initialState);
+    const[errors, setErrors] = useState({})
+    const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
-    const[searchForm, setSearchForm] = useState({
-        case_type:null,
-        case_number: undefined,
-        case_year: undefined
+    const[eFileNumber, seteFileNumber] = useState('')
+    const[isPetition, setIsPetition] = useState(false)
+    const[petition, setPetition] = useState({
+        court_type: '',
+        bench_type: '',
+        state: '',
+        district:'',
+        establishment: '',
+        court: '',
+        case_type: 6,
+        bail_type: '',
+        complaint_type: '',
+        crime_registered: '',
     })
-    const searchSchema = Yup.object({
+    const validationSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
         case_year: Yup.number().required("Please enter the case year")
     })
 
     const[searchErrors, setSearchErrors]            = useState({})
-    const[businessStates, setBusinessStates]        = useState([])
-    const[businessDistricts, setBusinessDistricts]  = useState([])
-    const[businessTaluks, setBusinessTaluks]        = useState([])
-    const[employerStates, setEmployerStates]        = useState([])
-    const[employerDistricts, setEmployerDistricts]  = useState([])
-    const[employerTaluks, setEmployerTaluks]        = useState([])
-    const[relations, setRelations]                  = useState([])
+    const [user, setUser] = useLocalStorage("user", null)
 
     const stepperRef = useRef(null);
 
@@ -117,12 +134,6 @@ const Surety = () => {
 
     const removeBankAccount = () => {}
 
-    const handleChange = (e) => {
-            const {name, value} = e.target
-            setForm({...form, [name]:value})
-    }
-
-
     useEffect(() => {
         async function fetchData(){
             try{
@@ -137,139 +148,33 @@ const Surety = () => {
         fetchData();
     },[])
 
-
     useEffect(() => {
-        async function fetchState(){
+        const fetchDetails = async() => {
             try{
-                const response = await api.get(`base/state/`)
+                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    setBusinessStates(response.data)
+                    const {petition:pet} = response.data
+                    setIsPetition(true)
+                    setBail(pet)
+                    setPetition({...petition,
+                        court_type: pet.court_type.id,
+                        bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
+                        state: pet.state ? pet.state.state_code : null,
+                        district:pet.district ? pet.district.district_code : null,
+                        establishment: pet.establishment ? pet.establishment.establishment_code : null,
+                        court: pet.court ? pet.court.court_code : null,
+                        case_type: 6,
+                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
+                        complaint_type: pet.complaint_type.id,
+                        crime_registered: pet.crime_registered,
+                    })
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        fetchState()
-    }, [])
-
-
-    useEffect(() => {
-        async function fetchState(){
-            try{
-                const response = await api.get(`base/state/`)
-                if(response.status === 200){
-                    setEmployerStates(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchState()
-    }, [])
-
-
-    useEffect(() => {
-        async function fetchDistrict(){
-            try{
-                const response = await api.get(`base/state/${form.business_state}/district/`)
-                if(response.status === 200){
-                    setBusinessDistricts(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.business_state !== ''){
-            fetchDistrict()
-        }
-    }, [form.business_state])
-
-
-    useEffect(() => {
-        async function fetchDistrict(){
-            try{
-                const response = await api.get(`base/state/${form.employer_state}/district/`)
-                if(response.status === 200){
-                    setEmployerDistricts(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.employer_state !== ''){
-            fetchDistrict()
-        }
-    }, [form.employer_state])
-
-
-    useEffect(() => {
-        async function fetchTaluk(){
-            try{
-                const response = await api.get(`base/district/${form.business_district}/taluk/`)
-                if(response.status === 200){
-                    setBusinessTaluks(response.data)
-                    console.log(businessTaluks)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.business_district !== ''){
-            fetchTaluk()
-        }
-    },[form.business_district])
-
-
-    useEffect(() => {
-        async function fetchTaluk(){
-            try{
-                const response = await api.get(`base/district/${form.employer_district}/taluk/`)
-                if(response.status === 200){
-                    setEmployerTaluks(response.data)
-                    console.log(employerTaluks)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.employer_district !== ''){
-            fetchTaluk()
-        }
-    },[form.employer_district])
-
-    useEffect(() => {
-        async function fetchRelation(){
-            try{
-                const response = await api.get(`base/relation/`)
-                if(response.status === 200){
-                    setRelations(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchRelation()
-    },[])
-
-  
-    useEffect(() => {
-    if(stateStatus === 'idle'){
-        dispatch(getStates())
-    }
-    }, [stateStatus, dispatch])
-    
-    useEffect(() => {
-    if(form.state !== ''){
-        dispatch(getDistrictByStateCode(form.state))
-    }
-    }, [form.state, dispatch])
-
-        
-    useEffect(() => {
-        if( form.district !== ''){
-            dispatch(getTalukByDistrictCode(form.district))
-        }
-    },[form.district, dispatch])
+        fetchDetails();
+    },[eFileNumber])
 
 
     const handleSearch = async(e) => {
@@ -278,7 +183,6 @@ const Surety = () => {
             // await searchSchema.validate(searchForm, { abortEarly:false})
             const response = await api.get("bail/petition/detail/", { params: searchForm})
             if(response.status === 200){
-                console.log(response.data)
                 setForm({...form, cino:response.data.petition.cino})
             }
             if(response.status === 404){
@@ -303,22 +207,38 @@ const Surety = () => {
     }
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault()
         try{
-            const response = await api.post("bail/surety/create/", form, {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    // 'X-CSRFTOKEN': CSRF_TOKEN
-                  }
-            })
+            // await validationSchema.validate(petition, { abortEarly:false})
+            const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
-                toast.success("Petition submitted successfully", {
-                    theme:'colored'
+                sessionStorage.setItem("efile_no", response.data.efile_number)
+                toast.success(`${response.data.efile_number} details submitted successfully`, {
+                    theme:"colored"
                 })
-                setForm(initialState)
+                const efile_no = sessionStorage.getItem("efile_no")
+                if(efile_no){
+                    if(parseInt(user.user.user_type) === 1){
+                        const advocate = {
+                            advocate_name: user.user.username,
+                            advocate_email: user.user.email,
+                            advocate_mobile: user.user.mobile,
+                            enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
+                            is_primary: true
+                        }
+                        await api.post(`advocate/create/`, advocate, {params: {efile_no}})
+                    }        
+                }
+               
             }
-        }catch(error){
-            console.log(error)
+          }catch(error){
+            if (error.inner){
+                const newErrors = {};
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message;
+                });
+                setErrors(newErrors);
+            }
         }
     }
 
@@ -400,15 +320,15 @@ const Surety = () => {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col-md-8 offset-2">
+                                                <div className="col-md-6 offset-3">
                                                     { parseInt(searchPetition) === 1 && (
                                                         <div className="form-group row">
                                                             <div className="col-sm-12">
                                                                 <select 
-                                                                    name="cino" 
+                                                                    name="eFileNumber" 
                                                                     className="form-control"
-                                                                    value={searchForm.cino}
-                                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                                    value={eFileNumber}
+                                                                    onChange={(e) => seteFileNumber(e.target.value)}
                                                                 >
                                                                     <option value="">Select petition</option>
                                                                     { cases.map((c, index) => (
@@ -426,906 +346,206 @@ const Surety = () => {
                                                     )}
                                                 </div>
                                                 <div className="col-md-8 offset-2">
-                                                    { parseInt(searchPetition) === 2 && (
-                                                    <form onSubmit={handleSearch}>
+                                                { parseInt(searchPetition) === 2 && (
+                                                    <form>
                                                         <div className="row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_type">Case Type</label>
-                                                                    <select 
-                                                                        name="case_type" 
-                                                                        className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
-                                                                        value={searchForm.case_type}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    >
-                                                                        <option value="">Select Case Type</option>
-                                                                        <option value="1">Bail Petition</option>
-                                                                    </select>
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_type }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_number">Case Number</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
-                                                                        name="case_number"
-                                                                        value={searchForm.case_number}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_number }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_year">Year</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
-                                                                        name="case_year"
-                                                                        value={searchForm.case_year}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_year }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                             <div className="col-md-12 d-flex justify-content-center">
-                                                                { parseInt(searchPetition) === 2 && (
-                                                                <Button
-                                                                    variant='contained'
-                                                                    type="submit"
-                                                                    color="success"
-                                                                    onClick={handleSearch}
-                                                                >Search</Button>
+                                                                <div className="form-group">
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            name="court_type" 
+                                                                            id="court_type_hc" 
+                                                                            value={ searchForm.court_type }
+                                                                            checked={parseInt(searchForm.court_type) === 1 ? true : false }
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
+                                                                        />
+                                                                        <label htmlFor="court_type_hc">High Court</label>
+                                                                    </div>
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            id="court_type_dc" 
+                                                                            name="court_type" 
+                                                                            value={searchForm.court_type}
+                                                                            checked={parseInt(searchForm.court_type) === 2 ? true : false } 
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
+                                                                        />
+                                                                        <label htmlFor="court_type_dc">District Court</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 offset-md-3">
+                                                                { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="row">
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">State</label>
+                                                                                <select 
+                                                                                    name="state" 
+                                                                                    className={`form-control ${errors.state ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select state</option>
+                                                                                    { states.map((state, index) => (
+                                                                                    <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.state }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">District</label>
+                                                                                <select 
+                                                                                    name="district" 
+                                                                                    className={`form-control ${errors.district ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select district</option>
+                                                                                    { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
+                                                                                        <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.district }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 )}
+                                                                <div className="row">
+                                                                    { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Establishment</label>
+                                                                            <select 
+                                                                                name="establishment" 
+                                                                                className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select establishment</option>
+                                                                                {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
+                                                                                    <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.establishment }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    { parseInt(searchForm.court_type) === 1 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">Bench</label>
+                                                                            <select 
+                                                                                name="bench_type" 
+                                                                                className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select bench</option>
+                                                                                {benchtypes.map((b, index)=>(
+                                                                                    <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.bench_type }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    <div className="col-md-4">
+                                                                        <label htmlFor="case_type">Case Type</label>
+                                                                        <select 
+                                                                            name="case_type" 
+                                                                            id="case_type" 
+                                                                            className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
+                                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                        >
+                                                                            <option value="">Select case type</option>
+                                                                            <option value="1">Bail Application</option>
+                                                                        </select>
+                                                                        <div className="invalid-feedback">
+                                                                            { searchErrors.case_type }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    <div className="col-md-10 offset-md-1">
+                                                                        <div className="row">
+                                                                            <div className="col-md-5">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_number ? 'is-invalid': ''}`}
+                                                                                        name="reg_number"
+                                                                                        value={searchForm.reg_number}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder='Registration Number'
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_number }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-4">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_year ? 'is-invalid': ''}`}
+                                                                                        name="reg_year"
+                                                                                        value={searchForm.reg_year}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder='Registration Year'
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_year }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-3">
+                                                                                <Button 
+                                                                                    variant='contained'
+                                                                                    color="primary"
+                                                                                    endIcon={<SearchIcon />}
+                                                                                    onClick={handleSearch}
+                                                                                >
+                                                                                    Search
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </form>
                                                     )}
+                                                </div>
+                                                <div className="col-md-8 offset-md-2">
+                                                { isPetition && (
+                                                    <>
+                                                        <InitialInput petition={bail} />
+                                                        <div className="d-flex justify-content-center">
+                                                            <Button
+                                                                variant='contained'
+                                                                color="success"
+                                                                onClick={handleSubmit}
+                                                            >
+                                                                Submit
+                                                            </Button>
+                                                        </div>
+                                                    </>
+                                                )}
                                                 </div>
                                             </div>
                                         </div>
                                         <div id="surety-details" className="content">
                                             <div className="container-fluid mt-5 px-5">
                                                 <div className="row">                                    
-                                                    <form onSubmit={handleSubmit} encType='multipart/form-data'>
-                                                        <div className="row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label>Name of Surety<RequiredField /></label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        name="surety_name" 
-                                                                        value={form.surety_name} 
-                                                                        onChange={handleChange}
-                                                                        className="form-control"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Parentage <RequiredField/></label>
-                                                                    <select 
-                                                                        name="relation" 
-                                                                        className="form-control"
-                                                                        value={form.relation}
-                                                                        onChange={handleChange}
-                                                                    >
-                                                                        <option value="">Select parentage</option>
-                                                                        { relations.map((relation, index) => (
-                                                                        <option key={index} value={relation.id}>{relation.relation_name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label>Name of the parentage <RequiredField/></label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        name="relative_name" 
-                                                                        value={form.relative_name} 
-                                                                        onChange={handleChange}
-                                                                        className="form-control" 
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label>Aadhar Number</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        name="aadhar_number" 
-                                                                        value={form.aadhar_number} 
-                                                                        onChange={handleChange} 
-                                                                        className="form-control"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label>Address</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        name="address" 
-                                                                        value={form.address} 
-                                                                        onChange={handleChange} 
-                                                                        className="form-control"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">State</label>
-                                                                    <select 
-                                                                        name="state" 
-                                                                        className="form-control"
-                                                                        value={form.state}
-                                                                        onChange={handleChange}
-                                                                    >
-                                                                        <option value="">Select state</option>
-                                                                        { states.map((state, index) => (
-                                                                        <option key={index} value={state.state_code}>{state.state_name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">District</label>
-                                                                    <select 
-                                                                        name="district"
-                                                                        className="form-control"
-                                                                        value={form.district}
-                                                                        onChange={handleChange}
-                                                                    >
-                                                                        <option value="">Select district</option>
-                                                                        { districts.map((district, index) => (
-                                                                        <option value={district.district_code} key={index}>{district.district_name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Taluk</label>
-                                                                    <select 
-                                                                        name="taluk"
-                                                                        className="form-control"
-                                                                        value={form.taluk}
-                                                                        onChange={handleChange}
-                                                                    >
-                                                                        <option value="">Select taluk</option>
-                                                                        { taluks.map((taluk, index) => (
-                                                                        <option value={taluk.id} key={index}>{taluk.taluk_name}</option>
-                                                                        ))}
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Pincode</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="pincode"
-                                                                        className="form-control"
-                                                                        value={form.pincode}
-                                                                        onChange={handleChange}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Phone Number</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="phone_number"
-                                                                        className="form-control"
-                                                                        value={form.phone_number}
-                                                                        onChange={handleChange}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">E-Mail Address</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="email_address"
-                                                                        className="form-control"
-                                                                        value={form.email_address}
-                                                                        onChange={handleChange}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Residing Since (Years)</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="residing_years"
-                                                                        className="form-control"
-                                                                        value={form.residing_years}
-                                                                        onChange={handleChange}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label>Property Type</label>
-                                                                    <select 
-                                                                        name="property_type" 
-                                                                        value={form.property_type} 
-                                                                        onChange={handleChange}
-                                                                        className="form-control"
-                                                                    >
-                                                                        <option value="">Select type</option>
-                                                                        <option value="1">Own</option>
-                                                                        <option value="2">Rental</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            { parseInt(form.property_type) === 1 && (
-                                                            <>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Survey Number</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="survey_number"
-                                                                        value={form.survey_number}
-                                                                        onChange={handleChange} 
-                                                                        className="form-control" 
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Location</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="site_location"
-                                                                        value={form.site_location}
-                                                                        onChange={handleChange}  
-                                                                        className="form-control"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Area in cent(s)</label>
-                                                                    <input 
-                                                                        type="text"
-                                                                        name="site_area"
-                                                                        value={form.site_area}
-                                                                        onChange={handleChange}
-                                                                        className="form-control"  
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">Valuation</label>
-                                                                    <input 
-                                                                        type="number"
-                                                                        name="site_valuation"
-                                                                        value={form.site_valuation}
-                                                                        onChange={handleChange}
-                                                                        className="form-control"  
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                            </>   
-                                                            )}
-                                                            { parseInt(form.property_type) === 2 && (
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label>Rent Bill in the name of Surety</label><br />
-                                                                    <div>
-                                                                        <div className="icheck-success d-inline mx-2">
-                                                                        <input 
-                                                                            type="radio" 
-                                                                            name="rent_bill_surety_name" 
-                                                                            id="isRentBillYes" 
-                                                                            value={form.rent_bill_surety_name}
-                                                                            checked={ form.rent_bill_surety_name }
-                                                                            onChange={(e) => setForm({...form, rent_bill_surety_name: true})} 
-                                                                        />
-                                                                        <label htmlFor="isRentBillYes">Yes</label>
-                                                                        </div>
-                                                                        <div className="icheck-danger d-inline mx-2">
-                                                                        <input 
-                                                                            type="radio" 
-                                                                            id="isRentBillNo" 
-                                                                            name="rent_bill_surety_name" 
-                                                                            value={form.rent_bill_surety_name}
-                                                                            checked={ !form.rent_bill_surety_name } 
-                                                                            onChange={(e) => setForm({...form, rent_bill_surety_name: false})}
-                                                                        />
-                                                                        <label htmlFor="isRentBillNo">No</label>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            )}
-                                                        
-                                                            <div className="col-md-6">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="">{parseInt(form.property_type) === 1 ? 'Upload patta/chitta' : 'Upload rental agreement/receipt'}</label>
-                                                                    <input 
-                                                                        type="file" 
-                                                                        className="form-control" 
-                                                                        name="property_document"
-                                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        
-                                                            <div className="col-md-3">
-                                                                <div className="form-group">
-                                                                    <label>Occupation</label>
-                                                                    <select 
-                                                                        name="employment_type" 
-                                                                        value={ form.employment_type } 
-                                                                        onChange={handleChange}
-                                                                        className="form-control"
-                                                                    >
-                                                                        <option value="">Select type</option>
-                                                                        <option value="1">Employed</option>
-                                                                        <option value="2">Self Employed</option>
-                                                                        <option value="3">Business</option>
-                                                                        <option value="4">Agriculture</option>
-                                                                        <option value="5">Unemployed</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        { parseInt(form.employment_type) === 1 && (
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="row">
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Employer Name</label>
-                                                                            <input type="text" 
-                                                                                name="employer_name" 
-                                                                                value={form.employer_name} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Designation</label>
-                                                                            <input type="text" 
-                                                                                name="designation" 
-                                                                                value={form.designation} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-4">
-                                                                        <div className="form-group">
-                                                                            <label>Employer Address</label>
-                                                                            <input type="text" 
-                                                                                name="employer_address" 
-                                                                                value={form.employer_address} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-2">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">State</label>
-                                                                            <select 
-                                                                                name="employer_state" 
-                                                                                className="form-control"
-                                                                                value={form.employer_state}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select state</option>
-                                                                                { states.map((state, index) => (
-                                                                                <option value={state.state_code} key={index}>{state.state_name}</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">District</label>
-                                                                            <select 
-                                                                                name="employer_district"
-                                                                                className="form-control"
-                                                                                value={form.employer_district}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select district</option>
-                                                                                { employerDistricts.map((district, index) => (
-                                                                                <option value={district.district_code} key={index}>{district.district_name}</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">Taluk</label>
-                                                                            <select 
-                                                                                name="employer_taluk"
-                                                                                className="form-control"
-                                                                                value={form.employer_taluk}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select taluk</option>
-                                                                                { employerTaluks.map((taluk, index) => (
-                                                                                <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Length of Service with Employer</label>
-                                                                            <input 
-                                                                                type="number" 
-                                                                                name="service_length" 
-                                                                                value={form.service_length} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Amount of Provident Fund</label>
-                                                                            <input 
-                                                                                type="number" 
-                                                                                name="pf_amount" 
-                                                                                value={form.pf_amount} 
-                                                                                onChange={handleChange}
-                                                                                className="form-control" 
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>House Property Details</label>
-                                                                            <textarea 
-                                                                                name="property_details" 
-                                                                                value={form.property_details} 
-                                                                                onChange={handleChange} 
-                                                                                className='form-control'
-                                                                                rows={1}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Income Tax Paid (Last 3 Years)</label>
-                                                                            <input 
-                                                                                type="number"
-                                                                                name="income_tax_paid" 
-                                                                                value={form.income_tax_paid} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <label htmlFor="">Upload Document</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            className="form-control" 
-                                                                            name="employment_document"
-                                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        )}
-                                                        { parseInt(form.employment_type) === 2 && (
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="row">
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Business Address</label>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                name="business_address" 
-                                                                                value={form.business_address} 
-                                                                                onChange={handleChange} 
-                                                                                className='form-control'
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">State</label>
-                                                                            <select 
-                                                                                name="business_state" 
-                                                                                className="form-control"
-                                                                                value={form.business_state}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select state</option>
-                                                                                { states.map((state, index) => (
-                                                                                <option value={state.state_code} key={index}>{ state.state_name }</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">District</label>
-                                                                            <select 
-                                                                                name="business_district"
-                                                                                className="form-control"
-                                                                                value={form.business_district}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select district</option>
-                                                                                { businessDistricts.map((district, index) => (
-                                                                                <option value={district.district_code} key={index}>{district.district_name}</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">Taluk</label>
-                                                                            <select 
-                                                                                name="business_taluk"
-                                                                                className="form-control"
-                                                                                value={form.business_taluk}
-                                                                                onChange={handleChange}
-                                                                            >
-                                                                                <option value="">Select taluk</option>
-                                                                                { businessTaluks.map((taluk, index) => (
-                                                                                <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
-                                                                                ))}
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Nature and Extent of Business</label>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                name="business_nature" 
-                                                                                value={form.business_nature} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Rent Paid for Place of Business</label>
-                                                                            <input 
-                                                                                type="number" 
-                                                                                name="business_rent_paid" 
-                                                                                value={form.business_rent_paid} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-5">
-                                                                        <div className="form-group">
-                                                                            <label>Rent Bill of Place of Business in name of Surety</label>
-                                                                            <div>
-                                                                                <div className="icheck-success d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    name="is_rent_bill_name" 
-                                                                                    id="isRentBillYes" 
-                                                                                    value={ form.is_rent_bill_name }
-                                                                                    checked={ form.is_rent_bill_name }
-                                                                                    onChange={(e) => setForm({...form, is_rent_bill_name: true})} 
-                                                                                />
-                                                                                <label htmlFor="isRentBillYes">Yes</label>
-                                                                                </div>
-                                                                                <div className="icheck-danger d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    id="isRentBillNo" 
-                                                                                    name="is_rent_bill_name" 
-                                                                                    value={form.is_rent_bill_name}
-                                                                                    checked={ !form.is_rent_bill_name } 
-                                                                                    onChange={(e) => setForm({...form, is_rent_bill_name: false})}
-                                                                                />
-                                                                                <label htmlFor="isRentBillNo">No</label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <label htmlFor="">Upload Document</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            className="form-control" 
-                                                                            name="business_document"
-                                                                            onChange={(e)=> setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                        />
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        )}
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="row">
-                                                                    <div className="col-md-12">
-                                                                        <label>Bank Accounts</label>
-                                                                        <div className="row">
-                                                                            <div className="col-md-3">
-                                                                                <input
-                                                                                    type="text"
-                                                                                    name="bank_name"
-                                                                                    placeholder="Bank Name"
-                                                                                    value={form.bank_name}
-                                                                                    onChange={(e) => handleBankAccountChange(e)}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div> 
-                                                                            <div className="col-md-3">
-                                                                                <input
-                                                                                    type="text"
-                                                                                    name="branch_name"
-                                                                                    placeholder="Branch Name"
-                                                                                    value={form.branch_name}
-                                                                                    onChange={(e) => handleBankAccountChange(e)}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div>
-                                                                            <div className="col-md-2">
-                                                                                <input
-                                                                                    type="text"
-                                                                                    name="account_number"
-                                                                                    placeholder="Account Number"
-                                                                                    value={form.account_number}
-                                                                                    onChange={(e) => handleBankAccountChange(e)}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div> 
-                                                                            <div className="col-md-2">
-                                                                                <input
-                                                                                    type="text"
-                                                                                    name="ifsc_code"
-                                                                                    placeholder="IFSC Code"
-                                                                                    value={form.ifsc_code}
-                                                                                    onChange={(e) => handleBankAccountChange(e)}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div> 
-                                                                        </div>
-                                                                        <div className="row mt-3">
-                                                                            <div className="col-md-2">
-                                                                                <Button
-                                                                                    variant='contained'
-                                                                                    color='primary'
-                                                                                >Add</Button>
-                                                                                <Button
-                                                                                    variant='contained'
-                                                                                    color='error'
-                                                                                    className="ml-1"
-                                                                                >Delete</Button>
-                                                                            </div>  
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="card">
-                                                            <div className="card-body">
-                                                                <div className="row">
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Acquaintance duration</label>
-                                                                            <div className="input-group">
-                                                                                <div className="input-group-prepend">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        name="accused_duration_year"
-                                                                                        placeholder="Years"
-                                                                                        value={form.accused_duration_year}
-                                                                                        onChange={handleChange}
-                                                                                        className="form-control"
-                                                                                    />
-                                                                                </div>
-                                                                                <input
-                                                                                    type="text"
-                                                                                    name="accused_duration_month"
-                                                                                    placeholder="Months"
-                                                                                    value={form.accused_duration_month}
-                                                                                    onChange={handleChange}
-                                                                                    className="form-control"
-                                                                                />
-                                                                            </div>  
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Related to accused?</label>
-                                                                            <div>
-                                                                                <div className="icheck-success d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    name="is_related" 
-                                                                                    id="isRelatedYes" 
-                                                                                    value={form.is_related}
-                                                                                    checked={ form.is_related }
-                                                                                    onChange={(e) => setForm({...form, is_related: true})} 
-                                                                                />
-                                                                                <label htmlFor="isRelatedYes">Yes</label>
-                                                                                </div>
-                                                                                <div className="icheck-danger d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    id="isRelatedNo" 
-                                                                                    name="is_related" 
-                                                                                    value={form.is_related}
-                                                                                    checked={ !form.is_related } 
-                                                                                    onChange={(e) => setForm({...form, is_related: false})}
-                                                                                />
-                                                                                <label htmlFor="isRelatedNo">No</label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-3">
-                                                                        <div className="form-group">
-                                                                            <label>Relation Details</label>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                name="relation_details" 
-                                                                                value={form.relation_details} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Whether surety has furnished any other cases</label>
-                                                                            <textarea 
-                                                                                name="others_surety" 
-                                                                                value={form.others_surety} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                                rows={1}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Litigation Details</label>
-                                                                            <textarea 
-                                                                                name="litigation_details" 
-                                                                                value={form.litigation_details} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                                rows={1}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Other Particulars</label>
-                                                                            <textarea 
-                                                                                name="other_particulars" 
-                                                                                value={form.other_particulars} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                                rows={1}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-2">
-                                                                        <div className="form-group">
-                                                                            <label>Surety Amount</label>
-                                                                            <input 
-                                                                                type="number" 
-                                                                                name="surety_amount" 
-                                                                                value={form.surety_amount} 
-                                                                                onChange={handleChange} 
-                                                                                className="form-control"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Upload Aadhar<RequiredField /></label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="aadhar"
-                                                                                className="form-control"
-                                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Upload Photo<RequiredField /></label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="photo"
-                                                                                className="form-control"
-                                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Upload Signature<RequiredField/></label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="signature"
-                                                                                className="form-control"
-                                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-6">
-                                                                        <div className="form-group">
-                                                                            <label>Upload Identity Proof</label>
-                                                                            <input 
-                                                                                type="file" 
-                                                                                name="identity_proof"
-                                                                                className="form-control"
-                                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    <div className="col-md-12 d-flex justify-content-center">
-                                                                        <Button
-                                                                            variant="contained"
-                                                                            color="success"
-                                                                            type='submit'
-                                                                        >Save</Button>
-                                                                        <Button
-                                                                            variant="contained"
-                                                                            color="warning"
-                                                                            className="ml-2"
-                                                                        >Reset</Button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="d-flex justify-content-end">
-                                                            <Button
-                                                                variant='contained'
-                                                                color='info'
-                                                                onClick={() => stepperRef.current.next()}
-                                                                endIcon={<ArrowForward />}
-                                                            >Next</Button>
-                                                        </div>
-                                                    </form>
+                                                    <SuretyForm />
                                                 </div>
                                             </div>
                                         </div>

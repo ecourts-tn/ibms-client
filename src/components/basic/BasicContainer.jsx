@@ -4,13 +4,13 @@ import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import * as Yup from 'yup'
-import api from '../../api';
+import api from 'api';
 import Select from 'react-select'
-import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { RequiredField } from '../../utils';
-import FIRSearch from '../search/FIRSearch';
+import { useLocalStorage } from "hooks/useLocalStorage";
+import { RequiredField } from 'utils';
+import FIRSearch from 'components/search/FIRSearch';
 import CaseSearch from '../search/CaseSearch';
-import { BaseContext } from '../../contexts/BaseContext';
+import { BaseContext } from 'contexts/BaseContext';
 import { useLocation } from 'react-router-dom';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
