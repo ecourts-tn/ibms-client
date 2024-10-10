@@ -19,6 +19,7 @@ import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { useTranslation } from 'react-i18next';
 
 
 const Relaxation = () => {
@@ -50,6 +51,7 @@ const Relaxation = () => {
         reg_year: ''
     })
     const[petition, setPetition] = useState({})
+    const {t} = useTranslation()
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -161,12 +163,6 @@ const Relaxation = () => {
             resetPage()
         }
     },[eFileNumber])
-
-    const petitionDetails = () => {
-        return{
-            
-        }
-    }
 
 
     const handleSearch = async(e) => {
@@ -317,7 +313,7 @@ const Relaxation = () => {
                                                                 checked={ parseInt(searchPetition) === 1 ? true : false}
                                                                 onChange={(e) => setSearchPetition(1)} 
                                                             />
-                                                            <label htmlFor="searchPetitionYes">Select from My Petitions</label>
+                                                            <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
                                                             </div>
                                                             <div className="icheck-primary d-inline mx-2">
                                                             <input 
@@ -328,7 +324,7 @@ const Relaxation = () => {
                                                                 checked={ parseInt(searchPetition) === 2 ? true : false } 
                                                                 onChange={(e) => setSearchPetition(2)}
                                                             />
-                                                            <label htmlFor="searchPetitionNo">Search Petition</label>
+                                                            <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -375,7 +371,7 @@ const Relaxation = () => {
                                                                             checked={parseInt(searchForm.court_type) === 1 ? true : false }
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                                                         />
-                                                                        <label htmlFor="court_type_hc">High Court</label>
+                                                                        <label htmlFor="court_type_hc">{t('high_court')}</label>
                                                                     </div>
                                                                     <div className="icheck-success d-inline mx-2">
                                                                         <input 
@@ -386,7 +382,7 @@ const Relaxation = () => {
                                                                             checked={parseInt(searchForm.court_type) === 2 ? true : false } 
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
                                                                         />
-                                                                        <label htmlFor="court_type_dc">District Court</label>
+                                                                        <label htmlFor="court_type_dc">{t('district_court')}</label>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -395,7 +391,7 @@ const Relaxation = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">State</label>
+                                                                                <label htmlFor="">{t('state')}</label>
                                                                                 <select 
                                                                                     name="state" 
                                                                                     className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -413,7 +409,7 @@ const Relaxation = () => {
                                                                         </div>
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">District</label>
+                                                                                <label htmlFor="">{t('district')}</label>
                                                                                 <select 
                                                                                     name="district" 
                                                                                     className={`form-control ${errors.district ? 'is-invalid': ''}`}
@@ -435,7 +431,7 @@ const Relaxation = () => {
                                                                     { parseInt(searchForm.court_type) === 2 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Establishment</label>
+                                                                            <label htmlFor="">{t('est_name')}</label>
                                                                             <select 
                                                                                 name="establishment" 
                                                                                 className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
@@ -455,7 +451,7 @@ const Relaxation = () => {
                                                                     { parseInt(searchForm.court_type) === 1 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Bench</label>
+                                                                            <label htmlFor="">{t('hc_bench')}</label>
                                                                             <select 
                                                                                 name="bench_type" 
                                                                                 className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
@@ -473,7 +469,7 @@ const Relaxation = () => {
                                                                     </div>
                                                                     )}
                                                                     <div className="col-md-4">
-                                                                        <label htmlFor="case_type">Case Type</label>
+                                                                        <label htmlFor="case_type">{t('case_type')}</label>
                                                                         <select 
                                                                             name="case_type" 
                                                                             id="case_type" 

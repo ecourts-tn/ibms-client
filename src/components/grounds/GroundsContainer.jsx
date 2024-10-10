@@ -4,6 +4,7 @@ import GroundsList from './GroundsList'
 import GroundsForm from './GroundsForm'
 import api from '../../api'
 import {toast, ToastContainer} from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 
 const GroundsContainer = () => {
@@ -11,6 +12,7 @@ const GroundsContainer = () => {
     const[grounds, setGrounds] = useState([])
 
     const[count, setCount] = useState(0)
+    const {t} = useTranslation()
 
     const incrementCount = () => {
         setCount(count+1)
@@ -72,7 +74,7 @@ const GroundsContainer = () => {
         <div className="container-fluid m-0">
             <div className="card">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>Grounds</strong></h3>
+                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>{t('ground')}</strong></h3>
                 </div>
                 <div className="card-body p-1">
                     <div className="row">

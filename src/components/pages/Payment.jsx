@@ -7,24 +7,21 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import api from '../../api'
 import PaymentHistory from './PaymentHistory';
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next';
 
 const Payment = () => {
-
-const [hmac, setHmac] = useState('');
-
-   
-
-  const generateHmac = () => {
-    const login = "tnhgcourt";
-    const pass = "ourttnh";
-    const ttype = "NBFundTransfer";
-    const prodid = "EPS-TN-102";
-    const txnid = "PAY202409260000001";
-    const amt = "30.00";
-    const scamt = "0.00";
-    const txnDate ="2024-09-26"
-    const reqHashKey = "653861302req996313560";
-    
+    const [hmac, setHmac] = useState('');
+    const {t} = useTranslation()
+    const generateHmac = () => {
+        const login = "tnhgcourt";
+        const pass = "ourttnh";
+        const ttype = "NBFundTransfer";
+        const prodid = "EPS-TN-102";
+        const txnid = "PAY202409260000001";
+        const amt = "30.00";
+        const scamt = "0.00";
+        const txnDate ="2024-09-26"
+        const reqHashKey = "653861302req996313560";
     // Concatenating the required strings
     const sampleStr = login + pass + ttype + prodid + txnid + amt + scamt + txnDate;
 
@@ -33,14 +30,14 @@ const [hmac, setHmac] = useState('');
     return hmacGenerated
     // Setting the generated HMAC
     // setHmac(hmacGenerated);
-  };
+    };
 
-//   https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?
-//   login=phhgcourt&pass=Test@123&txnType=NA&
-//   prodid=PHCFEE&
-//   txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&
-//   ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&
-//   udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
+    //   https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?
+    //   login=phhgcourt&pass=Test@123&txnType=NA&
+    //   prodid=PHCFEE&
+    //   txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&
+    //   ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&
+    //   udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
 
     const initialState = {
         login: "tnhgcourt",
@@ -200,7 +197,7 @@ const [hmac, setHmac] = useState('');
                             <div className="row">
                                 <div className="col-md-6 offset-md-3">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="">Payer Name</label>
+                                        <label htmlFor="">{t('payer_name')}</label>
                                         <input 
                                             type="text"
                                             name="udf1" 
@@ -220,7 +217,7 @@ const [hmac, setHmac] = useState('');
                                     <div className="row">
                                         <div className="col-md-8">
                                             <div className="form-group mb-3">
-                                                <label htmlFor="">Mobile Number</label>
+                                                <label htmlFor="">{t('mobile_number')}</label>
                                                 <input 
                                                     type="text" 
                                                     className={`form-control ${error.udf3 ? 'is-invalid' : null }`}
@@ -235,7 +232,7 @@ const [hmac, setHmac] = useState('');
                                         </div>
                                         <div className="col-md-4">
                                             <div className="form-group mb-3">
-                                                <label htmlFor="">Amount</label>
+                                                <label htmlFor="">{t('amount')}</label>
                                                 <input 
                                                     type="text" 
                                                     className={`form-control ${error.amt ? 'is-invalid' : null}`}
@@ -262,7 +259,7 @@ const [hmac, setHmac] = useState('');
                                                     color="warning"
                                                     onClick={sendMobileOTP}
                                                     disabled={mobileOtp}
-                                                >Send OTP</Button>
+                                                >{t('send_otp')}</Button>
                                             </div>
                                         </div>
                                         )}
@@ -283,7 +280,7 @@ const [hmac, setHmac] = useState('');
                                                         variant='contained'
                                                         color='success'
                                                         onClick={() => verifyMobile(otp)}
-                                                    >Verify</Button>
+                                                    >{t('verify')}</Button>
                                                 </div>
                                             </div>
                                         </>
@@ -292,14 +289,14 @@ const [hmac, setHmac] = useState('');
                                         <>
                                             <div className="col-md-12 mb-3">
                                                 <CheckCircleRoundedIcon color="success"/>
-                                                <span className="text-success ml-1"><strong>OTP Verified</strong></span>
+                                                <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
                                             </div>
                                             <div className="col-md-12">
                                                 <Button
                                                     variant="contained"
                                                     color="success"
                                                     onClick={handleSubmit}
-                                                >Submit</Button>
+                                                >{t('submit')}</Button>
                                             </div>
                                         </>
                                         

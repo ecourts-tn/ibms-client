@@ -19,8 +19,6 @@ import * as Yup from 'yup'
 
 const NewPetition = () => {
 
-    const {states, districts, establishments, courts, benchtypes, bailtypes, complainttypes, courttypes} = useContext(BaseContext)
-
     const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
     const[petitioners, setPetitioners] = useState([])

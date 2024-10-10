@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useState } from 'react'
-import { Stepper, Step } from 'react-form-stepper'
+import { Stepper } from 'react-form-stepper'
 import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom'
 import BasicContainer from '../basic/BasicContainer'
 import CaseDetails from './CaseDetails'
@@ -23,6 +22,7 @@ import api from '../../api'
 import { useSearchParams } from 'react-router-dom'
 import './style.css'
 import InitialInput from 'components/InitialInput'
+import { useTranslation } from 'react-i18next'
 
 function Litigants(props){
     const {
@@ -35,6 +35,8 @@ function Litigants(props){
             addRespondent,
             deleteRespondent
         } = props
+
+
 
     return (
         <>
@@ -55,8 +57,6 @@ function Litigants(props){
 
 const BailFiling = () => {
     
-    const dispatch = useDispatch()
-
     const navigate = useNavigate()
 
     const[searchParams] = useSearchParams()
@@ -64,15 +64,16 @@ const BailFiling = () => {
     const[nextEnabled, setNextEnabled] = useState(false)
     const[activeStep, setActiveStep] = useState(0)
     const currentStep = searchParams.get("step")
+    const {t} = useTranslation()
 
     const steps = [
-        { label: 'Basic Details', onClick: () => setActiveStep(0) },
-        { label: 'Litigants', onClick: () => setActiveStep(1) },
-        { label: 'Ground', onClick: () => setActiveStep(2) },
-        { label: 'Previous Case Details', onClick: () => setActiveStep(3)},
-        { label: 'Advocate Details', onClick: () => setActiveStep(4)},
-        { label: 'Upload Documents', onClick: () => setActiveStep(5)},
-        { label: 'Payment', onClick: () => setActiveStep(6)},
+        { label: t('basic_details'), onClick: () => setActiveStep(0) },
+        { label: t('litigants'), onClick: () => setActiveStep(1) },
+        { label: t('ground'), onClick: () => setActiveStep(2) },
+        { label: t('previous_case_details'), onClick: () => setActiveStep(3)},
+        { label: t('advocate_details'), onClick: () => setActiveStep(4)},
+        { label: t('upload_documents'), onClick: () => setActiveStep(5)},
+        { label: t('payment_details'), onClick: () => setActiveStep(6)},
         { label: 'eFile', onClick: () => setActiveStep(7)}
     ];
 
@@ -350,13 +351,13 @@ const BailFiling = () => {
                         <div className="p-0">
                             <div className="d-flex justify-content-start">
                                 { (activeStep !== 0)
-                                    && <Button onClick={ () => setActiveStep(activeStep - 1) }><i className="fa fa-arrow-left mr-2"></i>Previous</Button>
+                                    && <Button onClick={ () => setActiveStep(activeStep - 1) }><i className="fa fa-arrow-left mr-2"></i>{t('previous')}</Button>
                                 }
                             </div>
                             <div className="d-flex justify-content-end">
                                 { activeStep !== steps.length - 1 
                                 && <Button 
-                                        onClick={ () => setActiveStep(activeStep + 1)}><i className="fa fa-arrow-right mr-2"></i>Next</Button>
+                                        onClick={ () => setActiveStep(activeStep + 1)}><i className="fa fa-arrow-right mr-2"></i>{t('next')}</Button>
                                 }
                             </div>
                         </div>

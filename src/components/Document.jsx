@@ -5,7 +5,7 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Button from '@mui/material/Button'
 import api from 'api';
 import config from 'config'
-
+import { useTranslation } from 'react-i18next';
 
 const Document = ({swornRequired}) => {
 
@@ -20,6 +20,7 @@ const Document = ({swornRequired}) => {
 
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
+    const {t} = useTranslation()
 
     const sendMobileOTP = () => {
         // if(otp === ''){
@@ -124,8 +125,8 @@ const Document = ({swornRequired}) => {
                             <thead className="bg-info">
                                 <tr>
                                     <th>S.No</th>
-                                    <th>Title</th>
-                                    <th>Document</th>
+                                    <th>{t('document_title')}</th>
+                                    <th>{t('document')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -147,7 +148,7 @@ const Document = ({swornRequired}) => {
                         <div className="row">
                             <div className="col-md-5 mt-4"> 
                                 <div className="form-group">
-                                <label htmlFor="title">Document Title</label>
+                                <label htmlFor="title">{t('document_title')}</label>
                                 <select 
                                     name="title" 
                                     className="form-control"
@@ -161,7 +162,7 @@ const Document = ({swornRequired}) => {
                             </div>
                             <div className="col-md-5 mt-4"> 
                                 <div className="form-group">
-                                <label htmlFor="document">Document</label>
+                                <label htmlFor="document">{t('document')}</label>
                                 <input 
                                     type="file" 
                                     name="document" 
@@ -177,7 +178,7 @@ const Document = ({swornRequired}) => {
                                             color="success"
                                             onClick={handleSubmit}
                                         >
-                                            Upload
+                                            {t('upload')}
                                         </Button>
                                     </div>
                                 </div>
@@ -186,7 +187,7 @@ const Document = ({swornRequired}) => {
                         <div className="row">
                             <div className="col-md-4">
                                 <div className="form-group">
-                                    <label htmlFor="">Enrolment Number</label>
+                                    <label htmlFor="">{t('enrollment_number')}</label>
                                     <div className="row">
                                         <div className="col-md-4">
                                             <input 
@@ -218,7 +219,7 @@ const Document = ({swornRequired}) => {
                                     color="primary"
                                     onClick={sendMobileOTP}
                                     endIcon={<SendIcon />}
-                                >Sworn Affidavit</Button>
+                                >{t('sworn_affidavit')}</Button>
                             </div>
 
                             { mobileOtp && !mobileVerified && (

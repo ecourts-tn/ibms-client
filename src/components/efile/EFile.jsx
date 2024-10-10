@@ -6,6 +6,7 @@ import EFileDetails from './EFileDetails'
 import {toast, ToastContainer} from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import api from '../../api'
+import { useTranslation } from 'react-i18next'
 
 const EFile = () => {
     const navigate = useNavigate()
@@ -15,6 +16,7 @@ const EFile = () => {
     const handleShow = () => setShow(true);
     const[allChecked, setAllChecked] =  useState(false)
     const[isConfirm, setIsConfirm] = useState(false)
+    const {t} = useTranslation()
 
     const handleSubmit = async () => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -60,10 +62,10 @@ const EFile = () => {
             <div className="row mt-5">
                 <div className="col-md-6 offset-3">
                     <div className="mt-3">
-                        <input type="checkbox" name="declaration" id="declaration" onChange={()=>setAllChecked(true)}/> I solemnly state that the contents provided by me are true to the best of my knowledge and belief. And that conceals nothing and that no part of it is false. 
+                        <input type="checkbox" name="declaration" id="declaration" onChange={()=>setAllChecked(true)}/> {t('condition_1')} 
                     </div>
                     <div className="mt-3">
-                        <input type="checkbox" name="declaration" id="declaration" onChange={()=>setAllChecked(true)}/> I have signed the form by means of an electronic signature. 
+                        <input type="checkbox" name="declaration" id="declaration" onChange={()=>setAllChecked(true)}/> {t('condition_2')}
                     </div>
                 </div>
                 <div className="col-md-6 offset-3 text-center mt-5">
@@ -75,7 +77,7 @@ const EFile = () => {
                         disabled={ !allChecked }
                     >   
                         <i className="fa fa-paper-plane mr-2"></i>
-                        { isFinalSubmit ? "Final Submit" : "View Draft"}
+                        { isFinalSubmit ? t('final_submit') : t('view_draft')}
                     </Button>
                     <Button
 
@@ -86,7 +88,7 @@ const EFile = () => {
                         disabled={ !allChecked }
                     >   
                         <i className="fa fa-paper-plane mr-2"></i>
-                        Submit
+                        {t('submit')}
                     </Button>
                 </div>
             </div>
@@ -110,7 +112,7 @@ const EFile = () => {
                                 checked={isConfirm}
                                 onChange={(e) => setIsConfirm(!isConfirm)}
                             /> <span style={{ color:"#D93900", paddingLeft:"2px"}}>
-                                <strong>Are you sure you want to submit?</strong>
+                                <strong>{t('confirmation')}</strong>
                             </span>
                         </div>
                         <div>
@@ -126,7 +128,7 @@ const EFile = () => {
                                         }
                                     }
                                 >
-                                    Submit
+                                    {t('submit')}
                                 </Button>
                             )}
                         </div>

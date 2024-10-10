@@ -13,6 +13,7 @@ import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { useTranslation } from 'react-i18next'
 
 
 const FIRSearch = () => {
@@ -22,6 +23,7 @@ const FIRSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations} = useContext(PoliceStationContext)
+    const { t } = useTranslation()
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -106,7 +108,7 @@ const FIRSearch = () => {
                 </div> */}
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="state">State<RequiredField/></label>
+                        <label htmlFor="state">{t('state')}<RequiredField/></label>
                         <select 
                             name="state" 
                             id="state" 
@@ -126,7 +128,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label htmlFor="rdistrict">Revenue District<RequiredField/></label><br />
+                        <label htmlFor="rdistrict">{t('revenue_district')}<RequiredField/></label><br />
                         <Select 
                             name="rdistrict"
                             options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
@@ -140,7 +142,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label htmlFor="pdistrict">Police District<RequiredField/></label><br />
+                        <label htmlFor="pdistrict">{t('police_district')}<RequiredField/></label><br />
                         <Select 
                             name="pdistrict"
                             options={policeDistricts.filter(d=>parseInt(d.revenue_district)===parseInt(form.rdistrict)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
@@ -154,7 +156,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-5">
                     <div className="form-group">
-                    <label htmlFor="police_station">Police Station<RequiredField/></label><br />
+                    <label htmlFor="police_station">{t('police_station')}<RequiredField/></label><br />
                     <Select 
                         name="police_station"
                         options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
@@ -166,7 +168,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-2">
                     <Form.Group className="mb-3">
-                        <Form.Label>FIR Number<RequiredField/></Form.Label>
+                        <Form.Label>{t('fir_number')}<RequiredField/></Form.Label>
                         <Form.Control 
                             type="text"
                             name="crime_number"
@@ -179,7 +181,7 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-2">
                     <Form.Group>
-                        <Form.Label>Year<RequiredField/></Form.Label>
+                        <Form.Label>{t('fir_year')}<RequiredField/></Form.Label>
                         <Form.Control 
                             type="text"
                             name="year"
@@ -195,7 +197,7 @@ const FIRSearch = () => {
                         <Button 
                             variant="info"
                             onClick={ handleSearch }
-                        ><i className="fa fa-search mr-2"></i>Search</Button>
+                        ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
                     </Form.Group>
                 </div>
                 { loading && (

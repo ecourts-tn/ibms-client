@@ -107,8 +107,8 @@ const Surety = () => {
         court: '',
         case_type: 6,
         bail_type: '',
-        complaint_type: '',
-        crime_registered: '',
+        complaint_type: 2,
+        crime_registered: 2,
     })
     const validationSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
@@ -164,9 +164,10 @@ const Surety = () => {
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
                         court: pet.court ? pet.court.court_code : null,
                         case_type: 6,
-                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
-                        complaint_type: pet.complaint_type.id,
-                        crime_registered: pet.crime_registered,
+                        reg_type: pet.reg_type.id,
+                        reg_number: pet.reg_number,
+                        reg_year: pet.reg_year,
+                        registration_date: pet.registration_date
                     })
                 }
             }catch(error){
@@ -210,27 +211,14 @@ const Surety = () => {
         e.preventDefault()
         try{
             // await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", petition)
+            const response = await api.post("case/filing/surety/create/", petition)
             if(response.status === 201){
                 sessionStorage.setItem("efile_no", response.data.efile_number)
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme:"colored"
-                })
-                const efile_no = sessionStorage.getItem("efile_no")
-                if(efile_no){
-                    if(parseInt(user.user.user_type) === 1){
-                        const advocate = {
-                            advocate_name: user.user.username,
-                            advocate_email: user.user.email,
-                            advocate_mobile: user.user.mobile,
-                            enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
-                            is_primary: true
-                        }
-                        await api.post(`advocate/create/`, advocate, {params: {efile_no}})
-                    }        
-                }
-               
+                }) 
             }
+            console.log(response.data)
           }catch(error){
             if (error.inner){
                 const newErrors = {};

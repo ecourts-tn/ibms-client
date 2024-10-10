@@ -1,14 +1,14 @@
+import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom"
+import React from 'react';
+import { Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
 import Register from "./components/pages/Register"
 import PublicLayout from "./components/pages/PublicLayout"
 import BailFiling from "./components/filing/BailFiling"
 import Relaxation from './components/petition/relaxation/Relaxation'
-import IntervenePetition from "./components/petition/intervene/NewPetition"
-import Modification from './components/petition/modification/Modification'
+import IntervenePetition from "components/petition/intervene/NewPetition"
 import Surety from './components/petition/surety/Surety'
 import DischargeSurety from './components/petition/surety/DischargeSurety'
 import Extension from './components/petition/extension/Extension'
@@ -17,14 +17,12 @@ import FilingSearch from './components/pages/kiosk/FilingSearch'
 import CNRSearch from './components/pages/kiosk/CNRSearch'
 import FIRSearch from './components/pages/kiosk/FIRSearch'
 import RegistrationSearch from './components/pages/kiosk/RegistrationSearch'
-import PartyNameSearch from './components/pages/kiosk/PartyNameSearch'
 import CaseStatus from "./components/pages/kiosk/CaseStatus"
 import DraftList from "./components/pages/DraftList"
 import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
-import NotFound from './components/pages/NotFound'
 import { useTranslation } from 'react-i18next';
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
@@ -37,19 +35,18 @@ import Litigant from './components/petition/antibail/Litigant'
 
 import ModificationNew from './components/petition/modification/ModificationNew'
 
-import { BaseProvider } from './contexts/BaseContext';
-import Steps from './components/Steps';
+
 import ABail from 'components/petition/antibail/ABail';
 import ReturnProperty from 'components/petition/return/ReturnProperty';
 import Pleadings from 'components/pages/Pleadings';
 import { AppProvider } from 'contexts/AppContext';
-import Hmac from 'components/Hmac';
+
 
 function App() {
   
   const { t, i18n } = useTranslation();
   
-    const handleLanguageChange = (lng) => {
+    const changeLanguage = (lng) => {
       i18n.changeLanguage(lng);
     };
 
@@ -220,10 +217,6 @@ function App() {
                 <Route
                   path="status/fir-number"
                   element={<FIRSearch />}
-                />
-                <Route
-                  path="status/party-name"
-                  element={<PartyNameSearch />}
                 />
                 <Route 
                   path="auth/change-password" 

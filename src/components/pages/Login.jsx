@@ -17,6 +17,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button'
 import LoginIcon from '@mui/icons-material/LockOpen'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next';
 
 // const Search = styled('div')(({ theme }) => ({
 //     position: 'relative',
@@ -66,7 +67,7 @@ import * as Yup from 'yup'
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
-
+    const {t} = useTranslation()
     const[form, setForm] =  useState({
         usertype: '',
         username:'',
@@ -140,7 +141,7 @@ const Login = () => {
             <ToastContainer />
             <div className="text-center mb-4">
                 <img className="mb-2" src={highcourtlogo} alt width={70} height={70} />
-                <h1 className="h4 mb-3 font-weight-bold">Sign In</h1>
+                <h1 className="h4 mb-3 font-weight-bold">{t('signin')}</h1>
             </div>    
             <form onSubmit={handleSubmit}>
                 <RadioGroup
@@ -151,8 +152,8 @@ const Login = () => {
                     value={form.usertype}
                     onChange={(e) => setForm({...form, usertype: e.target.value})}
                 >
-                    <FormControlLabel value={1} control={<Radio />} label="Advocate" />
-                    <FormControlLabel value={2} control={<Radio />} label="Litigant" />
+                    <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
+                    <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
                 </RadioGroup>
                 <p className="text-danger mb-3 text-center" style={{marginTop:'-15px', fontSize:'14px', fontWeight:'bold'}}>{ errors.usertype }</p>
                 
@@ -161,7 +162,7 @@ const Login = () => {
                         <TextField
                             error={ errors.username ? true : false }
                             helperText={ errors.username }
-                            label="Mobile/Email/Bar Code"
+                            label={`${t('mobile')}/${t('email')}/${t('bar_code')}`}
                             size="small"
                             name="username"
                             value={ form.username }
@@ -172,7 +173,7 @@ const Login = () => {
                         <TextField
                             error={ errors.password ? true : false }
                             helperText={errors.password}
-                            label="Password"
+                            label={t('password')}
                             size="small"
                             type="password"
                             name="password"
@@ -181,7 +182,7 @@ const Login = () => {
                         />
                     </FormControl>
                     <div className="form-group mb-1">
-                        <input type="checkbox" defaultValue="remember-me" style={{ width:20}} /> Remember me
+                        <input type="checkbox" defaultValue="remember-me" style={{ width:20}} />{t('remember_me')}
                     </div>
                     <FormControl fullWidth>
                         <Button 
@@ -189,7 +190,7 @@ const Login = () => {
                             endIcon={<LoginIcon />}
                             type="submit"
                             color="success"
-                        >Sign In</Button>
+                        >{t('signin')}</Button>
                     </FormControl>
                 </div>
                 { loading && (
@@ -198,8 +199,8 @@ const Login = () => {
                     </div>
                 )}
                 <div className="mt-1">
-                    <p><a href="#">Forgot&nbsp;password?</a></p>
-                    <p className="d-flex justify-content-end">Don't have an account?&nbsp;<Link to="user/registration"> Register</Link></p>
+                    <p><a href="#">{t('forgot_password')}</a></p>
+                    <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="user/registration">{t('register')}</Link></p>
                 </div>
             </form>
         </>

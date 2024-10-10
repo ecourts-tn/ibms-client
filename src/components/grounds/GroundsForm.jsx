@@ -6,7 +6,7 @@ import { ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
 import api from '../../api'
 import Editor from 'react-simple-wysiwyg';
-// import { Editor } from '@tinymce/tinymce-react';
+import { useTranslation } from 'react-i18next'
 import { useRef } from 'react';
 import './style.css'
 
@@ -23,7 +23,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
     }
     const[ground, setGround] = useState(initialState)
     const[errors, setErrors] = useState(false)
-
+    const {t} = useTranslation()
     const saveGround = async () => {
         try{
             await  validationSchema.validate(ground, {abortEarly: false})     
@@ -62,7 +62,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
                         onClick={saveGround}
                     >
                         <i className="fa fa-plus mr-2"></i>
-                    Add Ground</Button>
+                    {t('add_ground')}</Button>
                 </div>    
             </>
             )}

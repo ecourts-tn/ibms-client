@@ -2,25 +2,18 @@ import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { nanoid } from '@reduxjs/toolkit'
-import { getStates, getStatesStatus } from '../../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getPoliceSationByDistrict } from '../../../redux/features/PoliceStationSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import api from '../../../api'
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
 import { BaseContext } from '../../../contexts/BaseContext'
+import { StateContext } from 'contexts/StateContext'
 
 
 const Respondent = ({addRespondent}) => {
-    const dispatch = useDispatch()
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const stateStatus = useSelector(getStatesStatus)
-    // const policeStations = useSelector((state) => state.police_stations.police_stations)
-
+    
+    const {states} = useContext(StateContext)
     const {policeDistricts, policeStations} = useContext(BaseContext)
-
     const initialState = {
         litigant_name: '',
         litigant_type: 2, 
@@ -32,24 +25,7 @@ const Respondent = ({addRespondent}) => {
     }
     const[litigant, setLitigant] = useState(initialState)
     const[respondentPolice, setRespondentPolice] = useState(false)
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-            dispatch(getStates())
-        }
-    },[stateStatus, dispatch])
-      
-    useEffect(() => {
-        if(litigant.state !== ''){
-          dispatch(getDistrictByStateCode(litigant.state))
-        }
-    },[litigant.state, dispatch])
-
-    useEffect(() => {
-        if(litigant.district){
-            dispatch(getPoliceSationByDistrict(litigant.district))
-        }
-    }, [litigant.district, dispatch])
-    
+        
 
     const validationSchema = Yup.object({
         litigant_name: Yup.string().required(),

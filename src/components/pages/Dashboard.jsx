@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
+import { useTranslation } from 'react-i18next'
 
 const Dashboard = () => {
 
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
+    const { t } = useTranslation()
 
     useEffect(() => {
         const fecthCases = async() =>{
@@ -45,8 +47,8 @@ const Dashboard = () => {
                     <div className="col-sm-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#/">Home</a></li>
-                                <li className="breadcrumb-item active"  aria-current="page">Dashboard</li>
+                                <li className="breadcrumb-item"><a href="#/">{t('home')}</a></li>
+                                <li className="breadcrumb-item active"  aria-current="page">{t('dashboard')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -59,7 +61,7 @@ const Dashboard = () => {
                             <div className="small-box bg-info">
                                 <div className="inner">
                                     <h3>{ count.draft }</h3>
-                                    <p style={{fontSize:'20px'}}><strong>Draft Petitions</strong></p>
+                                    <p style={{fontSize:'20px'}}><strong>{t('draft_petition')}</strong></p>
                                 </div>
                                 <div className="icon">
                                     <i className="ion ion-bag" />
@@ -73,7 +75,7 @@ const Dashboard = () => {
                             <div className="small-box bg-success">
                                 <div className="inner">
                                     <h3>{ count.submitted }</h3>
-                                    <p style={{ fontSize:'20px'}}><strong>Submitted Petitions</strong></p>
+                                    <p style={{ fontSize:'20px'}}><strong>{t('submitted_petition')}</strong></p>
                                 </div>
                                 <div className="icon">
                                 <i className="ion ion-stats-bars" />
@@ -87,7 +89,7 @@ const Dashboard = () => {
                             <div className="small-box bg-warning">
                                 <div className="inner">
                                     <h3>{ count.approved }</h3>
-                                    <p style={{ fontSize:'20px'}}><strong>Approved Petitions</strong></p>
+                                    <p style={{ fontSize:'20px'}}><strong>{t('approved_petition')}</strong></p>
                                 </div>
                                 <div className="icon">
                                     <i className="ion ion-person-add" />
@@ -99,7 +101,7 @@ const Dashboard = () => {
                             <div className="small-box bg-danger">
                                 <div className="inner">
                                     <h3>{ count.returned }</h3>
-                                    <p style={{ fontSize:'20px'}}><strong>Returned Petitions</strong></p>
+                                    <p style={{ fontSize:'20px'}}><strong>{t('returned_petition')}</strong></p>
                                 </div>
                                 <div className="icon">
                                     <i className="ion ion-pie-graph" />
@@ -114,7 +116,7 @@ const Dashboard = () => {
                                 <div className="card-header border-0 bg-success">
                                 <h3 className="card-title">
                                     <i className="far fa-calendar-alt" />
-                                    Calendar
+                                    {t('calendar')}
                                 </h3>
                                 <div className="card-tools">
                                     <div className="btn-group">
@@ -146,7 +148,7 @@ const Dashboard = () => {
                                 <div className="card-header">
                                 <h3 className="card-title">
                                     <i className="ion ion-clipboard mr-1" />
-                                    <strong>My Petitions</strong>
+                                    <strong>{t('my_petition')}</strong>
                                 </h3>
                                 <div className="card-tools">
                                     <ul className="pagination pagination-sm">

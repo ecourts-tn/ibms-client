@@ -1,5 +1,7 @@
 import React, {useState, useEffect, useContext, useRef} from 'react'
 import { RequiredField } from 'utils'
+import api from 'api'
+import {toast,ToastContainer} from 'react-toastify'
 import Button from '@mui/material/Button'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import { StateContext } from 'contexts/StateContext'
@@ -8,6 +10,8 @@ import { TalukContext } from 'contexts/TalukContext'
 import { RelationContext } from 'contexts/RelationContext'
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
+import * as Yup from 'yup'
+import config from 'config'
 
 
 const SuretyForm = () => {
@@ -28,7 +32,7 @@ const SuretyForm = () => {
         district: '',
         taluk: '',
         pincode: '',
-        phone_number: '',
+        mobile_number: '',
         email_address: '',
         residing_years: '',
         property_type: '',
@@ -67,23 +71,125 @@ const SuretyForm = () => {
         litigation_details: '',
         other_particulars: '',
         surety_amount: '',
-        photo: '',
-        signature:'',
-        identity_proof:''
+        photo: null,
+        signature:null,
+        identity_proof:null,
+        aadhar_card: null
     }
     const[surety, setSurety] = useState(initialState);
+    const[sureties, setSureties] = useState([])
+    const initialAccount = {
+        bank_name: '',
+        branch_name: '',
+        account_number: '',
+        ifsc_code: ''
+    }
+    const[account, setAccount] = useState(initialAccount)
+    const[bankAccounts, setBankAccounts] = useState([])
     const[errors, setErrors] = useState({})
+    const validationSchema = Yup.object({
+        surety_name: Yup.string().required(),
+        relation: Yup.string().required(),
+        relative_name: Yup.string().required(),
+        aadhar_number: Yup.number().required().typeError("Aadhar number should be numeric"),
+        state: Yup.string().required(),
+        district: Yup.string().required(),
+        taluk: Yup.string().required(),
+        address: Yup.string().required(),
+        pincode: Yup.number().required().typeError("Pincode must be numeric"),
+        mobile_number: Yup.number().required().typeError("Mobile number must be numeric"),
+        residing_years: Yup.string().required(),
+        property_type: Yup.string().required(),
+        accused_duration_year: Yup.number().required().typeError("This field should be numeric"),
+        accused_duration_month: Yup.number().required().typeError("This field should be numeric"),
+        is_related: Yup.boolean().required(),
+        relation_details: Yup.string().required(),
+        others_surety:Yup.string().required(),
+        litigation_details: Yup.string().required(),
+        other_particulars: Yup.string().required(),
+        surety_amount: Yup.number().required().typeError("Amount should be numeric"),
+        photo: Yup.string().required(),
+        signature:Yup.string().required(),
+        identity_proof:Yup.string().required(),
+        aadhar_card:Yup.string().required()
+    })
 
-    const stepperRef = useRef(null);
+    useEffect(()=> {
+        const fecthSureties = async() => {
+            const efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.get("case/surety/list/", {
+                params: {efile_no}
+            })
+            if(response.status === 200){
+                setSureties(response.data)
+            }
+        }
+        fecthSureties();
+    }, [])
+
+    const deleteSurety = async(surety) => {
+        try{
+            const newSureties = sureties.filter((s) => {
+                return s.surety_id !== surety.surety_id
+            })
+            const response = await api.delete("case/surety/delete/", {
+                params:{id:surety.surety_id}
+            })
+            if(response.status === 204){
+                toast.error(`${surety.surety_id} - surety deleted successfully`, {
+                    theme: "colored"
+                })
+                setSureties(newSureties)
+            }
+            
+        }catch(error){
+            console.log(error)
+        }
+    }
+
 
     const handleSubmit = async(e) => {
         e.preventDefault()
+        const efile_no = sessionStorage.getItem("efile_no")
+        try{
+            await validationSchema.validate(surety, {abortEarly:false})
+            const response = await api.post("case/surety/create/", surety, {
+                params: { efile_no}, 
+                headers: {
+                    'content-type': 'multipart/form-data',
+                }
+            })
+            if(response.status === 201){
+                toast.success("Surety Details added successfully", {
+                    theme:"colored"
+                })
+                setSurety(initialState)
+            }
+        }catch(error){
+            if(error.inner){
+                console.log(error.inner)
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
+        }
+    }
+
+    const addBankAccount = () => {
+        setBankAccounts([...bankAccounts, account])
+        toast.success("Bank details added successfully", {
+            theme : "colored"
+        })
+        setAccount(initialAccount)
     }
 
     const handleBankAccountChange = () => {
 
     }
 
+    const stepperRef = useRef(null);
     useEffect(() => {
         stepperRef.current = new Stepper(document.querySelector('#stepper1'), {
         linear: false,
@@ -94,7 +200,59 @@ const SuretyForm = () => {
 
     return (
         <form onSubmit={handleSubmit} encType='multipart/form-data' method='POST'>
+            <ToastContainer />
             <div className="row">
+                <div className="col-md-12">
+                    { Object.keys(sureties).length > 0 && (
+                    <table className="table table-striped table-bordered table-sm">
+                        <thead className="bg-secondary">
+                            <tr>
+                                <th>#</th>
+                                <th>Surety Name</th>
+                                <th>Parentage Name</th>
+                                <th>Aadhar Number</th>
+                                <th>Photo</th>
+                                <th>Aadhar Card</th>
+                                <th>Signature</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            { sureties.map((s, index) =>(
+                            <tr>
+                                <td>{ index+1 }</td>
+                                <td>{ s.surety_name }</td>
+                                <td>{ s.relative_name }</td>
+                                <td>{ s.aadhar_number }</td>
+                                <td>
+                                    <a href={`${config.docUrl}${s.photo}`} target="_blank">View</a>
+                                </td>
+                                <td>
+                                    <a href={`${config.docUrl}${s.aadhar_card}`} target="_blank">View</a>
+                                </td>
+                                <td>
+                                    <a href={`${config.docUrl}${s.signature}`} target="_blank">View</a>
+                                </td>
+                                <td>
+                                    <Button
+                                        variant='contained'
+                                        color='info'
+                                        size='small'
+                                    >Edit</Button>
+                                    <Button
+                                        variant='contained'
+                                        color='error'
+                                        size='small'
+                                        className='ml-2'
+                                        onClick={(e) => deleteSurety(s)}
+                                    >Delete</Button>
+                                </td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    )}
+                </div>
                 <div className="col-md-4">
                     <div className="form-group">
                         <label>Name of Surety<RequiredField /></label>
@@ -103,8 +261,11 @@ const SuretyForm = () => {
                             name="surety_name" 
                             value={surety.surety_name} 
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            className="form-control"
+                            className={`form-control ${errors.surety_name ? 'is-invalid' : null }`}
                         />
+                        <div className="invalid-feedback">
+                            { errors.surety_name }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-2">
@@ -112,7 +273,7 @@ const SuretyForm = () => {
                         <label htmlFor="">Parentage <RequiredField/></label>
                         <select 
                             name="relation" 
-                            className="form-control"
+                            className={`form-control ${errors.relation ? 'is-invalid' : null }`}
                             value={surety.relation}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         >
@@ -121,6 +282,9 @@ const SuretyForm = () => {
                             <option key={index} value={relation.id}>{relation.relation_name}</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.relation }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
@@ -131,40 +295,34 @@ const SuretyForm = () => {
                             name="relative_name" 
                             value={surety.relative_name} 
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            className="form-control" 
+                            className={`form-control ${errors.relative_name ? 'is-invalid' : null }`}
                         />
+                        <div className="invalid-feedback">
+                            { errors.relative_name }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Aadhar Number</label>
+                        <label>Aadhar Number<RequiredField /></label>
                         <input 
                             type="text" 
                             name="aadhar_number" 
                             value={surety.aadhar_number} 
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                            className="form-control"
+                            className={`form-control ${errors.aadhar_number ? 'is-invalid' : null}`}
                         />
-                    </div>
-                </div>
-                <div className="col-md-4">
-                    <div className="form-group">
-                        <label>Address</label>
-                        <input 
-                            type="text" 
-                            name="address" 
-                            value={surety.address} 
-                            onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                            className="form-control"
-                        />
+                        <div className="invalid-feedback">
+                            { errors.aadhar_number }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">State</label>
+                        <label htmlFor="">State<RequiredField /></label>
                         <select 
                             name="state" 
-                            className="form-control"
+                            className={`form-control ${errors.state ? 'is-invalid' : null }`}
                             value={surety.state}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         >
@@ -173,14 +331,17 @@ const SuretyForm = () => {
                             <option key={index} value={state.state_code}>{state.state_name}</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.state }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">District</label>
+                        <label htmlFor="">District<RequiredField/></label>
                         <select 
                             name="district"
-                            className="form-control"
+                            className={`form-control ${errors.district ? 'is-invalid' : null }`}
                             value={surety.district}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         >
@@ -189,14 +350,17 @@ const SuretyForm = () => {
                             <option value={district.district_code} key={index}>{district.district_name}</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.district }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">Taluk</label>
+                        <label htmlFor="">Taluk<RequiredField/></label>
                         <select 
                             name="taluk"
-                            className="form-control"
+                            className={`form-control ${errors.taluk ? 'is-invalid' : null }`}
                             value={surety.taluk}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         >
@@ -205,30 +369,54 @@ const SuretyForm = () => {
                             <option value={taluk.id} key={index}>{taluk.taluk_name}</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.taluk }
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-4">
+                    <div className="form-group">
+                        <label>Address<RequiredField/></label>
+                        <input 
+                            type="text" 
+                            name="address" 
+                            value={surety.address} 
+                            onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                            className={`form-control ${errors.address ? 'is-invalid' : null }`}
+                        />
+                        <div className="invalid-feedback">
+                            { errors.address}
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Pincode</label>
+                        <label htmlFor="">Pincode<RequiredField/></label>
                         <input 
                             type="text"
                             name="pincode"
-                            className="form-control"
+                            className={`form-control ${errors.pincode ? 'is-invalid' :  null}`}
                             value={surety.pincode}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         />
+                        <div className="invalid-feedback">
+                            { errors.pincode }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Phone Number</label>
+                        <label htmlFor="">Mobile Number<RequiredField/></label>
                         <input 
                             type="text"
-                            name="phone_number"
-                            className="form-control"
-                            value={surety.phone_number}
+                            name="mobile_number"
+                            className={`form-control ${errors.mobile_number ? 'is-invalid' : null}`}
+                            value={surety.mobile_number}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         />
+                        <div className="invalid-feedback">
+                            { errors.mobile_number }
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
@@ -245,36 +433,42 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Residing Since (Years)</label>
+                        <label htmlFor="">Residing Since (Years)<RequiredField/></label>
                         <input 
                             type="text"
                             name="residing_years"
-                            className="form-control"
+                            className={`form-control ${errors.residing_years ? 'is-invalid' : null}`}
                             value={surety.residing_years}
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                         />
+                        <div className="invalid-feedback">
+                            { errors.residing_years}
+                        </div>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Property Type</label>
+                        <label>Property Type<RequiredField/></label>
                         <select 
                             name="property_type" 
                             value={surety.property_type} 
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            className="form-control"
+                            className={`form-control ${errors.property_type ? 'is-invalid' : null}`}
                         >
                             <option value="">Select type</option>
                             <option value="1">Own</option>
                             <option value="2">Rental</option>
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.property_type }
+                        </div>
                     </div>
                 </div>
                 { parseInt(surety.property_type) === 1 && (
                 <>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Survey Number</label>
+                        <label htmlFor="">Survey Number<RequiredField/></label>
                         <input 
                             type="text"
                             name="survey_number"
@@ -286,7 +480,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">Location</label>
+                        <label htmlFor="">Location<RequiredField/></label>
                         <input 
                             type="text"
                             name="site_location"
@@ -298,7 +492,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Area in cent(s)</label>
+                        <label htmlFor="">Area in cent(s)<RequiredField/></label>
                         <input 
                             type="text"
                             name="site_area"
@@ -310,7 +504,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Valuation</label>
+                        <label htmlFor="">Valuation<RequiredField/></label>
                         <input 
                             type="number"
                             name="site_valuation"
@@ -325,7 +519,7 @@ const SuretyForm = () => {
                 { parseInt(surety.property_type) === 2 && (
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Rent Bill in the name of Surety</label><br />
+                        <label>Rent Bill in the name of Surety<RequiredField/></label><br />
                         <div>
                             <div className="icheck-success d-inline mx-2">
                             <input 
@@ -356,7 +550,7 @@ const SuretyForm = () => {
             
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="">{parseInt(surety.property_type) === 1 ? 'Upload patta/chitta' : 'Upload rental agreement/receipt'}</label>
+                        <label htmlFor="">{parseInt(surety.property_type) === 1 ? 'Upload patta/chitta' : 'Upload rental agreement/receipt'}<RequiredField/></label>
                         <input 
                             type="file" 
                             className="form-control" 
@@ -368,12 +562,12 @@ const SuretyForm = () => {
             
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Occupation</label>
+                        <label>Occupation<RequiredField/></label>
                         <select 
                             name="employment_type" 
                             value={ surety.employment_type } 
                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            className="form-control"
+                            className={`form-control ${errors.employment_type ? 'is-invalid' : null }`}
                         >
                             <option value="">Select type</option>
                             <option value="1">Employed</option>
@@ -382,16 +576,22 @@ const SuretyForm = () => {
                             <option value="4">Agriculture</option>
                             <option value="5">Unemployed</option>
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.employment_type }
+                        </div>
                     </div>
                 </div>
             </div>
             { parseInt(surety.employment_type) === 1 && (
             <div className="card">
+                <div className="card-header bg-navy">
+                    <strong>Employment Details</strong>
+                </div>
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Employer Name</label>
+                                <label>Employer Name<RequiredField/></label>
                                 <input type="text" 
                                     name="employer_name" 
                                     value={surety.employer_name} 
@@ -402,7 +602,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Designation</label>
+                                <label>Designation<RequiredField/></label>
                                 <input type="text" 
                                     name="designation" 
                                     value={surety.designation} 
@@ -411,20 +611,9 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-md-4">
-                            <div className="form-group">
-                                <label>Employer Address</label>
-                                <input type="text" 
-                                    name="employer_address" 
-                                    value={surety.employer_address} 
-                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
-                                />
-                            </div>
-                        </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label htmlFor="">State</label>
+                                <label htmlFor="">State<RequiredField/></label>
                                 <select 
                                     name="employer_state" 
                                     className="form-control"
@@ -440,7 +629,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">District</label>
+                                <label htmlFor="">District<RequiredField/></label>
                                 <select 
                                     name="employer_district"
                                     className="form-control"
@@ -456,7 +645,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">Taluk</label>
+                                <label htmlFor="">Taluk<RequiredField/></label>
                                 <select 
                                     name="employer_taluk"
                                     className="form-control"
@@ -470,9 +659,20 @@ const SuretyForm = () => {
                                 </select>
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-4">
                             <div className="form-group">
-                                <label>Length of Service with Employer</label>
+                                <label>Employer Address<RequiredField/></label>
+                                <input type="text" 
+                                    name="employer_address" 
+                                    value={surety.employer_address} 
+                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                    className="form-control"
+                                />
+                            </div>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="form-group">
+                                <label>Years of Service<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="service_length" 
@@ -482,9 +682,9 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Amount of Provident Fund</label>
+                                <label>PF Amount<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="pf_amount" 
@@ -496,7 +696,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>House Property Details</label>
+                                <label>House Property Details<RequiredField/></label>
                                 <textarea 
                                     name="property_details" 
                                     value={surety.property_details} 
@@ -506,9 +706,9 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Income Tax Paid (Last 3 Years)</label>
+                                <label>Income Tax Paid (Last 3 Years)<RequiredField/></label>
                                 <input 
                                     type="number"
                                     name="income_tax_paid" 
@@ -518,10 +718,8 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <label htmlFor="">Upload Document</label>
+                        <div className="col-md-3">
+                            <label htmlFor="">Upload Document<RequiredField/></label>
                             <input 
                                 type="file" 
                                 className="form-control" 
@@ -535,23 +733,14 @@ const SuretyForm = () => {
             )}
             { parseInt(surety.employment_type) === 2 && (
             <div className="card">
+                <div className="card-header bg-navy">
+                    <strong>Business Details</strong>
+                </div>
                 <div className="card-body">
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Business Address</label>
-                                <input 
-                                    type="text" 
-                                    name="business_address" 
-                                    value={surety.business_address} 
-                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className='form-control'
-                                />
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="form-group">
-                                <label htmlFor="">State</label>
+                                <label htmlFor="">State<RequiredField/></label>
                                 <select 
                                     name="business_state" 
                                     className="form-control"
@@ -567,7 +756,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">District</label>
+                                <label htmlFor="">District<RequiredField/></label>
                                 <select 
                                     name="business_district"
                                     className="form-control"
@@ -583,7 +772,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">Taluk</label>
+                                <label htmlFor="">Taluk<RequiredField/></label>
                                 <select 
                                     name="business_taluk"
                                     className="form-control"
@@ -597,9 +786,21 @@ const SuretyForm = () => {
                                 </select>
                             </div>
                         </div>
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label>Business Address<RequiredField/></label>
+                                <input 
+                                    type="text" 
+                                    name="business_address" 
+                                    value={surety.business_address} 
+                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                    className='form-control'
+                                />
+                            </div>
+                        </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Nature and Extent of Business</label>
+                                <label>Nature and Extent of Business<RequiredField/></label>
                                 <input 
                                     type="text" 
                                     name="business_nature" 
@@ -609,9 +810,9 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Rent Paid for Place of Business</label>
+                                <label>Rent Paid for Place of Business<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="business_rent_paid" 
@@ -621,9 +822,9 @@ const SuretyForm = () => {
                                 />
                             </div>
                         </div>
-                        <div className="col-md-5">
+                        <div className="col-md-3">
                             <div className="form-group">
-                                <label>Rent Bill of Place of Business in name of Surety</label>
+                                <label>Rent Bill of Place of Business in name of Surety<RequiredField/></label>
                                 <div>
                                     <div className="icheck-success d-inline mx-2">
                                     <input 
@@ -650,10 +851,8 @@ const SuretyForm = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <label htmlFor="">Upload Document</label>
+                        <div className="col-md-3">
+                            <label htmlFor="">Upload Document<RequiredField/></label>
                             <input 
                                 type="file" 
                                 className="form-control" 
@@ -666,64 +865,106 @@ const SuretyForm = () => {
             </div>
             )}
             <div className="card">
+                <div className="card-header bg-navy">
+                    <strong>Bank Account Details</strong>
+                </div>
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-12">
-                            <label>Bank Accounts</label>
+                            { Object.keys(bankAccounts).length > 0 && (
+                            <table className="table table striped table-bordered table-sm">
+                                <thead className='bg-secondary'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Bank Name</th>
+                                        <th>Branch Name</th>
+                                        <th>Account Number</th>
+                                        <th>IFSC Code</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { bankAccounts.map((b, index) => (
+                                    <tr>
+                                        <td>{ index+1} </td>
+                                        <td>{ b.bank_name }</td>
+                                        <td>{ b.branch_name }</td>
+                                        <td>{ b.account_number }</td>
+                                        <td>{ b.ifsc_code }</td>
+                                        <td>
+                                            <Button
+                                                variant='contained'
+                                                color='info'
+                                                size='small'
+                                            >Edit</Button>
+                                            <Button
+                                                variant='contained'
+                                                color='error'
+                                                className="ml-1"
+                                                size='small'
+                                            >Delete</Button>
+                                        </td>
+                                    </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            )}
                             <div className="row">
                                 <div className="col-md-3">
-                                    <input
-                                        type="text"
-                                        name="bank_name"
-                                        placeholder="Bank Name"
-                                        value={surety.bank_name}
-                                        onChange={(e) => handleBankAccountChange(e)}
-                                        className="form-control"
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor="">Bank Name<RequiredField/></label>
+                                        <input
+                                            type="text"
+                                            name="bank_name"
+                                            value={account.bank_name}
+                                            onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                            className="form-control"
+                                        />
+                                    </div>
                                 </div> 
                                 <div className="col-md-3">
-                                    <input
-                                        type="text"
-                                        name="branch_name"
-                                        placeholder="Branch Name"
-                                        value={surety.branch_name}
-                                        onChange={(e) => handleBankAccountChange(e)}
-                                        className="form-control"
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor="">Branch Name<RequiredField/></label>
+                                        <input
+                                            type="text"
+                                            name="branch_name"
+                                            value={account.branch_name}
+                                            onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                            className="form-control"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="col-md-2">
-                                    <input
-                                        type="text"
-                                        name="account_number"
-                                        placeholder="Account Number"
-                                        value={surety.account_number}
-                                        onChange={(e) => handleBankAccountChange(e)}
-                                        className="form-control"
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor="">Account Number<RequiredField/></label>
+                                        <input
+                                            type="text"
+                                            name="account_number"
+                                            value={account.account_number}
+                                            onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                            className="form-control"
+                                        />
+                                    </div>
                                 </div> 
                                 <div className="col-md-2">
-                                    <input
-                                        type="text"
-                                        name="ifsc_code"
-                                        placeholder="IFSC Code"
-                                        value={surety.ifsc_code}
-                                        onChange={(e) => handleBankAccountChange(e)}
-                                        className="form-control"
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor="">IFSC Code<RequiredField/></label>
+                                        <input
+                                            type="text"
+                                            name="ifsc_code"
+                                            value={account.ifsc_code}
+                                            onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                            className="form-control"
+                                        />
+                                    </div>
                                 </div> 
-                            </div>
-                            <div className="row mt-3">
-                                <div className="col-md-2">
+                                <div className="col-md-2 mt-4 pt-2">
                                     <Button
                                         variant='contained'
                                         color='primary'
+                                        onClick={addBankAccount}
                                     >Add</Button>
-                                    <Button
-                                        variant='contained'
-                                        color='error'
-                                        className="ml-1"
-                                    >Delete</Button>
-                                </div>  
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -732,9 +973,9 @@ const SuretyForm = () => {
             <div className="card">
                 <div className="card-body">
                     <div className="row">
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Acquaintance duration</label>
+                                <label>Acquaintance duration<RequiredField/></label>
                                 <div className="input-group">
                                     <div className="input-group-prepend">
                                         <input
@@ -743,8 +984,11 @@ const SuretyForm = () => {
                                             placeholder="Years"
                                             value={surety.accused_duration_year}
                                             onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                            className="form-control"
+                                            className={`form-control ${errors.accused_duration_year ? 'is-invalid' : null}`}
                                         />
+                                        <div className="invalid-feedback">
+                                            { errors.accused_duration_year }
+                                        </div>
                                     </div>
                                     <input
                                         type="text"
@@ -752,153 +996,200 @@ const SuretyForm = () => {
                                         placeholder="Months"
                                         value={surety.accused_duration_month}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                        className="form-control"
+                                        className={`form-control ${errors.accused_duration_month ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">
+                                        { errors.accused_duration_month }
+                                    </div>
                                 </div>  
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-2">
                             <div className="form-group">
-                                <label>Related to accused?</label>
+                                <label>Related to accused?<RequiredField/></label>
                                 <div>
-                                    <div className="icheck-success d-inline mx-2">
-                                    <input 
-                                        type="radio" 
-                                        name="is_related" 
-                                        id="isRelatedYes" 
-                                        value={surety.is_related}
-                                        checked={ surety.is_related }
-                                        onChange={(e) => setSurety({...surety, is_related: true})} 
-                                    />
-                                    <label htmlFor="isRelatedYes">Yes</label>
+                                    <div className="icheck-success d-inline mx-2 mt-1">
+                                        <input 
+                                            type="radio" 
+                                            name="is_related" 
+                                            id="isRelatedYes" 
+                                            value={surety.is_related}
+                                            checked={ surety.is_related }
+                                            onChange={(e) => setSurety({...surety, is_related: true})} 
+                                        />
+                                        <label htmlFor="isRelatedYes">Yes</label>
                                     </div>
                                     <div className="icheck-danger d-inline mx-2">
-                                    <input 
-                                        type="radio" 
-                                        id="isRelatedNo" 
-                                        name="is_related" 
-                                        value={surety.is_related}
-                                        checked={ !surety.is_related } 
-                                        onChange={(e) => setSurety({...surety, is_related: false})}
-                                    />
-                                    <label htmlFor="isRelatedNo">No</label>
+                                        <input 
+                                            type="radio" 
+                                            id="isRelatedNo" 
+                                            name="is_related" 
+                                            value={surety.is_related}
+                                            checked={ !surety.is_related } 
+                                            onChange={(e) => setSurety({...surety, is_related: false})}
+                                        />
+                                        <label htmlFor="isRelatedNo">No</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Relation Details</label>
+                                <label>Relation Details<RequiredField/></label>
                                 <input 
                                     type="text" 
                                     name="relation_details" 
                                     value={surety.relation_details} 
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
+                                    className={`form-control ${errors.relation_details ? 'is-invalid' : null }`}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.relation_details }
+                                </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-5">
                             <div className="form-group">
-                                <label>Whether surety has furnished any other cases</label>
+                                <label>Whether surety has furnished any other cases<RequiredField/></label>
                                 <textarea 
                                     name="others_surety" 
                                     value={surety.others_surety} 
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
+                                    className={`form-control ${errors.others_surety ? 'is-invalid' : null }`}
                                     rows={1}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.others_surety }
+                                </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-5">
                             <div className="form-group">
-                                <label>Litigation Details</label>
+                                <label>Litigation Details<RequiredField/></label>
                                 <textarea 
                                     name="litigation_details" 
                                     value={surety.litigation_details} 
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
+                                    className={`form-control ${errors.litigation_details ? 'is-invalid' : null }`}
                                     rows={1}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.litigation_details }
+                                </div>
                             </div>
                         </div>
-                        <div className="col-md-6">
+                        <div className="col-md-5">
                             <div className="form-group">
-                                <label>Other Particulars</label>
+                                <label>Other Particulars<RequiredField/></label>
                                 <textarea 
                                     name="other_particulars" 
                                     value={surety.other_particulars} 
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
+                                    className={`form-control ${errors.other_particulars ? 'is-invalid' : null }`}
                                     rows={1}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.other_particulars }
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Surety Amount</label>
+                                <label>Surety Amount<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="surety_amount" 
                                     value={surety.surety_amount} 
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                    className="form-control"
+                                    className={`form-control ${errors.surety_amount ? 'is-invalid' : null }`}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.surety_amount }
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label>Upload Aadhar<RequiredField /></label>
-                                <input 
-                                    type="file" 
-                                    name="aadhar"
-                                    className="form-control"
-                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <div className="form-group">
                                 <label>Upload Photo<RequiredField /></label>
                                 <input 
                                     type="file" 
                                     name="photo"
-                                    className="form-control"
+                                    className={`form-control ${errors.photo ? 'is-invalid' : null }`}
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.photo }
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
                             <div className="form-group">
                                 <label>Upload Signature<RequiredField/></label>
                                 <input 
                                     type="file" 
                                     name="signature"
-                                    className="form-control"
+                                    className={`form-control ${errors.signature ? 'is-invalid' : null }`}
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.signature }
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-6">
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label>Upload Aadhar<RequiredField /></label>
+                                <input 
+                                    type="file" 
+                                    name="aadhar_card"
+                                    className={`form-control ${errors.aadhar_card ? 'is-invalid' : null }`}
+                                    onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                />
+                                <div className="invalid-feedback">
+                                    { errors.aadhar_card }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-4">
                             <div className="form-group">
                                 <label>Upload Identity Proof</label>
                                 <input 
                                     type="file" 
                                     name="identity_proof"
-                                    className="form-control"
+                                    className={`form-control ${errors.identity_proof ? 'is-invalid' : null }`}
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                 />
+                                <div className="invalid-feedback">
+                                    { errors.identity_proof }
+                                </div>
                             </div>
                         </div>
                     </div>
+                    {/* <div className="row">
+                        <div className="col-md-4">
+                            <div className="form-group">
+                                <label htmlFor="">Select document</label>
+                                <select 
+                                    name="doucment" 
+                                    className="form-control"
+                                >
+                                    <option value="">Select document</option>
+                                    <option value="photo">Photo</option>
+                                    <option value="signature">Signature</option>
+                                    <option value="aadhar_card">Aaadhar Card</option>
+                                    <option value="identity_proof">Identity Proof</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div> */}
                     <div className="row">
                         <div className="col-md-12 d-flex justify-content-center">
                             <Button

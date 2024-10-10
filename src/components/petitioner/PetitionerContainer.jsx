@@ -6,6 +6,7 @@ import PetitionerForm from './PetitionerForm'
 import PetitionerList from './PetitionerList'
 import {toast, ToastContainer} from 'react-toastify'
 import api from '../../api'
+import { useTranslation } from 'react-i18next'
 
 const PetitionerContainer = () => {
 
@@ -13,6 +14,7 @@ const PetitionerContainer = () => {
     const[petitioners, setPetitioners] = useState([])
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const {t} = useTranslation()
     const efile_no = sessionStorage.getItem("efile_no")
     useEffect(() => {
         const fetchPetitioners = async() => {
@@ -69,7 +71,7 @@ const PetitionerContainer = () => {
             <div className="card card-outline card-danger">
                 <div className="card-header">
                     <div className="d-flex justify-content-between">
-                        <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>Petitioner Details</strong></h3>
+                        <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('petitioner_details')}</strong></h3>
                         { petitioners.length > 0 && (
                             <Button variant="warning" onClick={handleShow}>
                                 <i className="fas fa-users mr-2"></i>Petitioners <Badge bg="success" className="ml-2">{ petitioners.length }</Badge>

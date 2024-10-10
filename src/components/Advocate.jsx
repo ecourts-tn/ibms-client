@@ -4,11 +4,13 @@ import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import api from 'api'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 
 const Advocate = () => {
     
     const[advocates, setAdvocates] = useState([])
+    const {t} = useTranslation()
     useEffect(() => {
         async function fetchAdvocates(){
             try{
@@ -27,7 +29,7 @@ const Advocate = () => {
 
     const addAdvocate = async (advocate) => {
         try{
-            const efile_no = "ATN20240000001F2024000002" //sessionStorage.getItem("efile_no")
+            const efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
@@ -100,6 +102,7 @@ const AdvocateForm = ({setAdvocates}) => {
     }
     const[advocate, setAdvocate] = useState(initialAdvocate)
     const[errors, setErrors] = useState({})
+    const {t} = useTranslation()
     const validationSchema = Yup.object({
         adv_name: Yup.string().required(),
         adv_email: Yup.string().email().required(),
@@ -148,7 +151,7 @@ const AdvocateForm = ({setAdvocates}) => {
                 </div> */}
                 <div className="col-md-6 offset-md-3">
                     <Form.Group className="row mb-3">
-                        <Form.Label  className="col-sm-3">Advocate Name</Form.Label>
+                        <Form.Label  className="col-sm-3">{t('adv_name')}</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
                                 name="adv_name"
@@ -159,7 +162,7 @@ const AdvocateForm = ({setAdvocates}) => {
                         </div>
                     </Form.Group>
                     <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-3">Enrollment Number</Form.Label>
+                        <Form.Label className="col-sm-3">{t('enrollment_number')}</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
                                 name="adv_reg"
@@ -174,7 +177,7 @@ const AdvocateForm = ({setAdvocates}) => {
                         </div>
                     </Form.Group>
                     <Form.Group  className="row mb-3">
-                        <Form.Label className="col-sm-3">Mobile Number</Form.Label>
+                        <Form.Label className="col-sm-3">{t('mobile_number')}</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
                                 name="adv_mobile"
@@ -188,7 +191,7 @@ const AdvocateForm = ({setAdvocates}) => {
                         </div>
                     </Form.Group>
                     <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-3">E-Mail Address</Form.Label>
+                        <Form.Label className="col-sm-3">{t('email_address')}</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
                                 name="adv_email"
@@ -207,7 +210,7 @@ const AdvocateForm = ({setAdvocates}) => {
                         variant="contained"
                         color="success"
                         onClick={handleSubmit}
-                    ><i className="fa fa-plus mr-2"></i>Add Advocate</Button>
+                    ><i className="fa fa-plus mr-2"></i>{t('add_advocate')}</Button>
                 </div>
             </div>
         </>
@@ -216,6 +219,7 @@ const AdvocateForm = ({setAdvocates}) => {
 
 
 const AdvocateList = ({advocates, deleteAdvocate}) => {
+    const {t} = useTranslation()
     return (
     <>
       <div className="table-responsive">
@@ -223,11 +227,11 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
             <thead className="bg-secondary">
               <tr>
                 <td>S. No.</td>
-                <th>Advocate Name</th>
-                <th>Enrolment Number</th>
-                <th>Mobile Number</th>
-                <th>Email Address</th>
-                <th>Action</th>
+                <th>{t('adv_name')}</th>
+                <th>{t('enrollment_number')}</th>
+                <th>{t('mobile_number')}</th>
+                <th>{t('email_address')}</th>
+                <th>{t('action')}</th>
               </tr>
             </thead>
             <tbody>

@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import api from '../../api'
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
+import { useTranslation } from 'react-i18next'
+
 
 const PreviousCaseForm = () => {
 
@@ -19,6 +21,7 @@ const PreviousCaseForm = () => {
     const[petition, setPetition] = useState(initialState)
 
     const[history, setHistory] = useState([])
+    const {t} = useTranslation()
 
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -35,8 +38,6 @@ const PreviousCaseForm = () => {
         }
         fetchData();
     },[])
-
-    console.log(history)
 
     const handleSubmit = async (e) => {
         try{
@@ -119,7 +120,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Case Number</label>
+                        <label htmlFor="">{t('case_number')}</label>
                         <input 
                             type="text" 
                             name="prev_case_number" 
@@ -131,7 +132,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Year</label>
+                        <label htmlFor="">{t('year')}</label>
                         <input 
                             type="text" 
                             name="prev_case_year" 
@@ -143,7 +144,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">Status</label>
+                        <label htmlFor="">{t('status')}</label>
                         <input 
                             type="text" 
                             name="prev_case_status" 
@@ -155,7 +156,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Date of Disposal</label>
+                        <label htmlFor="">{t('disp_next_date')}</label>
                         <input 
                             type="date" 
                             name="prev_disposal_date" 
@@ -167,7 +168,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-9">
                     <div className="form-group">
-                        <label htmlFor="">Proceeding</label>
+                        <label htmlFor="">{t('proceedings')}</label>
                         <textarea 
                             name="prev_proceedings" 
                             className="form-control" 
@@ -181,7 +182,7 @@ const PreviousCaseForm = () => {
             <div className="row">
                 <div className="col-md-5">
                     <div className="form-group">
-                        <label>Are the above case details correct?</label>
+                        <label>{t('accept_case_detail')}</label>
                         <input 
                             type="radio" 
                             name="prev_is_correct" 
@@ -191,7 +192,7 @@ const PreviousCaseForm = () => {
                             checked={petition.prev_is_correct ? true : false }
                             onChange={(e) => setPetition({...petition, [e.target.name]:1})} 
                         />
-                        <label htmlFor="details_correct_yes" className="ml-1">Yes</label>
+                        <label htmlFor="details_correct_yes" className="ml-1">{t('yes')}</label>
                         <input 
                             type="radio" 
                             name="prev_is_correct" 
@@ -201,12 +202,12 @@ const PreviousCaseForm = () => {
                             checked={!petition.prev_is_correct ? true : false }
                             onChange={(e) => setPetition({...petition, [e.target.name]:2})} 
                         />
-                        <label htmlFor="details_correct_no" className="ml-1">No</label>
+                        <label htmlFor="details_correct_no" className="ml-1">{t('no')}</label>
                     </div>
                 </div>
                 <div className="col-md-9">
                     <div className="form-group">
-                        <label htmlFor="remarks">Remarks:</label>
+                        <label htmlFor="remarks">{t('remarks')}</label>
                         <textarea 
                             name="prev_remarks" 
                             className="form-control" 
@@ -218,7 +219,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-12">
                     <div className="form-group">
-                        <label htmlFor="previous_bail_application">Any Previous Bail Application Pending?</label>
+                        <label htmlFor="previous_bail_application">{t('previous_pending')}</label>
                         <input 
                             type="radio" 
                             name="prev_is_pending" 
@@ -228,7 +229,7 @@ const PreviousCaseForm = () => {
                             checked={petition.prev_is_pending ? true : false }
                             onChange={(e) => setPetition({...petition, [e.target.name]:1})} 
                         />
-                        <label htmlFor="previous_bail_yes" className="ml-1">Yes</label>
+                        <label htmlFor="previous_bail_yes" className="ml-1">{t('yes')}</label>
                         <input 
                             type="radio" 
                             name="prev_is_pending" 
@@ -238,7 +239,7 @@ const PreviousCaseForm = () => {
                             checked={!petition.prev_is_pending ? true : false }
                             onChange={(e) => setPetition({...petition, [e.target.name]:2})} 
                         />
-                        <label htmlFor="previous_bail_no" className="ml-1">No</label>
+                        <label htmlFor="previous_bail_no" className="ml-1">{t('no')}</label>
                     </div>
                 </div>
                 <div className="col-md-12">
@@ -247,7 +248,7 @@ const PreviousCaseForm = () => {
                             variant="contained"
                             color="success"
                             onClick={handleSubmit}
-                        >Submit</Button>
+                        >{t('submit')}</Button>
                     </div>
                 </div>
             </div>

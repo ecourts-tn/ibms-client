@@ -7,6 +7,7 @@ import RespondentForm from './RespondentForm'
 import RespondentList from './RespondentList'
 import {toast, ToastContainer} from 'react-toastify'
 import api from '../../api'
+import { useTranslation } from 'react-i18next'
 
 const RespondentContainer = () => {
 
@@ -15,6 +16,7 @@ const RespondentContainer = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const[respondents, setRespondents] = useState([])
+    const {t} = useTranslation()
     useEffect(() => {
         const fetchLitigants =  async() => {
             try{
@@ -72,7 +74,7 @@ const RespondentContainer = () => {
         <div className="card card-outline card-info">
             <div className="card-header">
                 <div className="d-flex justify-content-between">
-                    <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>Respondent Details</strong></h3>
+                    <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('respondent_details')}</strong></h3>
                     { respondents.length > 0 && (
                         <Button variant="warning" onClick={handleShow}>
                             <i className="fas fa-users mr-2"></i>

@@ -20,7 +20,7 @@ import { CourtTypeContext } from 'contexts/CourtTypeContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
-
+import { useTranslation } from 'react-i18next';
 
 const InitialInput = () => {
 
@@ -36,7 +36,7 @@ const InitialInput = () => {
     const {benchtypes}      = useContext(BenchTypeContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
-
+    const {t} = useTranslation()
 
     const initialState = {
         court_type: 1,
@@ -165,7 +165,7 @@ const InitialInput = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Court Type<RequiredField /></Form.Label>
+                                        <Form.Label>{t('court_type')}<RequiredField /></Form.Label>
                                         <select 
                                             name="court_type" 
                                             id="court_type" 
@@ -181,7 +181,7 @@ const InitialInput = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="bench_type">High Court Bench<RequiredField /></label>
+                                        <label htmlFor="bench_type">{t('hc_bench')}<RequiredField /></label>
                                         <select 
                                             name="bench_type" 
                                             className={`form-control ${errors.bench_type ? 'is-invalid' : ''} `}
@@ -204,7 +204,7 @@ const InitialInput = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="state">State<RequiredField /></label>
+                                        <label htmlFor="state">{t('state')}<RequiredField /></label>
                                         <select 
                                             name="state" 
                                             className={`form-control ${errors.state ? 'is-invalid': null }`}
@@ -221,7 +221,7 @@ const InitialInput = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="district">District<RequiredField /></label>
+                                        <label htmlFor="district">{t('district')}<RequiredField /></label>
                                         {/* <select 
                                             id="basic_district"
                                             name="district" 
@@ -247,7 +247,7 @@ const InitialInput = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="establishment">Establishment Name<RequiredField /></label>
+                                        <label htmlFor="establishment">{t('est_name')}<RequiredField /></label>
                                         <Select 
                                             name="establishment"
                                             options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
@@ -278,7 +278,7 @@ const InitialInput = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="court">Court Name<RequiredField /></label>
+                                        <label htmlFor="court">{t('court')}<RequiredField /></label>
                                         <Select 
                                             name="court"
                                             options={courts.filter(c=>c.establishment===petition.establishment).map((est) => { return { value:est.court_code, label:est.court_name}})} 
@@ -311,7 +311,7 @@ const InitialInput = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="bail_type">Bail Type<RequiredField /></label>
+                                        <label htmlFor="bail_type">{t('bail_type')}<RequiredField /></label>
                                         <select 
                                             name="bail_type" 
                                             id="bail_type" 
@@ -331,7 +331,7 @@ const InitialInput = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="complaint_type">Complaint Type<RequiredField /></label>
+                                        <label htmlFor="complaint_type">{t('complaint_type')}<RequiredField /></label>
                                         <select 
                                             name="complaint_type" 
                                             id="complaint_type"
@@ -354,19 +354,19 @@ const InitialInput = () => {
                                 <div className="col-md-12">                            
                                 { parseInt(petition.complaint_type) === 1 && (
                                     <div className="form-group row my-2">
-                                        <label htmlFor="" className="col-sm-3">Crime Registered?<RequiredField /></label>
+                                        <label htmlFor="" className="col-sm-3">{t('crime_registered')}<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <div className="icheck-success d-inline mx-2">
                                                 <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
-                                                <label htmlFor="radioPrimary1">Yes</label>
+                                                <label htmlFor="radioPrimary1">{t('yes')}</label>
                                             </div>
                                             <div className="icheck-danger d-inline mx-2">
                                                 <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
-                                                <label htmlFor="radioPrimary2">No</label>
+                                                <label htmlFor="radioPrimary2">{t('no')}</label>
                                             </div>
                                             <div className="icheck-primary d-inline mx-2">
                                                 <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
-                                                <label htmlFor="radioPrimary3">Not Known</label>
+                                                <label htmlFor="radioPrimary3">{t('not_known')}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -416,7 +416,7 @@ const InitialInput = () => {
                                 color="success"
                                 onClick={handleSubmit}
                             >
-                                Submit
+                                {t('submit')}
                             </Button>
                         </div>
                     </div>

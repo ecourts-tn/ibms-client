@@ -13,6 +13,7 @@ import { TalukContext } from 'contexts/TalukContext';
 import { PrisonContext } from 'contexts/PrisonContext';
 import { ProofContext } from 'contexts/ProofContext';
 import { CountryContext } from 'contexts/CountryContext';
+import { useTranslation } from 'react-i18next';
 
 
 const PetitionerForm = ({addPetitioner}) => {
@@ -25,6 +26,7 @@ const PetitionerForm = ({addPetitioner}) => {
   const {prisons} = useContext(PrisonContext)
   const {proofs} = useContext(ProofContext)
   const {countries} = useContext(CountryContext)
+  const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
@@ -170,7 +172,7 @@ const PetitionerForm = ({addPetitioner}) => {
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Name of the litigant<RequiredField /></Form.Label>
+                <Form.Label>{t('name_of_litigant')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -184,7 +186,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Gender<RequiredField /></Form.Label>
+                <Form.Label>{t('gender')}<RequiredField /></Form.Label>
                 { litigant.litigant !== 'o' && (
                   <Form.Control 
                     readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
@@ -208,7 +210,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Age<RequiredField /></Form.Label>
+                <Form.Label>{t('age')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="age"
@@ -222,7 +224,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Accused Rank<RequiredField /></Form.Label>
+                <Form.Label>{t('accused_rank')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="rank"
@@ -236,7 +238,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group mb-3">
-                  <label htmlFor="relation">Parentage<RequiredField /></label><br />
+                  <label htmlFor="relation">{t('relationship_type')}<RequiredField /></label><br />
                   { litigant.litigant !== 'o' && (
                     <Form.Control 
                       value={litigant.relation}
@@ -264,7 +266,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Parentage Name<RequiredField /></Form.Label>
+                <Form.Label>{t('relationship_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="relation_name"
@@ -278,7 +280,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-4">
               <Form.Group className="mb-3">
-                <Form.Label>Act<RequiredField /></Form.Label>
+                <Form.Label>{t('act')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="act"
@@ -292,7 +294,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-5">
               <Form.Group className="mb-3">
-                <Form.Label>Section<RequiredField /></Form.Label>
+                <Form.Label>{t('section')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="section"
@@ -306,7 +308,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-12">
               <Form.Group className="mb-3">
-                <Form.Label>Address<RequiredField /></Form.Label>
+                <Form.Label>{t('address')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="address"
@@ -320,7 +322,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-12">
               <div className="form-group">
-                <input type="checkbox" name={alternateAddress} onChange={(e) => setAlternateAddress(!alternateAddress)} className="mr-2"/><span className="text-primary"><strong>Add alternate address</strong></span>
+                <input type="checkbox" name={alternateAddress} onChange={(e) => setAlternateAddress(!alternateAddress)} className="mr-2"/><span className="text-primary"><strong>{t('alternate_address')}</strong></span>
               </div>
             </div>
           </div>
@@ -328,7 +330,7 @@ const PetitionerForm = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="state">State</label><br />
+                  <label htmlFor="state">{t('state')}</label><br />
                   <select 
                     name="state" 
                     id="state" 
@@ -345,7 +347,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="district">District</label><br />
+                  <label htmlFor="district">{t('district')}</label><br />
                   <select 
                     name="district" 
                     id="district" 
@@ -362,7 +364,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="taluk">Taluk</label><br />
+                  <label htmlFor="taluk">{t('taluk')}</label><br />
                   <select 
                     name="taluk" 
                     id="taluk" 
@@ -379,7 +381,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Post Office</Form.Label>
+                <Form.Label>{t('post_office')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="post_office"
@@ -390,7 +392,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-9">
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>{t('address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="address2"
@@ -402,7 +404,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Pincode</Form.Label>
+                <Form.Label>{t('pincode')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="pincode"
@@ -416,7 +418,7 @@ const PetitionerForm = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Nationality<RequiredField /></Form.Label>
+                <Form.Label>{t('nationality')}<RequiredField /></Form.Label>
                 <select 
                   name="nationality" 
                   className="form-control"
@@ -430,7 +432,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <div className="form-group">
-                <label htmlFor="">Identify Proof<RequiredField/></label>
+                <label htmlFor="">{t('identity_proof')}<RequiredField/></label>
                 <select 
                   name="identity_proof" 
                   className="form-control"
@@ -445,7 +447,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Identity Proof Number<RequiredField /></Form.Label>
+                <Form.Label>{t('identity_proof_number')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="proof_number"
@@ -458,7 +460,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group>
-                <Form.Label>Country Code<RequiredField /></Form.Label>
+                <Form.Label>{t('country_code')}<RequiredField /></Form.Label>
                 <select 
                   name="country_code" 
                   className="form-control"
@@ -476,7 +478,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Mobile Number (for Communication)<RequiredField /></Form.Label>
+                <Form.Label>{t('mobile_number')} (for Communication)<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
@@ -491,7 +493,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Email Address</Form.Label>
+                <Form.Label>{t('email_address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="email_address"
@@ -504,7 +506,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label>Whether Accused in Custody?<RequiredField /></label><br />
+                  <label>{t('custody')}<RequiredField /></label><br />
                   <div>
                     <div className="icheck-success d-inline mx-2">
                       <input 
@@ -515,7 +517,7 @@ const PetitionerForm = ({addPetitioner}) => {
                         checked={ litigant.is_custody }
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: true})} 
                       />
-                      <label htmlFor="custodyYes">Yes</label>
+                      <label htmlFor="custodyYes">{t('yes')}</label>
                     </div>
                     <div className="icheck-danger d-inline mx-2">
                       <input 
@@ -526,14 +528,14 @@ const PetitionerForm = ({addPetitioner}) => {
                         checked={ !litigant.is_custody } 
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: false, prison:''})}
                       />
-                      <label htmlFor="custodyNo">No</label>
+                      <label htmlFor="custodyNo">{t('no')}</label>
                     </div>
                   </div>
                 </div>
             </div>
             <div className="col-md-6 mt-2">
                 <div className="form-group">
-                  <label htmlFor="prison">Name of Prison / Jail / Sub Jail</label><br />
+                  <label htmlFor="prison">{t('prison_name')}</label><br />
                   <select 
                     name="prison" 
                     id="prison" 
@@ -552,7 +554,7 @@ const PetitionerForm = ({addPetitioner}) => {
               </div>  
               <div className="col-md-2 mt-2">
                 <Form.Group>
-                  <Form.Label>No. of days in custody</Form.Label>
+                  <Form.Label>{t('custody_days')}</Form.Label>
                   <Form.Control
                     type="text"
                     name="custody_days"
@@ -568,7 +570,7 @@ const PetitionerForm = ({addPetitioner}) => {
               </div>
               <div className="col-md-2 mt-2">
                 <div className="form-group">
-                  <label>If accused Surrendered<RequiredField /></label><br />
+                  <label>{t('accused_surrender')}<RequiredField /></label><br />
                   <div>
                     <div className="icheck-success d-inline mx-2">
                       <input 
@@ -579,7 +581,7 @@ const PetitionerForm = ({addPetitioner}) => {
                         checked={ litigant.is_surrendered }
                         onChange={(e) => setLitigant({...litigant, is_surrendered: true })}
                       />
-                      <label htmlFor="surrenderedYes">Yes</label>
+                      <label htmlFor="surrenderedYes">{t('yes')}</label>
                     </div>
                     <div className="icheck-danger d-inline mx-2">
                       <input 
@@ -590,7 +592,7 @@ const PetitionerForm = ({addPetitioner}) => {
                         checked={ !litigant.is_surrendered }
                         onChange={(e) => setLitigant({...litigant, is_surrendered: false })}
                       />
-                      <label htmlFor="surrenderedNo">No</label>
+                      <label htmlFor="surrenderedNo">{t('no')}</label>
                     </div>
                   </div>
                 </div>
@@ -610,7 +612,7 @@ const PetitionerForm = ({addPetitioner}) => {
                 <Button 
                   variant="secondary"
                   onClick={handleSubmit}
-                  ><i className="fa fa-plus mr-2"></i>Add Petitioner</Button>
+                  ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
               </div>
           </div>
     </>
