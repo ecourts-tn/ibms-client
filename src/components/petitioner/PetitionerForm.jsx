@@ -478,7 +478,7 @@ const PetitionerForm = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>{t('mobile_number')} (for Communication)<RequiredField /></Form.Label>
+                <Form.Label>{t('mobile_number')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"

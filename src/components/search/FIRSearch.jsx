@@ -85,6 +85,7 @@ const FIRSearch = () => {
                 }
                 else{
                     setNotFound('FIR details not found!!!.')
+                    setShowAdditionalFields(true)
                     setForm(initialState)
                 }
             }

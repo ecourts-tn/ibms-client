@@ -10,6 +10,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
 import Select from 'react-select'
+import { useTranslation } from 'react-i18next';
 
 const CaseSearch = () => {
 
@@ -17,7 +18,7 @@ const CaseSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
     const {courts} = useContext(CourtContext)
-
+    const {t} = useTranslation()
     const[search, setSearch] = useState(1)
     const[form, setForm] = useState({
         case_state: null,
@@ -98,11 +99,11 @@ const CaseSearch = () => {
         <>
             <div className="row p-0" style={{border:"1px solid #ffc107"}}>
                     <div className="col-md-12 p-0">
-                        <p className="bg-warning py-2 px-3"><strong>Case Search</strong></p>
+                        <p className="bg-warning py-2 px-3"><strong>{t('case_search')}</strong></p>
                     </div>
                     <div className="col-md-12 d-flex justify-content-center">
                         <div className="form-group clearfix">
-                            <label htmlFor="" className="mr-2">Search Case By:</label>
+                            <label htmlFor="" className="mr-2">{t('search_case_by')}</label>
                             <div className="icheck-info d-inline mx-2">
                                 <input 
                                     type="radio" 
@@ -111,7 +112,7 @@ const CaseSearch = () => {
                                     onClick={(e) => setSearch(1)} 
                                     checked={ search === 1 }
                                 />
-                                <label htmlFor="case_search_basic">Basic Search</label>
+                                <label htmlFor="case_search_basic">{t('basic_search')}</label>
                             </div>
                             <div className="icheck-warning d-inline mx-2">
                                 <input 
@@ -121,14 +122,14 @@ const CaseSearch = () => {
                                     onClick={(e) => setSearch(2)}
                                     checked={ search === 2 }
                                 />
-                                <label htmlFor="case_search_advanced">Advance Search</label>
+                                <label htmlFor="case_search_advanced">{t('advance_search')}</label>
                             </div>
                         </div>
                     </div>
                     { search === 1 && (
                     <div className="col-md-6 offset-md-3">
                         <Form.Group className="row">
-                            <Form.Label className="col-sm-4 text-right">CNR&nbsp;Number</Form.Label>
+                            <Form.Label className="col-sm-4 text-right">{t('cnr_number')}</Form.Label>
                             <div className="col-sm-8">
                                 <Form.Control
                                     name="cnr_number"
@@ -146,7 +147,7 @@ const CaseSearch = () => {
                     <div className="row mb-3 px-2">
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="case_state">State</label>
+                                <label htmlFor="case_state">{t('state')}</label>
                                 <select 
                                     name="case_state" 
                                     id="case_state" 
@@ -164,7 +165,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="case_district">District</label>
+                                <label htmlFor="case_district">{t('district')}</label>
                                 <Select 
                                     name="case_district"
                                     options={districts.filter(district=>parseInt(district.state)===parseInt(form.case_state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
@@ -176,7 +177,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-6">
                             <div className="form-group">
-                                <label htmlFor="case_establishment">Establishment Name</label>
+                                <label htmlFor="case_establishment">{t('est_name')}</label>
                                 <Select 
                                     name="case_establishment"
                                     options={establishments.filter(e=>parseInt(e.district)=== parseInt(form.case_district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
@@ -188,7 +189,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-5">
                             <div className="form-group">
-                                <label htmlFor="court">Court Name</label>
+                                <label htmlFor="court">{t('court')}</label>
                                 <Select 
                                     name="court"
                                     options={courts.filter(c=>c.establishment===form.case_establishment).map((est) => { return { value:est.court_code, label:est.court_name}})} 
@@ -200,7 +201,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-3">
                             <Form.Group>
-                                <Form.Label>Case Type</Form.Label>
+                                <Form.Label>{t('case_type')}</Form.Label>
                                 <select 
                                     name="case_case_type" 
                                     className={`form-control ${errors.case_case_type ? 'is-invalid' : ''}`}
@@ -215,7 +216,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-2">
                             <Form.Group>
-                                <Form.Label>Case Number</Form.Label>
+                                <Form.Label>{t('case_number')}</Form.Label>
                                 <Form.Control
                                     name="case_number"
                                     value={form.case_number}
@@ -227,7 +228,7 @@ const CaseSearch = () => {
                         </div>
                         <div className="col-md-2">
                             <Form.Group>
-                                <Form.Label>Case Year</Form.Label>
+                                <Form.Label>{t('case_year')}</Form.Label>
                                 <Form.Control
                                     name="case_year"
                                     value={form.case_year}
@@ -244,7 +245,7 @@ const CaseSearch = () => {
                             <Button 
                                 variant="info"
                                 onClick={handleSearch}
-                            ><i className="fa fa-search mr-2"></i>Search</Button>
+                            ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
                         </Form.Group>
                     </div>
                     { loading && (

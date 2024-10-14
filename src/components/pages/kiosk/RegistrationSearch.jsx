@@ -9,6 +9,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { useTranslation } from 'react-i18next';
 
 const RegistrationSearch = () => {
 
@@ -17,6 +18,7 @@ const RegistrationSearch = () => {
     const {establishments} = useContext(EstablishmentContext)
     const {benchtypes} = useContext(BenchTypeContext)
     // const {casetypes}   = useContext(CaseTypeContext)
+    const {t} = useTranslation()
 
     const[petition, setPetition] = useState({})
     const[litigant, setLitigant] = useState([])
@@ -75,9 +77,9 @@ const RegistrationSearch = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Status</li>
-                                <li className="breadcrumb-item active">Registration Number</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('case_status')}</li>
+                                <li className="breadcrumb-item active">{t('case_number')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -94,7 +96,7 @@ const RegistrationSearch = () => {
                                     checked={parseInt(form.court_type) === 1 ? true : false }
                                     onChange={(e) => setForm({...form, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                 />
-                                <label htmlFor="court_type_hc">High Court</label>
+                                <label htmlFor="court_type_hc">{t('high_court')}</label>
                             </div>
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
@@ -105,7 +107,7 @@ const RegistrationSearch = () => {
                                     checked={parseInt(form.court_type) === 2 ? true : false } 
                                     onChange={(e) => setForm({...form, [e.target.name]: 2, bench_type:''})}
                                 />
-                                <label htmlFor="court_type_dc">District Court</label>
+                                <label htmlFor="court_type_dc">{t('district_court')}</label>
                             </div>
                         </div>
                     </div>
@@ -116,7 +118,7 @@ const RegistrationSearch = () => {
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="">State</label>
+                                        <label htmlFor="">{t('state')}</label>
                                         <select 
                                             name="state" 
                                             className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -134,7 +136,7 @@ const RegistrationSearch = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group">
-                                        <label htmlFor="">District</label>
+                                        <label htmlFor="">{t('district')}</label>
                                         <select 
                                             name="district" 
                                             className={`form-control ${errors.district ? 'is-invalid': ''}`}
@@ -156,7 +158,7 @@ const RegistrationSearch = () => {
                             { parseInt(form.court_type) === 2 && (
                             <div className="col-md-8">
                                 <div className="form-group">
-                                    <label htmlFor="">Establishment</label>
+                                    <label htmlFor="">{t('est_name')}</label>
                                     <select 
                                         name="establishment" 
                                         className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
@@ -176,7 +178,7 @@ const RegistrationSearch = () => {
                             { parseInt(form.court_type) === 1 && (
                             <div className="col-md-8">
                                 <div className="form-group">
-                                    <label htmlFor="">Bench</label>
+                                    <label htmlFor="">{t('hc_bench')}</label>
                                     <select 
                                         name="bench_type" 
                                         className={`form-control ${errors.bench_type ? 'is-invalid': ''}`}
@@ -194,7 +196,7 @@ const RegistrationSearch = () => {
                             </div>
                             )}
                             <div className="col-md-4">
-                                <label htmlFor="case_type">Case Type</label>
+                                <label htmlFor="case_type">{t('case_type')}</label>
                                 <select 
                                     name="case_type" 
                                     id="case_type" 
@@ -222,7 +224,7 @@ const RegistrationSearch = () => {
                                                 name="reg_number"
                                                 value={form.reg_number}
                                                 onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                placeholder='Registration Number'
+                                                placeholder={t('case_number')}
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.reg_number }
@@ -237,7 +239,7 @@ const RegistrationSearch = () => {
                                                 name="reg_year"
                                                 value={form.reg_year}
                                                 onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                placeholder='Registration Year'
+                                                placeholder={t('case_year')}
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.reg_year }
@@ -251,7 +253,7 @@ const RegistrationSearch = () => {
                                             endIcon={<SearchIcon />}
                                             onClick={handleSubmit}
                                         >
-                                            Search
+                                            {t('search')}
                                         </Button>
                                     </div>
                                 </div>

@@ -11,6 +11,7 @@ import { StateContext } from 'contexts/StateContext';
 import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
+import { useTranslation } from 'react-i18next';
 
 
 const AccusedDetails = ({addPetitioner}) => {
@@ -21,7 +22,7 @@ const AccusedDetails = ({addPetitioner}) => {
   const {taluks}      = useContext(TalukContext)
   const {countries}   = useContext(CountryContext)
   const {relations}   = useContext(RelationContext)
-
+  const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
@@ -152,7 +153,7 @@ const AccusedDetails = ({addPetitioner}) => {
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Name of the litigant<RequiredField /></Form.Label>
+                <Form.Label>{t('name_of_litigant')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -166,7 +167,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Gender<RequiredField /></Form.Label>
+                <Form.Label>{t('gender')}<RequiredField /></Form.Label>
                 { litigant.litigant !== 'o' && (
                   <Form.Control 
                     readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
@@ -190,7 +191,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Age<RequiredField /></Form.Label>
+                <Form.Label>{t('age')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="age"
@@ -204,7 +205,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Accused Rank<RequiredField /></Form.Label>
+                <Form.Label>{t('accused_rank')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="rank"
@@ -218,7 +219,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group mb-3">
-                  <label htmlFor="relation">Parentage<RequiredField /></label><br />
+                  <label htmlFor="relation">{t('relationship_type')}<RequiredField /></label><br />
                   { litigant.litigant !== 'o' && (
                     <Form.Control 
                       value={litigant.relation}
@@ -246,7 +247,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Parentage Name<RequiredField /></Form.Label>
+                <Form.Label>{t('relationship_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="relation_name"
@@ -260,7 +261,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-4">
               <Form.Group className="mb-3">
-                <Form.Label>Act<RequiredField /></Form.Label>
+                <Form.Label>{t('act')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="act"
@@ -274,7 +275,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-5">
               <Form.Group className="mb-3">
-                <Form.Label>Section<RequiredField /></Form.Label>
+                <Form.Label>{t('section')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="section"
@@ -288,7 +289,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-12">
               <Form.Group className="mb-3">
-                <Form.Label>Address<RequiredField /></Form.Label>
+                <Form.Label>{t('address')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="address"
@@ -302,7 +303,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-12">
               <div className="form-group">
-                <input type="checkbox" name={alternateAddress} onChange={(e) => setAlternateAddress(!alternateAddress)} className="mr-2"/><span className="text-primary"><strong>Add alternate address</strong></span>
+                <input type="checkbox" name={alternateAddress} onChange={(e) => setAlternateAddress(!alternateAddress)} className="mr-2"/><span className="text-primary"><strong>{t('alternate_address')}</strong></span>
               </div>
             </div>
           </div>
@@ -310,7 +311,7 @@ const AccusedDetails = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="state">State</label><br />
+                  <label htmlFor="state">{t('state')}</label><br />
                   <select 
                     name="state" 
                     id="state" 
@@ -327,7 +328,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="district">District</label><br />
+                  <label htmlFor="district">{t('district')}</label><br />
                   <select 
                     name="district" 
                     id="district" 
@@ -344,7 +345,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="taluk">Taluk</label><br />
+                  <label htmlFor="taluk">{t('taluk')}</label><br />
                   <select 
                     name="taluk" 
                     id="taluk" 
@@ -361,7 +362,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Post Office</Form.Label>
+                <Form.Label>{t('post_office')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="post_office"
@@ -372,7 +373,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-9">
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>{t('address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="address2"
@@ -384,7 +385,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Pincode</Form.Label>
+                <Form.Label>{t('pincode')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="pincode"
@@ -398,7 +399,7 @@ const AccusedDetails = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Nationality<RequiredField /></Form.Label>
+                <Form.Label>{t('nationality')}<RequiredField /></Form.Label>
                 <select 
                   name="nationality" 
                   className="form-control"
@@ -412,7 +413,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group>
-                <Form.Label>Country Code</Form.Label>
+                <Form.Label>{t('country_code')}</Form.Label>
                 <select name="country" className="form-control">
                   <option value="">Select country</option>
                   {countries.map((c, index) => (
@@ -426,7 +427,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Mobile Number (for Communication)</Form.Label>
+                <Form.Label>{t('mobile_number')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
@@ -441,7 +442,7 @@ const AccusedDetails = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Email Address</Form.Label>
+                <Form.Label>{t('email_address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="email_address"
@@ -456,7 +457,7 @@ const AccusedDetails = ({addPetitioner}) => {
             <Button 
                 variant="secondary"
                 onClick={handleSubmit}
-                ><i className="fa fa-plus mr-2"></i>Add Accused</Button>
+                ><i className="fa fa-plus mr-2"></i>{t('add_litigant')}</Button>
             </div>
         </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Button from '@mui/material/Button'
 import api from '../../../api';
 import Payment from '../../pages/Payment';
@@ -7,21 +7,17 @@ import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
-import { useDispatch, useSelector } from "react-redux";
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getStatesStatus, getStates } from '../../../redux/features/StateSlice';
-import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import * as Yup from 'yup'
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
 
 
 const DischargeSurety = () => {
 
-    const dispatch = useDispatch()
-    const stateStatus       = useSelector(getStatesStatus);
-
-    const states    = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks    = useSelector((state) => state.taluks.taluks)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
 
     const initialState = {
         cino: '',
@@ -251,24 +247,7 @@ const DischargeSurety = () => {
     },[])
 
   
-    useEffect(() => {
-    if(stateStatus === 'idle'){
-        dispatch(getStates())
-    }
-    }, [stateStatus, dispatch])
     
-    useEffect(() => {
-    if(form.state !== ''){
-        dispatch(getDistrictByStateCode(form.state))
-    }
-    }, [form.state, dispatch])
-
-        
-    useEffect(() => {
-        if( form.district !== ''){
-            dispatch(getTalukByDistrictCode(form.district))
-        }
-    },[form.district, dispatch])
 
 
     const handleSearch = async(e) => {

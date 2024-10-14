@@ -132,7 +132,7 @@ const PreviousCaseForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">{t('year')}</label>
+                        <label htmlFor="">{t('case_year')}</label>
                         <input 
                             type="text" 
                             name="prev_case_year" 

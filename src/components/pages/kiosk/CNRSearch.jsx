@@ -6,11 +6,13 @@ import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
 import api from '../../../api'
 import { toast, ToastContainer } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 const CNRSearch = () => {
 
     const[cino, setCino] = useState('')
     const[petition, setPetition] = useState({})
+    const {t} = useTranslation()
     const handleSubmit = async() => {
         try{
             const {response} = await api.post("api/case/search/cnr-number/", {cino})
@@ -33,9 +35,9 @@ const CNRSearch = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Status</li>
-                                <li className="breadcrumb-item active">CNR Number</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('case_status')}</li>
+                                <li className="breadcrumb-item active">{t('cnr_number')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -45,7 +47,7 @@ const CNRSearch = () => {
                                 <FormControl fullWidth>
                                     <TextField
                                         name="cino"
-                                        label="CNR Number"
+                                        label={t('cnr_number')}
                                         value={cino}
                                         size="small"
                                         onChange={(e) => setCino(e.target.value)}
@@ -59,7 +61,7 @@ const CNRSearch = () => {
                                     endIcon={<SearchIcon />}
                                     onClick={handleSubmit}
                                 >
-                                    Search
+                                    {t('search')}
                                 </Button>
                             </div>
                         </div>

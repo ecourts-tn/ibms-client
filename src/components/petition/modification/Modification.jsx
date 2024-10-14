@@ -14,6 +14,7 @@ import { getTalukByDistrictCode } from '../../../redux/features/TalukSlice'
 import GroundsContainer from '../../grounds/GroundsContainer';
 import DocumentContainer from '../../documents/DocumentContainer';
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next';
 
 
 const Modification = () => {
@@ -31,6 +32,7 @@ const Modification = () => {
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
+    const {t} = useTranslation()
 
     const deleteAdvocate = (advocate) => {
         const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
@@ -242,7 +244,7 @@ const Modification = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Petition Details</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>

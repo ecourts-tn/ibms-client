@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { nanoid } from '@reduxjs/toolkit'
-import { useSelector, useDispatch } from 'react-redux'
-import api from '../../../api'
+import api from 'api'
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
-import { BaseContext } from '../../../contexts/BaseContext'
+import { BaseContext } from 'contexts/BaseContext'
 import { StateContext } from 'contexts/StateContext'
-
+import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { useTranslation } from 'react-i18next'
 
 const Respondent = ({addRespondent}) => {
     
     const {states} = useContext(StateContext)
-    const {policeDistricts, policeStations} = useContext(BaseContext)
+    const {policeDistricts} = useContext(PoliceDistrictContext)
+    const {policeStations} = useContext(PoliceStationContext)
+    const {t} = useTranslation()
     const initialState = {
         litigant_name: '',
         litigant_type: 2, 
@@ -57,7 +59,7 @@ const Respondent = ({addRespondent}) => {
             <div className="row">
                 <div className="col-md-12">
                     <div className="form-group">
-                        <input type="checkbox" name={respondentPolice} onChange={(e) => setRespondentPolice(!respondentPolice)} className="mr-2"/><span className="text-primary"><strong>Respondent Police</strong></span>
+                        <input type="checkbox" name={respondentPolice} onChange={(e) => setRespondentPolice(!respondentPolice)} className="mr-2"/><span className="text-primary"><strong>{t('respondent_police')}</strong></span>
                     </div>
                 </div>
             </div>
@@ -65,7 +67,7 @@ const Respondent = ({addRespondent}) => {
             <div className="row">
                 <div className="col-md-3">
                     <div className="form-group">
-                    <label htmlFor="state">State</label><br />
+                    <label htmlFor="state">{t('state')}</label><br />
                     <select 
                         name="state" 
                         id="state" 
@@ -82,7 +84,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                    <label htmlFor="district">District</label><br />
+                    <label htmlFor="district">{t('district')}</label><br />
                     <select 
                         name="police_district" 
                         id="police_district" 
@@ -99,7 +101,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="police_station">Police Station Name</label><br />
+                        <label htmlFor="police_station">{t('police_station')}</label><br />
                         <select 
                             name="police_station" 
                             id="police_station" 
@@ -119,7 +121,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-3">
                     <Form.Group>
-                        <Form.Label>Repondent Name</Form.Label>
+                        <Form.Label>{t('respondent_name')}</Form.Label>
                         <Form.Control
                             name="litigant_name"
                             value={litigant.litigant_name}
@@ -131,7 +133,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-3">
                     <Form.Group>
-                        <Form.Label>Designation</Form.Label>
+                        <Form.Label>{t('designation')}</Form.Label>
                         <select 
                             name="designation" 
                             className={`form-control ${errors.designation ? 'is-invalid' : ''}` }
@@ -149,7 +151,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-6">
                     <Form.Group>
-                        <Form.Label>Address</Form.Label>
+                        <Form.Label>{t('address')}</Form.Label>
                         <Form.Control
                             name="address"
                             value={litigant.address}
@@ -163,7 +165,7 @@ const Respondent = ({addRespondent}) => {
                     <Button 
                         variant="secondary"
                         onClick={handleSubmit}>
-                        <i className="fa fa-plus mr-2"></i>Add Respondent</Button>
+                        <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
                 </div>
             </div>
             )}
@@ -171,7 +173,7 @@ const Respondent = ({addRespondent}) => {
             <div className="row">
                 <div className="col-md-3">
                     <Form.Group>
-                        <Form.Label>Repondent Name</Form.Label>
+                        <Form.Label>{t('respondent_name')}</Form.Label>
                         <Form.Control
                             name="litigant_name"
                             value={litigant.litigant_name}
@@ -183,7 +185,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-2">
                     <Form.Group>
-                        <Form.Label>Mobile Number</Form.Label>
+                        <Form.Label>{t('mobile_number')}</Form.Label>
                         <input 
                             type="text"
                             name="mobile_number" 
@@ -196,7 +198,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-2">
                     <Form.Group>
-                        <Form.Label>E-Mail Address</Form.Label>
+                        <Form.Label>{t('email_address')}</Form.Label>
                         <input 
                             type="text"
                             name="email_address" 
@@ -209,7 +211,7 @@ const Respondent = ({addRespondent}) => {
                 </div>
                 <div className="col-md-5">
                     <Form.Group>
-                        <Form.Label>Address</Form.Label>
+                        <Form.Label>{t('address')}</Form.Label>
                         <Form.Control
                             name="address"
                             value={litigant.address}
@@ -223,7 +225,7 @@ const Respondent = ({addRespondent}) => {
                     <Button 
                         variant="secondary"
                         onClick={handleSubmit}>
-                        <i className="fa fa-plus mr-2"></i>Add Respondent</Button>
+                        <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
                 </div>
             </div>
             )}

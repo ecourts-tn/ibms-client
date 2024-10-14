@@ -12,6 +12,7 @@ import 'bs-stepper/dist/css/bs-stepper.min.css';
 import Stepper from 'bs-stepper';
 import * as Yup from 'yup'
 import config from 'config'
+import { useTranslation } from 'react-i18next'
 
 
 const SuretyForm = () => {
@@ -20,6 +21,7 @@ const SuretyForm = () => {
     const {districts} = useContext(DistrictContext)
     const {taluks}    = useContext(TalukContext)
     const {relations} = useContext(RelationContext)  
+    const {t} = useTranslation()
     
     const initialState = {
         cino: '',
@@ -208,13 +210,13 @@ const SuretyForm = () => {
                         <thead className="bg-secondary">
                             <tr>
                                 <th>#</th>
-                                <th>Surety Name</th>
-                                <th>Parentage Name</th>
-                                <th>Aadhar Number</th>
-                                <th>Photo</th>
-                                <th>Aadhar Card</th>
-                                <th>Signature</th>
-                                <th>Action</th>
+                                <th>{t('surety_name')}</th>
+                                <th>{t('relationship_name')}</th>
+                                <th>{t('aadhaar_number')}</th>
+                                <th>{t('photo')}</th>
+                                <th>{t('aadhar_card')}</th>
+                                <th>{t('signature')}</th>
+                                <th>{t('action')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -255,7 +257,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label>Name of Surety<RequiredField /></label>
+                        <label>{t('surety_name')}<RequiredField /></label>
                         <input 
                             type="text" 
                             name="surety_name" 
@@ -270,7 +272,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Parentage <RequiredField/></label>
+                        <label htmlFor="">{t('relationship_type')} <RequiredField/></label>
                         <select 
                             name="relation" 
                             className={`form-control ${errors.relation ? 'is-invalid' : null }`}
@@ -289,7 +291,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Name of the parentage <RequiredField/></label>
+                        <label>{t('relationship_name')} <RequiredField/></label>
                         <input 
                             type="text" 
                             name="relative_name" 
@@ -304,7 +306,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Aadhar Number<RequiredField /></label>
+                        <label>{t('aadhar_number')}<RequiredField /></label>
                         <input 
                             type="text" 
                             name="aadhar_number" 
@@ -319,7 +321,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">State<RequiredField /></label>
+                        <label htmlFor="">{t('state')}<RequiredField /></label>
                         <select 
                             name="state" 
                             className={`form-control ${errors.state ? 'is-invalid' : null }`}
@@ -338,7 +340,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">District<RequiredField/></label>
+                        <label htmlFor="">{t('district')}<RequiredField/></label>
                         <select 
                             name="district"
                             className={`form-control ${errors.district ? 'is-invalid' : null }`}
@@ -357,7 +359,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">Taluk<RequiredField/></label>
+                        <label htmlFor="">{t('taluk')}<RequiredField/></label>
                         <select 
                             name="taluk"
                             className={`form-control ${errors.taluk ? 'is-invalid' : null }`}
@@ -376,7 +378,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label>Address<RequiredField/></label>
+                        <label>{t('address')}<RequiredField/></label>
                         <input 
                             type="text" 
                             name="address" 
@@ -391,7 +393,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Pincode<RequiredField/></label>
+                        <label htmlFor="">{t('pincode')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="pincode"
@@ -406,7 +408,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Mobile Number<RequiredField/></label>
+                        <label htmlFor="">{t('mobile_number')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="mobile_number"
@@ -421,7 +423,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">E-Mail Address</label>
+                        <label htmlFor="">{t('email_address')}</label>
                         <input 
                             type="text"
                             name="email_address"
@@ -433,7 +435,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Residing Since (Years)<RequiredField/></label>
+                        <label htmlFor="">{t('residing_since')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="residing_years"
@@ -448,7 +450,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Property Type<RequiredField/></label>
+                        <label>{t('property_type')}<RequiredField/></label>
                         <select 
                             name="property_type" 
                             value={surety.property_type} 
@@ -468,7 +470,7 @@ const SuretyForm = () => {
                 <>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Survey Number<RequiredField/></label>
+                        <label htmlFor="">{t('survey_number')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="survey_number"
@@ -480,7 +482,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="">Location<RequiredField/></label>
+                        <label htmlFor="">{t('location')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="site_location"
@@ -492,7 +494,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Area in cent(s)<RequiredField/></label>
+                        <label htmlFor="">{t('area')}<RequiredField/></label>
                         <input 
                             type="text"
                             name="site_area"
@@ -504,7 +506,7 @@ const SuretyForm = () => {
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
-                        <label htmlFor="">Valuation<RequiredField/></label>
+                        <label htmlFor="">{t('valuation')}<RequiredField/></label>
                         <input 
                             type="number"
                             name="site_valuation"
@@ -519,7 +521,7 @@ const SuretyForm = () => {
                 { parseInt(surety.property_type) === 2 && (
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Rent Bill in the name of Surety<RequiredField/></label><br />
+                        <label>{t('rent_bill')}<RequiredField/></label><br />
                         <div>
                             <div className="icheck-success d-inline mx-2">
                             <input 
@@ -530,7 +532,7 @@ const SuretyForm = () => {
                                 checked={ surety.rent_bill_surety_name }
                                 onChange={(e) => setSurety({...surety, rent_bill_surety_name: true})} 
                             />
-                            <label htmlFor="isRentBillYes">Yes</label>
+                            <label htmlFor="isRentBillYes">{t('yes')}</label>
                             </div>
                             <div className="icheck-danger d-inline mx-2">
                             <input 
@@ -541,7 +543,7 @@ const SuretyForm = () => {
                                 checked={ !surety.rent_bill_surety_name } 
                                 onChange={(e) => setSurety({...surety, rent_bill_surety_name: false})}
                             />
-                            <label htmlFor="isRentBillNo">No</label>
+                            <label htmlFor="isRentBillNo">{t('no')}</label>
                             </div>
                         </div>
                     </div>
@@ -550,7 +552,7 @@ const SuretyForm = () => {
             
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="">{parseInt(surety.property_type) === 1 ? 'Upload patta/chitta' : 'Upload rental agreement/receipt'}<RequiredField/></label>
+                        <label htmlFor="">{parseInt(surety.property_type) === 1 ? t('patta_chitta') : t('rental_agreement')}<RequiredField/></label>
                         <input 
                             type="file" 
                             className="form-control" 
@@ -562,7 +564,7 @@ const SuretyForm = () => {
             
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label>Occupation<RequiredField/></label>
+                        <label>{t('occupation')}<RequiredField/></label>
                         <select 
                             name="employment_type" 
                             value={ surety.employment_type } 
@@ -585,13 +587,13 @@ const SuretyForm = () => {
             { parseInt(surety.employment_type) === 1 && (
             <div className="card">
                 <div className="card-header bg-navy">
-                    <strong>Employment Details</strong>
+                    <strong>{t('employment_details')}</strong>
                 </div>
                 <div className="card-body">
                     <div className="row">
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Employer Name<RequiredField/></label>
+                                <label>{t('employer_name')}<RequiredField/></label>
                                 <input type="text" 
                                     name="employer_name" 
                                     value={surety.employer_name} 
@@ -602,7 +604,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Designation<RequiredField/></label>
+                                <label>{t('designation')}<RequiredField/></label>
                                 <input type="text" 
                                     name="designation" 
                                     value={surety.designation} 
@@ -613,7 +615,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label htmlFor="">State<RequiredField/></label>
+                                <label htmlFor="">{t('state')}<RequiredField/></label>
                                 <select 
                                     name="employer_state" 
                                     className="form-control"
@@ -629,7 +631,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">District<RequiredField/></label>
+                                <label htmlFor="">{t('district')}<RequiredField/></label>
                                 <select 
                                     name="employer_district"
                                     className="form-control"
@@ -645,7 +647,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">Taluk<RequiredField/></label>
+                                <label htmlFor="">{t('taluk')}<RequiredField/></label>
                                 <select 
                                     name="employer_taluk"
                                     className="form-control"
@@ -661,7 +663,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Employer Address<RequiredField/></label>
+                                <label>{t('employer_address')}<RequiredField/></label>
                                 <input type="text" 
                                     name="employer_address" 
                                     value={surety.employer_address} 
@@ -672,7 +674,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Years of Service<RequiredField/></label>
+                                <label>{t('service_years')}<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="service_length" 
@@ -684,7 +686,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>PF Amount<RequiredField/></label>
+                                <label>{t('pf_amount')}<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="pf_amount" 
@@ -696,7 +698,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>House Property Details<RequiredField/></label>
+                                <label>{t('house_property_details')}<RequiredField/></label>
                                 <textarea 
                                     name="property_details" 
                                     value={surety.property_details} 
@@ -708,7 +710,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Income Tax Paid (Last 3 Years)<RequiredField/></label>
+                                <label>{t('income_tax_paid')}<RequiredField/></label>
                                 <input 
                                     type="number"
                                     name="income_tax_paid" 
@@ -719,7 +721,7 @@ const SuretyForm = () => {
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <label htmlFor="">Upload Document<RequiredField/></label>
+                            <label htmlFor="">{t('upload_document')}<RequiredField/></label>
                             <input 
                                 type="file" 
                                 className="form-control" 
@@ -740,7 +742,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label htmlFor="">State<RequiredField/></label>
+                                <label htmlFor="">{t('state')}<RequiredField/></label>
                                 <select 
                                     name="business_state" 
                                     className="form-control"
@@ -756,7 +758,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">District<RequiredField/></label>
+                                <label htmlFor="">{t('district')}<RequiredField/></label>
                                 <select 
                                     name="business_district"
                                     className="form-control"
@@ -772,7 +774,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label htmlFor="">Taluk<RequiredField/></label>
+                                <label htmlFor="">{t('taluk')}<RequiredField/></label>
                                 <select 
                                     name="business_taluk"
                                     className="form-control"
@@ -788,7 +790,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Business Address<RequiredField/></label>
+                                <label>{t('business_address')}<RequiredField/></label>
                                 <input 
                                     type="text" 
                                     name="business_address" 
@@ -800,7 +802,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Nature and Extent of Business<RequiredField/></label>
+                                <label>{t('business_nature')}<RequiredField/></label>
                                 <input 
                                     type="text" 
                                     name="business_nature" 
@@ -812,7 +814,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Rent Paid for Place of Business<RequiredField/></label>
+                                <label>{t('rent_paid')}<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="business_rent_paid" 
@@ -824,7 +826,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Rent Bill of Place of Business in name of Surety<RequiredField/></label>
+                                <label>{t('rent_bill_name')}<RequiredField/></label>
                                 <div>
                                     <div className="icheck-success d-inline mx-2">
                                     <input 
@@ -835,7 +837,7 @@ const SuretyForm = () => {
                                         checked={ surety.is_rent_bill_name }
                                         onChange={(e) => setSurety({...surety, is_rent_bill_name: true})} 
                                     />
-                                    <label htmlFor="isRentBillYes">Yes</label>
+                                    <label htmlFor="isRentBillYes">{t('yes')}</label>
                                     </div>
                                     <div className="icheck-danger d-inline mx-2">
                                     <input 
@@ -846,13 +848,13 @@ const SuretyForm = () => {
                                         checked={ !surety.is_rent_bill_name } 
                                         onChange={(e) => setSurety({...surety, is_rent_bill_name: false})}
                                     />
-                                    <label htmlFor="isRentBillNo">No</label>
+                                    <label htmlFor="isRentBillNo">{t('no')}</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
-                            <label htmlFor="">Upload Document<RequiredField/></label>
+                            <label htmlFor="">{t('upload_document')}<RequiredField/></label>
                             <input 
                                 type="file" 
                                 className="form-control" 
@@ -866,7 +868,7 @@ const SuretyForm = () => {
             )}
             <div className="card">
                 <div className="card-header bg-navy">
-                    <strong>Bank Account Details</strong>
+                    <strong>{t('bank_details')}</strong>
                 </div>
                 <div className="card-body">
                     <div className="row">
@@ -876,11 +878,11 @@ const SuretyForm = () => {
                                 <thead className='bg-secondary'>
                                     <tr>
                                         <th>#</th>
-                                        <th>Bank Name</th>
-                                        <th>Branch Name</th>
-                                        <th>Account Number</th>
-                                        <th>IFSC Code</th>
-                                        <th>Action</th>
+                                        <th>{t('bank_name')}</th>
+                                        <th>{t('branch_name')}</th>
+                                        <th>{t('account_number')}</th>
+                                        <th>{t('ifsc_code')}</th>
+                                        <th>{t('action')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -896,13 +898,13 @@ const SuretyForm = () => {
                                                 variant='contained'
                                                 color='info'
                                                 size='small'
-                                            >Edit</Button>
+                                            >{t('edit')}</Button>
                                             <Button
                                                 variant='contained'
                                                 color='error'
                                                 className="ml-1"
                                                 size='small'
-                                            >Delete</Button>
+                                            >{t('delete')}</Button>
                                         </td>
                                     </tr>
                                     ))}
@@ -912,7 +914,7 @@ const SuretyForm = () => {
                             <div className="row">
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="">Bank Name<RequiredField/></label>
+                                        <label htmlFor="">{t('bank_name')}<RequiredField/></label>
                                         <input
                                             type="text"
                                             name="bank_name"
@@ -924,7 +926,7 @@ const SuretyForm = () => {
                                 </div> 
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="">Branch Name<RequiredField/></label>
+                                        <label htmlFor="">{t('branch_name')}<RequiredField/></label>
                                         <input
                                             type="text"
                                             name="branch_name"
@@ -936,7 +938,7 @@ const SuretyForm = () => {
                                 </div>
                                 <div className="col-md-2">
                                     <div className="form-group">
-                                        <label htmlFor="">Account Number<RequiredField/></label>
+                                        <label htmlFor="">{t('account_number')}<RequiredField/></label>
                                         <input
                                             type="text"
                                             name="account_number"
@@ -948,7 +950,7 @@ const SuretyForm = () => {
                                 </div> 
                                 <div className="col-md-2">
                                     <div className="form-group">
-                                        <label htmlFor="">IFSC Code<RequiredField/></label>
+                                        <label htmlFor="">{t('ifsc_code')}<RequiredField/></label>
                                         <input
                                             type="text"
                                             name="ifsc_code"
@@ -963,7 +965,7 @@ const SuretyForm = () => {
                                         variant='contained'
                                         color='primary'
                                         onClick={addBankAccount}
-                                    >Add</Button>
+                                    >{t('add')}</Button>
                                 </div>
                             </div>
                         </div>
@@ -975,7 +977,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Acquaintance duration<RequiredField/></label>
+                                <label>{t('acquaintance_duration')}<RequiredField/></label>
                                 <div className="input-group">
                                     <div className="input-group-prepend">
                                         <input
@@ -1006,7 +1008,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Related to accused?<RequiredField/></label>
+                                <label>{t('related_to_accused')}<RequiredField/></label>
                                 <div>
                                     <div className="icheck-success d-inline mx-2 mt-1">
                                         <input 
@@ -1017,7 +1019,7 @@ const SuretyForm = () => {
                                             checked={ surety.is_related }
                                             onChange={(e) => setSurety({...surety, is_related: true})} 
                                         />
-                                        <label htmlFor="isRelatedYes">Yes</label>
+                                        <label htmlFor="isRelatedYes">{t('yes')}</label>
                                     </div>
                                     <div className="icheck-danger d-inline mx-2">
                                         <input 
@@ -1028,14 +1030,14 @@ const SuretyForm = () => {
                                             checked={ !surety.is_related } 
                                             onChange={(e) => setSurety({...surety, is_related: false})}
                                         />
-                                        <label htmlFor="isRelatedNo">No</label>
+                                        <label htmlFor="isRelatedNo">{t('no')}</label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-3">
                             <div className="form-group">
-                                <label>Relation Details<RequiredField/></label>
+                                <label>{t('relation_details')}<RequiredField/></label>
                                 <input 
                                     type="text" 
                                     name="relation_details" 
@@ -1050,7 +1052,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-5">
                             <div className="form-group">
-                                <label>Whether surety has furnished any other cases<RequiredField/></label>
+                                <label>{t('any_other_cases')}<RequiredField/></label>
                                 <textarea 
                                     name="others_surety" 
                                     value={surety.others_surety} 
@@ -1065,7 +1067,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-5">
                             <div className="form-group">
-                                <label>Litigation Details<RequiredField/></label>
+                                <label>{t('litigation_details')}<RequiredField/></label>
                                 <textarea 
                                     name="litigation_details" 
                                     value={surety.litigation_details} 
@@ -1080,7 +1082,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-5">
                             <div className="form-group">
-                                <label>Other Particulars<RequiredField/></label>
+                                <label>{t('other_particulars')}<RequiredField/></label>
                                 <textarea 
                                     name="other_particulars" 
                                     value={surety.other_particulars} 
@@ -1095,7 +1097,7 @@ const SuretyForm = () => {
                         </div>
                         <div className="col-md-2">
                             <div className="form-group">
-                                <label>Surety Amount<RequiredField/></label>
+                                <label>{t('surety_amount')}<RequiredField/></label>
                                 <input 
                                     type="number" 
                                     name="surety_amount" 
@@ -1112,7 +1114,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Upload Photo<RequiredField /></label>
+                                <label>{t('upload_photo')}<RequiredField /></label>
                                 <input 
                                     type="file" 
                                     name="photo"
@@ -1128,7 +1130,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Upload Signature<RequiredField/></label>
+                                <label>{t('upload_signature')}<RequiredField/></label>
                                 <input 
                                     type="file" 
                                     name="signature"
@@ -1144,7 +1146,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Upload Aadhar<RequiredField /></label>
+                                <label>{t('upload_aadhar')}<RequiredField /></label>
                                 <input 
                                     type="file" 
                                     name="aadhar_card"
@@ -1160,7 +1162,7 @@ const SuretyForm = () => {
                     <div className="row">
                         <div className="col-md-4">
                             <div className="form-group">
-                                <label>Upload Identity Proof</label>
+                                <label>{t('upload_identity_proof')}</label>
                                 <input 
                                     type="file" 
                                     name="identity_proof"
@@ -1196,12 +1198,12 @@ const SuretyForm = () => {
                                 variant="contained"
                                 color="success"
                                 type='submit'
-                            >Save</Button>
+                            >{t('save')}</Button>
                             <Button
                                 variant="contained"
                                 color="warning"
                                 className="ml-2"
-                            >Reset</Button>
+                            >{t('reset')}</Button>
                         </div>
                     </div>
                 </div>
@@ -1212,7 +1214,7 @@ const SuretyForm = () => {
                     color='info'
                     onClick={() => stepperRef.current.next()}
                     endIcon={<ArrowForward />}
-                >Next</Button>
+                >{t('next')}</Button>
             </div>
         </form>
     )

@@ -43,31 +43,26 @@ const Home = () => {
                             This system supports the filing of <strong>Bail Applications</strong>, <strong>Anticipatory Bail Applications</strong>, <strong>Condition Relaxation Requests</strong>, <strong>Intervene Petitions</strong>, <strong>Modification Petitions</strong>, <strong>Discharge of Surety</strong>, <strong>Return of Passport Requests</strong>, <strong>Extension of Time Applications</strong>, and <strong>Cancellation of Bail</strong>. 
                             These applications can be submitted to the Madras High Court or any District Court in Tamil Nadu. The platform is bilingual, supporting both English and the local language, to cater to a wider audience, including advocates, litigants, and court officials.
                             </p><br/> */}
-                            <strong>Key Benefits of IBMS:</strong> 
+                            <strong>{t('benefits')}</strong> 
                             <ol style={{lineHeight: '1.5rem'}}>
-                                <li><strong>Efficiency and Convenience</strong>
+                                <li><strong>{t('benefit_1')}</strong>
                                     <ul>
-                                        <li><strong>Saves Time and Money: </strong>Reduces the need for physical presence in court, thereby saving time, travel expenses, and other associated costs for advocates, litigants, and government officials.</li>
-                                        <li><strong>Online Accessibility</strong> Allows for the submission and tracking of applications from anywhere, making the legal process more accessible and less cumbersome.</li>
+                                        <li><strong>{t('benefit_1_sub_1')}</strong>{t('benefit_1_sub_1_desc')}</li>
+                                        <li><strong>{t('benefit_1_sub_2')}</strong>{t('benefit_1_sub_2_desc')}</li>
                                     </ul>
                                 </li>
-                                <li><strong>Enhanced Digital Workflow:</strong>
+                                <li><strong>{t('benefit_2')}</strong>
                                     <ul>
-                                        <li><strong>Automated Digitization</strong>: Automatically converts case records into digital format, ensuring easy access, retrieval, and management of case-related documents.</li>
-                                        <li><strong>Auto Scrutinization</strong>: Automatically checks applications for completeness and compliance with filing requirements, reducing errors and streamlining the review process.</li>
-                                        <li><strong>Tracking</strong>: Provides real-time updates on the status of applications, allowing users to track their progress through the legal system, ensuring transparency and timely notifications.</li>
+                                        <li><strong>{t('benefit_2_sub_1')}</strong>{t('benefit_2_sub_1_desc')}</li>
+                                        <li><strong>{t('benefit_2_sub_2')}</strong>{t('benefit_2_sub_2_desc')}</li>
+                                        <li><strong>{t('benefit_2_sub_3')}</strong>{t('benefit_2_sub_3_desc')}</li>
                                     </ul>
                                 </li>
-                                <li><strong>Environmentally Friendly</strong>
+                                <li><strong>{t('benefit_3')}</strong>
                                     <ul>
-                                        <li><strong>Paperless Operations:</strong> By reducing the reliance on paper documents, the system contributes to environmental sustainability and promotes a greener way of handling legal procedures.</li>
+                                        <li><strong>{t('benefit_3_sub_1')}</strong>{t('benefit_3_sub_1_desc')}</li>
                                     </ul>
                                 </li>
-                                {/* <li><strong>Improved Accessibility and Inclusivity:</strong>
-                                    <ul>
-                                        <li><strong>Bilingual Support:</strong>The platform's bilingual functionality ensures that it is accessible to a wider audience, including those who are more comfortable using the local language.</li>
-                                    </ul>
-                                </li>  */}
                             </ol>
                         </div>
                     </Col>

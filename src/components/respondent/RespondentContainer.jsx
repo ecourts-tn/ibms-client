@@ -78,7 +78,7 @@ const RespondentContainer = () => {
                     { respondents.length > 0 && (
                         <Button variant="warning" onClick={handleShow}>
                             <i className="fas fa-users mr-2"></i>
-                                Respondents 
+                                {t('respondents')}
                                 <Badge bg="success" className="ml-2">{ respondents.length }</Badge>
                         </Button>
                     )}
@@ -92,7 +92,7 @@ const RespondentContainer = () => {
                     size="xl"
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title><strong>Respondents</strong></Modal.Title>
+                        <Modal.Title><strong>{t('respondents')}</strong></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <RespondentList 
@@ -102,7 +102,7 @@ const RespondentContainer = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleClose}>
-                        Close
+                        {t('close')}
                         </Button>
                     </Modal.Footer>
                 </Modal>

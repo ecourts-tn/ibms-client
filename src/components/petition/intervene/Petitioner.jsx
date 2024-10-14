@@ -13,6 +13,7 @@ import { ProofContext } from 'contexts/ProofContext';
 import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
+import { useTranslation } from 'react-i18next';
 
 
 const Petitioner = ({addPetitioner}) => {
@@ -24,7 +25,7 @@ const Petitioner = ({addPetitioner}) => {
   const {taluks}      = useContext(TalukContext)
   const {countries}   = useContext(CountryContext)
   const {relations}   = useContext(RelationContext)
-  
+  const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
@@ -187,7 +188,7 @@ const Petitioner = ({addPetitioner}) => {
         <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Name of the litigant<RequiredField /></Form.Label>
+                <Form.Label>{t('petitioner_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -201,7 +202,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Gender<RequiredField /></Form.Label>
+                <Form.Label>{t('gender')}<RequiredField /></Form.Label>
                 <select 
                     name="gender" 
                     value={litigant.gender} 
@@ -217,7 +218,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group className="mb-3">
-                <Form.Label>Age<RequiredField /></Form.Label>
+                <Form.Label>{t('age')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="age"
@@ -231,7 +232,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
                 <div className="form-group mb-3">
-                  <label htmlFor="relation">Parentage<RequiredField /></label><br />
+                  <label htmlFor="relation">{t('relationship_type')}<RequiredField /></label><br />
                     <select 
                       name="relation" 
                       id="relation" 
@@ -249,7 +250,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Parentage Name<RequiredField /></Form.Label>
+                <Form.Label>{t('relationship_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="relation_name"
@@ -266,7 +267,7 @@ const Petitioner = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="state">State</label><br />
+                  <label htmlFor="state">{t('state')}</label><br />
                   <select 
                     name="state" 
                     id="state" 
@@ -283,7 +284,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="district">District</label><br />
+                  <label htmlFor="district">{t('district')}</label><br />
                   <select 
                     name="district" 
                     id="district" 
@@ -300,7 +301,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
                 <div className="form-group">
-                  <label htmlFor="taluk">Taluk</label><br />
+                  <label htmlFor="taluk">{t('taluk')}</label><br />
                   <select 
                     name="taluk" 
                     id="taluk" 
@@ -317,7 +318,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Post Office</Form.Label>
+                <Form.Label>{t('post_office')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="post_office"
@@ -328,7 +329,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-9">
               <Form.Group className="mb-3">
-                <Form.Label>Address</Form.Label>
+                <Form.Label>{t('address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="address2"
@@ -340,7 +341,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>Pincode</Form.Label>
+                <Form.Label>{t('pincode')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="pincode"
@@ -354,7 +355,7 @@ const Petitioner = ({addPetitioner}) => {
           <div className="row">
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Nationality<RequiredField /></Form.Label>
+                <Form.Label>{t('nationality')}<RequiredField /></Form.Label>
                 <select 
                   name="nationality" 
                   className="form-control"
@@ -368,7 +369,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <div className="form-group">
-                <label htmlFor="">Identify Proof<RequiredField/></label>
+                <label htmlFor="">{t('identity_proof')}<RequiredField/></label>
                 <select 
                   name="identity_proof" 
                   className="form-control"
@@ -383,7 +384,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Identity Proof Number<RequiredField /></Form.Label>
+                <Form.Label>{t('identity_proof_number')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="proof_number"
@@ -396,7 +397,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-2">
               <Form.Group>
-                <Form.Label>Country Code<RequiredField /></Form.Label>
+                <Form.Label>{t('country_code')}<RequiredField /></Form.Label>
                 <select name="country" className="form-control">
                   <option value="">Select country</option>
                   {countries.map((c, index) => (
@@ -410,7 +411,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Mobile Number (for Communication)<RequiredField /></Form.Label>
+                <Form.Label>{t('mobile_number')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
@@ -425,7 +426,7 @@ const Petitioner = ({addPetitioner}) => {
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>Email Address</Form.Label>
+                <Form.Label>{t('email_address')}</Form.Label>
                 <Form.Control
                   type="text"
                   name="email_address"
@@ -440,7 +441,7 @@ const Petitioner = ({addPetitioner}) => {
             <Button 
                 variant="secondary"
                 onClick={handleSubmit}
-                ><i className="fa fa-plus mr-2"></i>Add Petitioner</Button>
+                ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
             </div>
         </div>
     </>

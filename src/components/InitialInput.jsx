@@ -52,21 +52,21 @@ const InitialInput = () => {
     }
     const[petition, setPetition] = useState(initialState)
     
-    useEffect(() => {
-        const fetchData = async() => {
-            try{
-                const efile_no = "ATN20240000001F2024000001" //sessionStorage.getItem("efile_no")
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
-                if(response.status === 200){
-                    setPetition({...petition, bench_type: response.data.petition.bench_type})
+    // useEffect(() => {
+    //     const fetchData = async() => {
+    //         try{
+    //             const efile_no = "ATN20240000001F2024000001" //sessionStorage.getItem("efile_no")
+    //             const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+    //             if(response.status === 200){
+    //                 setPetition({...petition, bench_type: response.data.petition.bench_type})
                     
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchData()
-    },[])
+    //             }
+    //         }catch(error){
+    //             console.error(error)
+    //         }
+    //     }
+    //     fetchData()
+    // },[])
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 

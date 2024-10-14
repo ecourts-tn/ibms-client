@@ -1,7 +1,9 @@
 import React from 'react'
 import { Button } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
 
 const RespondentList = ({respondents, deleteRespondent}) => {
+  const {t} = useTranslation()
   return (
       <>
         { respondents.map((respondent, index)=>(
@@ -9,19 +11,19 @@ const RespondentList = ({respondents, deleteRespondent}) => {
             <div className="card-body">
               <table className="table no-border litigant-table">
                 <tr>
-                  <td>Respondent Name</td>
+                  <td>{t('respondent_name')}</td>
                   <td>:</td>
                   <td>{ respondent.litigant_name }</td>               
                 </tr>
                 <tr>
-                  <td>Represented By</td>
+                  <td>{t('representd_by')}</td>
                   <td>:</td>
                   <td>{ respondent.designation }</td>
                 </tr>
                 <tr>
-                  <td>Address</td>
+                  <td>{t('address')}</td>
                   <td>:</td>
-                  <td>{ respondent.address}, {respondent.district} </td>
+                  <td>{ respondent.address}, {respondent.district.district_name} </td>
                 </tr>
               </table>
               <div className="mt-2">

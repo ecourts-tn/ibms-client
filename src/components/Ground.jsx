@@ -6,6 +6,7 @@ import { CreateMarkup } from 'utils'
 import Editor from 'react-simple-wysiwyg'
 import Button from '@mui/material/Button'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 
 const GroundsContainer = () => {
@@ -161,6 +162,8 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
 }
 
 const GroundsList = ({grounds, deleteGround}) => {
+
+    const {t} = useTranslation()
     return (
         <>
             { grounds.map((ground, index) => (
@@ -176,7 +179,7 @@ const GroundsList = ({grounds, deleteGround}) => {
                             className="mr-2"
                         >
                             <i className="fa fa-pencil-alt mr-2"></i>
-                        Edit</Button>
+                        {t('edit')}</Button>
                         <Button 
                             variant="contained"
                             color="error" 
@@ -184,7 +187,7 @@ const GroundsList = ({grounds, deleteGround}) => {
                             onClick={()=>deleteGround(ground) }
                         >
                             <i className="fa fa-trash mr-2"></i>
-                        Delete</Button>
+                        {t('delete')}</Button>
                     </div>
                 </div>
             ))}

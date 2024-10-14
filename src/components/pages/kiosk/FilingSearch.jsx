@@ -9,6 +9,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import './style.css'
 import { BenchTypeContext } from 'contexts/BenchTypeContext'
+import { useTranslation } from 'react-i18next'
 
 const FilingSearch = () => {
 
@@ -16,7 +17,7 @@ const FilingSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {benchtypes} = useContext(BenchTypeContext)
     const {establishments} = useContext(EstablishmentContext)
-
+    const {t} = useTranslation()
     const[form, setForm] = useState({
         court_type:1,
         bench_type:'',
@@ -72,9 +73,9 @@ const FilingSearch = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Status</li>
-                                <li className="breadcrumb-item active">Filing Number</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('case_status')}</li>
+                                <li className="breadcrumb-item active">{t('filing_number')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -91,7 +92,7 @@ const FilingSearch = () => {
                                     checked={parseInt(form.court_type) === 1 ? true : false }
                                     onChange={(e) => setForm({...form, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                 />
-                                <label htmlFor="court_type_hc">High Court</label>
+                                <label htmlFor="court_type_hc">{t('high_court')}</label>
                             </div>
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
@@ -102,7 +103,7 @@ const FilingSearch = () => {
                                     checked={parseInt(form.court_type) === 2 ? true : false } 
                                     onChange={(e) => setForm({...form, [e.target.name]: 2, bench_type:''})}
                                 />
-                                <label htmlFor="court_type_dc">District Court</label>
+                                <label htmlFor="court_type_dc">{t('district_court')}</label>
                             </div>
                         </div>
                     </div>
@@ -113,7 +114,7 @@ const FilingSearch = () => {
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div className="form-group">
-                                            <label htmlFor="">State</label>
+                                            <label htmlFor="">{t('state')}</label>
                                             <select 
                                                 name="state" 
                                                 className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -131,7 +132,7 @@ const FilingSearch = () => {
                                     </div>
                                     <div className="col-md-6">
                                         <div className="form-group">
-                                            <label htmlFor="">District</label>
+                                            <label htmlFor="">{t('district')}</label>
                                             <select 
                                                 name="district" 
                                                 className={`form-control ${errors.district ? 'is-invalid' : ''}`}
@@ -149,7 +150,7 @@ const FilingSearch = () => {
                                     </div>
                                     <div className="col-md-12">
                                         <div className="form-group">
-                                            <label htmlFor="">Establishment</label>
+                                            <label htmlFor="">{t('est_name')}</label>
                                             <select 
                                                 name="establishment" 
                                                 className={`form-control ${errors.establishment ? 'is-invalid' : ''}`}
@@ -171,7 +172,7 @@ const FilingSearch = () => {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="form-group">
-                                            <label htmlFor="">Bench</label>
+                                            <label htmlFor="">{t('hc_bench')}</label>
                                             <select 
                                                 name="bench_type" 
                                                 className={`form-control ${errors.bench_type ? 'is-invalid' : ''}`}
@@ -200,7 +201,7 @@ const FilingSearch = () => {
                                                         name="filing_number"
                                                         value={form.filing_number}
                                                         onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                        placeholder='Filing Number'
+                                                        placeholder={t('filing_number')}
                                                     />
                                                     <div className="invalid-feedback">
                                                         { errors.filing_number }
@@ -215,7 +216,7 @@ const FilingSearch = () => {
                                                         name="filing_year"
                                                         value={form.filing_year}
                                                         onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                        placeholder='Filing Year'
+                                                        placeholder={t('case_year')}
                                                     />
                                                     <div className="invalid-feedback">
                                                         { errors.filing_year }
@@ -229,7 +230,7 @@ const FilingSearch = () => {
                                                     endIcon={<SearchIcon />}
                                                     onClick={handleSubmit}
                                                 >
-                                                    Search
+                                                    {t('search')}
                                                 </Button>
                                             </div>
                                         </div>

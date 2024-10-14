@@ -74,7 +74,7 @@ const PetitionerContainer = () => {
                         <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('petitioner_details')}</strong></h3>
                         { petitioners.length > 0 && (
                             <Button variant="warning" onClick={handleShow}>
-                                <i className="fas fa-users mr-2"></i>Petitioners <Badge bg="success" className="ml-2">{ petitioners.length }</Badge>
+                                <i className="fas fa-users mr-2"></i>{t('petitioners')} <Badge bg="success" className="ml-2">{ petitioners.length }</Badge>
                             </Button>
                         )}
                     </div>
@@ -86,14 +86,14 @@ const PetitionerContainer = () => {
                         size="xl"
                     >
                         <Modal.Header closeButton>
-                            <Modal.Title><strong>Petitioners</strong></Modal.Title>
+                            <Modal.Title><strong>{t('petitioners')}</strong></Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <PetitionerList petitioners={petitioners} deletePetitioner={deletePetitioner}/>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={handleClose}>
-                            Close
+                            {t('close')}
                             </Button>
                         </Modal.Footer>
                     </Modal>

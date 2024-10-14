@@ -19,6 +19,7 @@ import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { useTranslation } from 'react-i18next';
 
 
 const ModificationNew = () => {
@@ -50,6 +51,7 @@ const ModificationNew = () => {
         reg_year: ''
     })
     const[petition, setPetition] = useState({})
+    const {t} = useTranslation()
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -263,42 +265,42 @@ const ModificationNew = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Petition Details</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#litigant">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Litigants</span>
+                                            <span className="bs-stepper-label">{t('litigants')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#ground">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">Grounds</span>
+                                            <span className="bs-stepper-label">{t('ground')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#documents">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">4</span>
-                                            <span className="bs-stepper-label">Documents</span>
+                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">5</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">6</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -317,7 +319,7 @@ const ModificationNew = () => {
                                                                 checked={ parseInt(searchPetition) === 1 ? true : false}
                                                                 onChange={(e) => setSearchPetition(1)} 
                                                             />
-                                                            <label htmlFor="searchPetitionYes">Select from My Petitions</label>
+                                                            <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
                                                             </div>
                                                             <div className="icheck-primary d-inline mx-2">
                                                             <input 
@@ -328,7 +330,7 @@ const ModificationNew = () => {
                                                                 checked={ parseInt(searchPetition) === 2 ? true : false } 
                                                                 onChange={(e) => setSearchPetition(2)}
                                                             />
-                                                            <label htmlFor="searchPetitionNo">Search Petition</label>
+                                                            <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -375,7 +377,7 @@ const ModificationNew = () => {
                                                                             checked={parseInt(searchForm.court_type) === 1 ? true : false }
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                                                         />
-                                                                        <label htmlFor="court_type_hc">High Court</label>
+                                                                        <label htmlFor="court_type_hc">{t('high_court')}</label>
                                                                     </div>
                                                                     <div className="icheck-success d-inline mx-2">
                                                                         <input 
@@ -386,7 +388,7 @@ const ModificationNew = () => {
                                                                             checked={parseInt(searchForm.court_type) === 2 ? true : false } 
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
                                                                         />
-                                                                        <label htmlFor="court_type_dc">District Court</label>
+                                                                        <label htmlFor="court_type_dc">{t('district_court')}</label>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -395,7 +397,7 @@ const ModificationNew = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">State</label>
+                                                                                <label htmlFor="">{t('state')}</label>
                                                                                 <select 
                                                                                     name="state" 
                                                                                     className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -413,7 +415,7 @@ const ModificationNew = () => {
                                                                         </div>
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">District</label>
+                                                                                <label htmlFor="">{t('district')}</label>
                                                                                 <select 
                                                                                     name="district" 
                                                                                     className={`form-control ${errors.district ? 'is-invalid': ''}`}
@@ -435,7 +437,7 @@ const ModificationNew = () => {
                                                                     { parseInt(searchForm.court_type) === 2 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Establishment</label>
+                                                                            <label htmlFor="">{t('est_name')}</label>
                                                                             <select 
                                                                                 name="establishment" 
                                                                                 className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
@@ -455,7 +457,7 @@ const ModificationNew = () => {
                                                                     { parseInt(searchForm.court_type) === 1 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Bench</label>
+                                                                            <label htmlFor="">{t('hc_bench')}</label>
                                                                             <select 
                                                                                 name="bench_type" 
                                                                                 className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
@@ -473,7 +475,7 @@ const ModificationNew = () => {
                                                                     </div>
                                                                     )}
                                                                     <div className="col-md-4">
-                                                                        <label htmlFor="case_type">Case Type</label>
+                                                                        <label htmlFor="case_type">{t('case_type')}</label>
                                                                         <select 
                                                                             name="case_type" 
                                                                             id="case_type" 
@@ -499,7 +501,7 @@ const ModificationNew = () => {
                                                                                         name="reg_number"
                                                                                         value={searchForm.reg_number}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Number'
+                                                                                        placeholder={t('case_number')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_number }
@@ -514,7 +516,7 @@ const ModificationNew = () => {
                                                                                         name="reg_year"
                                                                                         value={searchForm.reg_year}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Year'
+                                                                                        placeholder={t('case_year')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_year }
@@ -528,7 +530,7 @@ const ModificationNew = () => {
                                                                                     endIcon={<SearchIcon />}
                                                                                     onClick={handleSearch}
                                                                                 >
-                                                                                    Search
+                                                                                    {t('search')}
                                                                                 </Button>
                                                                             </div>
                                                                         </div>
@@ -546,16 +548,16 @@ const ModificationNew = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={7}><strong>Petitioner Details</strong></td>
+                                                                        <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Select</th>
-                                                                        <th>Petitioner Name</th>
-                                                                        <th>Father/Husband/Guardian Name</th>
-                                                                        <th>Age</th>
-                                                                        <th>Rank</th>
-                                                                        <th>Act</th>
-                                                                        <th>Section</th>
+                                                                        <th>{t('select')}</th>
+                                                                        <th>{t('petitioner_name')}</th>
+                                                                        <th>{t('father_husband_guardian')}</th>
+                                                                        <th>{t('age')}</th>
+                                                                        <th>{t('accused_rank')}</th>
+                                                                        <th>{t('act')}</th>
+                                                                        <th>{t('section')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -626,13 +628,13 @@ const ModificationNew = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className='bg-navy'>
-                                                                        <td colSpan={4}><strong>Condition Details</strong></td>
+                                                                        <td colSpan={4}><strong>{t('condition_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Bail Order Date</th>
-                                                                        <th>Released Date</th>
-                                                                        <th>No. of Days Present</th>
-                                                                        <th>No. of Days Absent</th>
+                                                                        <th>{t('bail_date')}</th>
+                                                                        <th>{t('released_date')}</th>
+                                                                        <th>{t('days_present')}</th>
+                                                                        <th>{t('days_absent')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -647,13 +649,14 @@ const ModificationNew = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={6}><strong>Respondent Details</strong></td>
+                                                                        <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Respondent Name</th>
-                                                                        <th>Designation</th>
-                                                                        <th>Police Station</th>
-                                                                        <th>District</th>
+                                                                        <th>{t('respondent_name')}</th>
+                                                                        <th>{t('designation')}</th>
+                                                                        <th>{t('police_station')}</th>
+                                                                        <th>{t('district')}</th>
+                                                                        <th>{t('address')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -690,7 +693,7 @@ const ModificationNew = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.address}
+                                                                                    value={res.district.district_name}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -698,7 +701,7 @@ const ModificationNew = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.district.district_name}
+                                                                                    value={res.address}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -709,18 +712,18 @@ const ModificationNew = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={6}><strong>Advocate Details</strong>
+                                                                        <td colSpan={6}><strong>{t('advocate_details')}</strong>
                                                                             <div className="float-right">
                                                                                 <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Advocate Name</th>
-                                                                        <th>Enrolment Number</th>
-                                                                        <th>Mobile Number</th>
-                                                                        <th>Email Address</th>
-                                                                        <th width={120}>Action</th>
+                                                                        <th>{t('adv_name')}</th>
+                                                                        <th>{t('enrollment_number')}</th>
+                                                                        <th>{t('mobile_number')}</th>
+                                                                        <th>{t('email_address')}</th>
+                                                                        <th width={120}>{t('action')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -784,7 +787,7 @@ const ModificationNew = () => {
                                                                 color="success"
                                                                 onClick={handleInitialSubmit}
                                                             >
-                                                                Submit
+                                                                {t('submit')}
                                                             </Button>
                                                         </div>
                                                     )}
@@ -802,13 +805,13 @@ const ModificationNew = () => {
                                                     color='info'
                                                     onClick={() => stepperRef.current.previous()}
                                                     startIcon={<ArrowBack />}
-                                                >Previous</Button>
+                                                >{t('previous')}</Button>
                                                 <Button
                                                     variant="contained"
                                                     color="info"
                                                     onClick={() => stepperRef.current.next()}
                                                     endIcon={<ArrowForward />}
-                                                >Next</Button>
+                                                >{t('next')}</Button>
                                             </div>
                                         </div>
                                         <div id="ground" className="content">
@@ -835,7 +838,7 @@ const ModificationNew = () => {
                                                 variant='contained'
                                                 color='success'
                                                 className="mt-4"
-                                            >Final Submit</Button>
+                                            >{t('final_submit')}</Button>
                                         </div>
                                     </div>
                                 </div>

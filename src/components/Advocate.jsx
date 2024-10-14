@@ -226,7 +226,7 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
       <table className="table table-striped table-bordered table-sm">
             <thead className="bg-secondary">
               <tr>
-                <td>S. No.</td>
+                <td>{t('sl_no')}</td>
                 <th>{t('adv_name')}</th>
                 <th>{t('enrollment_number')}</th>
                 <th>{t('mobile_number')}</th>

@@ -18,6 +18,7 @@ import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import InitialInput from 'components/petition/InitialInput';
 import SuretyForm from './SuretyForm';
 import { useLocalStorage } from 'hooks/useLocalStorage';
+import { useTranslation } from 'react-i18next';
 
 
 const Surety = () => {
@@ -90,7 +91,7 @@ const Surety = () => {
         signature:'',
         identity_proof:''
     }
-
+    const {t} = useTranslation()
     const[form, setForm] = useState(initialState);
     const[errors, setErrors] = useState({})
     const[bail, setBail] = useState({})
@@ -250,28 +251,28 @@ const Surety = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Initial Input</span>
+                                            <span className="bs-stepper-label">{t('basic_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#surety-details">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Surety Details</span>
+                                            <span className="bs-stepper-label">{t('surety_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">4</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -290,7 +291,7 @@ const Surety = () => {
                                                                 checked={ parseInt(searchPetition) === 1 ? true : false}
                                                                 onChange={(e) => setSearchPetition(1)} 
                                                             />
-                                                            <label htmlFor="searchPetitionYes">Select from My Petitions</label>
+                                                            <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
                                                             </div>
                                                             <div className="icheck-primary d-inline mx-2">
                                                             <input 
@@ -301,7 +302,7 @@ const Surety = () => {
                                                                 checked={ parseInt(searchPetition) === 2 ? true : false } 
                                                                 onChange={(e) => setSearchPetition(2)}
                                                             />
-                                                            <label htmlFor="searchPetitionNo">Search Petition</label>
+                                                            <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -348,7 +349,7 @@ const Surety = () => {
                                                                             checked={parseInt(searchForm.court_type) === 1 ? true : false }
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                                                         />
-                                                                        <label htmlFor="court_type_hc">High Court</label>
+                                                                        <label htmlFor="court_type_hc">{t('high_court')}</label>
                                                                     </div>
                                                                     <div className="icheck-success d-inline mx-2">
                                                                         <input 
@@ -359,7 +360,7 @@ const Surety = () => {
                                                                             checked={parseInt(searchForm.court_type) === 2 ? true : false } 
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
                                                                         />
-                                                                        <label htmlFor="court_type_dc">District Court</label>
+                                                                        <label htmlFor="court_type_dc">{t('district_court')}</label>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -368,7 +369,7 @@ const Surety = () => {
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">State</label>
+                                                                                <label htmlFor="">{t('state')}</label>
                                                                                 <select 
                                                                                     name="state" 
                                                                                     className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -386,7 +387,7 @@ const Surety = () => {
                                                                         </div>
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
-                                                                                <label htmlFor="">District</label>
+                                                                                <label htmlFor="">{t('district')}</label>
                                                                                 <select 
                                                                                     name="district" 
                                                                                     className={`form-control ${errors.district ? 'is-invalid': ''}`}
@@ -408,7 +409,7 @@ const Surety = () => {
                                                                     { parseInt(searchForm.court_type) === 2 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Establishment</label>
+                                                                            <label htmlFor="">{t('est_name')}</label>
                                                                             <select 
                                                                                 name="establishment" 
                                                                                 className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
@@ -428,7 +429,7 @@ const Surety = () => {
                                                                     { parseInt(searchForm.court_type) === 1 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
-                                                                            <label htmlFor="">Bench</label>
+                                                                            <label htmlFor="">{t('hc_bench')}</label>
                                                                             <select 
                                                                                 name="bench_type" 
                                                                                 className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
@@ -446,7 +447,7 @@ const Surety = () => {
                                                                     </div>
                                                                     )}
                                                                     <div className="col-md-4">
-                                                                        <label htmlFor="case_type">Case Type</label>
+                                                                        <label htmlFor="case_type">{t('case_type')}</label>
                                                                         <select 
                                                                             name="case_type" 
                                                                             id="case_type" 
@@ -472,7 +473,7 @@ const Surety = () => {
                                                                                         name="reg_number"
                                                                                         value={searchForm.reg_number}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Number'
+                                                                                        placeholder={t('case_number')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_number }
@@ -487,7 +488,7 @@ const Surety = () => {
                                                                                         name="reg_year"
                                                                                         value={searchForm.reg_year}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Year'
+                                                                                        placeholder={t('case_year')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_year }
@@ -501,7 +502,7 @@ const Surety = () => {
                                                                                     endIcon={<SearchIcon />}
                                                                                     onClick={handleSearch}
                                                                                 >
-                                                                                    Search
+                                                                                    {t('search')}
                                                                                 </Button>
                                                                             </div>
                                                                         </div>
@@ -545,13 +546,13 @@ const Surety = () => {
                                                     color='info'
                                                     onClick={() => stepperRef.current.previous()}
                                                     startIcon={<ArrowBack />}
-                                                >Previous</Button>
+                                                >{t('previous')}</Button>
                                                 <Button
                                                     variant="contained"
                                                     color="info"
                                                     onClick={() => stepperRef.current.next()}
                                                     endIcon={<ArrowForward />}
-                                                >Next</Button>
+                                                >{t('next')}</Button>
                                             </div>
                                         </div>
                                         <div id="efile" className="content text-center">
@@ -559,7 +560,7 @@ const Surety = () => {
                                                 variant='contained'
                                                 color='success'
                                                 className="mt-4"
-                                            >Final Submit</Button>
+                                            >{t('final_submit')}</Button>
                                         </div>
                                     </div>
                                 </div>

@@ -10,6 +10,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { useTranslation } from 'react-i18next'
 
 
 const FIRSearch = () => {
@@ -17,7 +18,7 @@ const FIRSearch = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {policeStations} = useContext(PoliceStationContext)
-
+    const {t} = useTranslation()
     const[form, setForm] = useState({
         state:'',
         district:'',
@@ -62,9 +63,9 @@ const FIRSearch = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Status</li>
-                                <li className="breadcrumb-item active">FIR Number</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('case_status')}</li>
+                                <li className="breadcrumb-item active">{t('fir_number')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -74,7 +75,7 @@ const FIRSearch = () => {
                             <div className="row">
                                     <div className="col-md-6">
                                         <div className="form-group">
-                                            <label htmlFor="">State</label>
+                                            <label htmlFor="">{t('state')}</label>
                                             <select 
                                                 name="state" 
                                                 className={`form-control ${errors.state ? 'is-invalid': ''}`}
@@ -92,7 +93,7 @@ const FIRSearch = () => {
                                     </div>
                                     <div className="col-md-6">
                                         <div className="form-group">
-                                            <label htmlFor="">District</label>
+                                            <label htmlFor="">{t('district')}</label>
                                             <select 
                                                 name="district" 
                                                 className={`form-control ${errors.district ? 'is-invalid' : ''}`}
@@ -110,7 +111,7 @@ const FIRSearch = () => {
                                     </div>
                                     <div className="col-md-12">
                                         <div className="form-group">
-                                            <label htmlFor="">Police Station</label>
+                                            <label htmlFor="">{t('police_station')}</label>
                                             <select 
                                                 name="police_station" 
                                                 className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
@@ -133,7 +134,7 @@ const FIRSearch = () => {
                                             <TextField
                                                 error={errors.fir_number ? true : false}
                                                 name="fir_number"
-                                                label="FIR Number"
+                                                label={t('fir_number')}
                                                 value={form.fir_number}
                                                 size="small"
                                                 helperText={errors.fir_number}
@@ -146,7 +147,7 @@ const FIRSearch = () => {
                                             <TextField
                                                 name="fir_year"
                                                 error={errors.fir_year ? true : false }
-                                                label="FIR Year"
+                                                label={t('fir_year')}
                                                 value={form.fir_year}
                                                 size="small"
                                                 helperText={errors.fir_year}
@@ -161,7 +162,7 @@ const FIRSearch = () => {
                                             endIcon={<SearchIcon />}
                                             onClick={handleSubmit}
                                         >
-                                            Search
+                                            {t('search')}
                                         </Button>
                                     </div>
                                 </div>

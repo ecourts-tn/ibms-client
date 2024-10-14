@@ -3,6 +3,7 @@ import {CreateMarkup} from '../../utils'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
 import { BaseContext } from '../../contexts/BaseContext'
+import { useTranslation } from 'react-i18next'
 
 
 const FIRDetails = () => {
@@ -10,6 +11,7 @@ const FIRDetails = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const {t} = useTranslation()
 
     return (
         <>
@@ -21,7 +23,7 @@ const FIRDetails = () => {
                         onClick={handleShow}
                     >   
                         <i className="fa fa-paper-plane mr-2"></i>
-                        View FIR Details
+                        {t('view_fir')}
                     </Button>
                     <Modal 
                             show={show} 
@@ -31,7 +33,7 @@ const FIRDetails = () => {
                             size="xl"
                         >
                             <Modal.Header>
-                                <Modal.Title><strong>FIR Details</strong></Modal.Title>
+                                <Modal.Title><strong>{t('fir_details')}</strong></Modal.Title>
                                 <button 
                                     type="button" 
                                     class="close" 
@@ -44,42 +46,42 @@ const FIRDetails = () => {
                                     <div className="col-md-12">
                                         <table className="table table-bordered table-striped table-sm">
                                             <tr>
-                                                <td>Date&nbsp;of&nbsp;Occurrence</td>
+                                                <td>{t('date_of_occurence')}</td>
                                                 <td>{ fir.date_of_occurrence }</td>
-                                                <td>FIR Date & Time</td>
+                                                <td>{t('fir_date_time')}</td>
                                                 <td>{ fir.fir_date_time }</td>
                                             </tr>
                                             <tr>
-                                                <td>Place of Occurence</td>
+                                                <td>{t('place_of_occurence')}</td>
                                                 <td colSpan={3}>{ fir.place_of_occurrence }</td>
                                             </tr>
                                             <tr>
-                                                <td>Investigation Officer</td>
+                                                <td>{t('investigation_officer')}</td>
                                                 <td>{ fir.investigation_officer }</td>
-                                                <td>Investigation Officer Rank</td>
+                                                <td>{t('investigation_officer_rank')}</td>
                                                 <td>{ fir.investigation_officer_rank }</td>
                                             </tr>
                                             <tr>
-                                                <td>Complaintant&nbsp;Name</td>
+                                                <td>{t('complaintant_name')}</td>
                                                 <td>{ fir.complainant_name }</td>
-                                                <td>Complaintant&nbsp;Age</td>
+                                                <td>{t('complaintant_age')}</td>
                                                 <td>{ fir.complainant_age }</td>
                                             </tr>
                                             <tr>
-                                                <td>Complaintant&nbsp;Guardian</td>
+                                                <td>{t('complaintant_guardian')}</td>
                                                 <td>{ fir.complainant_guardian }</td>
-                                                <td>Complaintant&nbsp;Guardian Name</td>
+                                                <td>{t('complaintant_guardian_name')}</td>
                                                 <td>{ fir.complainant_guardian_name }</td>
                                             </tr>
                                             <tr>
                                                 <td colSpan={4}>
-                                                    <p><strong>Gist of FIR / Allegations</strong></p>
+                                                    <p><strong>{t('gist_of_fir')}</strong></p>
                                                     <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_of_fir)}></span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colSpan={4} width="500">
-                                                    <p><strong>Gist of FIR / Allegations (In Local Language)</strong></p>
+                                                    <p><strong>{t('gist_in_local')}</strong></p>
                                                     <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
                                                 </td>
                                             </tr>
@@ -89,11 +91,11 @@ const FIRDetails = () => {
                                                 <thead>
                                                     <tr className="bg-navy">
                                                         <th>#</th>
-                                                        <th>Accused Name</th>
-                                                        <th>Age</th>
-                                                        <th>Rank</th>
-                                                        <th>Gender</th>
-                                                        <th>Guardian Name</th>
+                                                        <th>{t('accused_name')}</th>
+                                                        <th>{t('age')}</th>
+                                                        <th>{t('accused_rank')}</th>
+                                                        <th>{t('gender')}</th>
+                                                        <th>{t('guardian_name')}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -115,7 +117,7 @@ const FIRDetails = () => {
                             </Modal.Body>
                             <Modal.Footer style={{ justifyContent: "end", alignItems:"center"}}>
                                 <Button variant="contained" onClick={handleClose}>
-                                    Close
+                                    {t('close')}
                                 </Button>
                             </Modal.Footer>
                     </Modal>

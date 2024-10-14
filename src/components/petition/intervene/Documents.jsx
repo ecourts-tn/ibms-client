@@ -6,6 +6,7 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import CloudUpload from '@mui/icons-material/CloudUpload';
 import api from 'api';
 import config from 'config'
+import { useTranslation } from 'react-i18next';
 
 
 const Documents = () => {
@@ -16,10 +17,7 @@ const Documents = () => {
     }
     const[form, setForm] = useState(initialState)
     const[documents, setDocuments] = useState([])
-    // const[documents, setDocuments] = useState({
-    //     vakalath: '',
-    //     supporting_document: ''
-    // })
+    const {t} = useTranslation()
 
     const[otp, setOtp] = useState('')
 
@@ -130,8 +128,8 @@ const Documents = () => {
                     <thead className="bg-info">
                         <tr>
                             <th>S.No</th>
-                            <th>Title</th>
-                            <th>Document</th>
+                            <th>{t('document_title')}</th>
+                            <th>{t('document')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -153,7 +151,7 @@ const Documents = () => {
                 <div className="row">
                     <div className="col-md-5 offset-md-2 mt-4"> 
                         <div className="form-group">
-                        <label htmlFor="title">Document Title</label>
+                        <label htmlFor="title">{t('document_title')}</label>
                         <input 
                             type="text" 
                             name="title"
@@ -165,7 +163,7 @@ const Documents = () => {
                     </div>
                     <div className="col-md-3 mt-4"> 
                         <div className="form-group">
-                        <label htmlFor="document">Document</label>
+                        <label htmlFor="document">{t('document')}</label>
                         <input 
                             type="file" 
                             name="document" 
@@ -185,7 +183,7 @@ const Documents = () => {
                                     onClick={handleSubmit}
                                     startIcon={<CloudUpload />}
                                 >
-                                    Upload
+                                    {t('upload')}
                                 </Button>
                             </div>
                         </div>

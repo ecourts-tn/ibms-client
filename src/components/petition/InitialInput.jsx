@@ -1,12 +1,14 @@
 import React from 'react'
 import Form from 'react-bootstrap/Form'
+import { useTranslation } from 'react-i18next'
 
 const InitialInput = ({petition}) => {
+    const {t} = useTranslation()
     return (
         <div className="row mb-4">
             <div className="col-md-6">
                 <Form.Group className="mb-3">
-                    <Form.Label>Court Type</Form.Label>
+                    <Form.Label>{t('court_type')}</Form.Label>
                         <Form.Control
                         value={petition.court_type.court_type}
                         readOnly={true}
@@ -15,7 +17,7 @@ const InitialInput = ({petition}) => {
             </div>
             <div className="col-md-6">
                 <div className="form-group">
-                    <Form.Label>Bench Type</Form.Label>
+                    <Form.Label>{t('hc_bench')}</Form.Label>
                     <Form.Control
                         value={petition.bench_type ? petition.bench_type.bench_type : null}
                         readOnly={true}
@@ -26,7 +28,7 @@ const InitialInput = ({petition}) => {
             <>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="state">State</label>
+                        <label htmlFor="state">{t('state')}</label>
                         <Form.Control
                             value={petition.state.state_name}
                             readOnly={true}
@@ -35,7 +37,7 @@ const InitialInput = ({petition}) => {
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
-                        <label htmlFor="district">District</label>
+                        <label htmlFor="district">{t('district')}</label>
                         <Form.Control
                             value={petition.district.district_name}
                             readOnly={true}
@@ -44,7 +46,7 @@ const InitialInput = ({petition}) => {
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="establishment">Establishment Name</label>
+                        <label htmlFor="establishment">{t('est_name')}</label>
                         <Form.Control
                             value={petition.establishment.establishment_name}
                             readOnly={true}
@@ -53,7 +55,7 @@ const InitialInput = ({petition}) => {
                 </div>
                 <div className="col-md-6">
                     <div className="form-group">
-                        <label htmlFor="court">Court Name</label>
+                        <label htmlFor="court">{t('court')}</label>
                         <Form.Control
                             value={petition.court.court_name}
                             readOnly={true}

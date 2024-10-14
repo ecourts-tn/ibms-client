@@ -259,42 +259,42 @@ const Relaxation = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Petition Details</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#litigant">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Litigants</span>
+                                            <span className="bs-stepper-label">{t('litigants')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#ground">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">Grounds</span>
+                                            <span className="bs-stepper-label">{t('ground')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#documents">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">4</span>
-                                            <span className="bs-stepper-label">Documents</span>
+                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">5</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">6</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -495,7 +495,7 @@ const Relaxation = () => {
                                                                                         name="reg_number"
                                                                                         value={searchForm.reg_number}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Number'
+                                                                                        placeholder={t('case_number')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_number }
@@ -510,7 +510,7 @@ const Relaxation = () => {
                                                                                         name="reg_year"
                                                                                         value={searchForm.reg_year}
                                                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                                        placeholder='Registration Year'
+                                                                                        placeholder={t('case_year')}
                                                                                     />
                                                                                     <div className="invalid-feedback">
                                                                                         { searchErrors.reg_year }
@@ -524,7 +524,7 @@ const Relaxation = () => {
                                                                                     endIcon={<SearchIcon />}
                                                                                     onClick={handleSearch}
                                                                                 >
-                                                                                    Search
+                                                                                    {t('search')}
                                                                                 </Button>
                                                                             </div>
                                                                         </div>
@@ -542,16 +542,16 @@ const Relaxation = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={7}><strong>Petitioner Details</strong></td>
+                                                                        <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Select</th>
-                                                                        <th>Petitioner Name</th>
-                                                                        <th>Father/Husband/Guardian Name</th>
-                                                                        <th>Age</th>
-                                                                        <th>Rank</th>
-                                                                        <th>Act</th>
-                                                                        <th>Section</th>
+                                                                        <th>{t('select')}</th>
+                                                                        <th>{t('petitioner_name')}</th>
+                                                                        <th>{t('father_husband_guardian')}</th>
+                                                                        <th>{t('age')}</th>
+                                                                        <th>{t('accused_rank')}</th>
+                                                                        <th>{t('act')}</th>
+                                                                        <th>{t('section')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -622,13 +622,13 @@ const Relaxation = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className='bg-navy'>
-                                                                        <td colSpan={4}><strong>Condition Details</strong></td>
+                                                                        <td colSpan={4}><strong>{t('condition_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Bail Order Date</th>
-                                                                        <th>Released Date</th>
-                                                                        <th>No. of Days Present</th>
-                                                                        <th>No. of Days Absent</th>
+                                                                        <th>{t('bail_date')}</th>
+                                                                        <th>{t('released_date')}</th>
+                                                                        <th>{t('days_present')}</th>
+                                                                        <th>{t('days_absent')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -643,13 +643,14 @@ const Relaxation = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={6}><strong>Respondent Details</strong></td>
+                                                                        <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Respondent Name</th>
-                                                                        <th>Designation</th>
-                                                                        <th>Police Station</th>
-                                                                        <th>District</th>
+                                                                        <th>{t('respondent_name')}</th>
+                                                                        <th>{t('designation')}</th>
+                                                                        <th>{t('police_station')}</th>
+                                                                        <th>{t('district')}</th>
+                                                                        <th>{t('address')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -686,7 +687,7 @@ const Relaxation = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.address}
+                                                                                    value={res.district.district_name}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -694,7 +695,7 @@ const Relaxation = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.district.district_name}
+                                                                                    value={res.address}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -705,18 +706,18 @@ const Relaxation = () => {
                                                             <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={6}><strong>Advocate Details</strong>
+                                                                        <td colSpan={6}><strong>{t('advocate_details')}</strong>
                                                                             <div className="float-right">
                                                                                 <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
                                                                             </div>
                                                                         </td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Advocate Name</th>
-                                                                        <th>Enrolment Number</th>
-                                                                        <th>Mobile Number</th>
-                                                                        <th>Email Address</th>
-                                                                        <th width={120}>Action</th>
+                                                                        <th>{t('adv_name')}</th>
+                                                                        <th>{t('enrollment_number')}</th>
+                                                                        <th>{t('mobile_number')}</th>
+                                                                        <th>{t('email_address')}</th>
+                                                                        <th width={120}>{t('action')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -780,7 +781,7 @@ const Relaxation = () => {
                                                                 color="success"
                                                                 onClick={handleInitialSubmit}
                                                             >
-                                                                Submit
+                                                                {t('submit')}
                                                             </Button>
                                                         </div>
                                                     )}
@@ -831,7 +832,7 @@ const Relaxation = () => {
                                                 variant='contained'
                                                 color='success'
                                                 className="mt-4"
-                                            >Final Submit</Button>
+                                            >{t('final_submit')}</Button>
                                         </div>
                                     </div>
                                 </div>

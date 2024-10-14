@@ -23,6 +23,7 @@ import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next';
 
 
 const ABail = () => {
@@ -36,6 +37,7 @@ const ABail = () => {
     const {benchtypes}      = useContext(BenchTypeContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
+    const {t} = useTranslation()
 
     const[grounds, setGrounds] = useState([])
     const[petition, setPetition] = useState({})
@@ -198,56 +200,56 @@ const ABail = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Basic Details</span>
+                                            <span className="bs-stepper-label">{t('basic_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#petitioner">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Petitioner Details</span>
+                                            <span className="bs-stepper-label">{t('petitioner_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#accused">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">Accused Details</span>
+                                            <span className="bs-stepper-label">{t('accused_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#respondent">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">4</span>
-                                            <span className="bs-stepper-label">Respondent Details</span>
+                                            <span className="bs-stepper-label">{t('respondent_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#grounds">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">5</span>
-                                            <span className="bs-stepper-label">Grounds</span>
+                                            <span className="bs-stepper-label">{t('ground')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#documents">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">6</span>
-                                            <span className="bs-stepper-label">Documents </span>
+                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">7</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">8</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div> 
                                     </div>
