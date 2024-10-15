@@ -22,9 +22,25 @@
       <link rel="stylesheet" href="%PUBLIC_URL%/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
       <title>Integrated Bail Management System</title>
       <style>
-        *{
-          font-family: 'Source Sans Pro'
-        }
+        /* Step 1: Define the Marutham font using @font-face */
+          @font-face {
+            font-family: 'Marutham';
+            src: url('./marutham.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+          }
+
+          /* Step 2: Define the global font (Source Sans Pro or fallback) */
+          * {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+          }
+
+          /* Step 3: Apply the Tamil font to Tamil language elements */
+          :lang(ta), 
+          :lang(ta) .nav-link, 
+          :lang(ta) .dropdown-menu li a {
+            font-family: 'Marutham', serif; /* Add a fallback font */
+          }
       </style>
     </head>
   <body class="hold-transition sidebar-mini layout-fixed">

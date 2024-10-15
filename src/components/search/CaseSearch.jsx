@@ -104,7 +104,7 @@ const CaseSearch = () => {
                     <div className="col-md-12 d-flex justify-content-center">
                         <div className="form-group clearfix">
                             <label htmlFor="" className="mr-2">{t('search_case_by')}</label>
-                            <div className="icheck-info d-inline mx-2">
+                            <div className="icheck-success d-inline mx-2">
                                 <input 
                                     type="radio" 
                                     name="search" 
@@ -114,7 +114,7 @@ const CaseSearch = () => {
                                 />
                                 <label htmlFor="case_search_basic">{t('basic_search')}</label>
                             </div>
-                            <div className="icheck-warning d-inline mx-2">
+                            <div className="icheck-success d-inline mx-2">
                                 <input 
                                     type="radio" 
                                     name="search" 

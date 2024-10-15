@@ -1,12 +1,14 @@
 import React from 'react'
 import Button from '@mui/material/Button'
+import { useTranslation } from 'react-i18next'
 
 const VehicleDetails = ({vehicle, setVehicle}) => {
+    const {t} = useTranslation()
     return (
         <div className="row">
             <div className="col-md-6">
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Name of the Vehicle</label>
+                    <label htmlFor="" className='col-sm-4'>{t('vehicle_name')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -18,7 +20,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Owner Name</label>
+                    <label htmlFor="" className='col-sm-4'>{t('owner_name')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -30,7 +32,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Owner Address</label>
+                    <label htmlFor="" className='col-sm-4'>{t('owner_address')}</label>
                     <div className="col-sm-6">
                         <textarea 
                             type="text" 
@@ -42,7 +44,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className="col-sm-4">Vehicle Number</label>
+                    <label htmlFor="" className="col-sm-4">{t('vehicle_number')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -54,7 +56,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className="col-sm-4">Fastag Details</label>
+                    <label htmlFor="" className="col-sm-4">{t('fastag_details')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -66,7 +68,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Whether owner of the vehicle is the accused</label>
+                    <label htmlFor="" className='col-sm-4'>{t('is_owner_accused')}</label>
                     <div className="col-sm-6">
                         <select 
                             name="is_owner_accused" 
@@ -74,8 +76,8 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             value={vehicle.is_owner_accused}
                             onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
                         >
-                            <option value="Yes">Yes</option>
-                            <option value="No">No</option>
+                            <option value="Yes">{t('yes')}</option>
+                            <option value="No">{t('no')}</option>
                         </select>
                     </div>
                 </div>
@@ -83,7 +85,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                     <Button
                         variant='contained'
                         color="primary"
-                    >Save</Button>
+                    >{t('save')}</Button>
                 </div>
             </div>
         </div>

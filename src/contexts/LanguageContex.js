@@ -13,6 +13,7 @@ export const LanguageProvider = ({ children }) => {
 
     const toggleLanguage = () => {
         setLanguage(language === 'ta' ? i18n.changeLanguage('en') : i18n.changeLanguage('ta')); // Toggle between English and Tamil
+        // language === 'ta'? document.documentElement.setAttribute('lang', 'ta') : document.documentElement.setAttribute('lang', 'en')
     };
 
   return (

@@ -23,3 +23,16 @@
     background-color: #04AA6D;
     color: white;
 }
+
+@font-face {
+    font-family: 'Marutham';
+    src: url('./marutham.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+  :lang(ta), 
+  :lang(ta) .nav-link, 
+  :lang(ta) .dropdown-menu li a {
+    font-family: 'Marutham', serif; 
+  }

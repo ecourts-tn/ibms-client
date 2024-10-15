@@ -32,7 +32,7 @@ const Header = () => {
     if (response.status === 205) {
       sessionStorage.clear();
       setIsAuth(false)
-      toast.success("You are logged out successfully", { theme: "colored" });
+      toast.success(t('alerts.logged_out'), { theme: "colored" });
       setTimeout(() => {
         navigate('/');
       },1000)

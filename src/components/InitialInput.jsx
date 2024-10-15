@@ -80,33 +80,33 @@ const InitialInput = () => {
 
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
-        // bench_type: Yup.string().when("court_type",(court_type, schema) => {
-        //     if(parseInt(court_type) === 1){
-        //         return schema.required("Please select the bench type")
-        //     }
-        // }),
+        bench_type: Yup.string().when("court_type",(court_type, schema) => {
+            if(parseInt(court_type) === 1){
+                return schema.required(t('errors.bench_required'))
+            }
+        }),
         state: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
-                return schema.required("Please select the state")
+                return schema.required(t('errors.state_required'))
             }
         }),
         district: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
-                return schema.required("Please select the district")
+                return schema.required(t('errors.district_required'))
             }
         }),
         establishment: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
-                return schema.required("Please select the establishment")
+                return schema.required(t('errors.est_required'))
             }
         }),
         court: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
-                return schema.required("Please select the court")
+                return schema.required(t('errors.court_required'))
             }
         }),
-        bail_type: Yup.string().required("Please select the bail type"),
-        complaint_type: Yup.string().required("Please select the complaint type"),
+        bail_type: Yup.string().required(t('errors.bail_required')),
+        complaint_type: Yup.string().required(t('errors.complaint_required')),
     })
 
     const handleSubmit = async (e) => {
@@ -117,7 +117,7 @@ const InitialInput = () => {
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 sessionStorage.setItem("efile_no", response.data.efile_number)
-                toast.success(`${response.data.efile_number} details submitted successfully`, {
+                toast.success(t('alerts.submit_success').replace('{efile_no}', response.data.efile_number), {
                     theme:"colored"
                 })
                 const efile_no = sessionStorage.getItem("efile_no")

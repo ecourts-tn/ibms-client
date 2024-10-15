@@ -3,31 +3,34 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col';
 import './footer.css'
+import { useTranslation } from 'react-i18next';
 
 
 const Footer = () => {
-  return (
+
+    const {t} = useTranslation()
+    return (
         <>
             <Container fluid className="sub-footer">
                 <Container className="">
                     <Row>
                     <Col>
-                        <h6>IMPORTANT LINKS</h6>
+                        <h6>{t('important_links')}</h6>
                         <ul className="important-links">
-                        <li><a href="#">Supreme Court of India</a></li>
-                        <li><a href="#">High Court Madras</a></li>
-                        <li><a href="#">e-Filing Portal</a></li>
-                        <li><a href="#">High Court Services</a></li>
-                        <li><a href="#">District Court Services</a></li>
+                        <li><a href="#">{t('supreme_court')}</a></li>
+                        <li><a href="#">{t('mhc')}</a></li>
+                        <li><a href="#">{t('efiling_portal')}</a></li>
+                        <li><a href="#">{t('hc_services')}</a></li>
+                        <li><a href="#">{t('dc_services')}</a></li>
                         </ul>
                     </Col>
                     <Col>
-                        <h6>QUICK LINKS</h6>
+                        <h6>{t('quick_links')}</h6>
                         <ul className="quick-links">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Features</a></li>
-                        <li><a href="#">User Guide</a></li>
-                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">{t('about')}</a></li>
+                        <li><a href="#">{t('features')}</a></li>
+                        <li><a href="#">{t('user_guide')}</a></li>
+                        <li><a href="#">{t('faq')}</a></li>
                         </ul>
                     </Col>
                     <Col>
@@ -43,7 +46,7 @@ const Footer = () => {
                 <Row>
                 <Col>
                     <div className="d-flex justify-content-center">
-                    <p className="pt-3"><strong> @ 2024 <a href="https://hcmadras.tn.gov.in" style={{ textDecoration: 'none', color:'orange'}}>High Court Madras</a>. All rights reserved</strong></p>
+                    <p className="pt-3"><strong> @ 2024 <a href="https://hcmadras.tn.gov.in" style={{ textDecoration: 'none', color:'orange'}}>{t('mhc')}</a>. {t('rights_reserved')}</strong></p>
                     </div>
                 </Col>
                 </Row>

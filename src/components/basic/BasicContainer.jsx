@@ -20,12 +20,14 @@ import { CourtTypeContext } from 'contexts/CourtTypeContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
+import { useTranslation } from 'react-i18next';
 
 
 const BasicContainer = () => {
 
     const location = useLocation();
     const currentPath = location.pathname;
+    const {t} = useTranslation()
     const{
         efile_no, 
         setEfileNo,
@@ -119,7 +121,7 @@ const BasicContainer = () => {
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 sessionStorage.setItem("efile_no", response.data.efile_number)
-                toast.success(`${response.data.efile_number} details submitted successfully`, {
+                toast.success(`${t("alerts.submit_success").response.data.efile_number}`, {
                     theme:"colored"
                 })
                 const efile_no = sessionStorage.getItem("efile_no")

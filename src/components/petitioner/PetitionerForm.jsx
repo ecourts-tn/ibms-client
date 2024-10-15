@@ -64,7 +64,8 @@ const PetitionerForm = ({addPetitioner}) => {
 
   
   const validationSchema = Yup.object({
-    litigant_name: Yup.string().required('Litigant name is required'),
+    litigant_name: Yup.string().required(t('errors.litigant_name_required')),
+    gender: Yup.string().required(t('errors.gender_required')),
     relation: Yup.string().required('Relation is required'),
     relation_name: Yup.string().required('Relation name is required'),
     age: Yup.number()

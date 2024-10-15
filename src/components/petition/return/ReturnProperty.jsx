@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Button from '@mui/material/Button'
 import api from '../../../api';
 import Payment from '../../pages/Payment';
@@ -17,6 +17,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import MaterialDetails from 'components/petition/return/MaterialDetails';
 import VehicleDetails from 'components/petition/return/VehicleDetails'
+import { useTranslation } from 'react-i18next';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import SearchIcon from '@mui/icons-material/Search';
+import GroundsContainer from 'components/Ground';
+import Document from 'components/Document';
 
 
 const ReturnProperty = () => {
@@ -25,7 +33,14 @@ const ReturnProperty = () => {
     const[petitioners, setPetitioners] = useState([])
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {benchtypes} = useContext(BenchTypeContext)
+    const[selectedPetitioner, setSelectedPetitioner] = useState([])
+    const[selectedRespondent, setSelectedRespondent] = useState([])
     const[errors, setErrors] = useState({})
+    const {t} = useTranslation()
 
     const deleteAdvocate = (advocate) => {
         const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
@@ -112,9 +127,14 @@ const ReturnProperty = () => {
     const[searchPetition, setSearchPetition] = useState(1)
     const[propertyType, setPropertyType] = useState(1)
     const[searchForm, setSearchForm] = useState({
-        case_type:null,
-        case_number: undefined,
-        case_year: undefined
+        court_type:1,
+        bench_type:'',
+        state:'',
+        district:'',
+        establishment:'',
+        case_type: '',
+        reg_number: '',
+        reg_year: ''
     })
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
@@ -243,19 +263,57 @@ const ReturnProperty = () => {
         }
     }
 
-    const petitionerOptions = petitioners.map((petitioner, index) => {
-        return {
-            value : petitioner.petitioner_id,
-            label : petitioner.petitioner_name
+    const handlePetitionerCheckBoxChange = (petitioner) => {
+        if (selectedPetitioner.includes(petitioner)) {
+          // If already selected, remove the petitioner from the selected list
+          setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
+        } else {
+          // Otherwise, add the petitioner to the selected list
+          setSelectedPetitioner([...selectedPetitioner, {
+            litigant_name :petitioner.litigant_name,
+            litigant_type :1, 
+            rank: petitioner.rank,
+            gender: petitioner.gender,
+            act: petitioner.act,
+            section: petitioner.section,
+            relation: petitioner.relation,
+            relation_name: petitioner.relation_name,
+            age: petitioner.age,
+            address: petitioner.address,
+            mobile_number: petitioner.mobile_number,
+            email_address: petitioner.email_address,
+            nationality: petitioner.nationality,
+          }]);
         }
-    })
+    };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-    }
+    const handleRespondentCheckBoxChange = (respondent) => {
+        if (selectedRespondent.includes(respondent)) {
+          // If already selected, remove the respondent from the selected list
+          setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
+        } else {
+          // Otherwise, add the respondent to the selected list
+          setSelectedRespondent([...selectedRespondent, {
+            litigant_name: respondent.litigant_name,
+            litigant_type: 2, 
+            designation: respondent.designation,
+            state: respondent.state.state_code,
+            district: respondent.district.district_code,
+            police_station: respondent.police_station.cctns_code,
+            address: respondent.address,
+          }]);
+        }
+    };
+
+
+    const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
+    const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
 
     const addMaterial = () => {}
+
+    const handleSubmit = async() => {
+
+    }
 
     return(
         <>
@@ -277,21 +335,35 @@ const ReturnProperty = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Petition Details</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#grounds">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">2</span>
+                                            <span className="bs-stepper-label">{t('ground')}</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#documents">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">2</span>
+                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
                                     </div>
@@ -310,7 +382,7 @@ const ReturnProperty = () => {
                                                                 checked={ parseInt(searchPetition) === 1 ? true : false}
                                                                 onChange={(e) => setSearchPetition(1)} 
                                                             />
-                                                            <label htmlFor="searchPetitionYes">Select from My Petitions</label>
+                                                            <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
                                                             </div>
                                                             <div className="icheck-primary d-inline mx-2">
                                                             <input 
@@ -321,7 +393,7 @@ const ReturnProperty = () => {
                                                                 checked={ parseInt(searchPetition) === 2 ? true : false } 
                                                                 onChange={(e) => setSearchPetition(2)}
                                                             />
-                                                            <label htmlFor="searchPetitionNo">Search Petition</label>
+                                                            <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -354,65 +426,179 @@ const ReturnProperty = () => {
                                                     )}
                                                 </div>
                                                 <div className="col-md-8 offset-2">
-                                                    { parseInt(searchPetition) === 2 && (
-                                                    <form onSubmit={handleSearch}>
+                                                { parseInt(searchPetition) === 2 && (
+                                                    <form>
                                                         <div className="row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_type">Case Type</label>
-                                                                    <select 
-                                                                        name="case_type" 
-                                                                        className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
-                                                                        value={searchForm.case_type}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    >
-                                                                        <option value="">Select Case Type</option>
-                                                                        <option value="1">Bail Petition</option>
-                                                                    </select>
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_type }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_number">Case Number</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
-                                                                        name="case_number"
-                                                                        value={searchForm.case_number}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_number }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_year">Year</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
-                                                                        name="case_year"
-                                                                        value={searchForm.case_year}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_year }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
                                                             <div className="col-md-12 d-flex justify-content-center">
-                                                                { parseInt(searchPetition) === 2 && (
-                                                                <Button
-                                                                    variant='contained'
-                                                                    type="submit"
-                                                                    color="success"
-                                                                    onClick={handleSearch}
-                                                                >Search</Button>
+                                                                <div className="form-group">
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            name="court_type" 
+                                                                            id="court_type_hc" 
+                                                                            value={ searchForm.court_type }
+                                                                            checked={parseInt(searchForm.court_type) === 1 ? true : false }
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
+                                                                        />
+                                                                        <label htmlFor="court_type_hc">{t('high_court')}</label>
+                                                                    </div>
+                                                                    <div className="icheck-success d-inline mx-2">
+                                                                        <input 
+                                                                            type="radio" 
+                                                                            id="court_type_dc" 
+                                                                            name="court_type" 
+                                                                            value={searchForm.court_type}
+                                                                            checked={parseInt(searchForm.court_type) === 2 ? true : false } 
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
+                                                                        />
+                                                                        <label htmlFor="court_type_dc">{t('district_court')}</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-6 offset-md-3">
+                                                                { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="row">
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">{t('state')}</label>
+                                                                                <select 
+                                                                                    name="state" 
+                                                                                    className={`form-control ${errors.state ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select state</option>
+                                                                                    { states.map((state, index) => (
+                                                                                    <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.state }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="col-md-6">
+                                                                            <div className="form-group">
+                                                                                <label htmlFor="">{t('district')}</label>
+                                                                                <select 
+                                                                                    name="district" 
+                                                                                    className={`form-control ${errors.district ? 'is-invalid': ''}`}
+                                                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                                >
+                                                                                    <option value="">Select district</option>
+                                                                                    { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
+                                                                                        <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                                                    ))}
+                                                                                </select>
+                                                                                <div className="invalid-feedback">
+                                                                                    { searchErrors.district }
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 )}
+                                                                <div className="row">
+                                                                    { parseInt(searchForm.court_type) === 2 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">{t('est_name')}</label>
+                                                                            <select 
+                                                                                name="establishment" 
+                                                                                className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select establishment</option>
+                                                                                {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
+                                                                                    <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.establishment }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    { parseInt(searchForm.court_type) === 1 && (
+                                                                    <div className="col-md-8">
+                                                                        <div className="form-group">
+                                                                            <label htmlFor="">{t('hc_bench')}</label>
+                                                                            <select 
+                                                                                name="bench_type" 
+                                                                                className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                            >
+                                                                                <option value="">Select bench</option>
+                                                                                {benchtypes.map((b, index)=>(
+                                                                                    <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                                                ))}
+                                                                            </select>
+                                                                            <div className="invalid-feedback">
+                                                                                { searchErrors.bench_type }
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    )}
+                                                                    <div className="col-md-4">
+                                                                        <label htmlFor="case_type">{t('case_type')}</label>
+                                                                        <select 
+                                                                            name="case_type" 
+                                                                            id="case_type" 
+                                                                            className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
+                                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                                        >
+                                                                            <option value="">Select case type</option>
+                                                                            <option value="1">Bail Application</option>
+                                                                        </select>
+                                                                        <div className="invalid-feedback">
+                                                                            { searchErrors.case_type }
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="row">
+                                                                    <div className="col-md-10 offset-md-1">
+                                                                        <div className="row">
+                                                                            <div className="col-md-5">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_number ? 'is-invalid': ''}`}
+                                                                                        name="reg_number"
+                                                                                        value={searchForm.reg_number}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder={t('case_number')}
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_number }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-4">
+                                                                                <div className="form-group">
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className={`form-control ${searchErrors.reg_year ? 'is-invalid': ''}`}
+                                                                                        name="reg_year"
+                                                                                        value={searchForm.reg_year}
+                                                                                        onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                                        placeholder={t('case_year')}
+                                                                                    />
+                                                                                    <div className="invalid-feedback">
+                                                                                        { searchErrors.reg_year }
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="col-md-3">
+                                                                                <Button 
+                                                                                    variant='contained'
+                                                                                    color="primary"
+                                                                                    endIcon={<SearchIcon />}
+                                                                                    onClick={handleSearch}
+                                                                                >
+                                                                                    {t('search')}
+                                                                                </Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -425,19 +611,19 @@ const ReturnProperty = () => {
                                                             <InitialInput petition={petition} />
                                                         )}
                                                         { Object.keys(petitioners).length > 0 && (
-                                                            <table className="table table-bordered">
+                                                            <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={7}><strong>Petitioner Details</strong></td>
+                                                                        <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Select</th>
-                                                                        <th>Petitioner Name</th>
-                                                                        <th>Age</th>
-                                                                        <th>Rank</th>
-                                                                        <th>Act</th>
-                                                                        <th>Section</th>
-                                                                        <th>Father/Husband/Guardian Name</th>
+                                                                        <th>{t('select')}</th>
+                                                                        <th>{t('petitioner_name')}</th>
+                                                                        <th>{t('father_husband_guardian')}</th>
+                                                                        <th>{t('age')}</th>
+                                                                        <th>{t('accused_rank')}</th>
+                                                                        <th>{t('act')}</th>
+                                                                        <th>{t('section')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -445,14 +631,27 @@ const ReturnProperty = () => {
                                                                     <tr key={index}>
                                                                         <td>
                                                                             <div className="icheck-success">
-                                                                                <input type="checkbox" id={`checkboxSuccess${index+1}`} />
-                                                                                <label htmlFor={`checkboxSuccess${index+1}`}></label>
+                                                                                <input 
+                                                                                    type="checkbox" 
+                                                                                    id={`checkboxSuccess${petitioner.litigant_id}`} 
+                                                                                    checked={isPetitionerSelected(petitioner)}
+                                                                                    onChange={() => handlePetitionerCheckBoxChange(petitioner)}
+                                                                                />
+                                                                                <label htmlFor={`checkboxSuccess${petitioner.litigant_id}`}></label>
                                                                             </div>                                                                            </td>
                                                                         <td>
                                                                             <input 
                                                                                 type="text" 
                                                                                 className="form-control" 
                                                                                 value={petitioner.litigant_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.relation_name}
                                                                                 readOnly={true}
                                                                             />
                                                                         </td>
@@ -488,79 +687,39 @@ const ReturnProperty = () => {
                                                                                 readOnly={true}
                                                                             />
                                                                         </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={petitioner.relation_name}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
                                                                     </tr>
                                                                     ))}
                                                                 </tbody>
                                                             </table>
                                                         )}
-                                                        <div className="card card-navy">
-                                                            <div className="card-header">
-                                                                <strong>Property Details</strong>
-                                                            </div>
-                                                            <div className="card-body">
-                                                                <div className="row">
-                                                                    <div className="col-md-12">
-                                                                        <div className="form-group row">
-                                                                            <label htmlFor="" className='col-sm-2 form-label'>Propterty Type</label>
-                                                                            <div className="col-sm-9">
-                                                                                <div className="icheck-primary d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    name="property_type" 
-                                                                                    id="propertyTypeYes" 
-                                                                                    value={propertyType}
-                                                                                    checked={ parseInt(propertyType) === 1 ? true : false}
-                                                                                    onChange={(e) => setPropertyType(1)} 
-                                                                                />
-                                                                                <label htmlFor="propertyTypeYes">Material</label>
-                                                                                </div>
-                                                                                <div className="icheck-primary d-inline mx-2">
-                                                                                <input 
-                                                                                    type="radio" 
-                                                                                    id="propertyTypeNo" 
-                                                                                    name="property_type" 
-                                                                                    value={propertyType}
-                                                                                    checked={ parseInt(propertyType) === 2 ? true : false } 
-                                                                                    onChange={(e) => setPropertyType(2)}
-                                                                                />
-                                                                                <label htmlFor="propertyTypeNo">Vehicle</label>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        { parseInt(propertyType) === 1 && (
-                                                                            <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
-                                                                        )}
-                                                                        { parseInt(propertyType) === 2 && (
-                                                                            <VehicleDetails  vehicle={vehicle} setVehicle={setVehicle}/>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
                                                         { Object.keys(respondents).length > 0 && (
-                                                            <table className=" table table-bordered">
+                                                            <table className="table table-bordered table-striped table-sm">
                                                                 <thead>
                                                                     <tr className="bg-navy">
-                                                                        <td colSpan={6}><strong>Respondent Details</strong></td>
+                                                                        <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
                                                                     </tr>
                                                                     <tr>
-                                                                        <th>Respondent Name</th>
-                                                                        <th>Designation</th>
-                                                                        <th>Police Station</th>
-                                                                        <th>District</th>
+                                                                        <th>{t('respondent_name')}</th>
+                                                                        <th>{t('designation')}</th>
+                                                                        <th>{t('police_station')}</th>
+                                                                        <th>{t('district')}</th>
+                                                                        <th>{t('address')}</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     { respondents.map((res, index) => (
                                                                         <tr key={index}>
+                                                                            <td>
+                                                                                <div className="icheck-success">
+                                                                                    <input 
+                                                                                        type="checkbox" 
+                                                                                        id={`checkboxSuccess${res.litigant_id}`} 
+                                                                                        checked={isRespondentSelected(res)}
+                                                                                        onChange={() => handleRespondentCheckBoxChange(res)}
+                                                                                    />
+                                                                                    <label htmlFor={`checkboxSuccess${res.litigant_id}`}></label>
+                                                                                </div>                                                                            
+                                                                            </td>
                                                                             <td>
                                                                                 <input 
                                                                                     type="text" 
@@ -581,7 +740,7 @@ const ReturnProperty = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.address}
+                                                                                    value={res.district.district_name}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -589,7 +748,7 @@ const ReturnProperty = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.district.district_name}
+                                                                                    value={res.address}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>
@@ -599,210 +758,130 @@ const ReturnProperty = () => {
                                                             </table>
                                                         )}
                                                         { Object.keys(advocates).length > 0 && (
-                                                        <table className=" table table-bordered">
-                                                            <thead>
-                                                                <tr className="bg-navy">
-                                                                    <td colSpan={6}><strong>Advocate Details</strong>
-                                                                        <div className="float-right">
-                                                                            <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <th>Advocate Name</th>
-                                                                    <th>Enrolment Number</th>
-                                                                    <th>Mobile Number</th>
-                                                                    <th>Email Address</th>
-                                                                    <th width={120}>Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                { advocates.map((advocate, index) => (
-                                                                    <tr key={index}>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_name}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.enrolment_number}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_mobile}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            <input 
-                                                                                type="text" 
-                                                                                className="form-control" 
-                                                                                value={advocate.advocate_email}
-                                                                                readOnly={true}
-                                                                            />
-                                                                        </td>
-                                                                        <td>
-                                                                            { !advocate.is_primary && (
-                                                                                <>
-                                                                                    <IconButton aria-label="delete" disabled color="primary">
-                                                                                        <EditIcon color='info'/>
-                                                                                    </IconButton>
-                                                                                    <IconButton aria-label="delete">
-                                                                                        <DeleteIcon color='error' onClick={() => deleteAdvocate(advocate)} />
-                                                                                    </IconButton>
-                                                                                
-                                                                                </>
-                                                                            )}
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>{t('advocate_details')}</strong>
+                                                                            <div className="float-right">
+                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                            </div>
                                                                         </td>
                                                                     </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
+                                                                    <tr>
+                                                                        <th>{t('adv_name')}</th>
+                                                                        <th>{t('enrollment_number')}</th>
+                                                                        <th>{t('mobile_number')}</th>
+                                                                        <th>{t('email_address')}</th>
+                                                                        <th width={120}>{t('action')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { advocates.map((advocate, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.enrolment_number}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_mobile}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_email}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                { !advocate.is_primary && (
+                                                                                    <>
+                                                                                        <IconButton aria-label="delete" disabled color="primary">
+                                                                                            <EditIcon color='info'/>
+                                                                                        </IconButton>
+                                                                                        <IconButton aria-label="delete">
+                                                                                            <DeleteIcon color='error' />
+                                                                                        </IconButton>
+                                                                                    
+                                                                                    </>
+                                                                                )}
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
                                                         )}
-                                                        { Object.keys(petition).length > 0 && (
-                                                            <>  
-                                                                <div className="row">
-                                                                    <div className="col-md-12">
-                                                                        <div className="form-group">
-                                                                            <p className="bg-navy" style={{padding:"12px 10px", marginBottom:'0px'}}><strong>Grounds</strong></p>
-                                                                            <Editor 
-                                                                                value={form.ground} 
-                                                                                onChange={(e) => setForm({...form, ground: e.target.value })} 
-                                                                            />
-                                                                            <div className="invalid-feedback">
-                                                                                { errors.ground }
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div className="row">
-                                                                    { parseInt(searchPetition) === 1 && (
-                                                                    <div className="col-md-12 mt-4"> 
-                                                                        <div className="form-group">
-                                                                        <label htmlFor="vakkalat">Upload Vakkalat / Memo of Appearance</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            name="vakalath"
-                                                                            className="form-control"
-                                                                            // value={petition.vakalath}
-                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                        />
-                                                                        </div>
-                                                                    </div>
-                                                                    )}
-                                                                    <div className="col-md-12 mt-4"> 
-                                                                        <div className="form-group">
-                                                                        <label htmlFor="document">Supporting Documents</label>
-                                                                        <input 
-                                                                            type="file" 
-                                                                            name="supporting_document" 
-                                                                            className="form-control"
-                                                                            // value={petition.supporting_document}
-                                                                            onChange={(e) => setForm({[e.target.name]:e.target.files[0]})}
-                                                                        />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="col-md-4">
-                                                                        <div className="form-group">
-                                                                            <label htmlFor="">Enrolment Number</label>
-                                                                            <div className="row">
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='MS'
-                                                                                    />
-                                                                                </div>
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='Reg. No.'
-                                                                                    />
-                                                                                </div>
-                                                                                <div className="col-md-4">
-                                                                                    <input 
-                                                                                        type="text" 
-                                                                                        className="form-control" 
-                                                                                        placeholder='Reg. Year'
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                <div className="col-md-2 mt-4 pt-2">
-                                                                    <Button 
-                                                                        variant="contained"
-                                                                        color="primary"
-                                                                        onClick={sendMobileOTP}
-                                                                        endIcon={<SendIcon />}
-                                                                    >Sworn Affidavit</Button>
-                                                                </div>
-                        
-                                                                {/* { !mobileVerified && (
-                                                                    <div className="col-sm-2">
-                                                                    <Button 
-                                                                        variant="contained"
-                                                                        color="primary" 
-                                                                        onClick={sendMobileOTP}
-                                                                    >
-                                                                        Send OTP</Button>
-                                                                </div>
-                                                                )} */}
-                                                                { mobileOtp && !mobileVerified && (
-                                                                <>
-                                                                    <div className="col-md-1 mt-3 pt-2">
-                                                                        <input 
-                                                                            type="password" 
-                                                                            className="form-control mt-2" 
-                                                                            placeholder="OTP" 
-                                                                            value={otp}
-                                                                            onChange={(e) => setOtp(e.target.value)}
-                                                                        />
-                                                                    </div>
-                                                                    <div className="col-md-2 mt-3 pt-2">
-                                                                        <button 
-                                                                            type="button" 
-                                                                            className="btn btn-success px-5 mt-2"
-                                                                            onClick={() => verifyMobile(otp)}
-                                                                        >Verify</button>
-                                                                    </div>
-                                                                </>
-                                                                )}
-                                                                    { mobileVerified && (
-                                                                        <p className="mt-4 pt-3">
-                                                                            <CheckCircleRoundedIcon color="success"/>
-                                                                            <span className="text-success ml-1"><strong>Verified</strong></span>
-                                                                        </p>
-                                                                    )}
-                                                                    <div className="col-md-12">
-                                                                        <div className="d-flex justify-content-center">
-                                                                            <Button
-                                                                                variant="contained"
-                                                                                color="success"
-                                                                                onClick={handleSubmit}
-                                                                            >
-                                                                                Submit
-                                                                            </Button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                        </>
+                                                         </>
                                                     )}
+                                                                                                            <div className="card card-navy">
+                                                            <div className="card-header">
+                                                                <strong>{t('property_details')}</strong>
+                                                            </div>
+                                                            <div className="card-body">
+                                                                <div className="row">
+                                                                    <div className="col-md-12">
+                                                                        <div className="form-group row">
+                                                                            <label htmlFor="" className='col-sm-2 form-label'>{t('property_type')}</label>
+                                                                            <div className="col-sm-9">
+                                                                                <div className="icheck-primary d-inline mx-2">
+                                                                                <input 
+                                                                                    type="radio" 
+                                                                                    name="property_type" 
+                                                                                    id="propertyTypeYes" 
+                                                                                    value={propertyType}
+                                                                                    checked={ parseInt(propertyType) === 1 ? true : false}
+                                                                                    onChange={(e) => setPropertyType(1)} 
+                                                                                />
+                                                                                <label htmlFor="propertyTypeYes">{t('material')}</label>
+                                                                                </div>
+                                                                                <div className="icheck-primary d-inline mx-2">
+                                                                                <input 
+                                                                                    type="radio" 
+                                                                                    id="propertyTypeNo" 
+                                                                                    name="property_type" 
+                                                                                    value={propertyType}
+                                                                                    checked={ parseInt(propertyType) === 2 ? true : false } 
+                                                                                    onChange={(e) => setPropertyType(2)}
+                                                                                />
+                                                                                <label htmlFor="propertyTypeNo">{t('vehicle')}</label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        { parseInt(propertyType) === 1 && (
+                                                                            <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
+                                                                        )}
+                                                                        { parseInt(propertyType) === 2 && (
+                                                                            <VehicleDetails  vehicle={vehicle} setVehicle={setVehicle}/>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div id="grounds" className="content">
+                                            <GroundsContainer />
+                                        </div>
+                                        <div id="documents" className="content">
+                                            <Document />
                                         </div>
                                         <div id="payment" className="content">
                                             <Payment />

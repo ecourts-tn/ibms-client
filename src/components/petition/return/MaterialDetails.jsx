@@ -1,12 +1,15 @@
 import React from 'react'
 import Button from '@mui/material/Button'
+import { useTranslation } from 'react-i18next'
 
 const MaterialDetails = ({material, setMaterial, addMaterial}) => {
+    const {t} = useTranslation()
+
     return (
         <div className="row">
             <div className="col-md-6">
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Material Name</label>
+                    <label htmlFor="" className='col-sm-4'>{t('name_of_material')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -18,7 +21,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className='col-sm-4'>Quantity</label>
+                    <label htmlFor="" className='col-sm-4'>{t('quantity_of_material')}</label>
                     <div className="col-sm-3">
                         <input 
                             type="text" 
@@ -30,7 +33,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className="col-sm-4">Nature(Small/Commercial)</label>
+                    <label htmlFor="" className="col-sm-4">{t('nature_of_quantity')}</label>
                     <div className="col-sm-6">
                         <input 
                             type="text" 
@@ -42,7 +45,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="" className="col-sm-4">Remarks</label>
+                    <label htmlFor="" className="col-sm-4">{t('remarks')}</label>
                     <div className="col-sm-6">
                         <textarea 
                             name="remarks" 
@@ -57,7 +60,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                         variant="contained"
                         color="primary"
                     >
-                        Save
+                        {t('save')}
                     </Button>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import Spinner from 'react-bootstrap/Spinner'
@@ -18,6 +18,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { RequiredField } from '../../utils'
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -37,7 +38,7 @@ const Register = () => {
 
     const[user, setUser] =  useState([])
     const [show, setShow] = useState(false);
-
+    const {t} = useTranslation()
     const handleClose = () => {
         setShow(false);
         navigate("/")
@@ -249,7 +250,7 @@ const Register = () => {
                                 <div className="row">
                                     <div className="col-md-8 offset-md-2">
                                         <Alert icon={<PersonAddIcon fontSize="inherit" />} className="registration-alert" severity="success">
-                                            New user registration
+                                            {t('user_registration')}
                                         </Alert>
                                     </div>
                                 </div>
@@ -265,14 +266,14 @@ const Register = () => {
                                                 value={form.user_type}
                                                 onChange={(e) => setForm({...form, user_type:e.target.value})}
                                             >
-                                                <FormControlLabel value={1} control={<Radio />} label="Advocate" />
-                                                <FormControlLabel value={2} control={<Radio />} label="Litigant" />
+                                                <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
+                                                <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
                                     <div className="col-md-8 offset-md-2">
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? 'Advocate Name' : 'Litigant Name' }<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <input 
                                                     type="text" 
@@ -287,7 +288,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">Gender<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3 col-form-label">{t('gender')}<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <FormControl>
                                                     <RadioGroup
@@ -297,9 +298,9 @@ const Register = () => {
                                                         value={form.gender}
                                                         onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                                     >
-                                                        <FormControlLabel value={1} control={<Radio />} label="Male" />
-                                                        <FormControlLabel value={2} control={<Radio />} label="Female" />
-                                                        <FormControlLabel value={3} control={<Radio />} label="Other" />
+                                                        <FormControlLabel value={1} control={<Radio />} label={t('male')} />
+                                                        <FormControlLabel value={2} control={<Radio />} label={t('female')} />
+                                                        <FormControlLabel value={3} control={<Radio />} label={t('other')} />
                                                     </RadioGroup>
                                                     <div className="invalid-feedback">
                                                         { errors.gender }
@@ -307,7 +308,7 @@ const Register = () => {
                                                 </FormControl>
                                             </div>
                                             <div className="col-sm-2">
-                                                <label htmlFor="">Date of Birth<RequiredField/></label>
+                                                <label htmlFor="">{t('date_of_birth')}<RequiredField/></label>
                                             </div>
                                             <div className="col-sm-3">
                                                 <input 
@@ -323,7 +324,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">Place of Practice/Litigation<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3 col-form-label">{t('place_of_practice')}<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <FormControl>
                                                     <RadioGroup
@@ -333,8 +334,8 @@ const Register = () => {
                                                         value={form.litigation_place}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     >
-                                                        <FormControlLabel value={1} control={<Radio />} label="High Court" />
-                                                        <FormControlLabel value={2} control={<Radio />} label="District Court" />
+                                                        <FormControlLabel value={1} control={<Radio />} label={t('high_court')} />
+                                                        <FormControlLabel value={2} control={<Radio />} label={t('district_court')} />
                                                     </RadioGroup>
                                                 </FormControl>
                                             </div>
@@ -342,7 +343,7 @@ const Register = () => {
                                         { parseInt(form.user_type) === 1 && (
                                         <>
                                             <div className="form-group row mb-3">
-                                                <label htmlFor="#" className="col-sm-3 col-form-label">Bar Registration Number<RequiredField/></label>
+                                                <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>
                                                 <div className="col-sm-9">
                                                     <div className="row">
                                                         <div className="col-sm-3">
@@ -379,7 +380,7 @@ const Register = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group row mb-3">
-                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>Bar Registration Certificate<RequiredField/></label>
+                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
                                                 <div className="col-sm-9">
                                                     <Button
                                                         component="label"
@@ -389,7 +390,7 @@ const Register = () => {
                                                         color="warning"
                                                         startIcon={<CloudUploadIcon />}
                                                         >
-                                                        Upload Bar. Registration
+                                                        {t('upload_bar_certificate')}
                                                         <VisuallyHiddenInput 
                                                             type="file"
                                                             name="reg_certificate"
@@ -400,7 +401,7 @@ const Register = () => {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label htmlFor="" className="col-sm-3">Notary<RequiredField/></label>
+                                                <label htmlFor="" className="col-sm-3">{t('notary')}<RequiredField/></label>
                                                 <div className="col-md-9">
                                                 <FormControl>
                                                     <RadioGroup
@@ -410,15 +411,15 @@ const Register = () => {
                                                         value={form.is_notary}
                                                         onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                                     >
-                                                        <FormControlLabel value={true} control={<Radio />} label="Yes" />
-                                                        <FormControlLabel value={false} control={<Radio />} label="No" />
+                                                        <FormControlLabel value={true} control={<Radio />} label={t('yes')} />
+                                                        <FormControlLabel value={false} control={<Radio />} label={t('no')} />
                                                     </RadioGroup>
                                                 </FormControl>
                                                 </div>
                                             </div>
                                             { form.is_notary === "true" && (
                                             <div className="form-group row">
-                                                <label htmlFor="" className="col-sm-3">Appointment Date<RequiredField/></label>
+                                                <label htmlFor="" className="col-sm-3">{t('appointment_date')}<RequiredField/></label>
                                                 <div className="col-sm-3">
                                                     <input 
                                                         type="date"     
@@ -427,7 +428,7 @@ const Register = () => {
                                                     />
                                                 </div>
                                                 <div className="col-md-2">
-                                                    <label htmlFor="">Notary Order<RequiredField/></label>
+                                                    <label htmlFor="">{t('notary_order')}<RequiredField/></label>
                                                 </div>
                                                 <div className="col-md-4">
                                                     <Button
@@ -438,7 +439,7 @@ const Register = () => {
                                                         color="warning"
                                                         startIcon={<CloudUploadIcon />}
                                                         >
-                                                        Upload Notary Order
+                                                        {t('upload_notary_order')}
                                                         <VisuallyHiddenInput 
                                                             type="file"
                                                             name="notary_order"
@@ -453,7 +454,7 @@ const Register = () => {
                                         )}
                                         { parseInt(form.litigation_place) === 2 && (
                                             <div className="form-group row mb-3">
-                                                <label htmlFor="district" className='col-form-label col-sm-3'>District<RequiredField/></label>
+                                                <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
                                                 <div className="col-sm-6">
                                                     <select 
                                                         name="district" 
@@ -471,7 +472,7 @@ const Register = () => {
                                             </div>
                                         )}
                                         <div className="form-group row">
-                                            <label className="col-form-label col-sm-3 pt-0">Password<RequiredField/></label>
+                                            <label className="col-form-label col-sm-3 pt-0">{t('password')}<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
                                                     <input
@@ -501,7 +502,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3 pt-0">Confirm Password<RequiredField/></label>
+                                            <label className="col-form-label col-sm-3 pt-0">{t('confirm_password')}<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
                                                     <input
@@ -518,7 +519,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">Mobile Number<RequiredField/></label>
+                                            <label className="col-form-label col-sm-3">{t('mobile_number')}<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <FormControl className="mb-3" fullWidth>
                                                     <input 
@@ -540,7 +541,7 @@ const Register = () => {
                                                         color="primary" 
                                                         onClick={sendMobileOTP}
                                                     >
-                                                        Send OTP</Button>
+                                                        {t('send_otp')}</Button>
                                                 </div>
 
                                             )}
@@ -563,7 +564,7 @@ const Register = () => {
                                                                 color="success"
                                                                 onClick={() => verifyMobile(form.mobile_otp)}
                                                             >
-                                                            Verify</Button>
+                                                            {t('verify')}</Button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -571,12 +572,12 @@ const Register = () => {
                                             { mobileVerified && (
                                                 <p className="mt-2">
                                                     <CheckCircleRoundedIcon color="success"/>
-                                                    <span className="text-success ml-1"><strong>Verified</strong></span>
+                                                    <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
                                                 </p>
                                             )}
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">Email Address<RequiredField/></label>
+                                            <label className="col-form-label col-sm-3">{t('email_address')}<RequiredField/></label>
                                             <div className="col-sm-4">
                                                 <input 
                                                     type="email" 
@@ -596,7 +597,7 @@ const Register = () => {
                                                         color="primary" 
                                                         onClick={sendEmailOTP}
                                                     >
-                                                        Send OTP</Button>
+                                                        {t('send_otp')}</Button>
                                                 </div>
                                             )}
                                             { emailLoading && (<Spinner variant="primary"/>)}
@@ -617,7 +618,7 @@ const Register = () => {
                                                                 variant="contained" 
                                                                 color="success"
                                                                 onClick={() => verifyEmail(form.email_otp)}
-                                                            >Verify</Button>
+                                                            >{t('verify')}</Button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -625,12 +626,12 @@ const Register = () => {
                                             { emailVerified && (
                                             <p className="mt-2">
                                                 <CheckCircleRoundedIcon color="success"/>
-                                                <span className="text-success ml-1"><strong>Verified</strong></span>
+                                                <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
                                             </p>
                                             )}
                                         </div>
                                         <div className="form-group row">
-                                            <label htmlFor="address" className="col form-label col-sm 3">Address</label>
+                                            <label htmlFor="address" className="col form-label col-sm 3">{t('address')}</label>
                                             <div className="col-sm-9">
                                                 <textarea 
                                                     name="address"
@@ -641,7 +642,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="photo" className='col-form-label col-sm-3'>Upload Photo</label>
+                                            <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}</label>
                                             <div className="col-sm-9">
                                                 <Button
                                                     component="label"
@@ -651,7 +652,7 @@ const Register = () => {
                                                     tabIndex={-1}
                                                     startIcon={<CloudUploadIcon />}
                                                     >
-                                                    Upload Photo
+                                                    {t('upload_photo')}
                                                     <VisuallyHiddenInput 
                                                         type="file" 
                                                         name="profile_photo"
@@ -662,7 +663,7 @@ const Register = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="address_proof" className='col-form-label col-sm-3'>Identity Proof</label>
+                                            <label htmlFor="address_proof" className='col-form-label col-sm-3'>{t('identity_proof')}</label>
                                             <div className="col-sm-9">
                                                 <Button
                                                     component="label"
@@ -672,7 +673,7 @@ const Register = () => {
                                                     tabIndex={-1}
                                                     startIcon={<CloudUploadIcon />}
                                                     >
-                                                    Upload Identity Proof
+                                                    {t('upload_proof')}
                                                     <VisuallyHiddenInput 
                                                         type="file"
                                                         name="identity_proof"
@@ -690,7 +691,7 @@ const Register = () => {
                                                 startIcon={<PersonAddIcon />}
                                                 onClick={handleSubmit}
                                             >
-                                                Register
+                                                {t('register')}
                                             </Button>
                                         </div>
                                     </div>

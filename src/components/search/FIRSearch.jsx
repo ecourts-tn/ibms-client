@@ -23,12 +23,12 @@ const FIRSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations} = useContext(PoliceStationContext)
-    const { t } = useTranslation()
+    const {t} = useTranslation()
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)
-    const[errors, setErrors] = useState({})
-    const[notFound, setNotFound] = useState('')
+    const [errors, setErrors] = useState({})
+    const [notFound, setNotFound] = useState('')
     const initialState = {
         state: '',
         rdistrict: '',
@@ -37,15 +37,14 @@ const FIRSearch = () => {
         crime_number:'',
         year:''
     }
-    const[form, setForm] = useState(initialState)
-
+    const [form, setForm] = useState(initialState)
     const validationSchema = Yup.object({
-        state: Yup.string().required("Please select state"),
-        rdistrict: Yup.string().required("Please select district"),
-        pdistrict: Yup.string().required("Please select district"),
-        police_station: Yup.string().required("Please select police station"),
-        crime_number: Yup.number().required("Please enter FIR number").typeError("This field should be numeric"),
-        year: Yup.number().required("Please enter year").typeError("This field should be numeric")
+        state: Yup.string().required(t('errors.state_required')),
+        rdistrict: Yup.string().required(t('errors.district_required')),
+        pdistrict: Yup.string().required(t('errors.district_required')),
+        police_station: Yup.string().required(t('errors.station_required')),
+        crime_number: Yup.number().required("Please enter FIR number").typeError(t('errors.numeric')),
+        year: Yup.number().required("Please enter year").typeError(t('errors.numeric'))
     })
 
     const handleSearch = async (e) => {
@@ -84,8 +83,8 @@ const FIRSearch = () => {
                     setNotFound('')
                 }
                 else{
-                    setNotFound('FIR details not found!!!.')
-                    setShowAdditionalFields(true)
+                    setNotFound(t('errors.fir_not_found'))
+                    setShowAdditionalFields(false)
                     setForm(initialState)
                 }
             }
@@ -99,8 +98,7 @@ const FIRSearch = () => {
             }
         }
     }
-    console.log(states)
-    console.log(districts)
+
     return (
         <>
             <div className="row">
@@ -157,14 +155,14 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-5">
                     <div className="form-group">
-                    <label htmlFor="police_station">{t('police_station')}<RequiredField/></label><br />
-                    <Select 
-                        name="police_station"
-                        options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
-                        className={`${errors.district ? 'is-invalid' : null}`}
-                        onChange={(e) => setForm({...form, police_station:e.value})}
-                    />
-                    <div className="invalid-feedback">{ errors.police_station }</div>
+                        <label htmlFor="police_station">{t('police_station')}<RequiredField/></label><br />
+                        <Select 
+                            name="police_station"
+                            options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
+                            className={`${errors.police_station ? 'is-invalid' : null}`}
+                            onChange={(e) => setForm({...form, police_station:e.value})}
+                        />
+                        <div className="invalid-feedback">{ errors.police_station }</div>
                     </div>
                 </div>
                 <div className="col-md-2">

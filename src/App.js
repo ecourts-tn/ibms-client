@@ -1,6 +1,6 @@
 import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
@@ -44,13 +44,7 @@ import { AppProvider } from 'contexts/AppContext';
 
 function App() {
   
-  const { t, i18n } = useTranslation();
-  
-    const changeLanguage = (lng) => {
-      i18n.changeLanguage(lng);
-    };
-
- return (
+  return (
     <>
       <HashRouter>
         <AuthProvider>
