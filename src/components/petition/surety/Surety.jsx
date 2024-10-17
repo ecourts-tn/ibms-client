@@ -239,9 +239,9 @@ const Surety = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Surety Petition</li>
+                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('surety')}</li>
                             </ol>
                         </nav>
                         <div className="card">

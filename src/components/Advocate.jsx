@@ -104,10 +104,10 @@ const AdvocateForm = ({setAdvocates}) => {
     const[errors, setErrors] = useState({})
     const {t} = useTranslation()
     const validationSchema = Yup.object({
-        adv_name: Yup.string().required(),
-        adv_email: Yup.string().email().required(),
-        adv_mobile: Yup.string().required(),
-        adv_reg: Yup.string().required()
+        adv_name: Yup.string().required(t('errors.adv_name_required')),
+        adv_email: Yup.string().email().required(t('errors.adv_email_required')),
+        adv_mobile: Yup.string().required(t('errors.adv_mobile_required')),
+        adv_reg: Yup.string().required(t('errors.adv_reg_required'))
     })
 
 
@@ -159,6 +159,9 @@ const AdvocateForm = ({setAdvocates}) => {
                                 onChange={ handleChange }
                                 className={`${errors.adv_name ? 'is-invalid' : ''}`}
                             ></Form.Control>
+                            <div className="invalid-feedback">
+                                { errors.adv_name }
+                            </div>
                         </div>
                     </Form.Group>
                     <Form.Group className="row mb-3">

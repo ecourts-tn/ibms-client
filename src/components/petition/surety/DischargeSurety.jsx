@@ -11,6 +11,11 @@ import * as Yup from 'yup'
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { TalukContext } from 'contexts/TalukContext';
+import { useTranslation } from 'react-i18next';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import SearchIcon from '@mui/icons-material/Search'
+import SearchForm from '../SearchForm';
 
 
 const DischargeSurety = () => {
@@ -18,6 +23,9 @@ const DischargeSurety = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {taluks}  = useContext(TalukContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {benchtypes} = useContext(BenchTypeContext)
+    const {t} = useTranslation()
 
     const initialState = {
         cino: '',
@@ -78,10 +86,16 @@ const DischargeSurety = () => {
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
-        case_type:null,
-        case_number: undefined,
-        case_year: undefined
+        court_type:1,
+        bench_type:'',
+        state:'',
+        district:'',
+        establishment:'',
+        case_type: '',
+        reg_number: '',
+        reg_year: ''
     })
+    const [errors, setErrors] = useState({})
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -89,12 +103,6 @@ const DischargeSurety = () => {
     })
 
     const[searchErrors, setSearchErrors]            = useState({})
-    const[businessStates, setBusinessStates]        = useState([])
-    const[businessDistricts, setBusinessDistricts]  = useState([])
-    const[businessTaluks, setBusinessTaluks]        = useState([])
-    const[employerStates, setEmployerStates]        = useState([])
-    const[employerDistricts, setEmployerDistricts]  = useState([])
-    const[employerTaluks, setEmployerTaluks]        = useState([])
     const[relations, setRelations]                  = useState([])
 
     const stepperRef = useRef(null);
@@ -133,104 +141,6 @@ const DischargeSurety = () => {
     },[])
 
 
-    useEffect(() => {
-        async function fetchState(){
-            try{
-                const response = await api.get(`api/base/state/`)
-                if(response.status === 200){
-                    setBusinessStates(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchState()
-    }, [])
-
-
-    useEffect(() => {
-        async function fetchState(){
-            try{
-                const response = await api.get(`api/base/state/`)
-                if(response.status === 200){
-                    setEmployerStates(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        fetchState()
-    }, [])
-
-
-    useEffect(() => {
-        async function fetchDistrict(){
-            try{
-                const response = await api.get(`api/base/state/${form.business_state}/district/`)
-                if(response.status === 200){
-                    setBusinessDistricts(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.business_state !== ''){
-            fetchDistrict()
-        }
-    }, [form.business_state])
-
-
-    useEffect(() => {
-        async function fetchDistrict(){
-            try{
-                const response = await api.get(`api/base/state/${form.employer_state}/district/`)
-                if(response.status === 200){
-                    setEmployerDistricts(response.data)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.employer_state !== ''){
-            fetchDistrict()
-        }
-    }, [form.employer_state])
-
-
-    useEffect(() => {
-        async function fetchTaluk(){
-            try{
-                const response = await api.get(`api/base/district/${form.business_district}/taluk/`)
-                if(response.status === 200){
-                    setBusinessTaluks(response.data)
-                    console.log(businessTaluks)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.business_district !== ''){
-            fetchTaluk()
-        }
-    },[form.business_district])
-
-
-    useEffect(() => {
-        async function fetchTaluk(){
-            try{
-                const response = await api.get(`api/base/district/${form.employer_district}/taluk/`)
-                if(response.status === 200){
-                    setEmployerTaluks(response.data)
-                    console.log(employerTaluks)
-                }
-            }catch(error){
-                console.log(error)
-            }
-        }
-        if(form.employer_district !== ''){
-            fetchTaluk()
-        }
-    },[form.employer_district])
 
     useEffect(() => {
         async function fetchRelation(){
@@ -308,9 +218,9 @@ const DischargeSurety = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Discharge of Surety</li>
+                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('discharge_surety')}</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -353,7 +263,7 @@ const DischargeSurety = () => {
                                                                 checked={ parseInt(searchPetition) === 1 ? true : false}
                                                                 onChange={(e) => setSearchPetition(1)} 
                                                             />
-                                                            <label htmlFor="searchPetitionYes">Select from My Petitions</label>
+                                                            <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
                                                             </div>
                                                             <div className="icheck-primary d-inline mx-2">
                                                             <input 
@@ -364,7 +274,7 @@ const DischargeSurety = () => {
                                                                 checked={ parseInt(searchPetition) === 2 ? true : false } 
                                                                 onChange={(e) => setSearchPetition(2)}
                                                             />
-                                                            <label htmlFor="searchPetitionNo">Search Petition</label>
+                                                            <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -398,67 +308,182 @@ const DischargeSurety = () => {
                                                 </div>
                                                 <div className="col-md-8 offset-2">
                                                     { parseInt(searchPetition) === 2 && (
-                                                    <form onSubmit={handleSearch}>
-                                                        <div className="row">
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_type">Case Type</label>
-                                                                    <select 
-                                                                        name="case_type" 
-                                                                        className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
-                                                                        value={searchForm.case_type}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    >
-                                                                        <option value="">Select Case Type</option>
-                                                                        <option value="1">Bail Petition</option>
-                                                                    </select>
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_type }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_number">Case Number</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
-                                                                        name="case_number"
-                                                                        value={searchForm.case_number}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_number }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-4">
-                                                                <div className="form-group">
-                                                                    <label htmlFor="case_year">Year</label>
-                                                                    <input 
-                                                                        type="text" 
-                                                                        className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
-                                                                        name="case_year"
-                                                                        value={searchForm.case_year}
-                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                                    />
-                                                                    <div className="invalid-feedback">
-                                                                        { searchErrors.case_year }
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div className="col-md-12 d-flex justify-content-center">
-                                                                { parseInt(searchPetition) === 2 && (
-                                                                <Button
-                                                                    variant='contained'
-                                                                    type="submit"
-                                                                    color="success"
-                                                                    onClick={handleSearch}
-                                                                >Search</Button>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    </form>
+                                                    // <form>
+                                                    //     <div className="row">
+                                                    //         <div className="col-md-12 d-flex justify-content-center">
+                                                    //             <div className="form-group">
+                                                    //                 <div className="icheck-success d-inline mx-2">
+                                                    //                     <input 
+                                                    //                         type="radio" 
+                                                    //                         name="court_type" 
+                                                    //                         id="court_type_hc" 
+                                                    //                         value={ searchForm.court_type }
+                                                    //                         checked={parseInt(searchForm.court_type) === 1 ? true : false }
+                                                    //                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
+                                                    //                     />
+                                                    //                     <label htmlFor="court_type_hc">{t('high_court')}</label>
+                                                    //                 </div>
+                                                    //                 <div className="icheck-success d-inline mx-2">
+                                                    //                     <input 
+                                                    //                         type="radio" 
+                                                    //                         id="court_type_dc" 
+                                                    //                         name="court_type" 
+                                                    //                         value={searchForm.court_type}
+                                                    //                         checked={parseInt(searchForm.court_type) === 2 ? true : false } 
+                                                    //                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
+                                                    //                     />
+                                                    //                     <label htmlFor="court_type_dc">{t('district_court')}</label>
+                                                    //                 </div>
+                                                    //             </div>
+                                                    //         </div>
+                                                    //         <div className="col-md-6 offset-md-3">
+                                                    //             { parseInt(searchForm.court_type) === 2 && (
+                                                    //                 <div className="row">
+                                                    //                     <div className="col-md-6">
+                                                    //                         <div className="form-group">
+                                                    //                             <label htmlFor="">{t('state')}</label>
+                                                    //                             <select 
+                                                    //                                 name="state" 
+                                                    //                                 className={`form-control ${errors.state ? 'is-invalid': ''}`}
+                                                    //                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                    //                             >
+                                                    //                                 <option value="">Select state</option>
+                                                    //                                 { states.map((state, index) => (
+                                                    //                                 <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                    //                                 ))}
+                                                    //                             </select>
+                                                    //                             <div className="invalid-feedback">
+                                                    //                                 { searchErrors.state }
+                                                    //                             </div>
+                                                    //                         </div>
+                                                    //                     </div>
+                                                    //                     <div className="col-md-6">
+                                                    //                         <div className="form-group">
+                                                    //                             <label htmlFor="">{t('district')}</label>
+                                                    //                             <select 
+                                                    //                                 name="district" 
+                                                    //                                 className={`form-control ${errors.district ? 'is-invalid': ''}`}
+                                                    //                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                    //                             >
+                                                    //                                 <option value="">Select district</option>
+                                                    //                                 { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
+                                                    //                                     <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                    //                                 ))}
+                                                    //                             </select>
+                                                    //                             <div className="invalid-feedback">
+                                                    //                                 { searchErrors.district }
+                                                    //                             </div>
+                                                    //                         </div>
+                                                    //                     </div>
+                                                    //                 </div>
+                                                    //             )}
+                                                    //             <div className="row">
+                                                    //                 { parseInt(searchForm.court_type) === 2 && (
+                                                    //                 <div className="col-md-8">
+                                                    //                     <div className="form-group">
+                                                    //                         <label htmlFor="">{t('est_name')}</label>
+                                                    //                         <select 
+                                                    //                             name="establishment" 
+                                                    //                             className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
+                                                    //                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                    //                         >
+                                                    //                             <option value="">Select establishment</option>
+                                                    //                             {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
+                                                    //                                 <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                    //                             ))}
+                                                    //                         </select>
+                                                    //                         <div className="invalid-feedback">
+                                                    //                             { searchErrors.establishment }
+                                                    //                         </div>
+                                                    //                     </div>
+                                                    //                 </div>
+                                                    //                 )}
+                                                    //                 { parseInt(searchForm.court_type) === 1 && (
+                                                    //                 <div className="col-md-8">
+                                                    //                     <div className="form-group">
+                                                    //                         <label htmlFor="">{t('hc_bench')}</label>
+                                                    //                         <select 
+                                                    //                             name="bench_type" 
+                                                    //                             className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                    //                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                    //                         >
+                                                    //                             <option value="">Select bench</option>
+                                                    //                             {benchtypes.map((b, index)=>(
+                                                    //                                 <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                    //                             ))}
+                                                    //                         </select>
+                                                    //                         <div className="invalid-feedback">
+                                                    //                             { searchErrors.bench_type }
+                                                    //                         </div>
+                                                    //                     </div>
+                                                    //                 </div>
+                                                    //                 )}
+                                                    //                 <div className="col-md-4">
+                                                    //                     <label htmlFor="case_type">{t('case_type')}</label>
+                                                    //                     <select 
+                                                    //                         name="case_type" 
+                                                    //                         id="case_type" 
+                                                    //                         className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
+                                                    //                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
+                                                    //                     >
+                                                    //                         <option value="">Select case type</option>
+                                                    //                         <option value="1">Bail Application</option>
+                                                    //                     </select>
+                                                    //                     <div className="invalid-feedback">
+                                                    //                         { searchErrors.case_type }
+                                                    //                     </div>
+                                                    //                 </div>
+                                                    //             </div>
+                                                    //             <div className="row">
+                                                    //                 <div className="col-md-10 offset-md-1">
+                                                    //                     <div className="row">
+                                                    //                         <div className="col-md-5">
+                                                    //                             <div className="form-group">
+                                                    //                                 <input 
+                                                    //                                     type="text" 
+                                                    //                                     className={`form-control ${searchErrors.reg_number ? 'is-invalid': ''}`}
+                                                    //                                     name="reg_number"
+                                                    //                                     value={searchForm.reg_number}
+                                                    //                                     onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                    //                                     placeholder={t('case_number')}
+                                                    //                                 />
+                                                    //                                 <div className="invalid-feedback">
+                                                    //                                     { searchErrors.reg_number }
+                                                    //                                 </div>
+                                                    //                             </div>
+                                                    //                         </div>
+                                                    //                         <div className="col-md-4">
+                                                    //                             <div className="form-group">
+                                                    //                                 <input 
+                                                    //                                     type="text" 
+                                                    //                                     className={`form-control ${searchErrors.reg_year ? 'is-invalid': ''}`}
+                                                    //                                     name="reg_year"
+                                                    //                                     value={searchForm.reg_year}
+                                                    //                                     onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                    //                                     placeholder={t('case_year')}
+                                                    //                                 />
+                                                    //                                 <div className="invalid-feedback">
+                                                    //                                     { searchErrors.reg_year }
+                                                    //                                 </div>
+                                                    //                             </div>
+                                                    //                         </div>
+                                                    //                         <div className="col-md-3">
+                                                    //                             <Button 
+                                                    //                                 variant='contained'
+                                                    //                                 color="primary"
+                                                    //                                 endIcon={<SearchIcon />}
+                                                    //                                 onClick={handleSearch}
+                                                    //                             >
+                                                    //                                 {t('search')}
+                                                    //                             </Button>
+                                                    //                         </div>
+                                                    //                     </div>
+                                                    //                 </div>
+                                                    //             </div>
+                                                    //         </div>
+                                                    //     </div>
+                                                    // </form>
+                                                    <SearchForm />
                                                     )}
                                                 </div>
                                                 <div className="container-fluid mt-5 px-5">
@@ -817,7 +842,7 @@ const DischargeSurety = () => {
                                                                                     onChange={handleChange}
                                                                                 >
                                                                                     <option value="">Select district</option>
-                                                                                    { employerDistricts.map((district, index) => (
+                                                                                    { districts.filter(d=>parseInt(form.employer_state) === parseInt(d.state)).map((district, index) => (
                                                                                     <option value={district.district_code} key={index}>{district.district_name}</option>
                                                                                     ))}
                                                                                 </select>
@@ -833,7 +858,7 @@ const DischargeSurety = () => {
                                                                                     onChange={handleChange}
                                                                                 >
                                                                                     <option value="">Select taluk</option>
-                                                                                    { employerTaluks.map((taluk, index) => (
+                                                                                    { taluks.filter(t=>parseInt(form.employer_district) === t.district).map((taluk, index) => (
                                                                                     <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
                                                                                     ))}
                                                                                 </select>
@@ -944,7 +969,7 @@ const DischargeSurety = () => {
                                                                                     onChange={handleChange}
                                                                                 >
                                                                                     <option value="">Select district</option>
-                                                                                    { businessDistricts.map((district, index) => (
+                                                                                    { districts.filter(d=>parseInt(form.business_state) === parseInt(d.state)).map((district, index) => (
                                                                                     <option value={district.district_code} key={index}>{district.district_name}</option>
                                                                                     ))}
                                                                                 </select>
@@ -960,7 +985,7 @@ const DischargeSurety = () => {
                                                                                     onChange={handleChange}
                                                                                 >
                                                                                     <option value="">Select taluk</option>
-                                                                                    { businessTaluks.map((taluk, index) => (
+                                                                                    { taluks.filter(t=>parseInt(form.business_district)===t.district).map((taluk, index) => (
                                                                                     <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
                                                                                     ))}
                                                                                 </select>

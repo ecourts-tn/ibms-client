@@ -42,57 +42,13 @@ const Header = () => {
   return (
     <>
       <ToastContainer />
-      <nav className="navbar navbar-expand-lg primary-navbar">
+      <nav className="navbar navbar-expand-lg public-navbar">
         <div className="container">
-          <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <a className="navbar-brand" href="#">{t('title')}</a>
+          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"/>
           </button>
-          <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent1">
-          <div className="resize-icons">
-                        <button type="button" className="btn btn-default">
-                            <i className="fa fa-sitemap"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="decreaseFont">
-                            <i className="fa fa-font"></i>-
-                        </button>
-                        <button type="button" className="btn btn-default" id="defaultFont">
-                            <i className="fa fa-font"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="increaseFont">
-                            <i className="fa fa-font"></i>+
-                        </button>
-                        <button type="button" className="btn btn-default" id="highContrast">
-                            <i className="fa fa-adjust"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="normalMode">
-                            <i className="fa fa-adjust" style={{color:'#ffb600'}}></i>
-                        </button>
-                        <span className="ml-3 text-white">Screen Reader Access</span>
-                    </div>
-            <ul className="navbar-nav ml-md-5">
-              { isAuth && (
-                <li className="nav-item dropdown">
-                  <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <AccountCircleIcon /> {user.user.userlogin || 'User'}
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>
-                    <Link to="/auth/change-password" className="nav-link">{t('change_password')}</Link>
-                    <Link onClick={handleLogout} className="nav-link">{t('logout')}</Link>
-                  </div>
-                </li>
-              )}
-              <li className="nav-item">
-                <a href="#/" className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}><strong>{language === 'en' ? 'தமிழ்' : 'English'}</strong></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      <nav className="navbar navbar-expand-lg secondary-navbar">
-        <div className="container">
-          <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav ml-md-5">
               <li className="nav-item active">
                 <Link to="/" className="nav-link">{t('home')}</Link>
@@ -144,6 +100,21 @@ const Header = () => {
               </li>
               <li className="nav-item">
                 <Link to="#" className="nav-link nav-link-order">{t('verify_order')}</Link>
+              </li>
+              { isAuth && (
+                <li className="nav-item dropdown">
+                  <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <AccountCircleIcon /> {user.user.userlogin || 'User'}
+                  </a>
+                  <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>
+                    <Link to="/auth/change-password" className="nav-link">{t('change_password')}</Link>
+                    <Link onClick={handleLogout} className="nav-link">{t('logout')}</Link>
+                  </div>
+                </li>
+              )}
+              <li className="nav-item">
+                <a href="#/" className="btn btn-sm btn-warning mt-1 px-2 ml-2" onClick={toggleLanguage}><strong>{language === 'en' ? 'தமிழ்' : 'English'}</strong></a>
               </li>
             </ul>
           </div>

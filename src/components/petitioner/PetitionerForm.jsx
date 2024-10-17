@@ -66,21 +66,21 @@ const PetitionerForm = ({addPetitioner}) => {
   const validationSchema = Yup.object({
     litigant_name: Yup.string().required(t('errors.litigant_name_required')),
     gender: Yup.string().required(t('errors.gender_required')),
-    relation: Yup.string().required('Relation is required'),
-    relation_name: Yup.string().required('Relation name is required'),
+    relation: Yup.string().required(t('errors.relation_required')),
+    relation_name: Yup.string().required(t('errors.relation_name_required')),
     age: Yup.number()
-      .required('Age is required')
-      .typeError('Age must be a number'),
-    rank: Yup.string().required('Rank is required'),
-    gender: Yup.string().required('Gender is required'),
-    address: Yup.string().required('Address is required'),
+      .required(t('errors.age_required'))
+      .typeError(t('errors.numeric')),
+    rank: Yup.string().required(t('errors.rank_required')),
+    gender: Yup.string().required(t('errors.gender_required')),
+    address: Yup.string().required(t('errors.address_required')),
     mobile_number: Yup.number()
-      .required('Mobile number is required')
-      .typeError('Mobile number must be numeric'),
-    proof_number: Yup.string().required('Identify proof number is required'),
-    act: Yup.string().required('Act is required'),
-    section: Yup.string().required('Section is required'),
-    is_custody: Yup.boolean().required('Custody status is required'),
+      .required(t('errors.mobile_required'))
+      .typeError(t('errors.numeric')),
+    proof_number: Yup.string().required(t('errors.identity_proof_required')),
+    act: Yup.string().required(t('errors.act_required')),
+    section: Yup.string().required(t('errors.section_required')),
+    is_custody: Yup.boolean().required(t('errors.is_custody_required')),
   
     // prison: Yup.string()
     //   .when('is_custody', {

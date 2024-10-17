@@ -30,10 +30,10 @@ const RespondentForm = ({addRespondent}) => {
     const[respondentPolice, setRespondentPolice] = useState(false)  
 
     const validationSchema = Yup.object({
-        litigant_name: Yup.string().required(),
-        designation: Yup.string().required(),
-        address: Yup.string().required(),
-        district: Yup.string().required()
+        litigant_name: Yup.string().required(t('errors.litigant_name_required')),
+        designation: Yup.string().required(t('errors.designation_required')),
+        address: Yup.string().required(t('errors.address_required')),
+        district: Yup.string().required(t('errors.district_required'))
     })
     const[errors, setErrors] = useState({})
 

@@ -33,11 +33,28 @@ const FilingSearch = () => {
     const[objection, setObjection] = useState([])
     const[caseDetails, setCaseDetails] = useState(false)
     const validationSchema = Yup.object({
-        state:Yup.string().required(),
-        district: Yup.string().required(),
-        establishment: Yup.string().required(),
-        filing_number: Yup.number().typeError('This field should be a number').required(),
-        filing_year: Yup.number().typeError('This field should be a number').required()
+        bench_type: Yup.string().when("court_type",(court_type, schema) => {
+            if(parseInt(court_type) === 1){
+                return schema.required(t('errors.bench_required'))
+            }
+        }),
+        state: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.est_required'))
+            }
+        }),
+        filing_number: Yup.number().typeError(t('errors.numeric')).required(),
+        filing_year: Yup.number().typeError(t('errors.numeric')).required()
     })
     const handleSubmit = async() => {
         try{
@@ -184,7 +201,7 @@ const FilingSearch = () => {
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
-                                                { errors.establishment }
+                                                { errors.bench_type }
                                             </div>
                                         </div>
                                     </div>

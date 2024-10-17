@@ -36,12 +36,29 @@ const RegistrationSearch = () => {
     })
     const[errors, setErrors] = useState({})
     const validationSchema = Yup.object({
-        state: Yup.string().required(),
-        district: Yup.string().required(),
-        establishment: Yup.string().required(),
-        case_type: Yup.string().required(),
-        reg_number: Yup.number().typeError('This field should be a number').required(),
-        reg_year: Yup.number().typeError('This field should be a number').required()
+        bench_type: Yup.string().when("court_type",(court_type, schema) => {
+            if(parseInt(court_type) === 1){
+                return schema.required(t('errors.bench_required'))
+            }
+        }),
+        state: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.est_required'))
+            }
+        }),
+        case_type: Yup.string().required(t('errors.case_type_required')),
+        reg_number: Yup.number().typeError(t('errors.numeric')).required(),
+        reg_year: Yup.number().typeError(t('errors.numeric')).required()
     })
 
 

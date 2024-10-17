@@ -312,10 +312,22 @@
     "upload_bar_certificate": "Upload Bar Certificate",
 
     "alerts": {
+        "select_state": "Select state",
+        "select_district": "Select district",
+        "select_establishment": "Select establishment",
+        "select_court": "Select court",
+        "select_court_type": "Select court type",
+        "select_case_type": "Select case type",
+        "select_bench_type": "Select bench type",
+        "select_bail_type": "Select bail type",
+        "select_complaint_type": "Select complaint type",
         "submit_success": "{efile_no} details submitted successfully",
         "logged_out": "You are logged out successfully"
     },
     "errors": {
+        "username_required": "Username is required",
+        "password_required": "Password is required",
+        "usertype_required": "Please select the usertype",
         "bench_required": "Please select the bench type",
         "state_requried": "Please select the state",
         "district_required": "Please select the district",
@@ -323,11 +335,27 @@
         "court_required": "Please select the court",
         "bail_required": "Please select the bail type",
         "complaint_required": "Please select the complaint type",
+        "case_type_required": "Please select the case type",
         "station_required": "Please select the police station",
         "numeric": "This field should be numeric",
         "fir_not_found": "FIR details not found!!!",
         "litigant_name_required": "Litigant name is required",
-        "gender_required": "Please select the gender"
+        "designation_required": "Please select the designation",
+        "rank_required": "Please enter the Rank",
+        "gender_required": "Please select the gender",
+        "relation_required": "Please select the parantage",
+        "relation_name": "Please enter parantage name",
+        "age_required":"Please enter the age",
+        "act_required": "Please enter the Act",
+        "section_required": "Please enter the Section(s)",
+        "address_required": "Please enter the Address",
+        "identity_proof_required": "Please select the Proof",
+        "identity_number_required": "Please enter the identity number",
+        "mobile_required": "Please enter the mobile number",
+        "adv_name_required": "Please enter the Advocate Name",
+        "adv_reg_required": "Please enter the Enrolment Number",
+        "adv_mobile_required": "Please enter the Advocate Mobile Number",
+        "adv_email_required": "Please enter the Advocate E-Mail Address"
     }
 }
   

@@ -77,9 +77,9 @@ const Login = () => {
     const[errors, setErrors] = useState({})
 
     const validationSchema = Yup.object({
-        usertype: Yup.string().required("Please select the usertype"),
-        username: Yup.string().required("Username is required"),
-        password: Yup.string().required("Password is required")
+        usertype: Yup.string().required(t('errors.usertype_required')),
+        username: Yup.string().required(t('errors.username_required')),
+        password: Yup.string().required(t('errors.password_required'))
     })
 
     const handleSubmit = async (e) => {
