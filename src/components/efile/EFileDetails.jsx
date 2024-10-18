@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { CreateMarkup } from '../../utils'
 import api from '../../api'
+import { useTranslation } from 'react-i18next'
 
 const EFileDetails = () => {
 
@@ -8,6 +9,7 @@ const EFileDetails = () => {
     const[litigants, setLitigants] = useState([])
     const[respondents, setRespondents] = useState([])
     const[grounds, setGrounds] = useState([])
+    const {t} = useTranslation()
 
     useEffect(() => {
         async function fetchData(){
@@ -30,7 +32,7 @@ const EFileDetails = () => {
         <>
             <div className="card card-outline card-info">
                 <div className="card-header pb-0">
-                    <h3 className="card-title"><strong>Basic Details</strong></h3>
+                    <h3 className="card-title"><strong>{t('basic_details')}</strong></h3>
                 </div>
                 <div className="card-body p-2">
                     { Object.keys(petition).length > 0 && (
@@ -78,19 +80,19 @@ const EFileDetails = () => {
             </div>
             <div className="card card-outline card-success">
                 <div className="card-header pb-0">
-                    <h3 className="card-title"><strong>Petitioners</strong></h3>
+                    <h3 className="card-title"><strong>{t('petitioners')}</strong></h3>
                 </div>
                 <div className="card-body p-2">
                     <table className="table table-bordered table-striped table-sm">
                         <thead className="bg-dark">
                             <tr>
-                                <th>S.&nbsp;No.</th>
-                                <th>Petitioner&nbsp;Name</th>
-                                <th>Gender</th>
-                                <th>Age</th>
-                                <th width="500">Address</th>
-                                <th>Act</th>
-                                <th>Section</th>
+                                <th>{t('sl_no')}</th>
+                                <th>{t('petitioner_name')}</th>
+                                <th>{t('gender')}</th>
+                                <th>{t('age')}</th>
+                                <th width="500">{t('address')}</th>
+                                <th>{t('act')}</th>
+                                <th>{t('section')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,16 +113,16 @@ const EFileDetails = () => {
             </div>
             <div className="card card-outline card-info">
                 <div className="card-header pb-0">
-                    <h3 className="card-title"><strong>Respondents</strong></h3>
+                    <h3 className="card-title"><strong>{t('respondents')}</strong></h3>
                 </div>
                 <div className="card-body p-2">
                     <table className="table table-bordered table-striped table-sm">
                         <thead className="bg-dark">
                             <tr>
-                                <th>S. No.</th>
-                                <th>Respondent&nbsp;Name</th>
-                                <th>Designation</th>
-                                <th>Address</th>
+                                <th>{t('sl_no')}</th>
+                                <th>{t('respondent_name')}</th>
+                                <th>{t('designation')}</th>
+                                <th>{t('address')}</th>
                                 {/* <th>District</th> */}
                             </tr>
                         </thead>
@@ -140,7 +142,7 @@ const EFileDetails = () => {
             </div>
             <div className="card card-outline card-primary">
                 <div className="card-header pb-0">
-                    <h3 className="card-title"><strong>Grounds</strong></h3>
+                    <h3 className="card-title"><strong>{t('ground')}</strong></h3>
                 </div>
                 <div className="card-body p-2">
                     { grounds.map((ground, index) => (

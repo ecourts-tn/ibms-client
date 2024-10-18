@@ -100,7 +100,7 @@ const EFile = () => {
                     size="xl"
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title><strong>Draft Application</strong></Modal.Title>
+                        <Modal.Title><strong>{t('draft_application')}</strong></Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <EFileDetails />
@@ -134,7 +134,7 @@ const EFile = () => {
                         </div>
                         <div>
                             <Button variant="contained" onClick={handleClose}>
-                                Close
+                                {t('close')}
                             </Button>
                         </div>
                     </Modal.Footer>

@@ -30,7 +30,7 @@ const RespondentForm = ({addRespondent}) => {
     const[respondentPolice, setRespondentPolice] = useState(false)  
 
     const validationSchema = Yup.object({
-        litigant_name: Yup.string().required(t('errors.litigant_name_required')),
+        litigant_name: Yup.string().required(t('errors.respondent_name_required')),
         designation: Yup.string().required(t('errors.designation_required')),
         address: Yup.string().required(t('errors.address_required')),
         district: Yup.string().required(t('errors.district_required'))
@@ -235,7 +235,7 @@ const RespondentForm = ({addRespondent}) => {
                     <Button 
                         variant="secondary"
                         onClick={handleSubmit}>
-                        <i className="fa fa-plus mr-2"></i>Add Respondent</Button>
+                        <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
                 </div>
             </div>
             )}

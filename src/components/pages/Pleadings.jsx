@@ -9,6 +9,7 @@ import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import Editor  from 'react-simple-wysiwyg';
 import * as Yup from 'yup'
+import { useTranslation } from 'react-i18next';
 
 const Pleadings = () => {
 
@@ -17,6 +18,7 @@ const Pleadings = () => {
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
+    const {t} = useTranslation()
 
     const initialState = {
         efile_no: '',
@@ -227,9 +229,9 @@ const Pleadings = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#">Filing</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Pleadings</li>
+                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('pleadings')}</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -239,21 +241,21 @@ const Pleadings = () => {
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">Petition Details</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#payment">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">Payment</span>
+                                            <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">E-File</span>
+                                            <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
                                     </div>

@@ -115,7 +115,7 @@ const Dashboard = () => {
                             <div className="card">
                                 <div className="card-header border-0 bg-success">
                                 <h3 className="card-title">
-                                    <i className="far fa-calendar-alt" />
+                                    <i className="far fa-calendar-alt mr-2" />
                                     {t('calendar')}
                                 </h3>
                                 <div className="card-tools">

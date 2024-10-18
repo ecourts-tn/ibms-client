@@ -84,14 +84,14 @@ const Register = () => {
     const[emailVerified, setEmailVerified]   = useState(false)
 
     const validationSchema = Yup.object({
-        username: Yup.string().required(),
-        date_of_birth: Yup.string().required(),
+        username: Yup.string().required(t('errors.username_required')),
+        date_of_birth: Yup.string().required(t('errors.dob_required')),
         litigation_place: Yup.string().required(),
         gender: Yup.string().required(),
-        password: Yup.string().required(),
-        confirm_password: Yup.string().required('Confirm password is required').oneOf([Yup.ref('password'), null], 'Passwords must match'),
-        mobile: Yup.number().required().typeError("The mobile number should be numeric"),
-        email: Yup.string().email().required()
+        password: Yup.string().required(t('errors.password_required')),
+        confirm_password: Yup.string().required(t('errors.cpassword_required')).oneOf([Yup.ref('password'), null], 'Passwords must match'),
+        mobile: Yup.number().required(t('errors.mobile_required')).typeError(t('errors.numeric')),
+        email: Yup.string().email().required(t('errors.email_required'))
     })
 
     useEffect(() => {
@@ -111,12 +111,12 @@ const Register = () => {
 
     const sendMobileOTP = () => {
         if(form.mobile === ''){
-            toast.error("Please enter valid mobile number",{
+            toast.error(t('alerts.mobile_required'),{
                 theme:"colored"
             })
         }else{
             setMobileLoading(true)
-            toast.success("OTP has been sent your mobile number",{
+            toast.success(t('alerts.mobile_otp_sent'),{
                 theme:"colored"
             })
             setMobileLoading(false)
@@ -126,12 +126,12 @@ const Register = () => {
 
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
-            toast.success("Mobile opt verified successfully",{
+            toast.success(t('alerts.mobile_otp_verified'),{
                 theme:"colored"
             })
             setMobileVerified(true)
         }else{
-            toast.error("Invalid OTP. Please enter valid OTP",{
+            toast.error(t('alerts.invalid_otp'),{
                 theme:"colored"
             })
             setMobileVerified(false)
@@ -141,14 +141,14 @@ const Register = () => {
 
     const sendEmailOTP = async () => {
         if(form.email === ''){
-            toast.error("Please enter valid email address",{
+            toast.error(t('alerts.email_required'),{
                 theme:"colored"
             })
         }else{
             try{
                 setEmailLoading(true)
                 const response = await api.post("base/send-email-otp/", {email_address: form.email})
-                toast.success("OTP has been sent your email address",{
+                toast.success(t('alerts.email_otp_sent'),{
                     theme:"colored"
                 })
                 setEmailOtp(true)
@@ -167,14 +167,14 @@ const Register = () => {
                 otp: parseInt(otp)
             })
             if(response.status === 200){
-                toast.success("Email opt verified successfully",{
+                toast.success(t('alerts.email_otp_verified'),{
                     theme:"colored"
                 })
                 setEmailVerified(true)
             }
         }catch(err)
         {
-            toast.error("Invalid OTP. Please enter valid OTP",{
+            toast.error(t('alerts.invalid_otp'),{
                 theme:"colored"
             })
             setEmailVerified(false)

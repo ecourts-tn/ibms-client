@@ -19,6 +19,8 @@ import InitialInput from 'components/petition/InitialInput';
 import SuretyForm from './SuretyForm';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
+import GroundsContainer from 'components/Ground';
+import Document from 'components/Document';
 
 
 const Surety = () => {
@@ -111,10 +113,30 @@ const Surety = () => {
         complaint_type: 2,
         crime_registered: 2,
     })
-    const validationSchema = Yup.object({
-        case_type: Yup.string().required("Please select the case type"),
-        case_number: Yup.number().required("Please enter case number"),
-        case_year: Yup.number().required("Please enter the case year")
+    const searchSchema = Yup.object({
+        bench_type: Yup.string().when("court_type",(court_type, schema) => {
+            if(parseInt(court_type) === 1){
+                return schema.required(t('errors.bench_required'))
+            }
+        }),
+        state: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("court_type", (court_type, schema) => {
+            if(parseInt(court_type) === 2){
+                return schema.required(t('errors.est_required'))
+            }
+        }),
+        case_type: Yup.string().required(t('errors.case_type_required')),
+        reg_number: Yup.number().typeError(t('errors.numeric')).required(),
+        reg_year: Yup.number().typeError(t('errors.numeric')).required()
     })
 
     const[searchErrors, setSearchErrors]            = useState({})
@@ -262,9 +284,23 @@ const Surety = () => {
                                             </button>
                                         </div>
                                         <div className="line"></div>
-                                        <div className="step" data-target="#payment">
+                                        <div className="step" data-target="#grounds">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
+                                            <span className="bs-stepper-label">{t('ground')}</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#documents">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">4</span>
+                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
+                                            </button>
+                                        </div>
+                                        <div className="line"></div>
+                                        <div className="step" data-target="#payment">
+                                            <button className="step-trigger">
+                                            <span className="bs-stepper-circle">5</span>
                                             <span className="bs-stepper-label">{t('payment_details')}</span>
                                             </button>
                                         </div>
@@ -535,6 +571,20 @@ const Surety = () => {
                                             <div className="container-fluid mt-5 px-5">
                                                 <div className="row">                                    
                                                     <SuretyForm />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="grounds" className="content">
+                                            <div className="container-fluid mt-5 px-5">
+                                                <div className="row">                                    
+                                                   <GroundsContainer/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="documents" className="content">
+                                            <div className="container-fluid mt-5 px-5">
+                                                <div className="row">                                    
+                                                    <Document />
                                                 </div>
                                             </div>
                                         </div>

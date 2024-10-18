@@ -1,6 +1,6 @@
 import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React, {useEffect} from 'react';
+import React from 'react';
 import { Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
@@ -23,7 +23,6 @@ import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
 import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
-import { useTranslation } from 'react-i18next';
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "./hooks/useAuth";

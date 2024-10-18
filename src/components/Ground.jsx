@@ -13,7 +13,7 @@ const GroundsContainer = () => {
 
     const[grounds, setGrounds] = useState([])
     const[count, setCount] = useState(0)
-
+    const {t} = useTranslation()
     const incrementCount = () => {
         setCount(count+1)
     }
@@ -73,7 +73,7 @@ const GroundsContainer = () => {
         <div className="container-fluid m-0">
             <div className="card">
                 <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>Grounds</strong></h3>
+                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>{t('ground')}</strong></h3>
                 </div>
                 <div className="card-body p-1">
                     <div className="row">
@@ -105,6 +105,7 @@ export default GroundsContainer
 const GroundsForm = ({addGround, count, incrementCount}) => {
 
     const editorRef = useRef(null);
+    const {t} = useTranslation()
     const validationSchema = Yup.object({
         description: Yup.string().required("The description field may not be blank").max(3000, "Description should not be more than 3000 characters")
     })
@@ -153,7 +154,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
                         onClick={saveGround}
                     >
                         <i className="fa fa-plus mr-2"></i>
-                    Add Ground</Button>
+                    {t('add_ground')}</Button>
                 </div>    
             </>
             )}

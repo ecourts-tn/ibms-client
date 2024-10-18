@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
-import api from '../../api'
+import api from 'api'
+import { useTranslation } from 'react-i18next'
 
 const ChangePassword = () => {
 
@@ -12,11 +13,12 @@ const ChangePassword = () => {
     }
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
+    const {t} = useTranslation()
 
     const validationSchema = Yup.object({
-        old_password: Yup.string().required('Old password is required'),
-        new_password: Yup.string().required('New password is required'),
-        confirm_password: Yup.string().required('Confirm password is required').oneOf([Yup.ref('new_password'), null], 'Passwords must match')
+        old_password: Yup.string().required(t('errors.old_password_required')),
+        new_password: Yup.string().required(t('errors.password_required')),
+        confirm_password: Yup.string().required(t('errors.cpassword_required')).oneOf([Yup.ref('new_password'), null], 'Passwords must match')
     })
 
     const handleSubmit = async (e) => {
@@ -55,16 +57,16 @@ const ChangePassword = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Authentication</li>
-                                <li className="breadcrumb-item active" aria-current="page">Change Password</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('authentication')}</li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('change_password')}</li>
                             </ol>
                         </nav>
                     </div>
                     <div className="col-md-4">
                         <form onSubmit={handleSubmit}>
                             <div className="form-group">
-                                <label htmlFor="old-password">Current Password</label>
+                                <label htmlFor="old-password">{t('current_password')}</label>
                                 <input 
                                     type="password" 
                                     className={`form-control ${errors.old_password ? 'is-invalid' : null}`}
@@ -77,7 +79,7 @@ const ChangePassword = () => {
                                 </div>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="new-password">New Password</label>
+                                <label htmlFor="new-password">{t('new_password')}</label>
                                 <input 
                                     type="password" 
                                     className={`form-control ${errors.new_password ? 'is-invalid' : null}`}
@@ -90,7 +92,7 @@ const ChangePassword = () => {
                                 </div>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="confirm-password">Confirm Password</label>
+                                <label htmlFor="confirm-password">{t('confirm_password')}</label>
                                 <input 
                                     type="password" 
                                     className={`form-control ${errors.confirm_password ? 'is-invalid' : null}`}
@@ -102,7 +104,7 @@ const ChangePassword = () => {
                                     { errors.confirm_password }
                                 </div>
                             </div>
-                            <button type="submit" className="btn btn-success">Change Password</button>
+                            <button type="submit" className="btn btn-success">{t('change_password')}</button>
                         </form>
                     </div>
                 </div>

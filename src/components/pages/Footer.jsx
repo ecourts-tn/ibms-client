@@ -34,10 +34,10 @@ const Footer = () => {
                         </ul>
                     </Col>
                     <Col>
-                        <h6>CONNECT US</h6>
-                        <p>The Registrar (IT cum Statistics)<br/>
-                            Madras High Court <br />Chennai - 600104.</p>
-                        <p>E-Mail : cpctn[at]aij[dot]gov[dot]in</p>
+                        <h6>{t('contact_us')}</h6>
+                        <p>{t('registrar')}<br/>
+                            {t('mhc')} <br />{t('chennai')} - 600104.</p>
+                        <p>{t('email')} : cpctn[at]aij[dot]gov[dot]in</p>
                     </Col>
                     </Row>
                 </Container>

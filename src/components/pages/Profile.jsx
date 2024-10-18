@@ -2,9 +2,9 @@ import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import profile_pic from '../../profile.jpg'
 import { useAuth } from '../../hooks/useAuth'
-import * as Yup from 'yup'
-import api from '../../api'
+
 import './header.css'
+import { useTranslation } from 'react-i18next'
 
 const Profile = () => {
 
@@ -15,6 +15,7 @@ const Profile = () => {
         email_address    : user.user.email,
         username         : user.user.username
     }
+    const {t} = useTranslation()
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
     const[changeMobile, setChangeMobile] = useState(false)
@@ -60,9 +61,9 @@ const Profile = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item text-primary">Home</li>
-                                <li className="breadcrumb-item text-primary">Authentication</li>
-                                <li className="breadcrumb-item active" aria-current="page">User Profile</li>
+                                <li className="breadcrumb-item text-primary">{t('home')}</li>
+                                <li className="breadcrumb-item text-primary">{t('authentication')}</li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('profile')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -82,7 +83,7 @@ const Profile = () => {
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="form-group">
-                                        <label htmlFor="username">Advocate/Litigant Name</label>
+                                        <label htmlFor="username">{t('username')}</label>
                                         <input 
                                             type="text" 
                                             className={`form-control ${errors.old_password ? 'is-invalid' : null}`}
@@ -99,7 +100,7 @@ const Profile = () => {
                             <div className="row">
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="mobile_number">Mobile Number</label>
+                                        <label htmlFor="mobile_number">{t('mobile_number')}</label>
                                         <input 
                                             type="text" 
                                             className={`form-control ${errors.mobile_number ? 'is-invalid' : null}`}
@@ -125,14 +126,14 @@ const Profile = () => {
                                         <button 
                                             className="btn btn-primary"
                                             onClick={sendMobileOtp}
-                                        >Send OTP</button>
+                                        >{t('send_otp')}</button>
                                     </div>
                                 )}
                                 { mobileOtp && (
                                     <>
                                         <div className="col-md-2">
                                             <div className="form-group">
-                                                <label htmlFor="mobile_otp">OTP</label>
+                                                <label htmlFor="mobile_otp">{t('send_otp')}</label>
                                                 <input 
                                                     type="text" 
                                                     className="form-control"
@@ -143,7 +144,7 @@ const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="col-md-1 mt-4 pt-2">
-                                            <button className="btn btn-success">Verify</button>
+                                            <button className="btn btn-success">{t('verify')}</button>
                                         </div>
                                     </>
                                 )}
@@ -151,7 +152,7 @@ const Profile = () => {
                             <div className="row">
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="email_address">E-Mail Address</label>
+                                        <label htmlFor="email_address">{t('email_address')}</label>
                                         <input 
                                             type="text" 
                                             className={`form-control ${errors.email_address ? 'is-invalid' : null}`}
@@ -177,14 +178,14 @@ const Profile = () => {
                                         <button 
                                             className="btn btn-primary"
                                             onClick={sendEmailOtp}
-                                        >Send OTP</button>
+                                        >{t('send_otp')}</button>
                                     </div>
                                 )}
                                 { emailOtp && (
                                     <>
                                         <div className="col-md-2">
                                             <div className="form-group">
-                                                <label htmlFor="email_otp">OTP</label>
+                                                <label htmlFor="email_otp">{t('send_otp')}</label>
                                                 <input 
                                                     type="text" 
                                                     className="form-control"
@@ -195,7 +196,7 @@ const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="col-md-1 mt-4 pt-2">
-                                            <button className="btn btn-success">Verify</button>
+                                            <button className="btn btn-success">{t('verify')}</button>
                                         </div>
                                     </>
                                 )}
@@ -203,7 +204,7 @@ const Profile = () => {
                             <div className="row">
                                 <div className="col-md-12 mt-3">
                                     <div className="form-group">
-                                        <button className="btn btn-success">Update</button>
+                                        <button className="btn btn-success">{t('update')}</button>
                                     </div>
                                 </div>
                             </div>

@@ -7,23 +7,39 @@ import SearchIcon from '@mui/icons-material/Search'
 import api from '../../../api'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import * as Yup from 'yup'
 
 const CNRSearch = () => {
 
-    const[cino, setCino] = useState('')
+    const[form, setForm] = useState({
+        cino: ''
+    })
     const[petition, setPetition] = useState({})
     const {t} = useTranslation()
+    const [errors, setErrors] = useState({})
+    const validationSchema = Yup.object({
+        cino: Yup.string().required(t('errors.cnr_required'))
+    })
+
+
+
     const handleSubmit = async() => {
         try{
-            const {response} = await api.post("api/case/search/cnr-number/", {cino})
-            if(response.status === 200){
-                setPetition(response.data)
-            }
-            if(response.status === 404){
-                toast.error(response.data.message, { theme:"colored"})
+            await  validationSchema.validate(form, {abortEarly:false})
+            try{
+                const response = await api.post("api/case/search/cnr-number/", {form})
+                if(response.status === 200){
+                    setPetition(response.data)
+                }
+            }catch(error){
+                console.log(error)
             }
         }catch(error){
-            console.error(error)
+            const newErrors = {}
+            error.inner.forEach((err) => {
+                newErrors[err.path] = err.message
+            })
+            setErrors(newErrors)
         }
     }
 
@@ -48,9 +64,11 @@ const CNRSearch = () => {
                                     <TextField
                                         name="cino"
                                         label={t('cnr_number')}
-                                        value={cino}
+                                        value={form.cino}
                                         size="small"
-                                        onChange={(e) => setCino(e.target.value)}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                        error={ errors.cino ? true : false }
+                                        helperText={ errors.cino }
                                     />
                                 </FormControl>
                             </div>

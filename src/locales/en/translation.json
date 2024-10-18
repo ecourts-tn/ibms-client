@@ -310,6 +310,15 @@
     "notary_order":"Notary Order",
     "upload_notary_order": "Upload Notary Order",
     "upload_bar_certificate": "Upload Bar Certificate",
+    "surety_details": "Surety Details",
+    "pleadings": "Pleadings",
+    "screen_reader": "Screen Reader Access",
+    "authentication": "Authentication",
+    "contact_us": "Contact Us",
+    "registrar": "The Registrar (IT cum Statistics)",
+    "chennai": "Chennai",
+    "current_password": "Current Password",
+    "new_password": "New Password",
 
     "alerts": {
         "select_state": "Select state",
@@ -322,11 +331,21 @@
         "select_bail_type": "Select bail type",
         "select_complaint_type": "Select complaint type",
         "submit_success": "{efile_no} details submitted successfully",
-        "logged_out": "You are logged out successfully"
+        "logged_out": "You are logged out successfully",
+        "mobile_required": "Please enter valid mobile number",
+        "mobile_otp_sent": "OTP has been sent to your mobile number",
+        "mobile_otp_verified": "Mobile otp verified successfully",
+        "email_required": "Please enter valid email address",
+        "email_otp_sent": "OTP has been sent to your email address",
+        "email_otp_verified": "E-Mail otp verified successfully",
+        "invalid_otp": "Invalid OTP. Please enter valid OTP",
+        "petitioner_added_successfully": ""
     },
     "errors": {
         "username_required": "Username is required",
         "password_required": "Password is required",
+        "old_password": "Old password is required",
+        "cpassword_required": "Confirm password is required",
         "usertype_required": "Please select the usertype",
         "bench_required": "Please select the bench type",
         "state_requried": "Please select the state",
@@ -340,6 +359,7 @@
         "numeric": "This field should be numeric",
         "fir_not_found": "FIR details not found!!!",
         "litigant_name_required": "Litigant name is required",
+        "respondent_name_required": "Respondent name is required",
         "designation_required": "Please select the designation",
         "rank_required": "Please enter the Rank",
         "gender_required": "Please select the gender",
@@ -352,10 +372,13 @@
         "identity_proof_required": "Please select the Proof",
         "identity_number_required": "Please enter the identity number",
         "mobile_required": "Please enter the mobile number",
+        "email_required": "Please enter the email address",
         "adv_name_required": "Please enter the Advocate Name",
         "adv_reg_required": "Please enter the Enrolment Number",
         "adv_mobile_required": "Please enter the Advocate Mobile Number",
-        "adv_email_required": "Please enter the Advocate E-Mail Address"
+        "adv_email_required": "Please enter the Advocate E-Mail Address",
+        "dob_required": "Please enter valid Date of Birth",
+        "cnr_required": "Please enter the CNR Number"
     }
 }
   

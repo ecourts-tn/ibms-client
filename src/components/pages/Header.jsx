@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import api from '../../api';
+import api from 'api';
 import { REFRESH_TOKEN } from "../../constants";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -14,14 +14,11 @@ const Header = () => {
   const [user, setUser] = useState({});
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  // const changeLanguage = (lng) => {
-  //   i18n.changeLanguage(lng);
-  // };
 
   useEffect(() => {
     if (sessionStorage.getItem("access") !== null) {
       setIsAuth(true);
-      setUser(JSON.parse(sessionStorage.getItem("user"))); // Assuming user is stored as a JSON object
+      setUser(JSON.parse(sessionStorage.getItem("user"))); 
     }
   }, []);
 
@@ -49,39 +46,39 @@ const Header = () => {
             <span className="navbar-toggler-icon"/>
           </button>
           <div className="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent1">
-          <div className="resize-icons">
-                        <button type="button" className="btn btn-default">
-                            <i className="fa fa-sitemap"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="decreaseFont">
-                            <i className="fa fa-font"></i>-
-                        </button>
-                        <button type="button" className="btn btn-default" id="defaultFont">
-                            <i className="fa fa-font"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="increaseFont">
-                            <i className="fa fa-font"></i>+
-                        </button>
-                        <button type="button" className="btn btn-default" id="highContrast">
-                            <i className="fa fa-adjust"></i>
-                        </button>
-                        <button type="button" className="btn btn-default" id="normalMode">
-                            <i className="fa fa-adjust" style={{color:'#ffb600'}}></i>
-                        </button>
-                        <span className="ml-3 text-white">Screen Reader Access</span>
-                    </div>
+            <div className="resize-icons">
+                <button type="button" className="btn btn-default">
+                    <i className="fa fa-sitemap"></i>
+                </button>
+                <button type="button" className="btn btn-default" id="decreaseFont">
+                    <i className="fa fa-font"></i>-
+                </button>
+                <button type="button" className="btn btn-default" id="defaultFont">
+                    <i className="fa fa-font"></i>
+                </button>
+                <button type="button" className="btn btn-default" id="increaseFont">
+                    <i className="fa fa-font"></i>+
+                </button>
+                <button type="button" className="btn btn-default" id="highContrast">
+                    <i className="fa fa-adjust"></i>
+                </button>
+                <button type="button" className="btn btn-default" id="normalMode">
+                    <i className="fa fa-adjust" style={{color:'#ffb600'}}></i>
+                </button>
+                <span className="ml-3 text-white">{t('screen_reader')}</span>
+            </div>
             <ul className="navbar-nav ml-md-5">
               { isAuth && (
-                <li className="nav-item dropdown">
-                  <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <AccountCircleIcon /> {user.user.userlogin || 'User'}
-                  </a>
-                  <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>
-                    <Link to="/auth/change-password" className="nav-link">{t('change_password')}</Link>
-                    <Link onClick={handleLogout} className="nav-link">{t('logout')}</Link>
-                  </div>
-                </li>
+              <li className="nav-item dropdown">
+                <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <AccountCircleIcon /> {user.user.userlogin}
+                </a>
+                <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>
+                  <Link to="/auth/change-password" className="nav-link">{t('change_password')}</Link>
+                  <Link onClick={handleLogout} className="nav-link">{t('logout')}</Link>
+                </div>
+              </li>
               )}
               <li className="nav-item">
                 <a href="#/" className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}><strong>{language === 'en' ? 'தமிழ்' : 'English'}</strong></a>
@@ -120,7 +117,7 @@ const Header = () => {
                     </div>
                   </li>
                   <li className="nav-item">
-                    <Link to="pleadings" className="nav-link">Pleadings</Link>
+                    <Link to="pleadings" className="nav-link">{t('pleadings')}</Link>
                   </li>
                 </>
               )}

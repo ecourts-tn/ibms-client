@@ -96,7 +96,7 @@ const RegistrationSearch = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item text-primary">{t('home')}</li>
                                 <li className="breadcrumb-item text-primary">{t('case_status')}</li>
-                                <li className="breadcrumb-item active">{t('case_number')}</li>
+                                <li className="breadcrumb-item active">{t('registration_number')}</li>
                             </ol>
                         </nav>
                     </div>
@@ -241,7 +241,7 @@ const RegistrationSearch = () => {
                                                 name="reg_number"
                                                 value={form.reg_number}
                                                 onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                placeholder={t('case_number')}
+                                                placeholder={t('registration_number')}
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.reg_number }
