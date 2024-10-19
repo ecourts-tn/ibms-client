@@ -39,6 +39,7 @@ import ABail from 'components/petition/antibail/ABail';
 import ReturnProperty from 'components/petition/return/ReturnProperty';
 import Pleadings from 'components/pages/Pleadings';
 import { AppProvider } from 'contexts/AppContext';
+import SpeechToText from 'components/pages/SpeechToText';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
                 <Route path="/auth/login" element={<Home />} />
                 <Route index element={<Home />} />
                 <Route path="pdf" element={<PdfGenerator />} />
+                <Route path="speech" element={<SpeechToText />}/>
                 <Route
                   path="/dashboard"
                   element={

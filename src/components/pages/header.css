@@ -28,6 +28,7 @@
     background-color: #0f4676;
     padding-top:0px;
     padding-bottom:0px;
+    padding:0px !important;
     border-radius: 0px;
     min-width:250px;
 }
@@ -56,7 +57,7 @@
     padding-left:10px!important;
     padding-right:10px!important;
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 
@@ -251,4 +252,14 @@ legend > span {
 }
 .resize-icons .btn:hover{
     background-color: inherit;
+}
+
+.img-captcha{
+    height:40px;
+    width:100%;
+    border: 1px solid grey;
+}
+.btn-captcha{
+    height:40px;
+    border-radius:0px;
 }

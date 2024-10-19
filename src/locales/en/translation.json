@@ -319,6 +319,7 @@
     "chennai": "Chennai",
     "current_password": "Current Password",
     "new_password": "New Password",
+    "more_info":"More Info",
 
     "alerts": {
         "select_state": "Select state",
@@ -339,7 +340,11 @@
         "email_otp_sent": "OTP has been sent to your email address",
         "email_otp_verified": "E-Mail otp verified successfully",
         "invalid_otp": "Invalid OTP. Please enter valid OTP",
-        "petitioner_added_successfully": ""
+        "petitioner_added_successfully": "",
+        "not_authorized": "You are not authorized to login. Please contact site admin for further support",
+        "invalid_credentials": "Invalid username or password",
+        "not_activated": "Your account is not activated. Please contact site admin for further support",
+        "captcha_failed": "CAPTCHA validation failed. Please try again."
     },
     "errors": {
         "username_required": "Username is required",

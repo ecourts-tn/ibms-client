@@ -67,7 +67,7 @@ const Dashboard = () => {
                                     <i className="ion ion-bag" />
                                 </div>
                                 <Link to="/petition/draft" className="small-box-footer">
-                                    More info <i className="fas fa-arrow-circle-right" />
+                                    {t('more_info')} <i className="fas fa-arrow-circle-right" />
                                 </Link>
                             </div>
                         </div>
@@ -81,7 +81,7 @@ const Dashboard = () => {
                                 <i className="ion ion-stats-bars" />
                                 </div>
                                 <Link to="/petition/list" className="small-box-footer">
-                                    More info <i className="fas fa-arrow-circle-right" />
+                                    {t('more_info')} <i className="fas fa-arrow-circle-right" />
                                 </Link>
                             </div>
                         </div>
@@ -94,7 +94,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                     <i className="ion ion-person-add" />
                                 </div>
-                                <a href="#/" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
+                                <a href="#/" className="small-box-footer">{t('more_info')} <i className="fas fa-arrow-circle-right" /></a>
                             </div>
                         </div>
                         <div className="col-lg-3 col-6">
@@ -106,7 +106,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                     <i className="ion ion-pie-graph" />
                                 </div>
-                                <a href="#/" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></a>
+                                <a href="#/" className="small-box-footer">{t('more_info')} <i className="fas fa-arrow-circle-right" /></a>
                             </div>
                         </div>
                     </div>

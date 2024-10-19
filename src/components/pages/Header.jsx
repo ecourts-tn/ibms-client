@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next';
+import './header.css'
 
 const Header = () => {
   const {language, toggleLanguage} = useContext(LanguageContext)
