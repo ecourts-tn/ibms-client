@@ -13,7 +13,6 @@ import AdvocateContainer from '../advocate/AdvocateContainer'
 import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
 import Payment from '../pages/Payment'
-import { CaseNumberProvider } from '../../hooks/useCaseNumber'
 import Advocate from 'components/Advocate'
 import Document from 'components/Document'
 
@@ -270,27 +269,23 @@ const BailFiling = () => {
         switch(activeStep) {
             case 0: {
                 return (
-                    <CaseNumberProvider>
-                        <InitialInput 
-                            setActiveStep={setActiveStep}
-                        />
-                    </CaseNumberProvider>
+                    <InitialInput 
+                        setActiveStep={setActiveStep}
+                    />
                 )
             }  
             case 1: {   
                 return (
-                    <CaseNumberProvider>
-                        <Litigants 
-                            petition={petition}
-                            setPetition={setPetition}
-                            petitioners={petitioners} 
-                            addPetitioner={addPetitioner}
-                            deletePetitioner={deletePetitioner}
-                            respondents={respondents}
-                            addRespondent={addRespondent}
-                            deleteRespondent={deleteRespondent}
-                        />
-                    </CaseNumberProvider>
+                    <Litigants 
+                        petition={petition}
+                        setPetition={setPetition}
+                        petitioners={petitioners} 
+                        addPetitioner={addPetitioner}
+                        deletePetitioner={deletePetitioner}
+                        respondents={respondents}
+                        addRespondent={addRespondent}
+                        deleteRespondent={deleteRespondent}
+                    />
                 )
             }
             case 2: {

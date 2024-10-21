@@ -14,7 +14,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
-
+import { LanguageContext } from 'contexts/LanguageContex'
 
 const FIRSearch = () => {
 
@@ -23,6 +23,7 @@ const FIRSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations} = useContext(PoliceStationContext)
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
@@ -115,9 +116,9 @@ const FIRSearch = () => {
                             value={form.state}
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}    
                         >
-                        <option value="">Select state</option>
+                        <option value="">{t('alerts.select_state')}</option>
                         { states.map((item, index) => (
-                            <option key={index} value={item.state_code }>{ item.state_name }</option>
+                            <option key={index} value={item.state_code }>{ language === 'ta' ? item.state_lname : item.state_name }</option>
                         ))}
                         </select>
                         <div className="invalid-feedback">
@@ -130,7 +131,10 @@ const FIRSearch = () => {
                         <label htmlFor="rdistrict">{t('revenue_district')}<RequiredField/></label><br />
                         <Select 
                             name="rdistrict"
-                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            placeholder={t('alerts.select_district')}
+                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { 
+                                value:district.district_code, label: language === 'ta' ? district.district_lname : district.district_name
+                            }})} 
                             className={`${errors.rdistrict ? 'is-invalid' : null}`}
                             onChange={(e) => setForm({...form, rdistrict:e.value})}
                         />
@@ -144,7 +148,10 @@ const FIRSearch = () => {
                         <label htmlFor="pdistrict">{t('police_district')}<RequiredField/></label><br />
                         <Select 
                             name="pdistrict"
-                            options={policeDistricts.filter(d=>parseInt(d.revenue_district)===parseInt(form.rdistrict)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
+                            placeholder={t('alerts.select_district')}
+                            options={policeDistricts.filter(d=>parseInt(d.revenue_district)===parseInt(form.rdistrict)).map((district) => { return { 
+                                value:district.district_code, label: language === 'ta' ? district.district_lname : district.district_name
+                            }})} 
                             className={`${errors.pdistrict ? 'is-invalid' : null}`}
                             onChange={(e) => setForm({...form, pdistrict:e.value})}
                         />
@@ -158,7 +165,10 @@ const FIRSearch = () => {
                         <label htmlFor="police_station">{t('police_station')}<RequiredField/></label><br />
                         <Select 
                             name="police_station"
-                            options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { value:station.cctns_code, label:station.station_name}})} 
+                            placeholder={t('alerts.select_station')}
+                            options={policeStations.filter(p=>parseInt(p.district_code)===parseInt(form.pdistrict)).map((station) => { return { 
+                                value:station.cctns_code, label:language === 'ta' ? station.station_lname : station.station_name
+                            }})} 
                             className={`${errors.police_station ? 'is-invalid' : null}`}
                             onChange={(e) => setForm({...form, police_station:e.value})}
                         />

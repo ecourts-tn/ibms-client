@@ -21,6 +21,7 @@ import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const BasicContainer = () => {
@@ -28,6 +29,7 @@ const BasicContainer = () => {
     const location = useLocation();
     const currentPath = location.pathname;
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const{
         efile_no, 
         setEfileNo,

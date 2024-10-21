@@ -16,6 +16,9 @@ import { RelationProvider } from "contexts/RelationContext";
 import { CountryProvider } from "contexts/CountryContext";
 import { BaseProvider } from "./BaseContext";
 import { LanguageProvider } from "./LanguageContex";
+import { GenderProvider } from "./GenderContext";
+import { NationalityProvider } from "./NationalityContext";
+import { DesignationProvider } from "./DesignationContext";
 
 export const AppProvider = ({children}) => {
     return(
@@ -36,7 +39,13 @@ export const AppProvider = ({children}) => {
                                                                 <ProofProvider>
                                                                     <RelationProvider>
                                                                         <CountryProvider>
-                                                                            {children}
+                                                                            <GenderProvider>
+                                                                                <NationalityProvider>
+                                                                                    <DesignationProvider>
+                                                                                        {children}
+                                                                                    </DesignationProvider>
+                                                                                </NationalityProvider>
+                                                                            </GenderProvider>
                                                                         </CountryProvider>
                                                                     </RelationProvider>
                                                                 </ProofProvider>

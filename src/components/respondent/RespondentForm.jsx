@@ -9,12 +9,14 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 const RespondentForm = ({addRespondent}) => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
     const initialState = {
@@ -86,7 +88,7 @@ const RespondentForm = ({addRespondent}) => {
                     >
                         <option value="">Select state</option>
                         { states.map((item, index) => (
-                        <option value={item.state_code} key={index}>{item.state_name}</option>
+                        <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                         ))}
                     </select>
                     </div>
@@ -103,7 +105,7 @@ const RespondentForm = ({addRespondent}) => {
                     >
                         <option value="">Select District</option>
                         { districts.map((item, index) => (
-                        <option value={item.district_code} key={index}>{item.district_name}</option>
+                        <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                         ))}
                     </select>
                     </div>
@@ -120,7 +122,7 @@ const RespondentForm = ({addRespondent}) => {
                         >
                             <option value="">Select station</option>
                             { policeStations.filter(d=>parseInt(d.revenue_district)=== parseInt(litigant.district)).map((item, index) => (
-                                <option key={index} value={item.cctns_code}>{ item.station_name}</option>
+                                <option key={index} value={item.cctns_code}>{ language==='ta' ? item.station_lname : item.station_name}</option>
                             ))}
                         </select>
                         <div className="invalid-feedback">

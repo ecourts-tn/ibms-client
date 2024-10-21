@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from '../../utils';
 import * as Yup from 'yup'
-import { BaseContext } from '../../contexts/BaseContext';
+import { BaseContext } from 'contexts/BaseContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
@@ -14,6 +14,9 @@ import { PrisonContext } from 'contexts/PrisonContext';
 import { ProofContext } from 'contexts/ProofContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
+import { GenderContext } from 'contexts/GenderContext';
+import { NationalityContext } from 'contexts/NationalityContext';
 
 
 const PetitionerForm = ({addPetitioner}) => {
@@ -26,6 +29,9 @@ const PetitionerForm = ({addPetitioner}) => {
   const {prisons} = useContext(PrisonContext)
   const {proofs} = useContext(ProofContext)
   const {countries} = useContext(CountryContext)
+  const {language} = useContext(LanguageContext)
+  const {genders} = useContext(GenderContext)
+  const {nationalities} = useContext(NationalityContext)
   const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
@@ -201,10 +207,10 @@ const PetitionerForm = ({addPetitioner}) => {
                     className="form-control"
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="">{t('alerts.select_gender')}</option>
+                    { genders.map((g, index) => (
+                      <option value={g.id} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                    ))}
                   </select>
                 )}
               </Form.Group>
@@ -255,9 +261,9 @@ const PetitionerForm = ({addPetitioner}) => {
                       value={litigant.relation}
                       onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                       >
-                      <option value="">Select parantage</option>
+                      <option value="">{t('alerts.select_parantage')}</option>
                       { relations.map((item, index) => (
-                        <option key={index} value={item.relation_name}>{ item.relation_name }</option>
+                        <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                       )) }
                     </select>
                     <div className="invalid-feedback">{ errors.relation }</div>
@@ -339,9 +345,9 @@ const PetitionerForm = ({addPetitioner}) => {
                     value={litigant.state}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select state</option>
+                    <option value="">{t('alerts.select_state')}</option>
                     { states.map((item, index) => (
-                      <option value={item.state_code} key={index}>{item.state_name}</option>
+                      <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                     ))}
                   </select>
                 </div>
@@ -356,9 +362,9 @@ const PetitionerForm = ({addPetitioner}) => {
                     value={litigant.district}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select District</option>
+                    <option value="">{t('alerts.select_district')}</option>
                     { districts.filter(district=>parseInt(district.state)===parseInt(litigant.state)).map((item, index) => (
-                      <option value={item.district_code} key={index}>{item.district_name}</option>
+                      <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                     ))}
                   </select>
                 </div>
@@ -373,9 +379,9 @@ const PetitionerForm = ({addPetitioner}) => {
                     value={litigant.taluk}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select Taluk</option>
+                    <option value="">{t('alerts.select_taluk')}</option>
                     { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.district)).map((item, index) => (
-                      <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
+                      <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                     ))}
                   </select>
                 </div>
@@ -426,8 +432,10 @@ const PetitionerForm = ({addPetitioner}) => {
                   value={litigant.nationality}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="1">Indian</option>
-                  <option value="2">Others</option>
+                  <option value="">{t('alerts.select_nationality')}</option>
+                  { nationalities.map((n, index) => (
+                    <option value={n.id} key={index}>{language === 'ta' ? n.nationality_lname : n.nationality_name }</option>
+                  ))}
                 </select>
               </Form.Group>
             </div>
@@ -439,9 +447,9 @@ const PetitionerForm = ({addPetitioner}) => {
                   className="form-control"
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="">Select proof</option>
+                  <option value="">{t('alerts.select_proof')}</option>
                   { proofs.map((p, index) => (
-                    <option key={index} value={p.id}>{p.proof_name}</option>
+                    <option key={index} value={p.id}>{ language === 'ta' ? p.proof_lname : p.proof_name}</option>
                   ))}
                 </select>
               </div>
@@ -467,7 +475,7 @@ const PetitionerForm = ({addPetitioner}) => {
                   className="form-control"
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="">Select country</option>
+                  <option value="">{t('alerts.select_country')}</option>
                   {countries.map((c, index) => (
                     <option key={index} value={c.iso}>{`+(${c.iso})`} {c.country_name}</option>
                   ))}
@@ -545,9 +553,9 @@ const PetitionerForm = ({addPetitioner}) => {
                     value={litigant.prison}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
                   >
-                    <option value="">Select Prison</option>
+                    <option value="">{t('alerts.select_prison')}</option>
                     { prisons.map((item, index) => (
-                      <option value={item.prison_code} key={index}>{item.prison_name}</option>
+                      <option value={item.prison_code} key={index}>{language === 'ta' ? item.prison_lname : item.prison_name}</option>
                     ))}
                   </select>
                   <div className="invalid-feedback">{ errors.prison}</div>
