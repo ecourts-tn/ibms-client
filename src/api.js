@@ -4,9 +4,11 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 // Create an instance of Axios
 axios.defaults.withCredentials = true;
 
+console.log(process.env.LOCAL_API_URL)
+
 const api = axios.create({
     // baseURL: "http://117.193.76.243/api/v1/"
-    baseURL: "http://192.168.100.135:8000/api/v1/"
+    baseURL: "http://127.0.0.1:8000/api/v1/",
 });
 
 let isRefreshing = false;

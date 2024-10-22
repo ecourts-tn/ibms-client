@@ -1,6 +1,5 @@
 import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
-import profile_pic from '../../profile.jpg'
 import { useAuth } from '../../hooks/useAuth'
 
 import './header.css'
@@ -71,7 +70,7 @@ const Profile = () => {
                 <div className="row">
                     <div className="col-md-4 d-flex justify-content-center profile">
                         <div className="card" style={{width: '18rem'}}>
-                            <img src={profile_pic} alt="" />
+                            <img src="/images/profile.jpg" alt="" />
                             <div className="card-body text-center">
                                 <p className="card-text"><strong>{user.user.username}<br/>{user.user.mobile}<br/>{user.user.email}</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>

@@ -11,6 +11,7 @@ import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
 import Select from 'react-select'
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 const CaseSearch = () => {
 
@@ -18,14 +19,15 @@ const CaseSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
     const {courts} = useContext(CourtContext)
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
     const[search, setSearch] = useState(1)
     const[form, setForm] = useState({
-        case_state: null,
-        case_district: null,
-        case_establishment: null,
-        case_court: null,
-        case_case_type:  null,
+        state: null,
+        district: null,
+        establishment: null,
+        court: null,
+        case_type:  null,
         case_number: null,
         case_year: null,
         cnr_number: null,
@@ -35,48 +37,50 @@ const CaseSearch = () => {
     const[errors, setErrors] = useState({})
 
     const validationSchema = Yup.object({
-        case_search: Yup.string().required(),
-        cnr_number: Yup.string().when('case_search', (case_search, schema) => {
-            if(case_search === 1){
+        search: Yup.string().required(),
+        cnr_number: Yup.string().when('search', (search, schema) => {
+            if(parseInt(search) === 1){
+                return schema.required(t('errors.cnr_required'))
+            }
+        }),
+        state: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
+                return schema.required(t('errors.est_required'))
+            }
+        }),
+        court: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
+                return schema.required(t('errors.court_required'))
+            }
+        }),
+        case_type: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
+                return schema.required(t('alerts.case_type_required'))
+            }
+        }),
+        case_number: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
                 return schema.required()
             }
         }),
-        case_state: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_district: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_establishment: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_court: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_case_type: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_case_number: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
-                return schema.required()
-            }
-        }),
-        case_case_year: Yup.string().when("case_search", (case_search, schema) => {
-            if(parseInt(case_search) === 2){
+        case_year: Yup.string().when("search", (search, schema) => {
+            if(parseInt(search) === 2){
                 return schema.required()
             }
         })
     })
+
+    console.log(errors)
 
     const handleSearch = async() => {
         try{
@@ -86,10 +90,12 @@ const CaseSearch = () => {
             setLoading(true)
         }catch(error){
             const newErrors = {}
-            error.inner.forEach((err) => {
-                newErrors[err.path] = err.message
-            })
-            setErrors(newErrors)
+            if(error.inner){
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
         }
     }
 
@@ -127,10 +133,10 @@ const CaseSearch = () => {
                         </div>
                     </div>
                     { search === 1 && (
-                    <div className="col-md-6 offset-md-3">
-                        <Form.Group className="row">
-                            <Form.Label className="col-sm-4 text-right">{t('cnr_number')}</Form.Label>
-                            <div className="col-sm-8">
+                    <div className="col-md-8 offset-md-2">
+                        <Form.Group className="row mb-5">
+                            <Form.Label className="col-sm-3 text-right">{t('cnr_number')}</Form.Label>
+                            <div className="col-sm-6">
                                 <Form.Control
                                     name="cnr_number"
                                     value={form.cnr_number}
@@ -140,78 +146,95 @@ const CaseSearch = () => {
                                 ></Form.Control>
                                 <div className="invalid-feedback">{ errors.cnr_number }</div>
                             </div>
+                            <div className="col-md-3">
+                                <Form.Group>
+                                    <Button 
+                                        variant="info"
+                                        onClick={handleSearch}
+                                    ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
+                                </Form.Group>
+                            </div>
                         </Form.Group>
                     </div>
                     )}
                     { search === 2 && (
                     <div className="row mb-3 px-2">
-                        <div className="col-md-3">
+                        <div className="col-md-6">
                             <div className="form-group">
-                                <label htmlFor="case_state">{t('state')}</label>
+                                <label htmlFor="state">{t('state')}</label>
                                 <select 
-                                    name="case_state" 
-                                    id="case_state" 
-                                    className={`form-control ${errors.case_state ? 'is-invalid' : ''}`}
-                                    value={ form.case_state} 
+                                    name="state" 
+                                    id="state" 
+                                    className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+                                    value={ form.state} 
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                 >
-                                    <option value="">Select state</option>
+                                    <option value="">{t('alerts.select_state')}</option>
                                     { states.map( (item, index) => (
-                                        <option key={index} value={item.state_code}>{item.state_name}</option>)
+                                        <option key={index} value={item.state_code}>{language === 'ta' ? item.state_lname : item.state_name}</option>)
                                     )}
                                 </select>
-                                <div className="invalid-feedback">{ errors.case_state }</div>
-                            </div>
-                        </div>
-                        <div className="col-md-3">
-                            <div className="form-group">
-                                <label htmlFor="case_district">{t('district')}</label>
-                                <Select 
-                                    name="case_district"
-                                    options={districts.filter(district=>parseInt(district.state)===parseInt(form.case_state)).map((district) => { return { value:district.district_code, label:district.district_name}})} 
-                                    className={`${errors.district ? 'is-invalid' : null}`}
-                                    onChange={(e) => setForm({...form, case_district:e.value})}
-                                />
-                                <div className="invalid-feedback">{ errors.case_district }</div>
+                                <div className="invalid-feedback">{t('errors.state_required')}</div>
                             </div>
                         </div>
                         <div className="col-md-6">
                             <div className="form-group">
-                                <label htmlFor="case_establishment">{t('est_name')}</label>
+                                <label htmlFor="district">{t('district')}</label>
                                 <Select 
-                                    name="case_establishment"
-                                    options={establishments.filter(e=>parseInt(e.district)=== parseInt(form.case_district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
-                                    className={`${errors.establishment ? 'is-invalid' : null}`}
-                                    onChange={(e) => setForm({...form, case_establishment:e.value})}
+                                    name="district"
+                                    placeholder={t('alerts.select_district')}
+                                    options={districts.filter(district=>parseInt(district.state)===parseInt(form.state)).map((district) => { return { 
+                                        value:district.district_code, label: language === 'ta' ? district.district_lname : district.district_name
+                                    }})} 
+                                    className={`${errors.district ? 'is-invalid' : null}`}
+                                    onChange={(e) => setForm({...form, district:e.value})}
                                 />
-                                <div className="invalid-feedback">{ errors.case_establishment }</div>
+                                <div className="invalid-feedback">{t('errors.district_required')}</div>
                             </div>
                         </div>
-                        <div className="col-md-5">
+                        <div className="col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="establishment">{t('est_name')}</label>
+                                <Select 
+                                    name="establishment"
+                                    placeholder={t('alerts.select_establishment')}
+                                    options={establishments.filter(e=>parseInt(e.district)=== parseInt(form.district)).map((est) => { return { 
+                                        value:est.establishment_code, label: language === 'ta' ? est.establishment_lname : est.establishment_name
+                                    }})} 
+                                    className={`${errors.establishment ? 'is-invalid' : null}`}
+                                    onChange={(e) => setForm({...form, establishment:e.value})}
+                                />
+                                <div className="invalid-feedback">{t('errors.est_required')}</div>
+                            </div>
+                        </div>
+                        <div className="col-md-6">
                             <div className="form-group">
                                 <label htmlFor="court">{t('court')}</label>
                                 <Select 
                                     name="court"
-                                    options={courts.filter(c=>c.establishment===form.case_establishment).map((est) => { return { value:est.court_code, label:est.court_name}})} 
+                                    placeholder={t('alerts.select_court')}
+                                    options={courts.filter(c=>c.establishment===form.establishment).map((est) => { return { 
+                                        value:est.court_code, label: language === 'ta' ? est.court_lname : est.court_name
+                                    }})} 
                                     className={`${errors.court ? 'is-invalid' : null}`}
                                     onChange={(e) => setForm({...form, court:e.value})}
                                 />
-                                <div className="invalid-feedback">{ errors.court }</div>
+                                <div className="invalid-feedback">{t('errors.court_required')}</div>
                             </div>
                         </div>
-                        <div className="col-md-3">
+                        <div className="col-md-4">
                             <Form.Group>
                                 <Form.Label>{t('case_type')}</Form.Label>
                                 <select 
-                                    name="case_case_type" 
-                                    className={`form-control ${errors.case_case_type ? 'is-invalid' : ''}`}
-                                    value={form.case_case_type}
+                                    name="case_type" 
+                                    className={`form-control ${errors.case_type ? 'is-invalid' : ''}`}
+                                    value={form.case_type}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}    
                                 >
-                                    <option value="">Select case type</option>
+                                    <option value="">{t('alerts.select_case_type')}</option>
                                     <option value="1">CRLMP</option>
                                 </select>
-                                <div className="invalid-feedback">{ errors.case_case_type }</div>
+                                <div className="invalid-feedback">{t('errors.case_type_required')}</div>
                             </Form.Group>
                         </div>
                         <div className="col-md-2">
@@ -232,22 +255,22 @@ const CaseSearch = () => {
                                 <Form.Control
                                     name="case_year"
                                     value={form.case_year}
-                                    className={`${errors.case_state ? 'is-invalid' : ''}`}
+                                    className={`${errors.case_year ? 'is-invalid' : ''}`}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                 ></Form.Control>
                                 <div className="invalid-feedback">{ errors.case_year }</div>
                             </Form.Group>
                         </div>
+                        <div className="col-md-2 pt-4 mt-1">
+                            <Form.Group>
+                                <Button 
+                                    variant="info"
+                                    onClick={handleSearch}
+                                ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
+                            </Form.Group>
+                        </div>
                     </div>
                     )}
-                    <div className="col-md-12 text-center my-3">
-                        <Form.Group>
-                            <Button 
-                                variant="info"
-                                onClick={handleSearch}
-                            ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
-                        </Form.Group>
-                    </div>
                     { loading && (
                         <Loader />
                     )}

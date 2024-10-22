@@ -40,7 +40,7 @@ export const LanguageProvider = ({ children }) => {
   // Retrieve the language from session storage or default to 'en'
   const [language, setLanguage] = useState(() => {
     const storedLanguage = sessionStorage.getItem('language');
-    return storedLanguage ? storedLanguage : 'en';
+    return storedLanguage ? storedLanguage : 'ta';
   });
 
   const toggleLanguage = () => {

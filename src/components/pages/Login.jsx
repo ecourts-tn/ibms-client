@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import api from '../../api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 import { useAuth } from '../../hooks/useAuth';
-import highcourtlogo from '../../highcourtlogo.png'
+// import highcourtlogo from '../../highcourtlogo.png'
 import './header.css'
 import axios from 'axios'
 
@@ -40,7 +40,7 @@ const Login = () => {
         usertype: Yup.string().required(t('errors.usertype_required')),
         username: Yup.string().required(t('errors.username_required')),
         password: Yup.string().required(t('errors.password_required')),
-        captcha: Yup.string().required("Please enter captcha")
+        captcha: Yup.string().required(t('errors.captcha_required'))
     })
 
     useEffect(() => {
@@ -147,7 +147,7 @@ const Login = () => {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="text-center mb-4">
-                            <img className="mb-2" src={highcourtlogo} alt width={70} height={70} />
+                            <img className="mb-2" src={`${process.env.PUBLIC_URL}/images/highcourtlogo.png`} alt width={70} height={70} />
                             <h1 className="h4 mb-3 font-weight-bold">{t('signin')}</h1>
                         </div>    
                     </div>
@@ -197,7 +197,7 @@ const Login = () => {
                         </div>
                     </div>
                     <div className="col-md-6 d-flex">
-                        {captchaImageUrl && (<img src={captchaImageUrl} alt="CAPTCHA" className='img-captcha'/>)}
+                        {captchaImageUrl ? (<img src={captchaImageUrl} alt="CAPTCHA" className='img-captcha'/>) : (<span className="img-captcha px-2"> loading... </span>)}
                         <button className="btn bg-olive btn-captcha" onClick={fetchCaptcha} type="button"><RefreshIcon /></button>                    
                     </div>
                     <div className="col-md-6">

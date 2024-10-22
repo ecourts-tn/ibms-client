@@ -10,6 +10,7 @@ import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 const RegistrationSearch = () => {
 
@@ -17,6 +18,7 @@ const RegistrationSearch = () => {
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
     const {benchtypes} = useContext(BenchTypeContext)
+    const {language} = useContext(LanguageContext)
     // const {casetypes}   = useContext(CaseTypeContext)
     const {t} = useTranslation()
 
@@ -141,9 +143,9 @@ const RegistrationSearch = () => {
                                             className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
-                                            <option value="">Select state</option>
+                                            <option value="">{t('alerts.select_state')}</option>
                                             { states.map((state, index) => (
-                                            <option value={state.state_code} key={index}>{state.state_name}</option>
+                                            <option value={state.state_code} key={index}>{language === 'ta' ? state.state_lname : state.state_name}</option>
                                             ))}
                                         </select>
                                         <div className="invalid-feedback">
@@ -159,9 +161,9 @@ const RegistrationSearch = () => {
                                             className={`form-control ${errors.district ? 'is-invalid': ''}`}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
-                                            <option value="">Select district</option>
+                                            <option value="">{t('alerts.select_district')}</option>
                                             { districts.filter(district => parseInt(district.state) === parseInt(form.state)).map((district, index) => (
-                                                <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                <option value={district.district_code} key={index}>{language === 'ta' ? district.district_lname : district.district_name}</option>
                                             ))}
                                         </select>
                                         <div className="invalid-feedback">
@@ -181,9 +183,9 @@ const RegistrationSearch = () => {
                                         className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
-                                        <option value="">Select establishment</option>
+                                        <option value="">{t('alerts.select_establishment')}</option>
                                         {establishments.filter(est=>parseInt(est.district) === parseInt(form.district)).map((estd, index)=>(
-                                            <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                            <option key={index} value={estd.establishment_code}>{language === 'ta' ? estd.establishment_lname : estd.establishment_name}</option>
                                         ))}
                                     </select>
                                     <div className="invalid-feedback">
@@ -201,9 +203,9 @@ const RegistrationSearch = () => {
                                         className={`form-control ${errors.bench_type ? 'is-invalid': ''}`}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
-                                        <option value="">Select bench</option>
+                                        <option value="">{t('alerts.select_bench_type')}</option>
                                         {benchtypes.map((b, index)=>(
-                                            <option key={index} value={b.type_code}>{b.bench_type}</option>
+                                            <option key={index} value={b.type_code}>{language === 'ta' ? b.bench_ltype : b.bench_type}</option>
                                         ))}
                                     </select>
                                     <div className="invalid-feedback">
@@ -220,7 +222,7 @@ const RegistrationSearch = () => {
                                     className={`form-control ${errors.case_type ? 'is-invalid' : null}`}
                                     onChange={(e)=> setForm({...form, [e.target.name]: e.target.value})}
                                 >
-                                    <option value="">Select case type</option>
+                                    <option value="">{t('alerts.select_case_type')}</option>
                                     {/* { casetypes.map((type, index) => (
                                     <option value={type.type_code} key={index}>{type.type_full_form}</option>
                                     ))} */}

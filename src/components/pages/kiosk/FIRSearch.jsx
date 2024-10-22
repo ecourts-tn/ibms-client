@@ -11,6 +11,7 @@ import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 const FIRSearch = () => {
@@ -18,6 +19,7 @@ const FIRSearch = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {policeStations} = useContext(PoliceStationContext)
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
     const[form, setForm] = useState({
         state:'',
@@ -71,7 +73,7 @@ const FIRSearch = () => {
                     </div>
                     <div className="col-md-12 d-flex justify-content-center">
                         <div className="row">
-                            <div className="col-md-8 offset-2">
+                            <div className="col-md-10 offset-1">
                             <div className="row">
                                     <div className="col-md-6">
                                         <div className="form-group">
@@ -81,9 +83,9 @@ const FIRSearch = () => {
                                                 className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="">Select state</option>
+                                                <option value="">{t('alerts.select_state')}</option>
                                                 { states.map((state, index) => (
-                                                <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                <option value={state.state_code} key={index}>{language === 'ta' ? state.state_lname : state.state_name}</option>
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
@@ -99,9 +101,9 @@ const FIRSearch = () => {
                                                 className={`form-control ${errors.district ? 'is-invalid' : ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="">Select district</option>
+                                                <option value="">{t('alerts.select_district')}</option>
                                                 { districts.filter(district => parseInt(district.state) === parseInt(form.state)).map((district, index) => (
-                                                    <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                    <option value={district.district_code} key={index}>{language === 'ta' ? district.district_lname : district.district_name}</option>
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
@@ -117,9 +119,9 @@ const FIRSearch = () => {
                                                 className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="">Select police station</option>
+                                                <option value="">{t('alerts.select_station')}</option>
                                                 {policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(form.district)).map((ps, index)=>(
-                                                    <option key={index} value={ps.cctns_code}>{ps.station_name}</option>
+                                                    <option key={index} value={ps.cctns_code}>{language === 'ta' ? ps.station_lname : ps.station_name}</option>
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">

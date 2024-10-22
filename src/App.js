@@ -1,6 +1,6 @@
 import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
@@ -17,7 +17,6 @@ import FilingSearch from './components/pages/kiosk/FilingSearch'
 import CNRSearch from './components/pages/kiosk/CNRSearch'
 import FIRSearch from './components/pages/kiosk/FIRSearch'
 import RegistrationSearch from './components/pages/kiosk/RegistrationSearch'
-import CaseStatus from "./components/pages/kiosk/CaseStatus"
 import DraftList from "./components/pages/DraftList"
 import Payment from "./components/pages/Payment"
 import PetitionList from "./components/pages/PetitionList"
@@ -39,10 +38,13 @@ import ABail from 'components/petition/antibail/ABail';
 import ReturnProperty from 'components/petition/return/ReturnProperty';
 import Pleadings from 'components/pages/Pleadings';
 import { AppProvider } from 'contexts/AppContext';
-import SpeechToText from 'components/pages/SpeechToText';
-
+import Bail from 'components/filing/Bail';
 
 function App() {
+
+  useEffect(() => {
+    sessionStorage.setItem('language', 'ta')
+  },[])
   
   return (
     <>
@@ -54,7 +56,7 @@ function App() {
                 <Route path="/auth/login" element={<Home />} />
                 <Route index element={<Home />} />
                 <Route path="pdf" element={<PdfGenerator />} />
-                <Route path="speech" element={<SpeechToText />}/>
+                <Route path="bail" element={<Bail />}/>
                 <Route
                   path="/dashboard"
                   element={
@@ -238,7 +240,6 @@ function App() {
                   } 
                 />
                 <Route path="user/registration" element={<Register />} />
-                <Route path="filing/kiosk" element={<CaseStatus />} />
               </Route>
             
             </Routes>

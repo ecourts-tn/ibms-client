@@ -390,7 +390,8 @@
         "adv_mobile_required": "Please enter the Advocate Mobile Number",
         "adv_email_required": "Please enter the Advocate E-Mail Address",
         "dob_required": "Please enter valid Date of Birth",
-        "cnr_required": "Please enter the CNR Number"
+        "cnr_required": "Please enter the CNR Number",
+        "captcha_required":"Plase enter CAPTCHA code"
     }
 }
   
