@@ -223,7 +223,7 @@ legend > span {
    border-radius: 10rem;
 }
 .navbar-toggler {
-    background-color: #2af5c2; /* Background color */
+    background-color: #074280; /* Background color */
     border: px solid #ffffff; /* Border color and width */
     padding: 1px 10px; /* Adjust padding */
     border-radius: 4px; /* Rounded corners */
@@ -235,7 +235,7 @@ legend > span {
 }
 
 .navbar-toggler:hover {
-    background-color: #495057; /* Hover background */
+    background-color: #074280; /* Hover background */
     border-color: #adb5bd; /* Hover border */
 }
 

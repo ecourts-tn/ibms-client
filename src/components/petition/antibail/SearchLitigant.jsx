@@ -1,20 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import api from '../../../api'
 import Form from 'react-bootstrap/Form'
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../../redux/features/DistrictSlice'
-import { getPoliceSationByDistrict } from '../../../redux/features/PoliceStationSlice'
-import { getBasicDetails, getFirStatus } from '../../../redux/features/FIRSeachSlice'
-import { getCourtsByEstablishmentCode } from '../../../redux/features/CourtSlice';
-import { getEstablishmentByDistrict } from '../../../redux/features/EstablishmentSlice'
-import { getAccusedDetails } from '../../../redux/features/AccusedSlice'
 import * as Yup from 'yup'
 import {CreateMarkup} from '../../../utils'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
-import Spinner from 'react-bootstrap/Spinner'
 import { ToastContainer } from 'react-toastify'
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { Spinner } from 'react-bootstrap'
+import { EstablishmentContext } from 'contexts/EstablishmentContext'
+import { CourtContext } from 'contexts/CourtContext'
 
 const SearchLitigant = () => {
 
@@ -59,17 +56,11 @@ const SearchLitigant = () => {
 
 export default SearchLitigant
 
-
-
-
-
-
 const FIRSearch = () => {
 
-    const stateStatus = useSelector(getStatesStatus)
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {policeStations} = useContext(PoliceStationContext)
 
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -103,27 +94,7 @@ const FIRSearch = () => {
         crime_year: Yup.string().required()
     })
 
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-            dispatch(getStates())
-        }
-    }, [stateStatus, dispatch])
-
-    useEffect(() => {
-        if(petition.crime_state){
-            dispatch(getDistrictByStateCode(petition.crime_state))
-        }
-    }, [petition.crime_state, dispatch])
-
-    useEffect(() => {
-        if(petition.crime_district){
-            dispatch(getPoliceSationByDistrict(petition.crime_district))
-        }
-    }, [petition.crime_district, dispatch])
-
-    
+   
     const handleSearch = async (e) => {
         e.preventDefault()
         try{
@@ -152,7 +123,6 @@ const FIRSearch = () => {
                     const update = await api.put(`api/bail/filing/${cino}/update/`, petition)
                     setLoading(false)
                     setShowAdditionalFields(true)
-                    dispatch(getAccusedDetails())
                 }
             }
         }catch(error){
@@ -278,13 +248,10 @@ const FIRSearch = () => {
 
 const CaseSearch = () => {
 
-    const stateStatus = useSelector(getStatesStatus)
-
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const establishments = useSelector(state => state.establishments.establishments)
-    const courts = useSelector((state) => state.courts.courts)
-    const dispatch = useDispatch()
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {courts} = useContext(CourtContext)
 
     const[petition, setPetition] = useState({
         case_state: null,
@@ -299,30 +266,6 @@ const CaseSearch = () => {
 
     const[loading, setLoading] = useState(false)
     const[errors, setErrors] = useState({})
-
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-          dispatch(getStates())
-        }
-      }, [stateStatus, dispatch])
-    
-      useEffect(() => {
-        if(petition.case_state !== ''){
-          dispatch(getDistrictByStateCode(petition.case_state))
-        }
-      }, [petition.case_state, dispatch])
-    
-    useEffect(() => {
-        if( petition.case_district !== ''){
-            dispatch(getEstablishmentByDistrict(petition.case_district))
-        }
-    },[petition.case_district, dispatch])
-
-    useEffect(() => {
-        if(petition.case_establishment !== ''){
-          dispatch(getCourtsByEstablishmentCode(petition.case_establishment))
-        }
-    },[petition.case_establishment, dispatch])
 
     const validationSchema = Yup.object({
         case_search: Yup.string().required(),

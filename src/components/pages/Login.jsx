@@ -196,11 +196,11 @@ const Login = () => {
                             </FormControl>
                         </div>
                     </div>
-                    <div className="col-md-6 d-flex">
-                        {captchaImageUrl ? (<img src={captchaImageUrl} alt="CAPTCHA" className='img-captcha'/>) : (<span className="img-captcha px-2"> loading... </span>)}
+                    <div className="col-md-7 d-flex">
+                        {captchaImageUrl ? (<img src={captchaImageUrl} alt="CAPTCHA" className='img-captcha'/>) : (<span className="img-captcha px-2 pt-1"> captcha loading... </span>)}
                         <button className="btn bg-olive btn-captcha" onClick={fetchCaptcha} type="button"><RefreshIcon /></button>                    
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-5">
                         <input
                             type="text"
                             name="captcha"
