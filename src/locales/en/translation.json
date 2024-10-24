@@ -320,7 +320,7 @@
     "current_password": "Current Password",
     "new_password": "New Password",
     "more_info":"More Info",
-
+    "department_user": "Department User",
     "alerts": {
         "select_state": "Select state",
         "select_district": "Select district",
@@ -351,7 +351,8 @@
         "not_authorized": "You are not authorized to login. Please contact site admin for further support",
         "invalid_credentials": "Invalid username or password",
         "not_activated": "Your account is not activated. Please contact site admin for further support",
-        "captcha_failed": "CAPTCHA validation failed. Please try again."
+        "captcha_failed": "CAPTCHA validation failed. Please try again.",
+        "select_usertype": "Select usertype"
     },
     "errors": {
         "username_required": "Username is required",

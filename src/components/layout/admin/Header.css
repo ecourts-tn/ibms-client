@@ -1,0 +1,31 @@
+.case-history{
+    border: 1px solid grey;
+    min-height:700px;
+}
+
+.case-history .title{
+    background-color: green;
+    color:#fafafa;
+    font-size:18px;
+    padding:8px 10px;
+}
+div > a.list-group-item{
+    padding-top:5px;
+    padding-bottom:5px;
+    color:#007bff;
+}
+.blinking {
+    animation: smooth-blink 1.5s infinite;
+    background:lightcoral;
+    padding:3px 15px;
+    border-radius:20px;
+  }
+  
+  @keyframes smooth-blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }

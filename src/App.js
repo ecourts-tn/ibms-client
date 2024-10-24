@@ -5,7 +5,8 @@ import { Routes, Route, HashRouter } from "react-router-dom"
 import Dashboard from "./components/pages/Dashboard"
 import Home from './components/pages/Home'
 import Register from "./components/pages/Register"
-import PublicLayout from "./components/pages/PublicLayout"
+import PublicLayout from './components/layout/public/PublicLayout'
+import AdminLayout from 'components/layout/admin/AdminLayout';
 import BailFiling from "./components/filing/BailFiling"
 import Relaxation from './components/petition/relaxation/Relaxation'
 import IntervenePetition from "components/petition/intervene/NewPetition"
@@ -52,7 +53,7 @@ function App() {
         <AuthProvider>
           <AppProvider>
             <Routes>
-              <Route element={<PublicLayout />}>
+              <Route element={<PublicLayout/>}>
                 <Route path="/auth/login" element={<Home />} />
                 <Route index element={<Home />} />
                 <Route path="pdf" element={<PdfGenerator />} />

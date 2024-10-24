@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
@@ -19,18 +19,23 @@ import LoginIcon from '@mui/icons-material/LockOpen'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { UserTypeContext } from 'contexts/UserTypeContext';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
+    const {userTypes} = useContext(UserTypeContext)
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const[form, setForm] =  useState({
         usertype: '',
         username:'',
         password:'',
         captcha: ''
     })
+    const [isDepartment, setIsDepartment] = useState(false)
     const { login } = useAuth();
     const[errors, setErrors] = useState({})
     const [captchaImageUrl, setCaptchaImageUrl] = useState('');
@@ -151,6 +156,15 @@ const Login = () => {
                             <h1 className="h4 mb-3 font-weight-bold">{t('signin')}</h1>
                         </div>    
                     </div>
+                    <div className="col-md-12 d-flex justify-content-center">
+                        <div class="form-group">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1" onChange={() => setIsDepartment(!isDepartment)}/>
+                                <label class="custom-control-label" for="customSwitch1">{t('department_user')}</label>
+                            </div>
+                        </div>
+                    </div>
+                    { !isDepartment && (
                     <div className="col-md-12">
                         <RadioGroup
                             row
@@ -165,13 +179,27 @@ const Login = () => {
                         </RadioGroup>
                         <p className="text-danger mb-3 text-center" style={{marginTop:'-15px', fontSize:'14px', fontWeight:'bold'}}>{ errors.usertype }</p>
                     </div>
+                    )}
+                    { isDepartment && (
+                    <div className="col-md-12">
+                        <div className="form-group">
+                            <label htmlFor="">{t('usertype')}</label>
+                            <select name="usertype" className="form-control">
+                                <option value="">{t('alerts.select_usertype')}</option>
+                                { userTypes.filter(ut => ut.department_user).map((u, index) => (
+                                <option key={index} value={u.id}>{ language === 'ta' ? u.user_ltype : u.user_type}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    )}
                     <div className="col-md-12">
                         <div className="form-group mb-3">
                             <FormControl fullWidth>
                                 <TextField
                                     error={ errors.username ? true : false }
                                     helperText={ errors.username }
-                                    label={`${t('mobile')}/${t('email')}/${t('bar_code')}`}
+                                    label={`${t('mobile')}/${t('email')}/${t('username')}`}
                                     size="small"
                                     name="username"
                                     value={ form.username }

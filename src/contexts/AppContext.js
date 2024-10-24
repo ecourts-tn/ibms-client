@@ -14,11 +14,12 @@ import { PrisonProvider } from "contexts/PrisonContext";
 import { ProofProvider } from "contexts/ProofContext"
 import { RelationProvider } from "contexts/RelationContext";
 import { CountryProvider } from "contexts/CountryContext";
-import { BaseProvider } from "./BaseContext";
-import { LanguageProvider } from "./LanguageContex";
-import { GenderProvider } from "./GenderContext";
-import { NationalityProvider } from "./NationalityContext";
-import { DesignationProvider } from "./DesignationContext";
+import { BaseProvider } from "contexts/BaseContext";
+import { LanguageProvider } from "contexts/LanguageContex";
+import { GenderProvider } from "contexts/GenderContext";
+import { NationalityProvider } from "contexts/NationalityContext";
+import { DesignationProvider } from "contexts/DesignationContext";
+import { UserTypeProvider } from "contexts/UserTypeContext";
 
 export const AppProvider = ({children}) => {
     return(
@@ -42,7 +43,9 @@ export const AppProvider = ({children}) => {
                                                                             <GenderProvider>
                                                                                 <NationalityProvider>
                                                                                     <DesignationProvider>
-                                                                                        {children}
+                                                                                        <UserTypeProvider>
+                                                                                            {children}
+                                                                                        </UserTypeProvider>
                                                                                     </DesignationProvider>
                                                                                 </NationalityProvider>
                                                                             </GenderProvider>
