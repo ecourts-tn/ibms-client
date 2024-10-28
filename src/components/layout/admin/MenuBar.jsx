@@ -1,23 +1,46 @@
-import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import React, {useState, useEffect, useContext} from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from 'hooks/useAuth'
-
+import { toast, ToastContainer } from 'react-toastify';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 export default function MenuBar() {
 
-  const {user, logout} = useAuth()
+  const {language, toggleLanguage} = useContext(LanguageContext)
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
 
 
-  const handleLogout = () => {
-    logout();
+  useEffect(() => {
+    if (sessionStorage.getItem("access") !== null) {
+      setIsAuth(true);
+      setUser(JSON.parse(sessionStorage.getItem("user"))); 
+    }
+  }, []);
+
+  const handleLogout = async (e) => {
+    const response = await api.post('auth/logout/', {
+      refresh: sessionStorage.getItem(REFRESH_TOKEN),
+    });
+    if (response.status === 205) {
+      sessionStorage.clear();
+      setIsAuth(false)
+      toast.success(t('alerts.logged_out'), { theme: "colored" });
+      setTimeout(() => {
+        navigate('/');
+      },1000)
+    }
   };
 
   if (!user) {
-    return <Navigate to="/" />;
+    return navigate('/')
   }
 
   return (
       <>
+        <ToastContainer />
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
           <a href="#/" className="brand-link text-center">
             <span className="brand-text font-weight-bold">IBMS - MHC</span>

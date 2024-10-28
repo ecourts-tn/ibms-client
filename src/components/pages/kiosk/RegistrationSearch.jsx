@@ -8,7 +8,7 @@ import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
-import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 
@@ -17,7 +17,7 @@ const RegistrationSearch = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(BenchTypeContext)
+    const {benchtypes} = useContext(SeatContext)
     const {language} = useContext(LanguageContext)
     // const {casetypes}   = useContext(CaseTypeContext)
     const {t} = useTranslation()

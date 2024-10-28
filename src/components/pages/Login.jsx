@@ -29,18 +29,18 @@ const Login = () => {
     const {userTypes} = useContext(UserTypeContext)
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
+    const [isDepartment, setIsDepartment] = useState(false)
+    const { login } = useAuth();
+    const[errors, setErrors] = useState({})
+    const [captchaImageUrl, setCaptchaImageUrl] = useState('');
+    const [captchaValid, setCaptchaValid] = useState(null);
     const[form, setForm] =  useState({
         usertype: '',
         username:'',
         password:'',
         captcha: ''
     })
-    const [isDepartment, setIsDepartment] = useState(false)
-    const { login } = useAuth();
-    const[errors, setErrors] = useState({})
-    const [captchaImageUrl, setCaptchaImageUrl] = useState('');
-    const [captchaValid, setCaptchaValid] = useState(null);
-
+    
     const validationSchema = Yup.object({
         usertype: Yup.string().required(t('errors.usertype_required')),
         username: Yup.string().required(t('errors.username_required')),

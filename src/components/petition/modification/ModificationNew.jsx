@@ -18,7 +18,7 @@ import GroundsContainer from 'components/Ground';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 
 
@@ -27,7 +27,7 @@ const ModificationNew = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(BenchTypeContext)
+    const {benchtypes} = useContext(SeatContext)
     const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)

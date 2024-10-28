@@ -41,6 +41,8 @@ import Pleadings from 'components/pages/Pleadings';
 import { AppProvider } from 'contexts/AppContext';
 import Bail from 'components/filing/Bail';
 
+import CourtDashboard from 'components/court/Dashboard'
+
 function App() {
 
   useEffect(() => {
@@ -54,12 +56,12 @@ function App() {
           <AppProvider>
             <Routes>
               <Route element={<PublicLayout/>}>
-                <Route path="/auth/login" element={<Home />} />
+                <Route path="auth/login" element={<Home />} />
                 <Route index element={<Home />} />
                 <Route path="pdf" element={<PdfGenerator />} />
                 <Route path="bail" element={<Bail />}/>
                 <Route
-                  path="/dashboard"
+                  path="dashboard"
                   element={
                     <PrivateRoute>
                       <Dashboard />
@@ -67,7 +69,7 @@ function App() {
                   }
                 />
                 <Route
-                  path="/petition/draft"
+                  path="petition/draft"
                   element={
                     <PrivateRoute>
                       <DraftList />
@@ -242,7 +244,23 @@ function App() {
                 />
                 <Route path="user/registration" element={<Register />} />
               </Route>
-            
+              <Route path="/icms" element={<AdminLayout />}>
+                  <Route path="court">
+                    <Route path="dashboard" element={<CourtDashboard />}></Route>
+                  </Route>
+                  <Route path="police">
+
+                  </Route>
+                  <Route path="prison">
+
+                  </Route>
+                  <Route path="prosecution">
+
+                  </Route>
+                  <Route path="administration">
+                    
+                  </Route>
+              </Route>
             </Routes>
           </AppProvider>
         </AuthProvider>

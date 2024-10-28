@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { SeatContext } from 'contexts/SeatContext';
 import SearchIcon from '@mui/icons-material/Search';
 import GroundsContainer from 'components/Ground';
 import Document from 'components/Document';
@@ -36,7 +36,7 @@ const ReturnProperty = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(BenchTypeContext)
+    const {benchtypes} = useContext(SeatContext)
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
     const[selectedRespondent, setSelectedRespondent] = useState([])
     const[errors, setErrors] = useState({})

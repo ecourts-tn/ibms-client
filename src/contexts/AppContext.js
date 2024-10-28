@@ -4,8 +4,8 @@ import { DistrictProvider } from "contexts/DistrictContext";
 import { TalukProvider } from "contexts/TalukContext";
 import { EstablishmentProvider } from "contexts/EstablishmentContext";
 import { CourtProvider } from "contexts/CourtContext";
-import { CourtTypeProvider } from "contexts/CourtTypeContext";
-import { BenchTypeProvider } from "contexts/BenchTypeContext";
+import { JudiciaryProvider } from "contexts/JudiciaryContext";
+import { SeatProvider } from "contexts/SeatContext";
 import { BailTypeProvider } from "contexts/BailTypeContext";
 import { ComplaintTypeProvider } from "contexts/ComplaintTypeContext";
 import { PoliceDistrictProvider } from "contexts/PoliceDistrictContext";
@@ -30,8 +30,8 @@ export const AppProvider = ({children}) => {
                         <TalukProvider>
                             <EstablishmentProvider>
                                 <CourtProvider>
-                                    <CourtTypeProvider>
-                                        <BenchTypeProvider>
+                                    <JudiciaryProvider>
+                                        <SeatProvider>
                                             <BailTypeProvider>
                                                 <ComplaintTypeProvider>
                                                     <PoliceDistrictProvider>
@@ -57,8 +57,8 @@ export const AppProvider = ({children}) => {
                                                     </PoliceDistrictProvider>
                                                 </ComplaintTypeProvider>
                                             </BailTypeProvider>
-                                        </BenchTypeProvider>
-                                    </CourtTypeProvider>
+                                        </SeatProvider>
+                                    </JudiciaryProvider>
                                 </CourtProvider>
                             </EstablishmentProvider>
                         </TalukProvider>

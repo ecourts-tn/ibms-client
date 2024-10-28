@@ -16,8 +16,8 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import { CourtTypeContext } from 'contexts/CourtTypeContext';
-import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { JudiciaryContext } from 'contexts/JudiciaryContext';
+import { SeatContext } from 'contexts/SeatContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
@@ -33,8 +33,8 @@ const InitialInput = () => {
     const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {courttypes}      = useContext(CourtTypeContext)
-    const {benchtypes}      = useContext(BenchTypeContext)
+    const {courttypes}      = useContext(JudiciaryContext)
+    const {benchtypes}      = useContext(SeatContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
     const {language}        = useContext(LanguageContext)

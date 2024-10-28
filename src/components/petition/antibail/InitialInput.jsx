@@ -13,7 +13,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import { CourtTypeContext } from 'contexts/CourtTypeContext';
+import { CourtTypeContext } from 'contexts/JudiciaryContext';
 import { BenchTypeContext } from 'contexts/BenchTypeContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';

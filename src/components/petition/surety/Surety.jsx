@@ -13,7 +13,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { TalukContext } from 'contexts/TalukContext';
-import { BenchTypeContext } from 'contexts/BenchTypeContext';
+import { SeatContext } from 'contexts/SeatContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import InitialInput from 'components/petition/InitialInput';
 import SuretyForm from './SuretyForm';
@@ -27,7 +27,7 @@ const Surety = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {taluks}  = useContext(TalukContext)
-    const {benchtypes} = useContext(BenchTypeContext)
+    const {benchtypes} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
     const[searchForm, setSearchForm] = useState({
         court_type:1,
