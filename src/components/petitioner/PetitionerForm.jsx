@@ -19,7 +19,7 @@ import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
 
 
-const PetitionerForm = ({addPetitioner}) => {
+const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   const {fir, accused} = useContext(BaseContext)
   const {states} = useContext(StateContext)
@@ -32,6 +32,7 @@ const PetitionerForm = ({addPetitioner}) => {
   const {language} = useContext(LanguageContext)
   const {genders} = useContext(GenderContext)
   const {nationalities} = useContext(NationalityContext)
+
   const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
@@ -68,6 +69,9 @@ const PetitionerForm = ({addPetitioner}) => {
   const[litigant, setLitigant] = useState(initialState)
   const[errors, setErrors] = useState({})
 
+  useEffect(() => {
+    setLitigant(selectedPetitioner)
+  }, [selectedPetitioner])
   
   const validationSchema = Yup.object({
     litigant_name: Yup.string().required(t('errors.litigant_name_required')),
@@ -153,7 +157,8 @@ const PetitionerForm = ({addPetitioner}) => {
       }
     }
   };
-  
+
+
 
   return (
     <>
@@ -437,6 +442,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     <option value={n.id} key={index}>{language === 'ta' ? n.nationality_lname : n.nationality_name }</option>
                   ))}
                 </select>
+
               </Form.Group>
             </div>
             <div className="col-md-3">
@@ -452,6 +458,7 @@ const PetitionerForm = ({addPetitioner}) => {
                     <option key={index} value={p.id}>{ language === 'ta' ? p.proof_lname : p.proof_name}</option>
                   ))}
                 </select>
+
               </div>
             </div>
             <div className="col-md-3">
@@ -542,6 +549,22 @@ const PetitionerForm = ({addPetitioner}) => {
                   </div>
                 </div>
             </div>
+            <div className="col-md-3 mt-2">
+                <Form.Group>
+                  <Form.Label>{t('custody_days')}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="custody_days"
+                    className={`${errors.custody_days ? 'is-invalid' : ''}`}
+                    disabled={ !litigant.is_custody }
+                    value={litigant.custody_days}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
+                  ></Form.Control>
+                  <div className="invalid-feedback">
+                    {errors.custody_days}
+                  </div>
+                </Form.Group>
+              </div>
             <div className="col-md-6 mt-2">
                 <div className="form-group">
                   <label htmlFor="prison">{t('prison_name')}</label><br />
@@ -561,23 +584,7 @@ const PetitionerForm = ({addPetitioner}) => {
                   <div className="invalid-feedback">{ errors.prison}</div>
                 </div>
               </div>  
-              <div className="col-md-2 mt-2">
-                <Form.Group>
-                  <Form.Label>{t('custody_days')}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="custody_days"
-                    className={`${errors.custody_days ? 'is-invalid' : ''}`}
-                    disabled={ !litigant.is_custody }
-                    value={litigant.custody_days}
-                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
-                  ></Form.Control>
-                  <div className="invalid-feedback">
-                    {errors.custody_days}
-                  </div>
-                </Form.Group>
-              </div>
-              <div className="col-md-2 mt-2">
+              <div className="col-md-4 mt-2">
                 <div className="form-group">
                   <label>{t('accused_surrender')}<RequiredField /></label><br />
                   <div>

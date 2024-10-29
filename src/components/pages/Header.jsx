@@ -19,9 +19,11 @@ const Header = () => {
   useEffect(() => {
     if (sessionStorage.getItem("access") !== null) {
       setIsAuth(true);
-      setUser(JSON.parse(sessionStorage.getItem("user"))); 
+      setUser(sessionStorage.getItem("user")); 
     }
   }, []);
+
+  
 
   const handleLogout = async (e) => {
     const response = await api.post('auth/logout/', {
@@ -72,7 +74,7 @@ const Header = () => {
               { isAuth && (
               <li className="nav-item dropdown">
                 <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <AccountCircleIcon /> {user.user.userlogin}
+                  <AccountCircleIcon /> {user.userlogin}
                 </a>
                 <div className="dropdown-menu" aria-labelledby="navbarDropdown">
                   <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>

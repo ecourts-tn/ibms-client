@@ -12,6 +12,7 @@ export const NationalityProvider = ({children}) => {
                 const response = await api.get("base/nationality/")
                 if(response.status === 200){
                     setNationalities(response.data)
+                    console.log(nationalities)
                 }
             }catch(error){
                 console.error(error)

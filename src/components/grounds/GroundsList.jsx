@@ -3,7 +3,7 @@ import Button from 'react-bootstrap/Button'
 import { CreateMarkup } from '../../utils'
 import { useTranslation } from 'react-i18next'
 
-const GroundsList = ({grounds, deleteGround}) => {
+const GroundsList = ({grounds, deleteGround, editGround}) => {
     const {t} = useTranslation()
     return (
         <>
@@ -17,6 +17,7 @@ const GroundsList = ({grounds, deleteGround}) => {
                             variant="primary" 
                             size="sm" 
                             className="mr-2"
+                            onClick={()=>editGround(ground) }
                         >
                             <i className="fa fa-pencil-alt mr-2"></i>
                         {t('edit')}</Button>

@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 const GroundsContainer = () => {
 
     const[grounds, setGrounds] = useState([])
-
+    const[selectedGround, setSelectedGround] = useState(null)
     const[count, setCount] = useState(0)
     const {t} = useTranslation()
 
@@ -39,29 +39,39 @@ const GroundsContainer = () => {
 
     const addGround = async (ground) => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/ground/create/`, ground, {params:{efile_no}})
+            ground.efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`case/ground/create/`, ground)
             if(response.status === 201){
                 incrementCount()
                 setGrounds(grounds => [...grounds, ground])
-                toast.success("Grounds added successfully", {theme:"colored"})
+                toast.success(t('alerts.ground_added'), {theme:"colored"})
             }
         }catch(error){
             console.error(error)
         }
     }
 
+    const editGround = async(ground) => {
+        try{
+            const response = await api.get(`case/ground/${ground.id}/detail/`)
+            if(response.status === 200){
+                setSelectedGround(response.data)
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
     const deleteGround = async(ground) => {
-        console.log(ground)
         try{
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id
             })
-            const response = await api.delete("case/ground/delete", {params:{id:ground.id}})
+            const response = await api.delete(`case/ground/${ground.id}/delete/`)
             if(response.status === 204){
                 setGrounds(newGrounds)
                 decrementCount()
-                toast.error("Grounds deleted successfully", {
+                toast.error(t('alerts.ground_deleted'), {
                     theme: "colored"
                 })
             }
@@ -84,6 +94,7 @@ const GroundsContainer = () => {
                                 deleteGround={deleteGround} 
                                 count={count}
                                 decrementCount={decrementCount}
+                                editGround={editGround}
                             />
                         </div>   
                         <div className="col-md-12"> 
@@ -91,6 +102,7 @@ const GroundsContainer = () => {
                                 addGround={addGround} 
                                 count={count}
                                 incrementCount={incrementCount}
+                                selectedGround={selectedGround}
                             />
                         </div>
                     </div>

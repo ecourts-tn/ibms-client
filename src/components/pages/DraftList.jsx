@@ -4,24 +4,27 @@ import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
-import { formatDate, formatLitigant } from '../../utils'
+import { formatDate } from '../../utils'
 import api from '../../api'
 import config from '../../config'
 
 const DraftList = () => {
 
-    const[cases, setCases] = useState([])
-
     const navigate = useNavigate()
-
-    const [showDocument, setShowDocument] = useState(false);
+    const[cases, setCases] = useState([])
     const[errors, setErrors] = useState([])
-    const handleClose = () => {
-        setShowDocument(false);
-        // setShowVakalath(false)
+    const[selectedDocument, setSelectedDocument] = useState(null)
+    const[showError, setShowError] = useState(false)
+    const handleErrorClose = () => setShowError(false);
+    const handleErrorShow = () => setShowError(true);
+    const handleShow = (document) => {
+        setSelectedDocument(document)
     }
-    const handleShowDocument = () => setShowDocument(true);
 
+    const handleClose = () => {
+        setSelectedDocument(null)
+    }
+    
     useEffect(() => {
         async function fetchData(){
             try{
@@ -35,13 +38,13 @@ const DraftList = () => {
         }
         fetchData();
     }, [])
-    console.log(cases)
 
-    const [show, setShow] = useState(false);
-
-    const[showError, setShowError] = useState(false)
-    const handleErrorClose = () => setShowError(false);
-    const handleErrorShow = () => setShowError(true);
+    const handleEdit = (efile_no) => {
+        if (window.confirm("Are you sure you want to edit the petition?")) {
+            sessionStorage.setItem('efile_no', efile_no);
+            navigate("/petition/bail");
+        }
+    };
 
     const handleSubmit = async(efile_no) => {
         if(window.confirm("Are you sure you want to submit the petition")){
@@ -133,7 +136,7 @@ const DraftList = () => {
                                 { cases.map((item, index) => (
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
-                                    <td><a href="#/">{ item.petition.efile_number }</a></td>
+                                    <td><a href="#/"><strong>{ item.petition.efile_number }</strong></a></td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
@@ -149,21 +152,18 @@ const DraftList = () => {
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (
-                                            <>
-                                                <span key={index}><a href={`${config.apiUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
-                                                {/* <Link
-                                                    onClick={handleShowDocument}
-                                                >{d.title}</Link>
-                                                { showDocument && (
-                                                    <ViewDocument 
-                                                        url={`${apiUrl}${d.title}`}
-                                                        show={showDocument} 
-                                                        setShow={setShowDocument} 
-                                                        handleClose={handleClose} 
-                                                        handleShow={handleShowDocument}/>
-                                                )} */}
-                                            </>
+                                            <div>
+                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>{ d.title }</span>
+                                            </div>
                                         ))}
+                                        { selectedDocument && (
+                                            <ViewDocument 
+                                                url={`${config.docUrl}${selectedDocument.document}`}
+                                                title={selectedDocument.title}
+                                                show={!!selectedDocument}
+                                                handleClose={handleClose}
+                                            />
+                                        )}
                                     </td>
                                     <td>
                                         { item.fees.map((fee, index) => (
@@ -171,7 +171,7 @@ const DraftList = () => {
                                         ))}
                                     </td>
                                     <td>
-                                        <button className="btn btn-info mx-1">
+                                        <button className="btn btn-info mx-1" onClick={() => handleEdit(item.petition.efile_number)}>
                                             <i className="fa fa-pencil-alt"></i>
                                         </button>
                                         <button className="btn btn-danger mx-1">

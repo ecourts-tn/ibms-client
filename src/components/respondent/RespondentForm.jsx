@@ -3,19 +3,20 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify'
-import { BaseContext } from '../../contexts/BaseContext'
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import { DesignationContext } from 'contexts/DesignationContext'
 
 
-const RespondentForm = ({addRespondent}) => {
+const RespondentForm = ({addRespondent, selectedRespondent}) => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
+    const {designations} = useContext(DesignationContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
@@ -30,6 +31,14 @@ const RespondentForm = ({addRespondent}) => {
     }
     const[litigant, setLitigant] = useState(initialState)
     const[respondentPolice, setRespondentPolice] = useState(false)  
+
+    useEffect(() => {
+        if(selectedRespondent){
+            setLitigant(selectedRespondent)
+        }
+    }, [selectedRespondent])
+
+    console.log(litigant)
 
     const validationSchema = Yup.object({
         litigant_name: Yup.string().required(t('errors.respondent_name_required')),
@@ -58,7 +67,7 @@ const RespondentForm = ({addRespondent}) => {
     const handleRespondentChange = () => {
         setRespondentPolice(!respondentPolice)
         if(!respondentPolice){
-            setLitigant({...litigant, litigant_name:'State of Tamil Nadu rep by'})
+            setLitigant({...litigant, litigant_name: language === 'ta' ? 'தமிழ்நாடு மாநில பிரதிநிதி' : 'State of Tamil Nadu rep by'})
         }else{
             setLitigant({...litigant, litigant_name:''})
         }
@@ -86,7 +95,7 @@ const RespondentForm = ({addRespondent}) => {
                         value={litigant.state}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
-                        <option value="">Select state</option>
+                        <option value="">{t('alerts.select_state')}</option>
                         { states.map((item, index) => (
                         <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                         ))}
@@ -103,7 +112,7 @@ const RespondentForm = ({addRespondent}) => {
                         value={litigant.district}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
-                        <option value="">Select District</option>
+                        <option value="">{t('alerts.select_district')}</option>
                         { districts.map((item, index) => (
                         <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                         ))}
@@ -120,7 +129,7 @@ const RespondentForm = ({addRespondent}) => {
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}
                         >
-                            <option value="">Select station</option>
+                            <option value="">{t('alerts.select_station')}</option>
                             { policeStations.filter(d=>parseInt(d.revenue_district)=== parseInt(litigant.district)).map((item, index) => (
                                 <option key={index} value={item.cctns_code}>{ language==='ta' ? item.station_lname : item.station_name}</option>
                             ))}
@@ -152,11 +161,10 @@ const RespondentForm = ({addRespondent}) => {
                             value={litigant.designation}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
-                            <option value="">Select designation</option>
-                            <option value="Superintendent of Police">Superintendent of Police</option>
-                            <option value="Deputy Superintendent of Police">Deputy Superintendent of Police</option>
-                            <option value="Inspector of Police">Inspector of Police</option>
-                            <option value="Sub-Inspector of Police">Sub-Inspector of Police</option>
+                            <option value="">{t('alerts.select_designation')}</option>
+                            { designations.map((d, index) => (
+                                <option key={index} value={d.id}>{language === 'ta' ? d.designation_lname : d.designation_name }</option>
+                            ))}
                         </select>
                         <div className="invalid-feedback">{ errors.designation }</div>
                     </Form.Group>

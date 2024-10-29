@@ -39,8 +39,8 @@ const GroundsContainer = () => {
 
     const addGround = async (ground) => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/ground/create/`, ground, {params:{efile_no}})
+            ground.efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`case/ground/create/`, ground)
             if(response.status === 201){
                 incrementCount()
                 setGrounds(grounds => [...grounds, ground])

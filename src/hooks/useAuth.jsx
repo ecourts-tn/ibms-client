@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
+import api from "api";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,9 +9,21 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   // call this function when you want to authenticate the user
-  const login = async (data) => {
-    setUser(data);
-    navigate("/dashboard", {replace:true});
+  const login = async (token) => {
+    if(token){
+      try{
+        const response = await api.post(`auth/user/info/`)
+        if(response.status === 200){
+          setUser(response.data)
+          setTimeout(() => {
+            navigate("/dashboard");
+          },1000)
+        }
+      }catch(error){
+        setUser(null)
+      }
+    }
+    
   };
 
   // call this function to sign out logged in user

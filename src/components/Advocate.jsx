@@ -10,7 +10,9 @@ import { useTranslation } from 'react-i18next'
 const Advocate = () => {
     
     const[advocates, setAdvocates] = useState([])
+    const[selectedAdvocate, setSelectedAdvocate] = useState(null)
     const {t} = useTranslation()
+
     useEffect(() => {
         async function fetchAdvocates(){
             try{
@@ -29,11 +31,11 @@ const Advocate = () => {
 
     const addAdvocate = async (advocate) => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
+            advocate.efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`advocate/create/`, advocate)
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
-                toast.success("Advocate details added successfully", {
+                toast.success(t('alerts.advocate_added'), {
                     theme: "colored"
                 })
             }
@@ -41,6 +43,18 @@ const Advocate = () => {
             console.error(error)
         }
     }
+
+    const editAdvocate = async(advocate) => {
+        try{
+            const response = await api.get(`advocate/${advocate.adv_code}/detail/`)
+            if(response.status===200){
+                setSelectedAdvocate(response.data)
+            }
+        }catch(error){
+            console.error(error)
+        }
+    }
+
     
     const deleteAdvocate = async (advocate) => {
         const newAdvocate = advocates.filter((a) => {
@@ -48,13 +62,13 @@ const Advocate = () => {
         })
         const response = await api.delete(`advocate/${advocate.adv_code}/delete/`) 
         if(response.status === 200){
-            toast.success("Advocate details deleted successfully", {
+            toast.success(t('alerts.advocate_deleted'), {
                 theme:"colored"
             })
             setAdvocates(newAdvocate)
         }
         
-        toast.error("Advocate details deleted successfully", {
+        toast.error(t('alerts.advocate_deleted'), {
             theme:"colored"
         })
         setAdvocates(newAdvocate)
@@ -74,6 +88,7 @@ const Advocate = () => {
                                 <AdvocateList 
                                     advocates={advocates}
                                     deleteAdvocate={deleteAdvocate}
+                                    editAdvocate={editAdvocate}
                                 />
                             </div>
                         </div>
@@ -81,6 +96,7 @@ const Advocate = () => {
                     <AdvocateForm 
                         addAdvocate={addAdvocate}
                         setAdvocates={setAdvocates}
+                        selectedAdvocate={selectedAdvocate}
                         advocates={advocates}
                     />
                 </div>
@@ -92,7 +108,7 @@ const Advocate = () => {
 export default Advocate
 
 
-const AdvocateForm = ({setAdvocates}) => {
+const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const initialAdvocate = {
         adv_name: '',
         adv_email: '',
@@ -116,14 +132,21 @@ const AdvocateForm = ({setAdvocates}) => {
         setAdvocate({...advocate, [name]: value})
     }
 
+    useEffect(() => {
+        if(selectedAdvocate){
+            setAdvocate(selectedAdvocate)
+        }
+    }, [selectedAdvocate])
+
+
     const handleSubmit = async() => {
         try{
             await validationSchema.validate(advocate, { abortEarly:false})
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`advocate/create/`, advocate, {params:{efile_no}})
+            advocate.efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.post(`advocate/create/`, advocate, )
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
-                toast.success("Advocate details added successfully", {
+                toast.success(t('alerts.advocate_added'), {
                     theme: "colored"
                 })
                 setAdvocate(initialAdvocate)
@@ -221,7 +244,7 @@ const AdvocateForm = ({setAdvocates}) => {
 }
 
 
-const AdvocateList = ({advocates, deleteAdvocate}) => {
+const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
     const {t} = useTranslation()
     return (
     <>
@@ -252,7 +275,7 @@ const AdvocateList = ({advocates, deleteAdvocate}) => {
                           variant='contained'
                           color='primary'
                           size='small'
-                          onClick={() => deleteAdvocate(advocate)}
+                          onClick={() => editAdvocate(advocate)}
                         >Edit</Button>
                         <Button
                           variant='contained'

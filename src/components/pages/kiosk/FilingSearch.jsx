@@ -16,13 +16,13 @@ const FilingSearch = () => {
 
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
-    const {benchtypes} = useContext(SeatContext)
+    const {seats} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
     const[form, setForm] = useState({
-        court_type:1,
-        bench_type:'',
+        judiciary:1,
+        seat:'',
         state: '', 
         district: '',
         establishment: '',
@@ -35,23 +35,23 @@ const FilingSearch = () => {
     const[objection, setObjection] = useState([])
     const[caseDetails, setCaseDetails] = useState(false)
     const validationSchema = Yup.object({
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
+        seat: Yup.string().when("judiciary",(judiciary, schema) => {
+            if(parseInt(judiciary) === 1){
                 return schema.required(t('errors.bench_required'))
             }
         }),
-        state: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        state: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.state_required'))
             }
         }),
-        district: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        district: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.district_required'))
             }
         }),
-        establishment: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        establishment: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.est_required'))
             }
         }),
@@ -105,31 +105,31 @@ const FilingSearch = () => {
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
                                     type="radio" 
-                                    name="court_type" 
-                                    id="court_type_hc" 
-                                    value={ form.court_type }
-                                    checked={parseInt(form.court_type) === 1 ? true : false }
+                                    name="judiciary" 
+                                    id="judiciary_hc" 
+                                    value={ form.judiciary }
+                                    checked={parseInt(form.judiciary) === 1 ? true : false }
                                     onChange={(e) => setForm({...form, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                 />
-                                <label htmlFor="court_type_hc">{t('high_court')}</label>
+                                <label htmlFor="judiciary_hc">{t('high_court')}</label>
                             </div>
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
                                     type="radio" 
-                                    id="court_type_dc" 
-                                    name="court_type" 
-                                    value={form.court_type}
-                                    checked={parseInt(form.court_type) === 2 ? true : false } 
+                                    id="judiciary_dc" 
+                                    name="judiciary" 
+                                    value={form.judiciary}
+                                    checked={parseInt(form.judiciary) === 2 ? true : false } 
                                     onChange={(e) => setForm({...form, [e.target.name]: 2, bench_type:''})}
                                 />
-                                <label htmlFor="court_type_dc">{t('district_court')}</label>
+                                <label htmlFor="judiciary_dc">{t('district_court')}</label>
                             </div>
                         </div>
                     </div>
                     <div className="col-md-12">
                         <div className="row">
                             <div className="col-md-6 offset-md-3">
-                                { parseInt(form.court_type) === 2 && (
+                                { parseInt(form.judiciary) === 2 && (
                                 <div className="row">
                                     <div className="col-md-6">
                                         <div className="form-group">
@@ -175,7 +175,7 @@ const FilingSearch = () => {
                                                 className={`form-control ${errors.establishment ? 'is-invalid' : ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="">{t('alerts.select_establishment')}</option>
+                                                <option value="" disabled>{t('alerts.select_establishment')}</option>
                                                 {establishments.filter(est=>parseInt(est.district) === parseInt(form.district)).map((estd, index)=>(
                                                     <option key={index} value={estd.establishment_code}>{language === 'ta' ? estd.establishment_lname: estd.establishment_name}</option>
                                                 ))}
@@ -187,23 +187,23 @@ const FilingSearch = () => {
                                     </div>
                                 </div>
                                 )}
-                                { parseInt(form.court_type) === 1 && (
+                                { parseInt(form.judiciary) === 1 && (
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="form-group">
                                             <label htmlFor="">{t('hc_bench')}</label>
                                             <select 
-                                                name="bench_type" 
-                                                className={`form-control ${errors.bench_type ? 'is-invalid' : ''}`}
+                                                name="seat" 
+                                                className={`form-control ${errors.seat ? 'is-invalid' : ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
                                                 <option value="">{t('alerts.select_bench_type')}</option>
-                                                {benchtypes.map((b, index)=>(
-                                                    <option key={index} value={b.type_code}>{language === 'ta' ? b.bench_ltype : b.bench_type}</option>
+                                                { seats.map((b, index)=>(
+                                                    <option key={index} value={b.seat_code}>{language === 'ta' ? b.seat_lname : b.seat_name}</option>
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
-                                                { errors.bench_type }
+                                                { errors.seat }
                                             </div>
                                         </div>
                                     </div>

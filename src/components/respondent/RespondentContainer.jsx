@@ -16,6 +16,7 @@ const RespondentContainer = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const[respondents, setRespondents] = useState([])
+    const[selectedRespondent, setSelectedRespondent] = useState(null)
     const {t} = useTranslation()
     useEffect(() => {
         const fetchLitigants =  async() => {
@@ -36,16 +37,12 @@ const RespondentContainer = () => {
     },[])
 
     const addRespondent = async(litigant) => {
-        const efile_no = sessionStorage.getItem("efile_no")
+        litigant.efile_no = sessionStorage.getItem("efile_no")
         try{
-            const response = await api.post(`litigant/create/`, litigant, {
-                params: {
-                efile_no
-                }
-            })
+            const response = await api.post(`litigant/create/`, litigant)
             if(response.status === 201){
                 setRespondents(respondents => [...respondents, litigant])
-                toast.success(`Respondent ${response.data.litigant_id} added successfully`, {
+                toast.success(t('alerts.respondent_added').replace('{respondent}', response.data.litigant_id), {
                 theme:"colored"
                 })
             }
@@ -54,18 +51,32 @@ const RespondentContainer = () => {
         }
     }
 
-    const deleteRespondent =async (respondent) => {
+    const editRespondent = async(id) => {
         try{
-            const newRespondents = respondents.filter((p) => {
-                return p.litigant_id !== respondent.litigant_id
-            })
-            setRespondents(newRespondents)
-            toast.error(`Respondent ${respondent.litigant_id} deleted successfuly`, {
-                theme: "colored"
-            })
-
+            const response = await api.get(`litigant/${id}/read/`)
+            setSelectedRespondent(response.data)
+            handleClose()
         }catch(error){
-            console.error(error)
+            console.log(error)
+        }
+
+    }
+
+    const deleteRespondent =async (respondent) => {
+        const newRespondents = respondents.filter((p) => {
+            return p.litigant_id !== respondent.litigant_id
+        })
+        try{
+            if(window.confirm("Are you sure want to delete the litigant")){
+                const response = await api.delete(`litigant/${respondent.litigant_id}/delete/`)
+                setRespondents(newRespondents)
+                toast.error(t('alerts.respondent_deleted').replace('{respondent}', respondent.litigant_id), {
+                    theme: "colored"
+                })
+                handleClose()
+            }
+        }catch(error){
+            console.log(error)
         }
     }
     
@@ -98,6 +109,7 @@ const RespondentContainer = () => {
                         <RespondentList 
                             respondents={respondents}
                             deleteRespondent={deleteRespondent}
+                            editRespondent={editRespondent}
                         />
                     </Modal.Body>
                     <Modal.Footer>
@@ -113,6 +125,7 @@ const RespondentContainer = () => {
                     <div className="col-md-12"> 
                         <RespondentForm 
                             addRespondent={addRespondent}
+                            selectedRespondent={selectedRespondent}
                         />
                     </div>
                 </div>

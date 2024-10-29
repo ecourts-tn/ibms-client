@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import SendIcon from '@mui/icons-material/Send';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
@@ -6,21 +6,38 @@ import Button from '@mui/material/Button'
 import api from 'api';
 import config from 'config'
 import { useTranslation } from 'react-i18next';
+import { DocumentContext } from 'contexts/DocumentContext';
+import { LanguageContext } from 'contexts/LanguageContex';
+import ViewDocument from './pages/ViewDocument';
 
 const Document = ({swornRequired}) => {
 
+    const {documents} = useContext(DocumentContext)
+    const {language}  = useContext(LanguageContext)
     const initialState = {
         title: '',
         document: ''
     }
     const[form, setForm] = useState(initialState)
-    const[documents, setDocuments] = useState([])
+    const[documentList, setDocumentList] = useState([])
 
     const[otp, setOtp] = useState('')
 
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
     const {t} = useTranslation()
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [show, setShow] = useState(false);
+    const[errors, setErrors] = useState([])
+    
+    const handleShow = (document) => {
+        setSelectedDocument(document);
+    };
+
+    // Close the modal by clearing the selected document
+    const handleClose = () => {
+        setSelectedDocument(null);
+    };
 
     const sendMobileOTP = () => {
         // if(otp === ''){
@@ -63,7 +80,7 @@ const Document = ({swornRequired}) => {
                 const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get("case/document/list/", {params:{efile_no}})
                 if(response.status === 200){
-                    setDocuments(response.data)
+                    setDocumentList(response.data)
                 }
             }catch(error){
                 console.error(error)
@@ -80,7 +97,7 @@ const Document = ({swornRequired}) => {
             })
             const response = await api.delete("case/document/delete/", {params:{id:document.id}})
             if(response.status === 204){
-                setDocuments(newDocuments)
+                setDocumentList(newDocuments)
                 toast.error("Documents deleted successfully", {
                     theme: "colored"
                 })
@@ -93,18 +110,16 @@ const Document = ({swornRequired}) => {
 
     const handleSubmit = async () => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
+            form.efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`case/document/create/`, form, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     // 'X-CSRFTOKEN': CSRF_TOKEN
                 },
-                params:{
-                    efile_no
-                }
+
             })
             if(response.status === 201){
-                setDocuments(documents => [...documents, response.data])
+                setDocumentList(documents => [...documents, response.data])
                 setForm(initialState)
                 toast.success(`Document ${response.data.id} uploaded successfully`, {
                     theme:"colored"
@@ -125,22 +140,35 @@ const Document = ({swornRequired}) => {
                             <thead className="bg-info">
                                 <tr>
                                     <th>S.No</th>
+                                    <th>Document No.</th>
                                     <th>{t('document_title')}</th>
-                                    <th>{t('document')}</th>
+                                    <th>{t('action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {documents.map((document, index) => (
+                                {documentList.map((document, index) => (
                                 <tr>
                                     <td>{ index+1}</td>
+                                    <td>{ document.id }</td>
                                     <td>{ document.title }</td>
                                     <td>
-                                        <a href={`${config.docUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
+                                        <button onClick={() => handleShow(document)} className="btn btn-info btn-sm">View</button>
+
+                                        
                                         <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(document)}>Delete</button>
                                     </td>
                                 </tr>    
                                 ))}
 
+                                {/* ViewDocument Modal, only shown if selectedDocument is not null */}
+                                {selectedDocument && (
+                                    <ViewDocument
+                                        url={`${config.docUrl}${selectedDocument.document}`}
+                                        title={selectedDocument.title}
+                                        show={!!selectedDocument}
+                                        handleClose={handleClose}
+                                    />
+                                )}
                             </tbody>
                         </table>
                     )}
@@ -154,9 +182,10 @@ const Document = ({swornRequired}) => {
                                     className="form-control"
                                     onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                 >
-                                    <option value="">Select </option>
-                                    <option value="Vakalath">Vakalath</option>
-                                    <option value="Supporting Documents">Supporting Documents</option>
+                                    <option value="">{t('alerts.select_document')}</option>
+                                    { documents.map((d, index) => (
+                                    <option key={index} value={language === 'ta' ? d.document_lname : d.document_name}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
+                                    ))}
                                 </select>
                                 </div>
                             </div>

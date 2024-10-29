@@ -33,16 +33,16 @@ const InitialInput = () => {
     const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {courttypes}      = useContext(JudiciaryContext)
-    const {benchtypes}      = useContext(SeatContext)
+    const {judiciaries}     = useContext(JudiciaryContext)
+    const {seats}           = useContext(SeatContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
     const {language}        = useContext(LanguageContext)
     const { t } = useTranslation()
 
     const initialState = {
-        court_type: 1,
-        bench_type: '',
+        judiciary: 1,
+        seat: '',
         state: '',
         district:'',
         establishment: '',
@@ -54,56 +54,67 @@ const InitialInput = () => {
     }
     const[petition, setPetition] = useState(initialState)
     
-    // useEffect(() => {
-    //     const fetchData = async() => {
-    //         try{
-    //             const efile_no = "ATN20240000001F2024000001" //sessionStorage.getItem("efile_no")
-    //             const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
-    //             if(response.status === 200){
-    //                 setPetition({...petition, bench_type: response.data.petition.bench_type})
-                    
-    //             }
-    //         }catch(error){
-    //             console.error(error)
-    //         }
-    //     }
-    //     fetchData()
-    // },[])
+    useEffect(() => {
+        const efile_no = sessionStorage.getItem("efile_no")
+        const fetchData = async() => {
+            try{
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+                if(response.status === 200){
+                    setPetition(response.data.petition)
+                }else{
+                    setPetition(initialState)
+                }
+            }catch(error){
+                console.error(error)
+                setPetition(initialState)
+            }
+        }
+        if(efile_no){
+            fetchData()
+        }else{
+            setPetition(initialState)
+        }
+    },[])
+
+    console.log(petition)
+
+
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 
-    useEffect(() => {
-        if(currentPath == "petition/anticipatory/bail"){
-            console.log("true")
-            setPetition({...petition, bail_type:2})
-        }
-    }, [])
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setPetition((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
 
 
     let validationSchema = Yup.object({
-        court_type: Yup.string().required("Please select court type"),
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
+        judiciary: Yup.string().required("Please select court type"),
+        seat: Yup.string().when("judiciary",(judiciary, schema) => {
+            if(parseInt(judiciary) === 1){
                 return schema.required(t('errors.bench_required'))
             }
         }),
-        state: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        state: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.state_required'))
             }
         }),
-        district: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        district: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.district_required'))
             }
         }),
-        establishment: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        establishment: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.est_required'))
             }
         }),
-        court: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        court: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.court_required'))
             }
         }),
@@ -170,40 +181,40 @@ const InitialInput = () => {
                                     <Form.Group className="mb-3">
                                         <Form.Label>{t('court_type')}<RequiredField /></Form.Label>
                                         <select 
-                                            name="court_type" 
-                                            id="court_type" 
+                                            name="judiciary" 
+                                            id="judiciary" 
                                             className="form-control" 
-                                            value={petition.court_type} 
-                                            onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
+                                            value={petition.judiciary?.id || 1 } 
+                                            onChange={handleChange}
                                         >
-                                            { courttypes.map((type, index) => (
-                                                <option key={index} value={type.id}>{language === 'ta' ? type.court_ltype : type.court_type}</option>
+                                            { judiciaries.map((j, index) => (
+                                                <option key={index} value={j.id}>{language === 'ta' ? j.judiciary_lname : j.judiciary_name}</option>
                                             ))}
                                         </select>
                                     </Form.Group>
                                 </div>
                                 <div className="col-md-6">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="bench_type">{t('hc_bench')}<RequiredField /></label>
+                                        <label htmlFor="seat">{t('hc_bench')}<RequiredField /></label>
                                         <select 
-                                            name="bench_type" 
-                                            className={`form-control ${errors.bench_type ? 'is-invalid' : ''} `}
-                                            value={petition.bench_type}
-                                            disabled={ parseInt(petition.court_type) === 2 ? true : false}
+                                            name="seat" 
+                                            className={`form-control ${errors.seat ? 'is-invalid' : ''} `}
+                                            value={petition.seat?.id || ''}
+                                            disabled={ parseInt(petition.judiciary) === 2 ? true : false}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
-                                            <option value="">{t('alerts.select_bench_type')}</option>
-                                            { benchtypes.map((bench, index) => (
-                                                <option key={index} value={bench.bench_code}>{language === 'ta' ? bench.bench_ltype : bench.bench_type}</option>
+                                            <option value="" disabled>{t('alerts.select_bench_type')}</option>
+                                            { seats.map((s, index) => (
+                                                <option key={index} value={s.seat_code}>{language === 'ta' ? s.seat_lname :s.seat_name}</option>
                                             ))}
                                         </select>
                                         <div className="invalid-feedback">
-                                            { errors.bench_type }
+                                            { errors.seat }
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            { petition.court_type == 2 && (
+                            { petition.judiciary?.id == 2 && (
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
@@ -211,7 +222,7 @@ const InitialInput = () => {
                                         <select 
                                             name="state" 
                                             className={`form-control ${errors.state ? 'is-invalid': null }`}
-                                            value={petition.state} onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}>
+                                            value={petition.state?.state_code || ''} onChange={handleChange}>
                                             <option value="">{t('alerts.select_state')}</option>
                                             { states.map( (item, index) => (
                                                 <option key={index} value={item.state_code}>{language==='ta' ? item.state_lname : item.state_name}</option>)
@@ -243,8 +254,9 @@ const InitialInput = () => {
                                             options={districts.filter(district=>parseInt(district.state)===parseInt(petition.state)).map((district) => { return { 
                                                 value:district.district_code, label:language==='ta' ? district.district_lname : district.district_name
                                             }})} 
+                                            value={districts.find(district => district.district_code === 18) || null}
                                             className={`${errors.district ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, district:e.value})}
+                                            onChange={handleChange}
                                         />
                                         <div className="invalid-feedback">
                                             { errors.district }
@@ -327,12 +339,12 @@ const InitialInput = () => {
                                             name="bail_type" 
                                             id="bail_type" 
                                             className={`form-control ${errors.bail_type ? 'is-invalid' : null}`}
-                                            value={petition.bail_type}
+                                            value={petition.bail_type?.id || ''}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_bail_type')}</option>
-                                            { bailtypes.map((item, index) => (
-                                            <option key={index} value={item.id}>{ item.type_name }</option>
+                                            { bailtypes.map((b, index) => (
+                                            <option key={index} value={b.id}>{ language === 'ta' ? b.type_lname : b.type_name }</option>
                                             ))}
                                         </select>
                                         <div className="invalid-feedback">
@@ -347,7 +359,7 @@ const InitialInput = () => {
                                             name="complaint_type" 
                                             id="complaint_type"
                                             className={`form-control ${errors.complaint_type ? 'is-invalid' : null}`}   
-                                            value={petition.complaint_type}
+                                            value={petition.complaint_type?.id || ''}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
                                         >
                                             <option value="">{t('alerts.select_complaint_type')}</option>

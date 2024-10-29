@@ -11,7 +11,7 @@ import { useRef } from 'react';
 import './style.css'
 
 
-const GroundsForm = ({addGround, count, incrementCount}) => {
+const GroundsForm = ({addGround, count, selectedGround}) => {
 
     const editorRef = useRef(null);
     const validationSchema = Yup.object({
@@ -24,6 +24,7 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
     const[ground, setGround] = useState(initialState)
     const[errors, setErrors] = useState(false)
     const {t} = useTranslation()
+
     const saveGround = async () => {
         try{
             await  validationSchema.validate(ground, {abortEarly: false})     
@@ -37,6 +38,12 @@ const GroundsForm = ({addGround, count, incrementCount}) => {
             setErrors(newErrors);
         }
     }
+
+    useEffect(() => {
+        if(selectedGround){
+            setGround(selectedGround)
+        }
+    },[selectedGround])
 
     return (
         <>  

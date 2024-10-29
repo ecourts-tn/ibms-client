@@ -94,14 +94,14 @@ const Login = () => {
             const isCaptchaValid = await verifyCaptcha();
             if(isCaptchaValid){
                 const {username, password, usertype} = form
-                const response = await api.post('auth/public/login/', { usertype, username, password }, {
+                const response = await api.post('auth/login/', { usertype, username, password }, {
                     skipInterceptor: true // Custom configuration to skip the interceptor
                 })
                 sessionStorage.clear()
                 sessionStorage.setItem(ACCESS_TOKEN, response.data.access);
                 sessionStorage.setItem(REFRESH_TOKEN, response.data.refresh);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-                await login(response.data)
+                await login(response.data.access)
                 toast.success('logged in successfully', {
                     theme: "colored"
                 })
@@ -184,7 +184,7 @@ const Login = () => {
                     <div className="col-md-12">
                         <div className="form-group">
                             <label htmlFor="">{t('usertype')}</label>
-                            <select name="usertype" className="form-control">
+                            <select name="usertype" className="form-control" onChange={(e)=>setForm({...form, [e.target.name]: e.target.value})}>
                                 <option value="">{t('alerts.select_usertype')}</option>
                                 { userTypes.filter(ut => ut.department_user).map((u, index) => (
                                 <option key={index} value={u.id}>{ language === 'ta' ? u.user_ltype : u.user_type}</option>
