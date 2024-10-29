@@ -49,23 +49,21 @@ const Login = () => {
     })
 
     useEffect(() => {
-        fetchCaptcha();
-      }, []);
-    
-    const fetchCaptcha = async () => {
-        try {
-            const response = await api.get('auth/generate-captcha/', {
-                responseType: 'blob',
-                withCredentials: true,  // Ensure session cookies are included
-            });
-            const imageBlob = URL.createObjectURL(response.data);
-            setCaptchaImageUrl(imageBlob);
-        } catch (error) {
-            console.error('Error fetching CAPTCHA:', error);
+        const fetchCaptcha = async () => {
+            try {
+                const response = await api.get('auth/generate-captcha/', {
+                    responseType: 'blob',
+                    withCredentials: true,  // Ensure session cookies are included
+                });
+                const imageBlob = URL.createObjectURL(response.data);
+                setCaptchaImageUrl(imageBlob);
+            } catch (error) {
+                console.error('Error fetching CAPTCHA:', error);
+            }
         }
-    };
-
-
+        fetchCaptcha()
+    }, []);
+    
 
     const verifyCaptcha = async () => {
         try {
@@ -122,29 +120,26 @@ const Login = () => {
                 switch(status){
                     case 400:
                         toast.error(t('alerts.invalid_credentials'), {theme: "colored"})
-                        setLoading(false)
                         break;
                     case 401:
                         toast.error(t('alerts.not_authorized'), {theme:"colored"})
-                        setLoading(false)
                         break;
                     case 403:
                         toast.error(t('alerts.not_activated'), {theme:"colored"})
-                        setLoading(false)
                         break;
                     case 404:
                         toast.error(data.message, {theme:"colored"})
-                        setLoading(false)
                         break;
                     default:
                         toast.error(error, {theme:"colored"})
-                        setLoading(false)
                 }
             }
         }
+        finally{
+            setLoading(false)
+        }
     }
 
-    console.log(errors)
     return (
         <>
             <ToastContainer />
