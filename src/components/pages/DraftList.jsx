@@ -2,11 +2,12 @@ import React, {useState, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { formatDate } from '../../utils'
 import api from '../../api'
 import config from '../../config'
+import { useTranslation } from 'react-i18next'
 
 const DraftList = () => {
 
@@ -17,6 +18,7 @@ const DraftList = () => {
     const[showError, setShowError] = useState(false)
     const handleErrorClose = () => setShowError(false);
     const handleErrorShow = () => setShowError(true);
+    const {t} = useTranslation()
     const handleShow = (document) => {
         setSelectedDocument(document)
     }
@@ -105,7 +107,7 @@ const DraftList = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="contained" onClick={handleErrorClose}>
-                            Close
+                            {t('close')}
                         </Button>
                     </Modal.Footer>
             </Modal>
@@ -114,9 +116,9 @@ const DraftList = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#/">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#/">Petition</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Draft</li>
+                                <li className="breadcrumb-item"><a href="#/">{t('home')}</a></li>
+                                <li className="breadcrumb-item"><a href="#/">{t('petition')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('draft')}</li>
                             </ol>
                         </nav>
                         <h3><strong>Draft Petitions</strong></h3>
@@ -127,7 +129,7 @@ const DraftList = () => {
                                     <th>eFiling Number</th>
                                     <th>eFile Date</th>
                                     <th>Litigants</th>
-                                    <th>View Documents</th>
+                                    <th>Documents</th>
                                     <th>Payment</th>
                                     <th>Action</th>
                                 </tr>
@@ -171,18 +173,20 @@ const DraftList = () => {
                                         ))}
                                     </td>
                                     <td>
-                                        <button className="btn btn-info mx-1" onClick={() => handleEdit(item.petition.efile_number)}>
-                                            <i className="fa fa-pencil-alt"></i>
-                                        </button>
-                                        <button className="btn btn-danger mx-1">
-                                            <i className="fa fa-trash"></i>
-                                        </button>
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={() => handleEdit(item.petition.efile_number)}
+                                        >
+                                            <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
+                                        </Button>
                                         <Button
                                             variant="contained"
                                             color="success"
+                                            className="ml-1"
                                             onClick = {(e) => handleSubmit(item.petition.efile_number) }
                                         >
-                                            Submit
+                                            <i className="fa fa-upload mr-1"></i>{t('submit')}
                                         </Button>
                                     </td>
                                 </tr>

@@ -78,7 +78,7 @@ const Document = ({swornRequired}) => {
         const fetchDocuments = async() => {
             try{
                 const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get("case/document/list/", {params:{efile_no}})
+                const response = await api.get("case/document/", {params:{efile_no}})
                 if(response.status === 200){
                     setDocumentList(response.data)
                 }
@@ -95,7 +95,7 @@ const Document = ({swornRequired}) => {
             const newDocuments = documents.filter((g) => {
                 return g.id !== document.id
             })
-            const response = await api.delete("case/document/delete/", {params:{id:document.id}})
+            const response = await api.delete(`case/document/${document.id}/`)
             if(response.status === 204){
                 setDocumentList(newDocuments)
                 toast.error("Documents deleted successfully", {
@@ -111,7 +111,7 @@ const Document = ({swornRequired}) => {
     const handleSubmit = async () => {
         try{
             form.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/document/create/`, form, {
+            const response = await api.post(`case/document/`, form, {
                 headers: {
                     'content-type': 'multipart/form-data',
                     // 'X-CSRFTOKEN': CSRF_TOKEN
@@ -184,7 +184,7 @@ const Document = ({swornRequired}) => {
                                 >
                                     <option value="">{t('alerts.select_document')}</option>
                                     { documents.map((d, index) => (
-                                    <option key={index} value={language === 'ta' ? d.document_lname : d.document_name}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
+                                    <option key={index} value={d.id}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
                                     ))}
                                 </select>
                                 </div>

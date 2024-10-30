@@ -26,7 +26,7 @@ const GroundsContainer = () => {
         const fecthGrounds = async() => {
             try{
                 const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get("case/ground/list/", {params:{efile_no}})
+                const response = await api.get("case/ground/", {params:{efile_no}})
                 if(response.status === 200){
                     setGrounds(response.data)
                 }
@@ -40,7 +40,7 @@ const GroundsContainer = () => {
     const addGround = async (ground) => {
         try{
             ground.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/ground/create/`, ground)
+            const response = await api.post(`case/ground/`, ground)
             if(response.status === 201){
                 incrementCount()
                 setGrounds(grounds => [...grounds, ground])
@@ -53,7 +53,7 @@ const GroundsContainer = () => {
 
     const editGround = async(ground) => {
         try{
-            const response = await api.get(`case/ground/${ground.id}/detail/`)
+            const response = await api.get(`case/ground/${ground.id}/`)
             if(response.status === 200){
                 setSelectedGround(response.data)
             }
@@ -67,7 +67,7 @@ const GroundsContainer = () => {
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id
             })
-            const response = await api.delete(`case/ground/${ground.id}/delete/`)
+            const response = await api.delete(`case/ground/${ground.id}/`)
             if(response.status === 204){
                 setGrounds(newGrounds)
                 decrementCount()

@@ -25,7 +25,7 @@ import PetitionDetail from "./components/pages/PetitionDetail"
 import PdfGenerator from "./components/pages/PdfGenerator"
 
 import { PrivateRoute } from "./hooks/PrivateRoute";
-import { AuthProvider } from "./hooks/useAuth";
+import { AuthProvider } from "contexts/AuthContext";
 import Logout from './components/pages/Logout'
 import ChangePassword from './components/pages/ChangePassword'
 import Profile from './components/pages/Profile'

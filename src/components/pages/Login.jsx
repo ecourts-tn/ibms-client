@@ -3,12 +3,8 @@ import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../api';
-import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
-import { useAuth } from '../../hooks/useAuth';
-// import highcourtlogo from '../../highcourtlogo.png'
+import { useAuth } from 'contexts/AuthContext';
 import './header.css'
-import axios from 'axios'
-
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
 import Radio from '@mui/material/Radio';
@@ -16,24 +12,25 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button'
 import LoginIcon from '@mui/icons-material/LockOpen'
+import useCaptcha from 'hooks/useCaptcha';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
+
 
 
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
+    const { captchaImageUrl, fetchCaptcha, captchaValid, verifyCaptcha } = useCaptcha();
     const {userTypes} = useContext(UserTypeContext)
-    const {t} = useTranslation()
-    const {language} = useContext(LanguageContext)
     const [isDepartment, setIsDepartment] = useState(false)
+    const {language} = useContext(LanguageContext)
+    const {t} = useTranslation()
     const { login } = useAuth();
     const[errors, setErrors] = useState({})
-    const [captchaImageUrl, setCaptchaImageUrl] = useState('');
-    const [captchaValid, setCaptchaValid] = useState(null);
     const[form, setForm] =  useState({
         usertype: '',
         username:'',
@@ -49,57 +46,24 @@ const Login = () => {
     })
 
     useEffect(() => {
-        const fetchCaptcha = async () => {
-            try {
-                const response = await api.get('auth/generate-captcha/', {
-                    responseType: 'blob',
-                    withCredentials: true,  // Ensure session cookies are included
-                });
-                const imageBlob = URL.createObjectURL(response.data);
-                setCaptchaImageUrl(imageBlob);
-            } catch (error) {
-                console.error('Error fetching CAPTCHA:', error);
-            }
-        }
+        // load the captcha code when page gets loaded
         fetchCaptcha()
-    }, []);
-    
+    },[])
 
-    const verifyCaptcha = async () => {
-        try {
-          const response = await api.post('auth/verify-captcha/', {
-            captcha: form.captcha},{
-            withCredentials: true,  // Ensure session cookies are included
-            });
-          if (response.data.success) {
-            setCaptchaValid(true);
-            return true;
-          } else {
-            setCaptchaValid(false);
-            fetchCaptcha(); 
-            return false;
-          }
-        } catch (error) {
-          console.error('Error verifying CAPTCHA:', error);
-        }
-    };
 
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
         try{
             await validationSchema.validate(form, {abortEarly: false})
-            const isCaptchaValid = await verifyCaptcha();
+            const isCaptchaValid = await verifyCaptcha(form.captcha);
+            console.log(isCaptchaValid)
             if(isCaptchaValid){
                 const {username, password, usertype} = form
                 const response = await api.post('auth/login/', { usertype, username, password }, {
                     skipInterceptor: true // Custom configuration to skip the interceptor
                 })
-                sessionStorage.clear()
-                sessionStorage.setItem(ACCESS_TOKEN, response.data.access);
-                sessionStorage.setItem(REFRESH_TOKEN, response.data.refresh);
-                axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.access}`;
-                await login(response.data.access)
+                await login(response.data)
                 toast.success('logged in successfully', {
                     theme: "colored"
                 })

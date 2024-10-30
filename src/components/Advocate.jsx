@@ -17,7 +17,7 @@ const Advocate = () => {
         async function fetchAdvocates(){
             try{
                 const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get(`advocate/list/`, {params: {efile_no}})
+                const response = await api.get(`case/advocate/`, {params: {efile_no}})
                 if(response.status === 200){
                     setAdvocates(response.data)
                 }
@@ -32,7 +32,7 @@ const Advocate = () => {
     const addAdvocate = async (advocate) => {
         try{
             advocate.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`advocate/create/`, advocate)
+            const response = await api.post(`case/advocate/`, advocate)
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
                 toast.success(t('alerts.advocate_added'), {
@@ -46,7 +46,7 @@ const Advocate = () => {
 
     const editAdvocate = async(advocate) => {
         try{
-            const response = await api.get(`advocate/${advocate.adv_code}/detail/`)
+            const response = await api.get(`case/advocate/${advocate.adv_code}/`)
             if(response.status===200){
                 setSelectedAdvocate(response.data)
             }
@@ -60,7 +60,7 @@ const Advocate = () => {
         const newAdvocate = advocates.filter((a) => {
             return a.id !== advocate.id
         })
-        const response = await api.delete(`advocate/${advocate.adv_code}/delete/`) 
+        const response = await api.delete(`case/advocate/${advocate.adv_code}/`) 
         if(response.status === 200){
             toast.success(t('alerts.advocate_deleted'), {
                 theme:"colored"
@@ -143,7 +143,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         try{
             await validationSchema.validate(advocate, { abortEarly:false})
             advocate.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`advocate/create/`, advocate, )
+            const response = await api.post(`case/advocate/`, advocate, )
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
                 toast.success(t('alerts.advocate_added'), {
