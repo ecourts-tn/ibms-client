@@ -22,13 +22,11 @@ const Document = ({swornRequired}) => {
     const[documentList, setDocumentList] = useState([])
 
     const[otp, setOtp] = useState('')
-
+    const {t} = useTranslation()
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
-    const {t} = useTranslation()
     const [selectedDocument, setSelectedDocument] = useState(null);
-    const [show, setShow] = useState(false);
-    const[errors, setErrors] = useState([])
+
     
     const handleShow = (document) => {
         setSelectedDocument(document);

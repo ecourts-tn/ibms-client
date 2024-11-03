@@ -11,7 +11,6 @@ import { RequiredField } from 'utils';
 import FIRSearch from 'components/search/FIRSearch';
 import CaseSearch from 'components/search/CaseSearch';
 import { BaseContext } from 'contexts/BaseContext';
-import { useLocation } from 'react-router-dom';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
@@ -25,10 +24,7 @@ import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const InitialInput = () => {
-
-    const location = useLocation();
-    const currentPath = location.pathname;
-    const {efile_no, setEfileNo, fir} = useContext(BaseContext)
+    const {fir} = useContext(BaseContext)
     const {states}          = useContext(StateContext)
     const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
@@ -75,9 +71,6 @@ const InitialInput = () => {
             setPetition(initialState)
         }
     },[])
-
-    console.log(petition)
-
 
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
@@ -214,7 +207,7 @@ const InitialInput = () => {
                                     </div>
                                 </div>
                             </div>
-                            { petition.judiciary?.id == 2 && (
+                            { petition.judiciary?.id === 2 && (
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">

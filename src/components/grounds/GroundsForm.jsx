@@ -1,19 +1,15 @@
 import React, { useEffect } from 'react'
 import Button from '@mui/material/Button'
 import { useState } from 'react'
-import { nanoid } from '@reduxjs/toolkit'
 import { ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
-import api from '../../api'
 import Editor from 'react-simple-wysiwyg';
 import { useTranslation } from 'react-i18next'
-import { useRef } from 'react';
 import './style.css'
 
 
 const GroundsForm = ({addGround, count, selectedGround}) => {
 
-    const editorRef = useRef(null);
     const validationSchema = Yup.object({
         description: Yup.string().required("The description field may not be blank").max(3000, "Description should not be more than 3000 characters")
     })

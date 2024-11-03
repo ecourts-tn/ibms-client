@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import AdvocateForm from './AdvocateForm'
 import AdvocateList from './AdvocateList'
-import { toast, ToastContainer } from 'react-toastify'
+import { toast } from 'react-toastify'
 import api from '../../api'
 
 const AdvocateContainer = () => {

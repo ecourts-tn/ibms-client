@@ -1,6 +1,7 @@
-import React, {useState,useEffect} from 'react'
+import React, {useState,useEffect, useContext} from 'react'
 import { useLocation } from 'react-router-dom'
 import api from '../../api'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 const PetitionDetail = () => {
 
@@ -11,6 +12,7 @@ const PetitionDetail = () => {
     const[respondent, setRespondent] = useState([])
     const[crime, setCrime] = useState({})
     const[objection, setObjection] = useState([])
+    const {language} = useContext(LanguageContext)
     useEffect(() => {
         async function fetchData(){
             const response = await api.get(`case/filing/detail/`, {params: {efile_no:state.efile_no}})
@@ -31,7 +33,6 @@ const PetitionDetail = () => {
         fetchData()
     }, [])
 
-    console.log(petition)
 
     return (
         <>
@@ -50,19 +51,19 @@ const PetitionDetail = () => {
                             <h6 className="text-center text-danger"><strong>Case Details</strong></h6>
                             <table className="table table-bordered table-striped table-sm">
                                 <tbody>
-                                    { petition.court_type.id === 2 && (
+                                    { petition.judiciary.id== 2 && (
                                     <>
                                     <tr>
                                         <td>State</td>
-                                        <td>{ petition.state.state_name }</td>
+                                        <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
                                         <td>District</td>
-                                        <td>{ petition.district.district_name }</td>
+                                        <td>{ language === 'ta' ? petition.state.state_lname : petition.district.district_name }</td>
                                     </tr>
                                     <tr>
                                         <td>Establishment Name</td>
-                                        <td>{ petition.establishment.establishment_name }</td>
+                                        <td>{ language === 'ta' ? petition.establishment.establishment_lname : petition.establishment.establishment_name }</td>
                                         <td>Court Name</td>
-                                        <td>{ petition.court.court_name }</td>
+                                        <td>{ language === 'ta' ? petition.court.court_lname : petition.court.court_name }</td>
                                     </tr>
                                     </>
                                     )}
@@ -78,29 +79,29 @@ const PetitionDetail = () => {
                                         <td>Registration Date</td>
                                         <td>{  petition.registration_date }</td>
                                     </tr>
-                                    {  petition.court_type.code === 2 && (
+                                    {  petition.judiciary.id === 2 && (
                                     <>
                                         <tr>
                                             <td>State</td>
-                                            <td>{ petition.state.state_name}</td>
+                                            <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name}</td>
                                             <td>District</td>
-                                            <td>{ petition.district.district_name}</td>
+                                            <td>{ language === 'ta' ? petition.district.district_lname : petition.district.district_name}</td>
                                         </tr>
                                         <tr>
                                             <td>Establishment</td>
-                                            <td>{ petition.establishment.establishment_name}</td>
+                                            <td>{ language === 'ta' ? petition.establishment.establishment_lname : petition.establishment.establishment_name}</td>
                                             <td>Court</td>
-                                            <td>{ petition.court.court_name}</td>
+                                            <td>{ language === 'ta' ? petition.court.court_lname : petition.court.court_name}</td>
                                         </tr>
                                     </>
                                     )}
-                                    {  petition.court_type.code === 1 && (
+                                    {  petition.judiciary.id === 1 && (
                                     <>
                                         <tr>
                                             <td>Court Type</td>
-                                            <td>{ petition.court_type.name}</td>
+                                            <td>{ language === 'ta' ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
                                             <td>Bench Type</td>
-                                            <td>{ petition.bench_type.name}</td>
+                                            <td>{ language === 'ta' ? petition.seat.seat_lname : petition.seat.seat_name}</td>
                                         </tr>
                                     </>
                                     )}

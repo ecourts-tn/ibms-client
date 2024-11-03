@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect} from 'react'
 import { useState } from 'react'
 import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
@@ -104,7 +104,6 @@ export default GroundsContainer
 
 const GroundsForm = ({addGround, count, incrementCount}) => {
 
-    const editorRef = useRef(null);
     const {t} = useTranslation()
     const validationSchema = Yup.object({
         description: Yup.string().required("The description field may not be blank").max(3000, "Description should not be more than 3000 characters")

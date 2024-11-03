@@ -174,30 +174,19 @@ const Dashboard = () => {
                                                 </div>
                                                 
                                                 <span className="text mr-3">
-                                                    <Link to="">{ c.petition.efile_number }</Link>
+                                                    <Link to="/petition/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
-                                                { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                                { c.litigant.filter((l) => parseInt(l.litigant_type) ===1 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>
                                                 ))
                                                 }
-                                                {/* { c.litigant.map((p, index) => (
-                                                    <span className="text ml-2">{index+1}. {p.litigant_name}</span>
-                                                ))}  */}
                                                 <span className="text text-danger">Vs</span>
-                                                { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                                { c.litigant.filter((l) => parseInt(l.litigant_type) ===2 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
                                                 ))
                                                 }
-                                                {/* { c.litigant.map((res, index) => (
-                                                    <span className="text ml-2">{res.litigant_name} rep by {res.designation}</span>
-                                                ))}  */}
                                                 <div className="float-right">
-                                                    <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small>
-                                                    {/* <div className="tools">
-                                                        <i className="fas fa-edit" />
-                                                        <i className="fas fa-trash-o" />
-                                                    </div> */}
-
+                                                    {/* <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small> */}
                                                 </div>
                                             </li>
                                     ))}
