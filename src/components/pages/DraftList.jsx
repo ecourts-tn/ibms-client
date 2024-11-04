@@ -19,6 +19,7 @@ const DraftList = () => {
     const handleErrorClose = () => setShowError(false);
     const handleErrorShow = () => setShowError(true);
     const {t} = useTranslation()
+    
     const handleShow = (document) => {
         setSelectedDocument(document)
     }

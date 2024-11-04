@@ -1,8 +1,11 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from '@mui/material/Button';
+import { useTranslation } from 'react-i18next';
 
 const ViewDocument = ({ url, title, show, handleClose }) => {
+
+    const {t} = useTranslation()
     return (
         <Modal
             show={show}
@@ -22,7 +25,7 @@ const ViewDocument = ({ url, title, show, handleClose }) => {
             </Modal.Body>
             <Modal.Footer style={{ justifyContent: "end" }}>
                 <Button variant="contained" onClick={handleClose}>
-                    Close
+                    {t('close')}
                 </Button>
             </Modal.Footer>
         </Modal>

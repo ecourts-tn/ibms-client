@@ -42,6 +42,20 @@ import { AppProvider } from 'contexts/AppContext';
 import Bail from 'components/filing/Bail';
 
 import CourtDashboard from 'components/court/Dashboard'
+import ScrutinyDashboard from "./components/court/scrutiny/Dashboard"
+import TodayCases from 'components/court/TodayCases';
+import DailyProceedings from "components/court/DailyProceedings"
+import CaseRegistration from "components/court/CaseRegistration"
+import PendingList from './components/court/scrutiny/PendingList'
+import DailyProceedingsList from './components/court/DailyProceedingsList'
+import BailOrder from './components/court/BailOrder'
+import RegistrationPendingList from './components/court/RegistrationPendingList'
+import CauseList from './components/court/CauseList'
+import SuretyPendingList from './components/court/SuretyPendingList'
+import SuretyVerify from './components/court/SuretyVerify'
+import OrderPendingList from './components/court/OrderPendingList'
+import JudgeForm from 'components/court/judge/JudgeForm';
+import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
 
 function App() {
 
@@ -244,9 +258,129 @@ function App() {
                 />
                 <Route path="user/registration" element={<Register />} />
               </Route>
-              <Route path="/icms" element={<AdminLayout />}>
+              <Route path="/ibms" element={<AdminLayout />}>
                   <Route path="court">
                     <Route path="dashboard" element={<CourtDashboard />}></Route>
+                    <Route 
+                      path="petition/listed-today" 
+                      element={
+                        <PrivateRoute>
+                          <TodayCases />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/proceedings" 
+                      element={
+                        <PrivateRoute>
+                          <DailyProceedingsList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/case/proceedings" 
+                      element={
+                        <PrivateRoute>
+                          <DailyProceedings />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/cause-list" 
+                      element={
+                        <PrivateRoute>
+                          <CauseList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/scrutiny" 
+                      element={
+                        <PrivateRoute>
+                          <PendingList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/scrutiny/details" 
+                      element={
+                        <PrivateRoute>
+                          <ScrutinyDashboard />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/registration/list" 
+                      element={
+                        <PrivateRoute>
+                          <RegistrationPendingList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="petition/registration" 
+                      element={
+                        <PrivateRoute>
+                          <CaseRegistration />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="surety/pending/list/" 
+                      element={
+                        <PrivateRoute>
+                          <SuretyPendingList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="surety/verify/" 
+                      element={
+                        <PrivateRoute>
+                          <SuretyVerify />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="orders/generate/" 
+                      element={
+                        <PrivateRoute>
+                          <OrderPendingList />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="bail/generate/order" 
+                      element={
+                        <PrivateRoute>
+                          <BailOrder />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="orders/bail/" 
+                      element={
+                        <PrivateRoute>
+                          <BailOrder />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="admin/judge" 
+                      element={
+                        <PrivateRoute>
+                          <JudgeForm />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="admin/judge-period" 
+                      element={
+                        <PrivateRoute>
+                          <JudgePeriodForm />
+                        </PrivateRoute>
+                      } 
+                    />
                   </Route>
                   <Route path="police">
 

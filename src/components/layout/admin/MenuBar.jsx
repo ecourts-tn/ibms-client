@@ -53,7 +53,7 @@ export default function MenuBar() {
                 <img src={`${process.env.PUBLIC_URL}/images/highcourtlogo.png`} className="img-circle elevation-2" alt="User Icon" />
               </div>
               <div className="info">
-                <a href="#" className="d-block">{ user.user.username }</a>
+                <a href="#" className="d-block">{ user.username }</a>
               </div>
             </div>
             <div className="form-inline">
@@ -70,10 +70,10 @@ export default function MenuBar() {
               { user && (
               <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 {/* Start - Court user menu */}
-                { parseInt(user.user.user_type) === 8 && (
+                { parseInt(user.user_type) === 8 && (
                 <>
                   <li className="nav-item menu-open">
-                    <Link to="/court/dashboard" className="nav-link active">
+                    <Link to="/ibms/court/dashboard" className="nav-link active">
                       <i className="nav-icon fas fa-tachometer-alt" />
                       <p>{t('dashboard')}</p>
                     </Link> 
@@ -81,25 +81,25 @@ export default function MenuBar() {
                   <li className="nav-item">
                     <a href="/#" className="nav-link">
                       <i className="nav-icon fas fa-table"></i>
-                      <p>Registration <i className="fas fa-angle-left right"></i></p>
+                      <p>{t('registration')} <i className="fas fa-angle-left right"></i></p>
                     </a>
                     <ul className="nav nav-treeview">
                       <li className="nav-item">
-                        <Link to="/court/petition/scrutiny" className="nav-link">
+                        <Link to="/ibms/court/petition/scrutiny" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Case Scrutiny</p>
+                          <p>{t('case_scrutiny')}</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/court/petition/registration/list/" className="nav-link">
+                        <Link to="/ibms/court/petition/registration/list/" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Case Registration</p>
+                          <p>{t('registration')}</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/court/petition/listed-today" className="nav-link">
+                        <Link to="/ibms/court/petition/listed-today" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Post Cases to Causelist</p>
+                          <p>{t('post_causelist')}</p>
                         </Link>
                       </li>
                     </ul>
@@ -107,31 +107,13 @@ export default function MenuBar() {
                   <li className="nav-item">
                     <a href={void(0)} className="nav-link">
                       <i className="nav-icon fas fa-table" />
-                      <p> Court Proceedings <i className="fas fa-angle-left right" /></p>
+                      <p> {t('proceedings')} <i className="fas fa-angle-left right" /></p>
                     </a>
                     <ul className="nav nav-treeview">
-                      {/* <li className="nav-item">
-                        <Link to="/court/today-cases" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>Today's Cases</p>
-                        </Link>
-                      </li>
                       <li className="nav-item">
-                        <Link to="/" className="nav-link">
+                        <Link to="/ibms/court/petition/proceedings" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Pending Cases</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>Disposed Cases</p>
-                        </Link>
-                      </li> */}
-                      <li className="nav-item">
-                        <Link to="/court/petition/proceedings" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>Daily Proceedings</p>
+                          <p>{t('daily_proceedings')}</p>
                         </Link>
                       </li>
                     </ul>
@@ -139,25 +121,39 @@ export default function MenuBar() {
                   <li className="nav-item">
                     <a href="#" className="nav-link">
                       <i className="nav-icon fas fa-table" />
-                      <p> Orders <i className="fas fa-angle-left right" /></p>
+                      <p> {t('orders')} <i className="fas fa-angle-left right" /></p>
                     </a>
                     <ul className="nav nav-treeview">
                       <li className="nav-item">
-                        <Link to="/court/orders/generate/" className="nav-link">
+                        <Link to="/ibms/court/orders/generate/" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
-                          <p>Generate Orders</p>
+                          <p>{t('generate_order')}</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="police-response" className="nav-link">
+                        <Link to="/ibms/court/orders/publish/" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
-                          <p>Publish/Upload Orders</p>
+                          <p>{t('publish_order')}</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="police-response" className="nav-link">
+                        <Link to="/ibms/court/orders/status/" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
-                          <p>Order Status</p>
+                          <p>{t('order_status')}</p>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className="nav-item">
+                    <a href={void(0)} className="nav-link">
+                      <i className="nav-icon fas fa-table" />
+                      <p> {t('admin_menu')} <i className="fas fa-angle-left right" /></p>
+                    </a>
+                    <ul className="nav nav-treeview">
+                      <li className="nav-item">
+                        <Link to="/ibms/court/admin/judge" className="nav-link">
+                          <i className="far fa-circle nav-icon" />
+                          <p>{t('judge')}</p>
                         </Link>
                       </li>
                     </ul>
@@ -165,7 +161,7 @@ export default function MenuBar() {
                   <li className="nav-item">
                     <Link to="police-response" className="nav-link">
                       <i className="nav-icon far fa-circle text-info" />
-                      <p>Surender</p>
+                      <p>{t('surrender')}</p>
                     </Link>
                   </li>  
                   <li className="nav-item">
@@ -190,7 +186,7 @@ export default function MenuBar() {
                 )}
                 { /* End - Court user menu */} 
                 { /* Start - Police user menu */}
-                { parseInt(user.user.user_type) === 5 && (
+                { parseInt(user.user_type) === 5 && (
                 <>
                   <li className="nav-item menu-open">
                     <Link to="/police/dashboard" className="nav-link active">
@@ -246,7 +242,7 @@ export default function MenuBar() {
                 )}
                 { /* End - Police user menu */}
                 { /* Start - Prison user menu */}
-                { parseInt(user.user.user_type) === 4 && (
+                { parseInt(user.user_type) === 4 && (
                   <>
                     <li className="nav-item menu-open">
                       <Link to="/prison/dashboard" className="nav-link active">
@@ -268,7 +264,7 @@ export default function MenuBar() {
                   </>
                 )}
                 {/** End - Prison user menu */}
-                { parseInt(user.user.user_type) === 3 && (
+                { parseInt(user.user_type) === 3 && (
                   <>
                     <li className="nav-item menu-open">
                       <Link to="/prosecution/dashboard" className="nav-link active">

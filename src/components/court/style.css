@@ -1,0 +1,12 @@
+#accordion .card-header{
+    background: #3498db;
+    border: 1px solid #3498db!important;
+}
+
+#accordion .card-header a{
+    font-weight:bold;
+    font-size:16px;
+    color:#FAFAFA!important;
+    text-decoration: none;
+    display:block;
+}

@@ -3,11 +3,13 @@ import api from 'api'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
 import DashboardCard from 'components/common/DashboardCard'
+import { useTranslation } from 'react-i18next'
 
 const Dashboard = () => {
 
     const[cases, setCases] = useState([])
     const[count, setCount] = useState({})
+    const {t} = useTranslation()
 
     useEffect(() => {
         const fecthCases = async() =>{
@@ -42,36 +44,36 @@ const Dashboard = () => {
                 <div className="row">
                     <div className="col-sm-12">
                         <ol className="breadcrumb mt-2">
-                            <li className="breadcrumb-item"><a href="#">Home</a></li>
-                            <li className="breadcrumb-item"><a href="#">Court</a></li>
-                            <li className="breadcrumb-item active">Dashboard</li>
+                            <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                            <li className="breadcrumb-item"><a href="#">{t('court')}</a></li>
+                            <li className="breadcrumb-item active">{t('dashboard')}</li>
                         </ol>
                         <div className="row">
                             <DashboardCard
                                 color="bg-info"
                                 count={count.total}
-                                title="Total Petitions"
+                                title={t('total_petition')}
                                 icon="ion-bag"
                                 url={null}
                             ></DashboardCard>
                             <DashboardCard
                                 color="bg-success"
                                 count={count.approved}
-                                title="Approved Petitions"
+                                title={t('approved_petition')}
                                 icon="ion-stats-bars"
                                 url={null}
                             ></DashboardCard>
                             <DashboardCard
                                 color="bg-warning"
                                 count={count.returned}
-                                title="Returned Petitions"
+                                title={t('returned_petition')}
                                 icon="ion-person-add"
                                 url={null}
                             ></DashboardCard>
                             <DashboardCard
                                 color="bg-danger"
                                 count={count.rejected}
-                                title="Rejected Petitions"
+                                title={t('rejected_petition')}
                                 icon="ion-pie-graph"
                                 url={null}
                             ></DashboardCard>
@@ -82,7 +84,7 @@ const Dashboard = () => {
                                     <div className="card-header border-0 bg-success">
                                     <h3 className="card-title">
                                         <i className="far fa-calendar-alt" />
-                                        Calendar
+                                        {t('calendar')}
                                     </h3>
                                     <div className="card-tools">
                                         <div className="btn-group">
@@ -140,7 +142,7 @@ const Dashboard = () => {
                                                 </div>
                                                 
                                                 <span className="text mr-3">
-                                                    <Link to={`/court/petition/scrutiny/details`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                                    <Link to={`/ibms/court/petition/scrutiny/details`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
                                                 { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
                                                     <span className="text ml-2">{index+1}. {p.litigant_name}</span>
@@ -150,7 +152,7 @@ const Dashboard = () => {
                                                     <span className="text ml-2">{res.litigant_name} {res.designation}</span>
                                                 ))} 
                                                 <div className="float-right">
-                                                    <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small>
+                                                    {/* <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small> */}
                                                 </div>
                                             </li>
                                         ))}

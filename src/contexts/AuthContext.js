@@ -12,7 +12,6 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const login = async (data) => {
-    console.log(data)
     if(data){
         sessionStorage.clear()
         sessionStorage.setItem(ACCESS_TOKEN, data.access);
@@ -21,9 +20,20 @@ export const AuthProvider = ({ children }) => {
         try{
             const response = await api.post(`auth/user/info/`)
             if(response.status === 200){
-            setUser(response.data)
+              setUser(response.data)
             setTimeout(() => {
-                navigate("/dashboard");
+                const usertype = parseInt(user.user_type)
+                if(usertype === 1 || usertype === 2){
+                  navigate("/dashboard")
+                }else if(usertype === 3){
+                  navigate('/ibms/prosecution/dashboard')
+                }else if(usertype === 4){
+                  navigate('/ibms/prison/dashboard')
+                }else if(usertype === 5){
+                  navigate('/ibms/police/dashboard')
+                }else if(usertype === 6 || usertype === 8){
+                  navigate("/ibms/court/dashboard");
+                }
             },1000)
             }
         }catch(error){
