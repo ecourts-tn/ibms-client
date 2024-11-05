@@ -12,6 +12,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
+import CrimeDetails from './scrutiny/CrimeDetails';
 
 const CaseRegistration = () => {
 
@@ -115,7 +116,8 @@ const CaseRegistration = () => {
                                 </ul>
                                 <div className="tab-content" id="myTabContent">
                                     <div className="tab-pane fade show active mt-3" id="basic" role="tabpanel" aria-labelledby="basic-tab">
-                                        <BasicDetails petition={petition} crime={crime}/>
+                                        <BasicDetails petition={petition} />
+                                        <CrimeDetails crime={crime} />
                                     </div>
                                     <div className="tab-pane fade" id="litigant" role="tabpanel" aria-labelledby="litigant-tab">
                                         <div className="my-3">

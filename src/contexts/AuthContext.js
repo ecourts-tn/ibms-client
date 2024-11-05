@@ -22,18 +22,19 @@ export const AuthProvider = ({ children }) => {
             if(response.status === 200){
               setUser(response.data)
             setTimeout(() => {
-                const usertype = parseInt(user.user_type)
-                if(usertype === 1 || usertype === 2){
-                  navigate("/dashboard")
-                }else if(usertype === 3){
-                  navigate('/ibms/prosecution/dashboard')
-                }else if(usertype === 4){
-                  navigate('/ibms/prison/dashboard')
-                }else if(usertype === 5){
-                  navigate('/ibms/police/dashboard')
-                }else if(usertype === 6 || usertype === 8){
-                  navigate("/ibms/court/dashboard");
-                }
+                // const usertype = parseInt(user.user_type)
+                // if(usertype === 1 || usertype === 2){
+                //   navigate("/dashboard")
+                // }else if(usertype === 3){
+                //   navigate('/ibms/prosecution/dashboard')
+                // }else if(usertype === 4){
+                //   navigate('/ibms/prison/dashboard')
+                // }else if(usertype === 5){
+                //   navigate('/ibms/police/dashboard')
+                // }else if(usertype === 6 || usertype === 8){
+                //   navigate("/ibms/court/dashboard");
+                // }
+                navigate("/dashboard")
             },1000)
             }
         }catch(error){

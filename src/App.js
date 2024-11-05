@@ -56,6 +56,7 @@ import SuretyVerify from './components/court/SuretyVerify'
 import OrderPendingList from './components/court/OrderPendingList'
 import JudgeForm from 'components/court/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
+import JudgeList from 'components/court/judge/JudgeList';
 
 function App() {
 
@@ -370,6 +371,14 @@ function App() {
                       element={
                         <PrivateRoute>
                           <JudgeForm />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="admin/judge/list" 
+                      element={
+                        <PrivateRoute>
+                          <JudgeList />
                         </PrivateRoute>
                       } 
                     />

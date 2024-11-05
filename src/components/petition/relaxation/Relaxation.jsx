@@ -20,6 +20,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const Relaxation = () => {
@@ -27,7 +28,7 @@ const Relaxation = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(SeatContext)
+    const {seats} = useContext(SeatContext)
     const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
@@ -41,8 +42,8 @@ const Relaxation = () => {
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
-        court_type:1,
-        bench_type:'',
+        judiciary:1,
+        seat:'',
         state:'',
         district:'',
         establishment:'',
@@ -51,6 +52,7 @@ const Relaxation = () => {
         reg_year: ''
     })
     const[petition, setPetition] = useState({})
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
@@ -141,8 +143,8 @@ const Relaxation = () => {
                     setRespondents(litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(advocate)
                     setPetition({...petition,
-                        court_type: pet.court_type.id,
-                        bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
+                        judiciary: pet.judiciary.id,
+                        seat: pet.seat ? pet.seat.seat_code : null,
                         state: pet.state ? pet.state.state_code : null,
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
@@ -365,10 +367,10 @@ const Relaxation = () => {
                                                                     <div className="icheck-success d-inline mx-2">
                                                                         <input 
                                                                             type="radio" 
-                                                                            name="court_type" 
+                                                                            name="judiciary" 
                                                                             id="court_type_hc" 
-                                                                            value={ searchForm.court_type }
-                                                                            checked={parseInt(searchForm.court_type) === 1 ? true : false }
+                                                                            value={ searchForm.judiciary }
+                                                                            checked={parseInt(searchForm.judiciary) === 1 ? true : false }
                                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                                                         />
                                                                         <label htmlFor="court_type_hc">{t('high_court')}</label>
@@ -377,17 +379,17 @@ const Relaxation = () => {
                                                                         <input 
                                                                             type="radio" 
                                                                             id="court_type_dc" 
-                                                                            name="court_type" 
-                                                                            value={searchForm.court_type}
-                                                                            checked={parseInt(searchForm.court_type) === 2 ? true : false } 
-                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, bench_type:''})}
+                                                                            name="judiciary" 
+                                                                            value={searchForm.judiciary}
+                                                                            checked={parseInt(searchForm.judiciary) === 2 ? true : false } 
+                                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, seat:''})}
                                                                         />
                                                                         <label htmlFor="court_type_dc">{t('district_court')}</label>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <div className="col-md-6 offset-md-3">
-                                                                { parseInt(searchForm.court_type) === 2 && (
+                                                                { parseInt(searchForm.judiciary) === 2 && (
                                                                     <div className="row">
                                                                         <div className="col-md-6">
                                                                             <div className="form-group">
@@ -428,7 +430,7 @@ const Relaxation = () => {
                                                                     </div>
                                                                 )}
                                                                 <div className="row">
-                                                                    { parseInt(searchForm.court_type) === 2 && (
+                                                                    { parseInt(searchForm.judiciary) === 2 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
                                                                             <label htmlFor="">{t('est_name')}</label>
@@ -448,22 +450,22 @@ const Relaxation = () => {
                                                                         </div>
                                                                     </div>
                                                                     )}
-                                                                    { parseInt(searchForm.court_type) === 1 && (
+                                                                    { parseInt(searchForm.judiciary) === 1 && (
                                                                     <div className="col-md-8">
                                                                         <div className="form-group">
                                                                             <label htmlFor="">{t('hc_bench')}</label>
                                                                             <select 
-                                                                                name="bench_type" 
-                                                                                className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                                                name="seat" 
+                                                                                className={`form-control ${searchErrors.seat ? 'is-invalid': ''}`}
                                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                             >
-                                                                                <option value="">Select bench</option>
-                                                                                {benchtypes.map((b, index)=>(
-                                                                                    <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                                                <option value="">{t('alerts.select_bench_type')}</option>
+                                                                                {seats.map((s, index)=>(
+                                                                                    <option key={index} value={ s.seat_code}>{language === 'ta' ? s.seat_lname : s.seat_name }</option>
                                                                                 ))}
                                                                             </select>
                                                                             <div className="invalid-feedback">
-                                                                                { searchErrors.bench_type }
+                                                                                { searchErrors.seat }
                                                                             </div>
                                                                         </div>
                                                                     </div>

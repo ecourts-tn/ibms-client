@@ -207,7 +207,7 @@ const InitialInput = () => {
                                     </div>
                                 </div>
                             </div>
-                            { petition.judiciary?.id === 2 && (
+                            { parseInt(petition.judiciary) === 2 && (
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
@@ -215,7 +215,9 @@ const InitialInput = () => {
                                         <select 
                                             name="state" 
                                             className={`form-control ${errors.state ? 'is-invalid': null }`}
-                                            value={petition.state?.state_code || ''} onChange={handleChange}>
+                                            value={petition.state} 
+                                            onChange={(e)=>setPetition({...petition, [e.target.name]: e.target.value})}
+                                        >
                                             <option value="">{t('alerts.select_state')}</option>
                                             { states.map( (item, index) => (
                                                 <option key={index} value={item.state_code}>{language==='ta' ? item.state_lname : item.state_name}</option>)
@@ -229,28 +231,28 @@ const InitialInput = () => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="district">{t('district')}<RequiredField /></label>
-                                        {/* <select 
+                                        <select 
                                             id="basic_district"
                                             name="district" 
                                             className={`form-control ${errors.district ? 'is-invalid' : null}`}
                                             value={petition.district}
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
-                                            <option value="">Select district</option>
-                                            { districts.map( (item, index) => (
-                                                <option key={index} value={item.district_code}>{item.district_name}</option>)
+                                            <option value="">{t('alerts.select_district')}</option>
+                                            { districts.filter(district=>parseInt(district.state)===parseInt(petition.state)).map( (d, index) => (
+                                                <option key={index} value={d.district_code}>{language==='ta' ? d.district_lname : d.district_name}</option>)
                                             )}
-                                        </select> */}
-                                        <Select 
+                                        </select>
+                                        {/* <Select 
                                             name="district"
                                             placeholder={t('alerts.select_district')}
                                             options={districts.filter(district=>parseInt(district.state)===parseInt(petition.state)).map((district) => { return { 
                                                 value:district.district_code, label:language==='ta' ? district.district_lname : district.district_name
                                             }})} 
-                                            value={districts.find(district => district.district_code === 18) || null}
+                                            // value={districts.find(district => district.district_code === 18) || null}
                                             className={`${errors.district ? 'is-invalid' : null}`}
-                                            onChange={handleChange}
-                                        />
+                                            onChange={(e) => setPetition({...petition, district: e.value})}
+                                        /> */}
                                         <div className="invalid-feedback">
                                             { errors.district }
                                         </div>
@@ -259,7 +261,7 @@ const InitialInput = () => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="establishment">{t('est_name')}<RequiredField /></label>
-                                        <Select 
+                                        {/* <Select 
                                             name="establishment"
                                             placeholder={t('alerts.select_establishment')}
                                             options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((est) => { return { 
@@ -267,24 +269,19 @@ const InitialInput = () => {
                                             }})} 
                                             className={`${errors.establishment ? 'is-invalid' : null}`}
                                             onChange={(e) => setPetition({...petition, establishment:e.value})}
-                                        />
-                                        {/* <select 
+                                        /> */}
+                                        <select 
                                             name="establishment" 
                                             id="establishment" 
                                             className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
                                             value={petition.establishment}
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
-                                            <option value="">Select Establishment</option>
-                                            {
-                                                establishments.filter((establishment) => {
-                                                    return establishment.bail_filing && establishment.display
-                                                })
-                                                .map((item, index) => (
-                                                    <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                                ))
-                                            }
-                                        </select> */}
+                                            <option value="">{t('alerts.select_establishment')}</option>
+                                            {  establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((item, index) => (
+                                                    <option value={item.establishment_code} key={index}>{language === 'ta' ? item.establishment_lname : item.establishment_name}</option>
+                                            ))}
+                                        </select>
                                         <div className="invalid-feedback">
                                             { errors.establishment }
                                         </div>
@@ -293,30 +290,28 @@ const InitialInput = () => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="court">{t('court')}<RequiredField /></label>
-                                        <Select 
+                                        {/* <Select 
                                             placeholder={t('alerts.select_court')}
                                             name="court"
                                             options={courts.filter(c=>c.establishment===petition.establishment).map((est) => { return { 
                                                 value:est.court_code, label: language === 'ta' ? est.court_lname : est.court_name}})} 
                                             className={`${errors.court ? 'is-invalid' : null}`}
                                             onChange={(e) => setPetition({...petition, court:e.value})}
-                                        />
-                                        {/* <select 
+                                        /> */}
+                                        <select 
                                             name="court" 
                                             id="court" 
                                             className={`form-control ${errors.court ? 'is-invalid' : null }`}
                                             value={petition.court}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
-                                            <option value="">Select court</option>
-                                            {   courts.filter((court) => {
-                                                    return court.bail_filing && court.display
-                                                })
+                                            <option value="">{t('alerts.select_court')}</option>
+                                            {   courts.filter(c=>c.establishment===petition.establishment)
                                                 .map((item, index) => (
-                                                    <option key={index} value={item.court_code}>{ item.court_name}</option>
+                                                    <option key={index} value={item.court_code}>{ language === 'ta' ? item.court_lname : item.court_name }</option>
                                                 ))
                                             }
-                                        </select> */}
+                                        </select>
                                         <div className="invalid-feedback">
                                             { errors.court }
                                         </div>

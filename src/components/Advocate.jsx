@@ -83,7 +83,7 @@ const Advocate = () => {
                 </div>
                 <div className="card-body"> */}
                     <div className="row">
-                        <div className="col-md-8 offset-md-2">
+                        <div className="col-md-10 offset-md-1">
                             <div className="my-5">
                                 <AdvocateList 
                                     advocates={advocates}
@@ -249,7 +249,7 @@ const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
     return (
     <>
       <div className="table-responsive">
-      <table className="table table-striped table-bordered table-sm">
+      <table className="table table-striped table-bordered">
             <thead className="bg-secondary">
               <tr>
                 <td>{t('sl_no')}</td>

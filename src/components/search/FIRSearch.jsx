@@ -54,42 +54,44 @@ const FIRSearch = () => {
             await validationSchema.validate(form, { abortEarly:false})
             setLoading(true)
             setShowAdditionalFields(false)
-            const response = await api.post("external/police/tamilnadu/fir-details/", form)
-            if(response.status === 200){
-                setLoading(false)
-                if(response.data.FIR_date_time){
-                    setFir({...fir,
-                        state: form.state,
-                        district: form.rdistrict,
-                        police_station: form.police_station,
-                        fir_number: form.crime_number,
-                        fir_year: form.year,
-                        act: response.data.act,
-                        section: response.data.section,
-                        date_of_occurrence  : response.data.date_of_occurrence,
-                        investigation_officer: response.data.investigation_officer_name,
-                        fir_date_time: response.data.FIR_date_time,
-                        place_of_occurrence: response.data.place_of_occurence,
-                        gist_of_fir: response.data.gist_of_FIR,
-                        gist_in_local: response.data.gist_of_FIR_local_language,
-                        complainant_age: response.data.complainant_age,
-                        complainant_guardian: response.data.complainant_guardian,
-                        complainant_guardian_name: response.data.complainant_guardian_name,
-                        complainant_name:response.data.complaintant_name,
-                        investigation_officer_rank:response.data.investigation_officer_rank,
-                        no_of_accused: response.data.no_of_accused
-                    })
-                    setShowAdditionalFields(true)
-                    setAccused(response.data.accused_details)
-                    setNotFound('')
-                }
-                else{
-                    setNotFound(t('errors.fir_not_found'))
-                    setShowAdditionalFields(false)
-                    setForm(initialState)
-                }
+            const response = await api.post("external/police/tamilnadu/fir-details/", form);
+            if (response.status === 200) {
+                setLoading(false);
+                const data = typeof response.data === 'string' ? JSON.parse(JSON.stringify(response.data)) : response.data;
+                setFir({
+                    ...fir,
+                    state: form.state,
+                    district: form.rdistrict,
+                    police_station: form.police_station,
+                    fir_number: form.crime_number,
+                    fir_year: form.year,
+                    act: data?.act || "",
+                    section: data?.section || [],
+                    date_of_occurrence: data?.date_of_occurrence || "",
+                    investigation_officer: data?.investigation_officer_name || "",
+                    fir_date_time: data?.FIR_date_time || "",
+                    place_of_occurrence: data?.place_of_occurence || "",
+                    gist_of_fir: data?.gist_of_FIR || "",
+                    gist_in_local: data?.gist_of_FIR_local_language || "",
+                    complainant_age: data?.complainant_age || "",
+                    complainant_guardian: data?.complainant_guardian || "",
+                    complainant_guardian_name: data?.complainant_guardian_name || "",
+                    complainant_name: data?.complaintant_name || "",
+                    investigation_officer_rank: data?.investigation_officer_rank || "",
+                    no_of_accused: data?.no_of_accused || 0
+                });
+
+                setShowAdditionalFields(true);
+                setAccused(data?.accused_details || []);
+                setNotFound("");
+            } else {
+                setNotFound(t('errors.fir_not_found'));
+                setShowAdditionalFields(false);
+                setForm(initialState);
             }
+
         }catch(error){
+            console.error(error)
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {

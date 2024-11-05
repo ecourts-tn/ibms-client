@@ -17,7 +17,7 @@ const RegistrationSearch = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(SeatContext)
+    const {seats} = useContext(SeatContext)
     const {language} = useContext(LanguageContext)
     // const {casetypes}   = useContext(CaseTypeContext)
     const {t} = useTranslation()
@@ -199,13 +199,13 @@ const RegistrationSearch = () => {
                                 <div className="form-group">
                                     <label htmlFor="">{t('hc_bench')}</label>
                                     <select 
-                                        name="bench_type" 
-                                        className={`form-control ${errors.bench_type ? 'is-invalid': ''}`}
+                                        name="seat" 
+                                        className={`form-control ${errors.seat ? 'is-invalid': ''}`}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
                                         <option value="">{t('alerts.select_bench_type')}</option>
-                                        {benchtypes.map((b, index)=>(
-                                            <option key={index} value={b.type_code}>{language === 'ta' ? b.bench_ltype : b.bench_type}</option>
+                                        {seats.map((s, index)=>(
+                                            <option key={index} value={s.seat_code}>{language === 'ta' ? s.seat_lname : s.seat_name}</option>
                                         ))}
                                     </select>
                                     <div className="invalid-feedback">

@@ -417,7 +417,7 @@
         "cpassword_required": "Confirm password is required",
         "usertype_required": "Please select the usertype",
         "bench_required": "Please select the bench type",
-        "state_requried": "Please select the state",
+        "state_required": "Please select the state",
         "district_required": "Please select the district",
         "est_required": "Please select the establishment",
         "court_required": "Please select the court",

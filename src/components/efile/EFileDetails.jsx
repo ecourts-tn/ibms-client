@@ -41,11 +41,11 @@ const EFileDetails = () => {
                         <>
                             <tr>
                                 <td>Court Type</td>
-                                <td>{ petition.court_type.court_type }</td>
+                                <td>{ petition.judiciary.judiciary_name }</td>
                                 <td>Bench Type</td>
-                                <td>{ petition.bench_type ?  petition.bench_type.bench_type : null}</td>
+                                <td>{ petition.seat ?  petition.seat.seat_name : null}</td>
                             </tr>
-                            { petition.court_type.id === 2 && (
+                            { petition.judiciary.id === 2 && (
                             <>
                                 <tr>
                                     <td>State</td>

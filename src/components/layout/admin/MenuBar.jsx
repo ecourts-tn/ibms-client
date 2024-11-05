@@ -157,6 +157,14 @@ export default function MenuBar() {
                         </Link>
                       </li>
                     </ul>
+                    <ul className="nav nav-treeview">
+                      <li className="nav-item">
+                        <Link to="/ibms/court/admin/judge" className="nav-link">
+                          <i className="far fa-circle nav-icon" />
+                          <p>{t('judge')}</p>
+                        </Link>
+                      </li>
+                    </ul>
                   </li>
                   <li className="nav-item">
                     <Link to="police-response" className="nav-link">

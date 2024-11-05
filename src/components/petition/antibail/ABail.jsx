@@ -8,35 +8,17 @@ import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import { toast, ToastContainer } from 'react-toastify';
 import GroundsContainer from '../../grounds/GroundsContainer';
-import InitialInput from 'components/petition/intervene/InitialInput'
+import InitialInput from 'components/petition/antibail/InitialInput'
 import Petitioner from 'components/petition/intervene/Petitioner'
 import AccusedDetails from 'components/petition/intervene/AccusedDetails'
 import Respondent from 'components/petition/intervene/Respondent'
 import Documents from 'components/petition/intervene/Documents'
-import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
-import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { CourtContext } from 'contexts/CourtContext';
-import { JudiciaryContext } from 'contexts/JudiciaryContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { BailTypeContext } from 'contexts/BailTypeContext';
-import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
 
 
 const ABail = () => {
 
-    const{efile_no, setEfileNo, fir} = useContext(BaseContext)
-    const {states}          = useContext(StateContext)
-    const {districts}       = useContext(DistrictContext)
-    const {establishments}  = useContext(EstablishmentContext)
-    const {courts}          = useContext(CourtContext)
-    const {courttypes}      = useContext(JudiciaryContext)
-    const {benchtypes}      = useContext(SeatContext)
-    const {bailtypes}       = useContext(BailTypeContext)
-    const {complainttypes}  = useContext(ComplaintTypeContext)
     const {t} = useTranslation()
 
     const[grounds, setGrounds] = useState([])
@@ -75,23 +57,9 @@ const ABail = () => {
         });
     }, []);
 
-    console.log(petition)
-    
-
-    const handleChange = (e) => {
-            const {name, value} = e.target
-            setForm({...form, [name]:value})
-    }
-
-    const deleteAdvocate = (advocate) => {
-        const newAdvocate = advocates.filter((adv) => { return adv.id !== advocate.id})
-        setAdvocates(newAdvocate)
-    }
-
-    const deleteRespondent = (respondent) => {
-        const newRespondent = respondents.filter((res) => { return res.id !== respondent.id })
-        setRespondents(newRespondent)
-    }
+    useEffect(() => {
+        sessionStorage.removeItem("efile_no")
+    },[])
 
 
     useEffect(() => {
