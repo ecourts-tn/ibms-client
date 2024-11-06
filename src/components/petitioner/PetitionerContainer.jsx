@@ -37,7 +37,11 @@ const PetitionerContainer = () => {
         if(efile_no){
             try{
                 litigant.efile_no = efile_no;
-                const response = await api.post(`litigant/create/`, litigant)
+                const response = await api.post(`litigant/create/`, litigant, {
+                    headers:{
+                        'Content-Type': 'multipart/form-data',
+                    }
+                })
                 if(response.status === 201){
                     setPetitioners(petitioners => [...petitioners, litigant])
                     toast.success(t('alerts.petitioner_added').replace('{petitioner}', response.data.litigant_id), {

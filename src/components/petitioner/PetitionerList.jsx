@@ -60,6 +60,11 @@ const PetitionerList = ({petitioners, deletePetitioner, editPetitioner}) => {
                         <td>{t('address')}</td>
                         <td colSpan="7">{petitioner.address}</td>
                     </tr>
+                    <tr>
+                      <td>Photo</td>
+                      { petitioner.accused_photo}
+                      <td><img src={`data:image/png;base64,${petitioner.accused_photo}`} alt="Decoded" /></td>
+                    </tr>
                 </tbody>
             </table>
         // </div>

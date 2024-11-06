@@ -129,7 +129,8 @@ const InitialInput = () => {
                 const efile_no = sessionStorage.getItem("efile_no")
                 if(efile_no){
                     if(Object.keys(fir).length > 0){
-                        const response2 = await api.post(`case/crime/details/create/`, fir, {params:{efile_no}})
+                        fir.efile_no = efile_no
+                        const response2 = await api.post(`case/crime/details/create/`, fir)
                         if(response2.status === 201){
                             console.log(response2.message)
                         }
@@ -243,16 +244,6 @@ const InitialInput = () => {
                                                 <option key={index} value={d.district_code}>{language==='ta' ? d.district_lname : d.district_name}</option>)
                                             )}
                                         </select>
-                                        {/* <Select 
-                                            name="district"
-                                            placeholder={t('alerts.select_district')}
-                                            options={districts.filter(district=>parseInt(district.state)===parseInt(petition.state)).map((district) => { return { 
-                                                value:district.district_code, label:language==='ta' ? district.district_lname : district.district_name
-                                            }})} 
-                                            // value={districts.find(district => district.district_code === 18) || null}
-                                            className={`${errors.district ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, district: e.value})}
-                                        /> */}
                                         <div className="invalid-feedback">
                                             { errors.district }
                                         </div>
@@ -261,15 +252,6 @@ const InitialInput = () => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="establishment">{t('est_name')}<RequiredField /></label>
-                                        {/* <Select 
-                                            name="establishment"
-                                            placeholder={t('alerts.select_establishment')}
-                                            options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((est) => { return { 
-                                                value:est.establishment_code, label:language === 'ta' ? est.establishment_lname : est.establishment_name
-                                            }})} 
-                                            className={`${errors.establishment ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, establishment:e.value})}
-                                        /> */}
                                         <select 
                                             name="establishment" 
                                             id="establishment" 
@@ -290,14 +272,6 @@ const InitialInput = () => {
                                 <div className="col-md-6">
                                     <div className="form-group">
                                         <label htmlFor="court">{t('court')}<RequiredField /></label>
-                                        {/* <Select 
-                                            placeholder={t('alerts.select_court')}
-                                            name="court"
-                                            options={courts.filter(c=>c.establishment===petition.establishment).map((est) => { return { 
-                                                value:est.court_code, label: language === 'ta' ? est.court_lname : est.court_name}})} 
-                                            className={`${errors.court ? 'is-invalid' : null}`}
-                                            onChange={(e) => setPetition({...petition, court:e.value})}
-                                        /> */}
                                         <select 
                                             name="court" 
                                             id="court" 

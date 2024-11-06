@@ -60,6 +60,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       act: '',
       section: '',
       is_custody: false,
+      accused_photo:'',
+      is_auto_fetched:false,
       prison: '',
       custody_days: null,
       is_surrendered: false,
@@ -131,6 +133,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
           address: result.permanent_address === '' ? '-' :result.permanent_address,
           mobile_number: result.mobile_number,
           email_address: result.email_id,
+          accused_photo: result.accused_photo,
+          is_auto_fetched:true
         })
       }
     }
@@ -163,6 +167,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   return (
     <>
       <ToastContainer />
+      <form encType='multipart/form-data'>
         { accused.length > 0 && (
           <div className="row">
             <div className="col-md-4 mb-3">
@@ -631,6 +636,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
               </div>
           </div>
+          </form>
     </>
   )
 }

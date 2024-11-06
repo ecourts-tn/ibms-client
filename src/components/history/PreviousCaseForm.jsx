@@ -27,7 +27,7 @@ const PreviousCaseForm = () => {
         const efile_no = sessionStorage.getItem("efile_no")
         async function fetchData(){
             try{
-                const response = await api.get('case/crime/history/',{params: {efile_no}})
+                const response = await api.post('case/crime/history/',{efile_no})
                 if(response.status === 200){
                     console.log(response.data)
                     setHistory(response.data)
@@ -59,64 +59,59 @@ const PreviousCaseForm = () => {
             <ToastContainer />
             <div className="row">
                 <div className="col-md-12">
-                    { history.map((item, index) => (
-                        <>
-                            <table className="table table-bordered table-sm">
-                            <tbody>
-                                    <tr>
-                                        <td colSpan={2} className="text-primary"><strong>{index+1}. ATN20240000001F2024000001</strong></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong className='text-danger'>FIR Details</strong><br></br>
-                                            <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
-                                        </td>
-                                        <td>
-                                            <strong className="text-danger">Filing Details</strong><br/>
-                                            <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
-                                            <strong>eFile Date</strong>: 09-09-2024<br></br>
-                                            <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colSpan={2}>
-                                            <strong className="text-danger">Business/Order Details</strong><br></br>
-                                            <strong>Status</strong>: Pending <br></br>
-                                            <strong>Business/Order Date</strong>: 09-09-2024 <br></br>
-                                            <strong>Proceeding</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
-                                        </td>
-                                    </tr>
-                            </tbody>
-                            </table>
-                            <table className="table table-bordered table-sm">
-                            <tbody>
-                                <tr>
-                                    <td colSpan={2} className="text-primary"><strong>{index+2}. ATN20240000001F2024000002</strong></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong className='text-danger'>FIR Details</strong><br></br>
-                                        <strong>Crime Number</strong>: {`${item.fir_number}/${item.fir_year}`}  <br/><strong>Police Station</strong>: Sulur, Coimbatore District
-                                    </td>
-                                    <td>
-                                        <strong className="text-danger">Filing Details</strong><br/>
-                                        <strong>eFile Number</strong>: ATN20240000001F2024000001<br/>
-                                        <strong>eFile Date</strong>: 09-09-2024<br></br>
-                                        <strong>Jurisdiction Court</strong>: Principal Court, City Civil Court, Chennai 
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colSpan={2}>
-                                        <strong className="text-danger">Business/Order Details</strong><br></br>
-                                        <strong>Status</strong>: Pending <br></br>
-                                        <strong>Business/Order Date</strong>: 09-09-2024 <br></br>
-                                        <strong>Proceeding</strong>: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores esse aliquid necessitatibus, non repellendus et, libero id accusamus repellat voluptatum temporibus. Nobis, quasi a error consectetur enim quos tenetur cumque.
-                                    </td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </>
-                    ))}
+                { history.map((h, index) => (
+                    <table className="table table-bordered table-sm">
+                        <tbody>
+                            <tr>
+                                <td colSpan={4} className="text-primary"><strong>{index+1}. {h.petition.efile_number}</strong></td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2}><strong className='text-danger'>FIR Details</strong></td>
+                                <td colSpan={2}><strong className='text-danger'>Filing Details</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Crime Number</strong></td>
+                                <td>{`${h.crime.fir_number}/${h.crime.fir_year}`}</td>
+                                <td><strong>eFile&nbsp;Number</strong></td>
+                                <td>{h.petition.efile_number}</td>
+                            </tr>
+                            <tr>
+                                <td> <strong>Police Station</strong></td>
+                                <td>{h.crime.police_station?.station_name}, {h.crime.district?.district_name}</td>
+                                <td><strong>eFile Date</strong></td> 
+                                <td>{h.petition.efile_date}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan={2}></td>
+                                <td><strong>Jurisdiction&nbsp;Court</strong></td>
+                                <td>{h.petition.court?.court_name}, {h.petition.establishment?.establishment_name}, {h.petition.district?.district_name}, {h.petition.state?.state_name}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan={4}><strong className="text-danger">Business/Order Details</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Filing&nbsp;Number</strong></td>
+                                <td colSpan={3}>{h.petition.is_verified ? `${h.petition.filing_type?.type_name}/${h.petition.filing_number}/${h.petition.filing_year}` : ''}</td>
+                            </tr>
+                            <tr>   
+                                <td><strong>Registration&nbsp;Number</strong></td>
+                                <td colSpan={3}></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Status</strong></td>
+                                <td colSpan={3}>Pending</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Business/Order&nbsp;Date</strong></td>    
+                                <td colSpan={3}>09-09-2024</td>
+                            </tr>        
+                            <tr>
+                                <td><strong>Proceeding</strong></td>
+                                <td colSpan={3}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem eos rem quam tenetur ut. Laboriosam iure totam hic repellendus enim rem neque nesciunt ullam! Aliquam, vitae! Omnis eos quo odio!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                ))}
                 </div>
                 <div className="col-md-2">
                     <div className="form-group">
@@ -257,3 +252,4 @@ const PreviousCaseForm = () => {
 }
 
 export default PreviousCaseForm
+
