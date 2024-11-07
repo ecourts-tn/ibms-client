@@ -1,7 +1,7 @@
 {
   "name": "ibms-client",
   "version": "0.1.0",
-  "homepage": "https://ecourts-tn.github.io/ibms-client/",
+  "homepage": "/ibms",
   "private": false,
   "dependencies": {
     "@emotion/react": "^11.11.4",

@@ -56,7 +56,18 @@ const InitialInput = () => {
             try{
                 const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
-                    setPetition(response.data.petition)
+                    const petition = response.data.petition
+                    setPetition({...petition, 
+                        judiciary: petition.judiciary?.id,
+                        seat: petition.seat?.seat_code,
+                        state: petition.state?.state_code,
+                        district: petition.district?.district_code,
+                        establishment: petition.establishment?.establishment_code,
+                        court: petition.court?.court_code,
+                        case_type:petition.case_type?.id,
+                        bail_type: petition.bail_type?.id,
+                        complaint_type: petition.complaint_type?.id
+                    })
                 }else{
                     setPetition(initialState)
                 }
@@ -122,34 +133,38 @@ const InitialInput = () => {
             // setPetition({...petition, adv_code:user.user.userlogin})
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
-                sessionStorage.setItem("efile_no", response.data.efile_number)
-                toast.success(t('alerts.submit_success').replace('{efile_no}', response.data.efile_number), {
+                const efile_no = response.data.efile_number
+                sessionStorage.setItem("efile_no", efile_no)
+                const requests = []
+                if(Object.keys(fir).length > 0){
+                    fir.efile_no = efile_no
+                    const crime_reqeust = await api.post(`case/crime/details/create/`, fir);
+                    requests.push(crime_reqeust)
+                }
+                if(parseInt(user.user_type) === 1){
+                    console.log("welcome")
+                    const advocate = {
+                        efile_no: efile_no,
+                        adv_name: user.username,
+                        adv_email: user.email,
+                        adv_mobile: user.mobile,
+                        adv_reg: user.adv_reg,
+                        is_primary: true
+                    }
+                    const advocate_request = await api.post(`case/advocate/`, advocate);
+                    requests.push(advocate_request)
+                }        
+                if(requests.length > 0){
+                    const responses = await Promise.all(requests);
+                    responses.forEach((res, index) => {
+                        if (res.status === 201 || res.status === 200) {
+                            console.log(`Response ${index + 1} success:`, res.data.message);
+                          }
+                    })
+                }
+                toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
-                const efile_no = sessionStorage.getItem("efile_no")
-                if(efile_no){
-                    if(Object.keys(fir).length > 0){
-                        fir.efile_no = efile_no
-                        const response2 = await api.post(`case/crime/details/create/`, fir)
-                        if(response2.status === 201){
-                            console.log(response2.message)
-                        }
-                    }
-                    if(parseInt(user.user.user_type) === 1){
-                        const advocate = {
-                            advocate_name: user.user.username,
-                            advocate_email: user.user.email,
-                            advocate_mobile: user.user.mobile,
-                            enrolment_number: user.user.bar_code.concat("/",user.user.reg_number, "/", user.user.reg_year),
-                            is_primary: true
-                        }
-                        const response3 = await api.post(`advocate/create/`, advocate, {params: {efile_no}})
-                        if(response3.status === 200){
-                            console.log(response3.message)
-                        }
-                    }        
-                }
-               
             }
           }catch(error){
             if (error.inner){
@@ -162,6 +177,7 @@ const InitialInput = () => {
         }
     }
 
+ 
     return (
         <>
             <ToastContainer />
@@ -178,7 +194,7 @@ const InitialInput = () => {
                                             name="judiciary" 
                                             id="judiciary" 
                                             className="form-control" 
-                                            value={petition.judiciary?.id || 1 } 
+                                            value={petition.judiciary } 
                                             onChange={handleChange}
                                         >
                                             { judiciaries.map((j, index) => (
@@ -216,7 +232,7 @@ const InitialInput = () => {
                                         <select 
                                             name="state" 
                                             className={`form-control ${errors.state ? 'is-invalid': null }`}
-                                            value={petition.state} 
+                                            value={petition.state } 
                                             onChange={(e)=>setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_state')}</option>
@@ -236,7 +252,7 @@ const InitialInput = () => {
                                             id="basic_district"
                                             name="district" 
                                             className={`form-control ${errors.district ? 'is-invalid' : null}`}
-                                            value={petition.district}
+                                            value={petition.district }
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_district')}</option>
@@ -256,7 +272,7 @@ const InitialInput = () => {
                                             name="establishment" 
                                             id="establishment" 
                                             className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
-                                            value={petition.establishment}
+                                            value={petition.establishment }
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_establishment')}</option>
@@ -276,7 +292,7 @@ const InitialInput = () => {
                                             name="court" 
                                             id="court" 
                                             className={`form-control ${errors.court ? 'is-invalid' : null }`}
-                                            value={petition.court}
+                                            value={ petition.court }
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_court')}</option>
@@ -301,7 +317,7 @@ const InitialInput = () => {
                                             name="bail_type" 
                                             id="bail_type" 
                                             className={`form-control ${errors.bail_type ? 'is-invalid' : null}`}
-                                            value={petition.bail_type?.id || ''}
+                                            value={petition.bail_type }
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_bail_type')}</option>
@@ -321,7 +337,7 @@ const InitialInput = () => {
                                             name="complaint_type" 
                                             id="complaint_type"
                                             className={`form-control ${errors.complaint_type ? 'is-invalid' : null}`}   
-                                            value={petition.complaint_type?.id || ''}
+                                            value={petition.complaint_type }
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}           
                                         >
                                             <option value="">{t('alerts.select_complaint_type')}</option>
@@ -342,15 +358,33 @@ const InitialInput = () => {
                                         <label htmlFor="" className="col-sm-3">{t('crime_registered')}<RequiredField /></label>
                                         <div className="col-sm-9">
                                             <div className="icheck-success d-inline mx-2">
-                                                <input type="radio" id="radioPrimary1" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:1})} />
+                                                <input 
+                                                    type="radio" 
+                                                    id="radioPrimary1" 
+                                                    name="crime_registered" 
+                                                    onClick={(e) => setPetition({...petition, [e.target.name]:1})} 
+                                                    checked={parseInt(petition.crime_registered) === 1 ? true : false }
+                                                />
                                                 <label htmlFor="radioPrimary1">{t('yes')}</label>
                                             </div>
                                             <div className="icheck-danger d-inline mx-2">
-                                                <input type="radio" id="radioPrimary2" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:2})}/>
+                                                <input 
+                                                    type="radio" 
+                                                    id="radioPrimary2" 
+                                                    name="crime_registered" 
+                                                    onClick={(e) => setPetition({...petition, [e.target.name]:2})}
+                                                    checked={parseInt(petition.crime_registered) === 2 ? true : false }
+                                                />
                                                 <label htmlFor="radioPrimary2">{t('no')}</label>
                                             </div>
                                             <div className="icheck-primary d-inline mx-2">
-                                                <input type="radio" id="radioPrimary3" name="crime_registered" onClick={(e) => setPetition({...petition, [e.target.name]:3})}/>
+                                                <input 
+                                                    type="radio" 
+                                                    id="radioPrimary3" 
+                                                    name="crime_registered" 
+                                                    onClick={(e) => setPetition({...petition, [e.target.name]:3})}
+                                                    checked={parseInt(petition.crime_registered) === 3 ? true : false }
+                                                />
                                                 <label htmlFor="radioPrimary3">{t('not_known')}</label>
                                             </div>
                                         </div>

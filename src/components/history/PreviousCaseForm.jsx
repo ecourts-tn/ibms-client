@@ -29,7 +29,6 @@ const PreviousCaseForm = () => {
             try{
                 const response = await api.post('case/crime/history/',{efile_no})
                 if(response.status === 200){
-                    console.log(response.data)
                     setHistory(response.data)
                 }
             }catch(error){
@@ -41,8 +40,8 @@ const PreviousCaseForm = () => {
 
     const handleSubmit = async (e) => {
         try{
-            const cino = sessionStorage.getItem("efile_no")
-            const response = await api.put(`api/bail/filing/${cino}/update/`, petition)
+            petition.efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.put(`case/filing/update/`, petition)
             if(response.status === 200){
                 toast.success("Previous case details updated successfully", {
                     theme:"colored"
@@ -62,23 +61,23 @@ const PreviousCaseForm = () => {
                 { history.map((h, index) => (
                     <table className="table table-bordered table-sm">
                         <tbody>
-                            <tr>
-                                <td colSpan={4} className="text-primary"><strong>{index+1}. {h.petition.efile_number}</strong></td>
+                            <tr className="bg-info">
+                                <td colSpan={4} className="text-white"><strong>{index+1}. {h.petition.efile_number}</strong></td>
                             </tr>
                             <tr>
                                 <td colSpan={2}><strong className='text-danger'>FIR Details</strong></td>
                                 <td colSpan={2}><strong className='text-danger'>Filing Details</strong></td>
                             </tr>
                             <tr>
-                                <td><strong>Crime Number</strong></td>
+                                <td><strong>Crime&nbsp;Number</strong></td>
                                 <td>{`${h.crime.fir_number}/${h.crime.fir_year}`}</td>
                                 <td><strong>eFile&nbsp;Number</strong></td>
                                 <td>{h.petition.efile_number}</td>
                             </tr>
                             <tr>
-                                <td> <strong>Police Station</strong></td>
+                                <td> <strong>Police&nbsp;Station</strong></td>
                                 <td>{h.crime.police_station?.station_name}, {h.crime.district?.district_name}</td>
-                                <td><strong>eFile Date</strong></td> 
+                                <td><strong>eFile&nbsp;Date</strong></td> 
                                 <td>{h.petition.efile_date}</td>
                             </tr>
                             <tr>
@@ -87,23 +86,19 @@ const PreviousCaseForm = () => {
                                 <td>{h.petition.court?.court_name}, {h.petition.establishment?.establishment_name}, {h.petition.district?.district_name}, {h.petition.state?.state_name}</td>
                             </tr>
                             <tr>
-                                <td colSpan={4}><strong className="text-danger">Business/Order Details</strong></td>
+                                <td colSpan={4}><strong className="text-danger">Business/Order&nbsp;Details</strong></td>
                             </tr>
                             <tr>
                                 <td><strong>Filing&nbsp;Number</strong></td>
-                                <td colSpan={3}>{h.petition.is_verified ? `${h.petition.filing_type?.type_name}/${h.petition.filing_number}/${h.petition.filing_year}` : ''}</td>
-                            </tr>
-                            <tr>   
+                                <td>{h.petition.is_verified ? `${h.petition.filing_type?.type_name}/${h.petition.filing_number}/${h.petition.filing_year}` : ''}</td>
                                 <td><strong>Registration&nbsp;Number</strong></td>
-                                <td colSpan={3}></td>
+                                <td></td>
                             </tr>
                             <tr>
                                 <td><strong>Status</strong></td>
-                                <td colSpan={3}>Pending</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Business/Order&nbsp;Date</strong></td>    
-                                <td colSpan={3}>09-09-2024</td>
+                                <td>Pending</td>
+                                <td><strong>Business&nbsp;/&nbsp;Order&nbsp;Date</strong></td>    
+                                <td>09-09-2024</td>
                             </tr>        
                             <tr>
                                 <td><strong>Proceeding</strong></td>

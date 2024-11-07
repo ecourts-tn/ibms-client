@@ -75,14 +75,20 @@ const FIRDetails = () => {
                                             </tr>
                                             <tr>
                                                 <td colSpan={4}>
-                                                    <p><strong>{t('gist_of_fir')}</strong></p>
-                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_of_fir)}></span>
+                                                <p><strong>{t('gist_of_fir')}<span className="text-danger ml-2">{fir.sencitive_case ? 'Sencitive case' : ''}</span></strong> </p>
+                                                    { fir.sencitive_case ? 
+                                                        <MaskedParagraph mask={true} language={'tamil'} text={fir.gist_of_fir}/> : 
+                                                        <MaskedParagraph mask={false} language={'tamil'} text={fir.gist_of_fir}/> 
+                                                    }
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td colSpan={4} width="500">
-                                                    <p><strong>{t('gist_in_local')}</strong></p>
-                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
+                                                    <p><strong>{t('gist_in_local')}<span className="text-danger ml-2">{fir.sencitive_case ? 'Sencitive case' : ''}</span></strong> </p>
+                                                    { fir.sencitive_case ? 
+                                                        <MaskedParagraph mask={true} language={'tamil'} text={fir.gist_in_local}/> : 
+                                                        <MaskedParagraph mask={false} language={'tamil'} text={fir.gist_in_local}/> 
+                                                    }
                                                 </td>
                                             </tr>
                                         </table>
@@ -126,5 +132,32 @@ const FIRDetails = () => {
         </>
     )
 }
+
+
+function MaskedParagraph({mask, language, text}) {
+    if(language === 'english'){
+        if(mask){
+            return(
+                <span dangerouslySetInnerHTML={CreateMarkup(text.replace(/[a-zA-Z]/g,'*').replace(/[0-9]/g,'*'))}></span>
+            )
+        }else{
+            return (
+                <span dangerouslySetInnerHTML={CreateMarkup(text)}></span>
+            )
+        }
+    }else if(language === 'tamil'){
+        if(mask){
+            return(
+                <span dangerouslySetInnerHTML={CreateMarkup(text.replace(/[\u0B80-\u0BFF]/g,'*').replace(/[a-zA-Z]/g,'*').replace(/[0-9]/g,'*'))}></span>
+            )
+        }else{
+            return (
+                <span dangerouslySetInnerHTML={CreateMarkup(text)}></span>
+            )
+        }
+    }
+    return null;
+}
+
 
 export default FIRDetails

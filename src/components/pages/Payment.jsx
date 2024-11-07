@@ -129,13 +129,13 @@ const Payment = () => {
 
     const handleSubmit = async () => {
         try{
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`payment/court-fee/`,{
-                efile_no:efile_no,
+            const data = {
+                efile_no:sessionStorage.getItem("efile_no"),
                 payer_name:payment.udf1,
                 mobile_number: payment.udf3,
                 amount:payment.amt
-            }, {params:{efile_no}})
+            }
+            const response = await api.post(`payment/court-fee/`, data)
             if(response.status === 201){
                 toast.success("Payment completed successfully", {
                     theme: "colored"

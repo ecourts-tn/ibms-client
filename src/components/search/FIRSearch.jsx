@@ -78,7 +78,8 @@ const FIRSearch = () => {
                     complainant_guardian_name: data?.complainant_guardian_name || "",
                     complainant_name: data?.complaintant_name || "",
                     investigation_officer_rank: data?.investigation_officer_rank || "",
-                    no_of_accused: data?.no_of_accused || 0
+                    no_of_accused: data?.no_of_accused || 0,
+                    sencitive_case: data?.sencitive_case || false
                 });
 
                 setShowAdditionalFields(true);

@@ -13,19 +13,20 @@ const Advocate = () => {
     const[selectedAdvocate, setSelectedAdvocate] = useState(null)
     const {t} = useTranslation()
 
-    useEffect(() => {
-        async function fetchAdvocates(){
-            try{
-                const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get(`case/advocate/`, {params: {efile_no}})
-                if(response.status === 200){
-                    setAdvocates(response.data)
-                }
-                console.log(response.data)
-            }catch(error){
-                console.log(error)
+    async function fetchAdvocates(){
+        try{
+            const efile_no = sessionStorage.getItem("efile_no")
+            const response = await api.get(`case/advocate/`, {params: {efile_no}})
+            if(response.status === 200){
+                setAdvocates(response.data)
             }
+            console.log(response.data)
+        }catch(error){
+            console.log(error)
         }
+    }
+
+    useEffect(() => {
         fetchAdvocates();
     }, [])
 
@@ -34,7 +35,8 @@ const Advocate = () => {
             advocate.efile_no = sessionStorage.getItem("efile_no")
             const response = await api.post(`case/advocate/`, advocate)
             if(response.status === 201){
-                setAdvocates(advocates => [...advocates, advocate])
+                fetchAdvocates();
+                // setAdvocates(advocates => [...advocates, advocate])
                 toast.success(t('alerts.advocate_added'), {
                     theme: "colored"
                 })
@@ -45,6 +47,7 @@ const Advocate = () => {
     }
 
     const editAdvocate = async(advocate) => {
+        console.log(advocate.adv_code)
         try{
             const response = await api.get(`case/advocate/${advocate.adv_code}/`)
             if(response.status===200){

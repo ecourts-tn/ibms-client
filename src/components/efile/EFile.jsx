@@ -22,11 +22,7 @@ const EFile = () => {
         const efile_no = sessionStorage.getItem("efile_no")
         if(efile_no){
             try{
-                const response = await api.get("case/filing/final-submit/", {
-                    params: {
-                        efile_no
-                    }
-                })
+                const response = await api.post("case/filing/final-submit/", {efile_no})
                 if(response.status === 200){
                     if(response.data.error){
                         response.data.message.forEach((error) => {

@@ -13,6 +13,7 @@ import AdvocateContainer from '../advocate/AdvocateContainer'
 import PreviousCaseContainer from '../history/PreviousCaseContainer'
 import DocumentContainer from '../documents/DocumentContainer'
 import Payment from '../pages/Payment'
+import PaymentForm from 'components/pages/PaymentForm'
 import Advocate from 'components/Advocate'
 import Document from 'components/Document'
 
