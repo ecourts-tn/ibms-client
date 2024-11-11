@@ -7,32 +7,34 @@ import api from '../../api';
 import { CreateMarkup, formatDate } from '../../utils'
 import './pdfstyle.css'
 
-
-const options = {
-    filename: "my-petition.pdf",
-    page: {
-      margin: 20,
-      fontSize:40
-    }
-  };
-const getTargetElement = () => document.getElementById("pdf-content");
-
-const downloadPdf = () => generatePDF(getTargetElement, options);
-
-
 const PdfGenerator = () => {
     
     const[petition, setPetition] = useState({})
     const[petitioner, setPetitioner] = useState([])
     const[respondent, setRespondent] = useState([])
+    const[advocates, setAdvocates] = useState([])
+    const[grounds, setGrounds] = useState([])
     const[crime, setCrime] = useState({})
     const[count, setCount] = useState(0)
     const {state} = useLocation()
+
+
+    const options = {
+        filename: `${state.efile_no}.pdf`,
+        page: {
+          margin: 20,
+          fontSize:20
+        }
+      };
+    const getTargetElement = () => document.getElementById("pdf-content"); 
+    const downloadPdf = () => generatePDF(getTargetElement, options);
+
     useEffect(() => {
         async function fetchData(){
             const response = await api.get(`case/filing/detail/`, {params:{efile_no:state.efile_no}})
             if(response.status === 200){
-                setPetition(response.data)
+                setPetition(response.data.petition)
+                setAdvocates(response.data.advocate)
                 setCrime(response.data.crime)
                 const filtered_petitioner = response.data.litigant.filter((l => {
                     return l.litigant_type === 1
@@ -49,21 +51,34 @@ const PdfGenerator = () => {
 
     if(Object.keys(petition).length > 0){
         return (
-            <div className="container-fluid" style={{backgroundColor:'lightgray'}}>
+            <div className="container-fluid" style={{backgroundColor:'lightgray', marginTop:'-30px'}}>
                 <div className="container pdf-container">
                 <div id="pdf-content">
                     <div className="row">
-                        <div className="col-md-12 text-center">
-                            <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.petition.court.court_name}<br/>{petition.petition.establishment.establishment_name}</strong> </h4>
-                            <p><strong>{ petition.petition.efile_number }</strong></p>
+                        { parseInt(petition.judiciary?.id) === 2 && (
+                        <div className="col-md-12 text-center" style={{textTransform:'uppercase'}}>
+                            <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.court?.court_name}<br/>{petition.establishment.establishment_name}</strong> </h4>
+                            <p><strong>{ petition.efile_number }</strong></p>
                             <p className="mb-4">
-                                {`In the matter of Crime number: ${crime.fir_number}/${crime.fir_year} of ${crime.police_station.station_name} 
-                                Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.petition.court.court_name}
-                                ${petition.petition.establishment.establishment_name}, ${petition.petition.district.district_name}, ${petition.petition.state.state_name}`}
+                                {`In the matter of Crime number: ${crime?.fir_number || '0'}/${crime?.fir_year || '0000'} of ${crime.police_station?.station_name || 'xxxxx'} 
+                                Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.court.court_name}
+                                ${petition.establishment.establishment_name}, ${petition.district.district_name}, ${petition.state.state_name}`}
                             </p>
                         </div>
+                        )}
+                        { parseInt(petition.judiciary?.id) === 1 && (
+                        <div className="col-md-12 text-center" style={{textTransform:'uppercase'}}>
+                            <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.judiciary?.judiciary_name}<br/>{petition.seat.seat_name}</strong> </h4>
+                            <p><strong>{ petition.efile_number }</strong></p>
+                            <p className="mb-4">
+                                {`In the matter of Crime number: ${crime?.fir_number || '0'}/${crime?.fir_year || '0000'} of ${crime.police_station?.station_name || 'xxxxx'} 
+                                Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.judiciary?.judiciary_name}
+                                ${petition.seat?.seat_name}`}
+                            </p>
+                        </div>
+                        )}
                         <div className="col-md-6">
-                            { petition.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                            { petitioner.map((l, index) => (
                             <p>
                                <strong>{index+1}. {l.litigant_name}, {l.age}, {l.gender}, {l.rank}</strong><br/>
                                 {l.relation} Name: {l.relation_name}<br/>
@@ -80,7 +95,7 @@ const PdfGenerator = () => {
                             <p><strong>-Vs-</strong></p>
                         </div>
                         <div className="col-md-6">
-                            { petition.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                            { respondent.map((l, index) => (
                                 <>
                                     <p><strong>{index+1}. {l.litigant_name} rep by {l.designation}</strong><br/>
                                         { l.address}, { l.address }
@@ -93,16 +108,16 @@ const PdfGenerator = () => {
                         </div>
                         <div className="col-md-12 mt-5">
                             <p className="text-center my-3" style={{textTransform:'uppercase'}}><strong>Bail Petition filed by 
-                                { petition.advocate.map((adv, index) => (
-                                    <span>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}, &nbsp;</span>
+                                { advocates.map((adv, index) => (
+                                    <span>&nbsp;{`${adv.adv_name} - [${adv.adv_reg}]`}, &nbsp;</span>
                                 ))}
-                                 for and on behalf of the Petitioner/Accused&nbsp;[{ petition.litigant.filter(l => l.litigant_type ===1).map((p, index) => (
+                                 for and on behalf of the Petitioner/Accused&nbsp;[{ petitioner.map((p, index) => (
                             <>
                                 <span><strong>&nbsp;{index+1}.{p.litigant_name}&nbsp;&nbsp;</strong></span>
                             </>
-                            ))}] U/s {petition.petition.bail_type.type_name}:-</strong></p>
+                            ))}] U/s {petition.bail_type.type_name}:-</strong></p>
                             <ol style={{lineHeight:'2'}}>
-                                <li>
+                                {/* <li>
                                     It is most respectfully submitted that the respondent&nbsp;
                                     <strong>{respondent[0].litigant_name}&nbsp;&nbsp;{respondent[0].designation},&nbsp;{respondent[0].police_station.station_name}, &nbsp;{respondent[0].police_district.district_name}</strong> on&nbsp;
                                     <strong>{crime.fir_date_time }</strong>&nbsp;has registered a case for the alleged offenses punishable&nbsp;
@@ -112,8 +127,8 @@ const PdfGenerator = () => {
                                     { petitioner.map((p, index) => (
                                         <><strong>&nbsp;{index+1}.{p.litigant_name}&nbsp;&nbsp;</strong></>
                                         ))
-                                    } based on a petition given by one&nbsp;<strong>{petition.petition.complaintant_name}</strong>.
-                                </li>
+                                    } based on a petition given by one&nbsp;<strong>{petition.complaintant_name}</strong>.
+                                </li> */}
                                 <li>
                                     It is most humbly submitted that the alleged facts stated in the F.I.R. are<br></br>
                                     <span dangerouslySetInnerHTML={CreateMarkup(crime.gist_in_local)}></span>
@@ -121,7 +136,7 @@ const PdfGenerator = () => {
                                 <li>
                                     It is most humbly submitted that the petitioner was arrested by the respondent police in connection with this case and was remanded to judicial custody on <strong>[{crime.date_of_arrest}]</strong> and he/she is languishing at District Jail/Central Prison at <strong>[{ petitioner[0].prison ? petitioner[0].prison : '*****'}]</strong>
                                 </li>
-                                { petition.grounds.map((ground, index) => (
+                                { grounds.map((ground, index) => (
                                     <li key={index}  dangerouslySetInnerHTML={CreateMarkup(ground.description)}></li>
                                 ))}
                                 <li>
@@ -131,7 +146,7 @@ const PdfGenerator = () => {
                                     It is most humbly submitted that the petitioner is ready to abide with any condition imposed on him/her by this Honourable Court.
                                 </li>
                                 <li>
-                                    I humbly submit that this is the first petition filed by me seeking {petition.petition.case_type.type_full_form } before this Honourable Court and no such petition is filed or pending before any courts
+                                    I humbly submit that this is the first petition filed by me seeking {petition.case_type.type_full_form } before this Honourable Court and no such petition is filed or pending before any courts
                                 </li>
                                 <li>
                                     Hence it is most humbly prayed that this Honourable Court may be pleased to accept this petition and pass orders to release the petitioner on bail and thus render justice.
@@ -139,14 +154,14 @@ const PdfGenerator = () => {
                             </ol>
                         </div>
                         <div className="col-md-6 mt-5">
-                            <p>Place: <strong>{petition.petition.district.district_name}</strong></p>
-                            <p>Submitted on: {formatDate(petition.petition.created_at)}</p>
+                            <p>Place: <strong>{ petition.judiciary?.id === 1  ? petition.seat?.seat_name : petition.district?.district_name}</strong></p>
+                            <p>Submitted on: {formatDate(petition.created_at)}</p>
                         </div>
                         <div className="col-md-6 mt-5" style={{textAlign:'right'}}>
                             <p>Advocates</p>
                             <p>
-                            { petition.advocate.map((adv, index) => (
-                               <span><strong>&nbsp;{`${adv.advocate_name} - [${adv.enrolment_number}]`}</strong><br/></span>
+                            { advocates.map((a, index) => (
+                               <span key={index} style={{textTransform:'uppercase'}}><strong>&nbsp;{`${a.adv_name} - [${a.adv_reg}]`}</strong><br/></span>
                             ))}
                             </p>
                         </div>

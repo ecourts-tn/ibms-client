@@ -1,17 +1,20 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import ViewDocument from './ViewDocument'
 import { formatDate, formatLitigant } from '../../utils'
 import api from '../../api'
 import config from '../../config'
+import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 const PetitionList = () => {
 
     const[cases, setCases] = useState([])
 
     const navigate = useNavigate()
-
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const [showDocument, setShowDocument] = useState(false);
     const [showVakalath, setShowVakalath] = useState(false)
     const handleClose = () => {
@@ -70,8 +73,8 @@ const PetitionList = () => {
                                 <tr>
                                     <th>S. No</th>
                                     <th>eFiling Number</th>
-                                    <th>E-Filing Date</th>
-                                    <th>Case Number</th>
+                                    <th>Filing Number</th>
+                                    <th>Court Details</th>
                                     <th>Litigants</th>
                                     <th>View Documents</th>
                                     <th>Court Fee</th>
@@ -84,12 +87,26 @@ const PetitionList = () => {
                                     <td>{ index+1 }</td>
                                     <td>
                                         <Link to="/petition/detail" state={{efile_no:item.petition.efile_number}}>
-                                            { item.petition.efile_number }
+                                            <strong>{ item.petition.efile_number }</strong>
                                         </Link>
+                                        <span style={{display:'block'}}>Date: { formatDate(item.petition.efile_date) }</span>
                                     </td>
-                                    <td>{ formatDate(item.petition.efile_date) }</td>
                                     <td>
-                                        {item.petition.reg_type ? `${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}` : null}
+                                        {item.petition.filing_type ? `${item.petition.filing_type?.type_name}/${item.petition.filing_number}/${item.petition.filing_year}` : null}
+                                    </td>
+                                    <td>
+                                        { item.petition.judiciary.id== 2 && (
+                                        <>
+                                            { language === 'ta' ? item.petition.court.court_lname : item.petition.court.court_name }, 
+                                            { language === 'ta' ? item.petition.establishment.establishment_lname : item.petition.establishment.establishment_name }, 
+                                            { language === 'ta' ? item.petition.district.district_lname : item.petition.district.district_name }
+                                        </>
+                                        )}
+                                        { item.petition.judiciary.id === 1 && (
+                                        <>
+                                            { language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}
+                                        </>
+                                        )}
                                     </td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (

@@ -2,12 +2,13 @@ import React, {useState, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { formatDate } from '../../utils'
 import api from '../../api'
 import config from '../../config'
 import { useTranslation } from 'react-i18next'
+
 
 const DraftList = () => {
 
@@ -55,8 +56,9 @@ const DraftList = () => {
                 const response = await api.post("case/filing/final-submit/", { efile_no})
                 if(response.status === 200){
                     if(response.data.error){
+                        console.log(response.data.error)
                         setShowError(true)
-                        setErrors(response.data.message)
+                        setErrors(response.data.messages)
                         // response.data.message.forEach((error) => {
                         //     toast.error(error, {
                         //         theme:"colored"
@@ -64,7 +66,7 @@ const DraftList = () => {
                         // })
                     }else{
                         try{
-                            const result = await api.put(`api/case/filing/${efile_no}/final-submit/`)
+                            const result = await api.put(`case/filing/${efile_no}/final-submit/`)
                             if(result.status === 200){
                                 toast.success("Petition submitted successfully", {
                                     theme:"colored"
@@ -135,7 +137,11 @@ const DraftList = () => {
                                 { cases.map((item, index) => (
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
-                                    <td><a href="#/"><strong>{ item.petition.efile_number }</strong></a></td>
+                                    <td style={{fontWeight:700}}>
+                                        <Link to="/petition/detail" state={{efile_no:item.petition.efile_number}}>
+                                            { item.petition.efile_number }
+                                        </Link>
+                                    </td>
                                     <td>{ formatDate(item.petition.efile_date) }</td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
