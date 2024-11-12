@@ -58,6 +58,9 @@ import JudgeForm from 'components/court/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
 import JudgeList from 'components/court/judge/JudgeList';
 
+import PoliceDashboard from 'components/police/Dashboard'
+import ResponsePending from 'components/police/ResponsePending';
+
 function App() {
 
   useEffect(() => {
@@ -392,7 +395,22 @@ function App() {
                     />
                   </Route>
                   <Route path="police">
-
+                    <Route
+                      path="dashboard"
+                      element={
+                        <PrivateRoute>
+                          <PoliceDashboard />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="response/pending"
+                      element={
+                        <PrivateRoute>
+                         <ResponsePending />
+                        </PrivateRoute>
+                      }
+                    />
                   </Route>
                   <Route path="prison">
 

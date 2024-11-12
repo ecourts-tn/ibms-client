@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from './ViewDocument'
@@ -8,6 +8,7 @@ import { formatDate } from '../../utils'
 import api from '../../api'
 import config from '../../config'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 const DraftList = () => {
@@ -20,6 +21,7 @@ const DraftList = () => {
     const handleErrorClose = () => setShowError(false);
     const handleErrorShow = () => setShowError(true);
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     
     const handleShow = (document) => {
         setSelectedDocument(document)
@@ -158,13 +160,15 @@ const DraftList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <div>
-                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>{ d.title }</span>
+                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>
+                                                    { language === 'ta' ?  d.title?.document_lname || null : d.title?.document_name || null}
+                                                </span>
                                             </div>
                                         ))}
                                         { selectedDocument && (
                                             <ViewDocument 
                                                 url={`${config.docUrl}${selectedDocument.document}`}
-                                                title={selectedDocument.title}
+                                                title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
                                                 show={!!selectedDocument}
                                                 handleClose={handleClose}
                                             />

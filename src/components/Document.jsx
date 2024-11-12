@@ -140,20 +140,20 @@ const Document = ({swornRequired}) => {
                                     <th>S.No</th>
                                     <th>Document No.</th>
                                     <th>{t('document_title')}</th>
+                                    <th>Key</th>
                                     <th>{t('action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {documentList.map((document, index) => (
+                                {documentList.map((d, index) => (
                                 <tr>
                                     <td>{ index+1}</td>
-                                    <td>{ document.id }</td>
-                                    <td>{ document.title }</td>
+                                    <td>{ d.id }</td>
+                                    <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
+                                    <td>{ d.hash }</td>
                                     <td>
-                                        <button onClick={() => handleShow(document)} className="btn btn-info btn-sm">View</button>
-
-                                        
-                                        <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(document)}>Delete</button>
+                                        <button onClick={() => handleShow(d)} className="btn btn-info btn-sm">{t('view')}</button>
+                                        <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(d)}>{t('delete')}</button>
                                     </td>
                                 </tr>    
                                 ))}

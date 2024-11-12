@@ -147,7 +147,7 @@ const Register = () => {
         }else{
             try{
                 setEmailLoading(true)
-                const response = await api.post("base/send-email-otp/", {email_address: form.email})
+                const response = await api.post("external/email/sent-otp/", {email_address: form.email})
                 toast.success(t('alerts.email_otp_sent'),{
                     theme:"colored"
                 })
@@ -162,7 +162,7 @@ const Register = () => {
 
     const verifyEmail = async (otp) => {
         try{
-            const response = await api.post("base/verify-email-otp/", {
+            const response = await api.post("external/email/verify-otp/", {
                 email_address: form.email,
                 otp: parseInt(otp)
             })
