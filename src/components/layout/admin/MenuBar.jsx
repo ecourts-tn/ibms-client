@@ -1,315 +1,140 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { useTranslation } from 'react-i18next'
-import api from 'api'
+import { useTranslation } from 'react-i18next';
+import api from 'api';
 import { REFRESH_TOKEN } from 'constants';
 
 export default function MenuBar() {
-
-  const {language, toggleLanguage} = useContext(LanguageContext)
+  const { language, toggleLanguage } = useContext(LanguageContext);
   const [isAuth, setIsAuth] = useState(false);
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
-
+  const { t } = useTranslation();
 
   useEffect(() => {
-    if (sessionStorage.getItem("access") !== null) {
+    const access = sessionStorage.getItem("access");
+    if (access) {
       setIsAuth(true);
-      setUser(JSON.parse(sessionStorage.getItem("user"))); 
+      setUser(JSON.parse(sessionStorage.getItem("user")));
     }
   }, []);
 
-  const handleLogout = async (e) => {
+  const handleLogout = async () => {
     const response = await api.post('auth/logout/', {
       refresh: sessionStorage.getItem(REFRESH_TOKEN),
     });
     if (response.status === 205) {
       sessionStorage.clear();
-      setIsAuth(false)
+      setIsAuth(false);
       toast.success(t('alerts.logged_out'), { theme: "colored" });
-      setTimeout(() => {
-        navigate('/');
-      },1000)
+      setTimeout(() => navigate('/'), 1000);
     }
   };
 
-  if (!user) {
-    return navigate('/')
-  }
+  if (!user) return null;
+
+  const userMenus = {
+    8: [
+      { to: "/ibms/court/dashboard", label: t('dashboard'), icon: "fas fa-tachometer-alt" },
+      { 
+        label: t('registration'), 
+        icon: "fas fa-table", 
+        subMenu: [
+          { to: "/ibms/court/petition/scrutiny", label: t('case_scrutiny') },
+          { to: "/ibms/court/petition/registration/list/", label: t('registration') },
+          { to: "/ibms/court/petition/listed-today", label: t('post_causelist') }
+        ]
+      },
+      // Add more court-specific menus here
+    ],
+    5: [
+      { to: "/police/dashboard", label: t('dashboard'), icon: "fas fa-tachometer-alt" },
+      { to: "/police/response/pending", label: t('pending_response'), icon: "far fa-circle text-info" },
+      { to: "/police/response/submitted", label: t('submitted_response'), icon: "far fa-circle text-info" },
+      // Add more police-specific menus here
+    ],
+    4: [
+      { to: "/prison/dashboard", label: t('dashboard'), icon: "fas fa-tachometer-alt" },
+      { to: "/prison/response/pending", label: t('pending_response'), icon: "far fa-circle text-info" },
+      // Add more prison-specific menus here
+    ],
+    3: [
+      { to: "/prosecution/dashboard", label: t('dashboard'), icon: "fas fa-tachometer-alt" },
+      { to: "/prosecution/response/pending", label: t('pending_response'), icon: "far fa-circle text-info" },
+      // Add more prosecution-specific menus here
+    ],
+  };
+
+  const commonMenus = [
+    { to: "/auth/user/registration/", label: t('user_registration'), icon: "far fa-circle text-info" },
+    { label: t('logout'), icon: "far fa-circle text-info", onClick: handleLogout }
+  ];
+
+  const renderMenuItems = (menuItems) =>
+    menuItems.map((item, index) => (
+      <li key={index} className="nav-item">
+        {item.subMenu ? (
+          <>
+            <a href="#/" className="nav-link">
+              <i className={`nav-icon ${item.icon}`} />
+              <p>{item.label} <i className="fas fa-angle-left right" /></p>
+            </a>
+            <ul className="nav nav-treeview">
+              {item.subMenu.map((subItem, subIndex) => (
+                <li key={subIndex} className="nav-item">
+                  <Link to={subItem.to} className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>{subItem.label}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <Link to={item.to} className="nav-link" onClick={item.onClick}>
+            <i className={`nav-icon ${item.icon}`} />
+            <p>{item.label}</p>
+          </Link>
+        )}
+      </li>
+    ));
 
   return (
-      <>
-        <ToastContainer />
-        <aside className="main-sidebar sidebar-dark-primary elevation-4">
-          <a href="#/" className="brand-link text-center">
-            <span className="brand-text font-weight-bold">IBMS - MHC</span>
-          </a>
-          <div className="sidebar">
-            <div className="user-panel mt-3 pb-3 mb-3 d-flex">
-              <div className="image">
-                <img src={`${process.env.PUBLIC_URL}/images/highcourtlogo.png`} className="img-circle elevation-2" alt="User Icon" />
-              </div>
-              <div className="info">
-                <a href="#" className="d-block">{ user.username }</a>
-              </div>
+    <>
+      <ToastContainer />
+      <aside className="main-sidebar sidebar-dark-primary elevation-4">
+        <a href="#/" className="brand-link text-center">
+          <span className="brand-text font-weight-bold">IBMS - MHC</span>
+        </a>
+        <div className="sidebar">
+          <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div className="image">
+              <img src={`${process.env.PUBLIC_URL}/images/highcourtlogo.png`} className="img-circle elevation-2" alt="User Icon" />
             </div>
-            <div className="form-inline">
-              <div className="input-group" data-widget="sidebar-search">
-                <input className="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" />
-                <div className="input-group-append">
-                  <button className="btn btn-sidebar">
-                    <i className="fas fa-search fa-fw" />
-                  </button>
-                </div>
-              </div>
+            <div className="info">
+              <a href="#/" className="d-block">{user.username}</a>
             </div>
-            <nav className="mt-2">
-              { user && (
-              <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                {/* Start - Court user menu */}
-                { parseInt(user.user_type) === 8 && (
-                <>
-                  <li className="nav-item menu-open">
-                    <Link to="/ibms/court/dashboard" className="nav-link active">
-                      <i className="nav-icon fas fa-tachometer-alt" />
-                      <p>{t('dashboard')}</p>
-                    </Link> 
-                  </li>
-                  <li className="nav-item">
-                    <a href="/#" className="nav-link">
-                      <i className="nav-icon fas fa-table"></i>
-                      <p>{t('registration')} <i className="fas fa-angle-left right"></i></p>
-                    </a>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/ibms/court/petition/scrutiny" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('case_scrutiny')}</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/ibms/court/petition/registration/list/" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('registration')}</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/ibms/court/petition/listed-today" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('post_causelist')}</p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="nav-item">
-                    <a href={void(0)} className="nav-link">
-                      <i className="nav-icon fas fa-table" />
-                      <p> {t('proceedings')} <i className="fas fa-angle-left right" /></p>
-                    </a>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/ibms/court/petition/proceedings" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('daily_proceedings')}</p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="nav-item">
-                    <a href="#" className="nav-link">
-                      <i className="nav-icon fas fa-table" />
-                      <p> {t('orders')} <i className="fas fa-angle-left right" /></p>
-                    </a>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/ibms/court/orders/generate/" className="nav-link">
-                          <i className="nav-icon far fa-circle text-info" />
-                          <p>{t('generate_order')}</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/ibms/court/orders/publish/" className="nav-link">
-                          <i className="nav-icon far fa-circle text-info" />
-                          <p>{t('publish_order')}</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/ibms/court/orders/status/" className="nav-link">
-                          <i className="nav-icon far fa-circle text-info" />
-                          <p>{t('order_status')}</p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="nav-item">
-                    <a href={void(0)} className="nav-link">
-                      <i className="nav-icon fas fa-table" />
-                      <p> {t('admin_menu')} <i className="fas fa-angle-left right" /></p>
-                    </a>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/ibms/court/admin/judge" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('judge')}</p>
-                        </Link>
-                      </li>
-                    </ul>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/ibms/court/admin/judge" className="nav-link">
-                          <i className="far fa-circle nav-icon" />
-                          <p>{t('judge')}</p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="police-response" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>{t('surrender')}</p>
-                    </Link>
-                  </li>  
-                  <li className="nav-item">
-                    <Link to="/court/surety/pending/list/" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Surety</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="police-response" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Condition Complaince</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="police-response" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Reports</p>
-                    </Link>
-                  </li>   
-                </>
-                )}
-                { /* End - Court user menu */} 
-                { /* Start - Police user menu */}
-                { parseInt(user.user_type) === 5 && (
-                <>
-                  <li className="nav-item menu-open">
-                    <Link to="/police/dashboard" className="nav-link active">
-                      <i className="nav-icon fas fa-tachometer-alt" />
-                      <p>Dashboard</p>
-                    </Link>  
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/police/response/pending" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Pending Response</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/police/response/submitted" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Submitted Response</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/police/condition" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Condition</p>
-                    </Link>
-                  </li>    
-                  <li className="nav-item">
-                    <a href="#" className="nav-link">
-                      <i className="nav-icon fas fa-file" />
-                      <p>File Petition<i className="fas fa-angle-left right" /></p>
-                    </a>
-                    <ul className="nav nav-treeview">
-                      <li className="nav-item">
-                        <Link to="/police/bail/cancellation" className="nav-link">
-                          <i className="nav-icon far fa-circle text-info" />
-                          <p>Bail Cancellation</p>
-                        </Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/police/request/custody" className="nav-link">
-                          <i className="nav-icon far fa-circle text-info" />
-                          <p>Request Custody</p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/police/profile" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Profile</p>
-                    </Link>
-                  </li>         
-                </>
-                )}
-                { /* End - Police user menu */}
-                { /* Start - Prison user menu */}
-                { parseInt(user.user_type) === 4 && (
-                  <>
-                    <li className="nav-item menu-open">
-                      <Link to="/prison/dashboard" className="nav-link active">
-                        <i className="nav-icon fas fa-tachometer-alt" />
-                        <p>Dashboard</p>
-                      </Link>  
-                    </li> <li className="nav-item">
-                      <Link to="/prison/response/pending" className="nav-link">
-                        <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link to="/prison/response/submitted" className="nav-link">
-                        <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
-                      </Link>
-                    </li>        
-                  </>
-                )}
-                {/** End - Prison user menu */}
-                { parseInt(user.user_type) === 3 && (
-                  <>
-                    <li className="nav-item menu-open">
-                      <Link to="/prosecution/dashboard" className="nav-link active">
-                        <i className="nav-icon fas fa-tachometer-alt" />
-                        <p>Dashboard</p>
-                      </Link>  
-                    </li> <li className="nav-item">
-                      <Link to="/prosecution/response/pending" className="nav-link">
-                        <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
-                      </Link>
-                    </li>
-                    <li className="nav-item">
-                      <Link to="/prosecution/response/submitted" className="nav-link">
-                        <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
-                      </Link>
-                    </li>       
-                  </>
-                )}
-                <li className="nav-item">
-                  <Link to="/auth/user/registration/" className="nav-link">
-                    <i className="nav-icon far fa-circle text-info" />
-                    <p>User Registration</p>
-                  </Link>
-                </li> 
-                <li className="nav-item">
-                  <Link onClick={handleLogout} className="nav-link">
-                    <i className="nav-icon far fa-circle text-info" />
-                    <p>Logout</p>
-                  </Link>
-                </li>    
-              </ul>
-              )}
-            </nav>
           </div>
-        </aside>
-      </>
+          <div className="form-inline">
+            <div className="input-group" data-widget="sidebar-search">
+              <input className="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search" />
+              <div className="input-group-append">
+                <button className="btn btn-sidebar">
+                  <i className="fas fa-search fa-fw" />
+                </button>
+              </div>
+            </div>
+          </div>
+          <nav className="mt-2">
+            <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+              {renderMenuItems(userMenus[user.user_type] || [])}
+              {renderMenuItems(commonMenus)}
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    </>
   );
 }

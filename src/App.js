@@ -60,6 +60,7 @@ import JudgeList from 'components/court/judge/JudgeList';
 
 import PoliceDashboard from 'components/police/Dashboard'
 import ResponsePending from 'components/police/ResponsePending';
+import ResponseCreate from 'components/police/ResponseCreate';
 
 function App() {
 
@@ -408,6 +409,14 @@ function App() {
                       element={
                         <PrivateRoute>
                          <ResponsePending />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="response/create"
+                      element={
+                        <PrivateRoute>
+                          <ResponseCreate />
                         </PrivateRoute>
                       }
                     />

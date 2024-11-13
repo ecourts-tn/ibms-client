@@ -16,6 +16,7 @@ import { RequiredField } from '../../utils';
 import FIRDetails from './FIRDetails';
 import Loader from './Loader';
 import MaterialDetails from './MaterialDetails';
+import VehicleDetails from './VehicleDetails';
 
 
 const ResponseCreate = () => {
@@ -64,7 +65,7 @@ const ResponseCreate = () => {
         is_material_seized  : '',
         is_vehicle_seized   : '',
     }
-    const materialState = {
+    const initialMaterial = {
         name: '',
         quantity:'',
         nature:'',
@@ -72,7 +73,7 @@ const ResponseCreate = () => {
         produced_date: '',
         reason: ''
     }
-    const[material, setMaterial] = useState(materialState)
+    const[material, setMaterial] = useState(initialMaterial)
     const[materialErrors, setMaterialErrors] = useState({})
     const[materials, setMaterials] = useState([])
     const vehicleState = {
@@ -129,12 +130,13 @@ const ResponseCreate = () => {
     const addMaterial = async(e) => {
         e.preventDefault()
         try{
-            await materialValidationSchema.validate(material, {abortEarly:false})
+            console.log(material)
+            // await materialValidationSchema.validate(material, {abortEarly:false})
             setMaterials(prevState => [prevState, material])
             toast.success("Materials details added successfully", {
                 theme:"colored"
             })
-            setMaterial(materialState)
+            setMaterial(initialMaterial)
         }catch(error){
             if(error.inner){
                 const newErrors = {}
@@ -145,6 +147,7 @@ const ResponseCreate = () => {
             }
         }
     }
+
 
     const validationSchema = Yup.object({
         offences: Yup.string().required(),
@@ -268,11 +271,11 @@ const ResponseCreate = () => {
                             <div className="card-body p-1">
                                 <table className="table table-bordered table-striped table-sm">
                                     <tbody>
-                                        { parseInt(petition.court_type.id) === 2 && (
+                                        { parseInt(petition.judiciary?.id) === 2 && (
                                         <>
                                         <tr>
                                             <td>Court Type</td>
-                                            <td>{ petition.court_type.court_type }</td>
+                                            <td>{ petition.judiciary?.judiciary_name }</td>
                                             <td>State</td>
                                             <td>{ petition.state.state_name }</td>
                                             <td>District</td>
@@ -598,7 +601,10 @@ const ResponseCreate = () => {
                                             </div>
                                         </div>
                                         { parseInt(form.is_material_seized) === 1 && (
-                                            <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
+                                            <MaterialDetails 
+                                                materials={materials} 
+                                                setMaterials={setMaterials} 
+                                             />
                                         )}
                                         <div className="form-group row">
                                             <label className="col-sm-3">Vechicle seized?</label>
@@ -634,73 +640,10 @@ const ResponseCreate = () => {
                                             </div>
                                         </div>
                                         { parseInt(form.is_vehicle_seized) === 1 && (
-                                        <div className="row">
-                                            <div className="col-md-4">
-                                                <div className="form-group">
-                                                    <label htmlFor="">Name of the Vehicle</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        name="vehicle_name"
-                                                        value={vehicle.vehicle_name}
-                                                        onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-2">
-                                                <div className="form-group">
-                                                    <label htmlFor="">Owner details with address</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        name="owner_details"
-                                                        value={vehicle.owner_details}
-                                                        onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3">
-                                                <div className="form-group">
-                                                    <label htmlFor="">Vehicle Number</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        name="vehicle_number"
-                                                        value={vehicle.vehicle_number}
-                                                        onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3">
-                                                <div className="form-group">
-                                                    <label htmlFor="">Fastag Details</label>
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        name="fastag_details"
-                                                        value={vehicle.fastag_details}
-                                                        onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-md-3">
-                                                <div className="form-group">
-                                                    <label htmlFor="">Whether owner of the vehicle is the accused</label>
-                                                    <select 
-                                                        name="is_owner_accused" 
-                                                        className="form-control"
-                                                        value={vehicle.is_owner_accused}
-                                                        onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="Yes">Yes</option>
-                                                        <option value="No">No</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-1 mt-4 pt-2">
-                                                <button className="btn btn-primary">Add</button>
-                                            </div>
-                                        </div>
+                                            <VehicleDetails 
+                                                vehicles={vehicles}
+                                                setVehicles={setVehicles}
+                                            />
                                         )}
                                         <div className="row">
                                             <div className="col-md-3">

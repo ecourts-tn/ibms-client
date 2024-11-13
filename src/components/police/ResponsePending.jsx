@@ -48,14 +48,14 @@ const ResponsePending = () => {
                                             <td>{ index + 1 }</td>
                                             <td>
                                                 <span className="text-primary"><strong>{ petition.petition.efile_number }</strong></span><br></br>
-                                                {petition.petition.court_type.id === 2 ? `${petition.petition.court.court_name}, ${petition.petition.district.district_name}` : null}
+                                                {petition.petition.judiciary?.id === 2 ? `${petition.petition.court?.court_name}, ${petition.petition.district?.district_name}` : null}
                                             </td>
                                             <td>{ petition.crime.date_of_occurrence }</td>
                                             <td>{ petition.crime.fir_number }/{ petition.crime.fir_year }</td>
-                                            <td>{ petition.crime.complainant_guardian_name }</td>
+                                            <td>{ petition.crime.complaitnant_name }</td>
                                             <td>{ petition.crime.investigation_officer }</td>
                                             <td>
-                                                <Link to='/police/response/create/' state={{ efile_no: petition.petition.efile_number }}>
+                                                <Link to='/ibms/police/response/create/' state={{ efile_no: petition.petition.efile_number }}>
                                                     <Button
                                                         variant='contained'
                                                         color='success'
