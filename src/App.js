@@ -58,9 +58,26 @@ import JudgeForm from 'components/court/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
 import JudgeList from 'components/court/judge/JudgeList';
 
-import PoliceDashboard from 'components/police/Dashboard'
-import ResponsePending from 'components/police/ResponsePending';
-import ResponseCreate from 'components/police/ResponseCreate';
+import PoliceDashboard from "components/police/Dashboard"
+import ResponsePending from "components/police/ResponsePending"
+import ResponseCreate from './components/police/ResponseCreate'
+import ResponseSubmitted from "components/police/ResponseSubmitted"
+import ResponseDetails from 'components/police/ResponseDetails'
+import ConditionList from 'components/police/ConditionList'
+import ConditionForm from 'components/police/ConditionForm'
+import BailCancellation from './components/police/BailCancellation'
+import RequestCustody from './components/police/RequestCustody'
+import PoliceProfile from 'components/police/Profile'
+
+import PrisonDashboard from "components/prison/Dashboard"
+import PrisonResponsePending from "components/prison/ResponsePending"
+import PrisonResponseSubmitted from "components/prison/ResponseSubmitted"
+import PrisonResponseCreate from "components/prison/ResponseCreate"
+
+import ProsecutorDashboard from "components/prosecutor/Dashboard"
+import ProsecutionResponsePending from "components/prosecutor/ResponsePending"
+import ProsecutionResponseSubmitted from "components/prosecutor/ResponseSubmitted"
+import ProsecutionResponse from "components/prosecutor/ResponseCreate"
 
 function App() {
 
@@ -263,7 +280,7 @@ function App() {
                 />
                 <Route path="user/registration" element={<Register />} />
               </Route>
-              <Route path="/ibms" element={<AdminLayout />}>
+              <Route element={<AdminLayout />}>
                   <Route path="court">
                     <Route path="dashboard" element={<CourtDashboard />}></Route>
                     <Route 
@@ -396,36 +413,150 @@ function App() {
                     />
                   </Route>
                   <Route path="police">
-                    <Route
-                      path="dashboard"
-                      element={
-                        <PrivateRoute>
-                          <PoliceDashboard />
-                        </PrivateRoute>
-                      }
-                    />
-                    <Route
-                      path="response/pending"
-                      element={
-                        <PrivateRoute>
-                         <ResponsePending />
-                        </PrivateRoute>
-                      }
-                    />
-                    <Route
-                      path="response/create"
-                      element={
-                        <PrivateRoute>
-                          <ResponseCreate />
-                        </PrivateRoute>
-                      }
-                    />
+                      <Route
+                        path="profile"
+                        element={<PoliceProfile />}
+                      />
+                      <Route 
+                        path="dashboard" 
+                        element={
+                          <PrivateRoute>
+                            <PoliceDashboard />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/pending"  
+                        element={
+                          <PrivateRoute>
+                            <ResponsePending />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/submitted"  
+                        element={
+                          <PrivateRoute>
+                            <ResponseSubmitted />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/create" 
+                        element={
+                          <PrivateRoute>
+                            <ResponseCreate />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/details" 
+                        element={
+                          <PrivateRoute>
+                            <ResponseDetails />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="condition" 
+                        element={
+                          <PrivateRoute>
+                            <ConditionList />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="condition/create" 
+                        element={
+                          <PrivateRoute>
+                            <ConditionForm />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="bail/cancellation" 
+                        element={
+                          <PrivateRoute>
+                            <BailCancellation />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="request/custody" 
+                        element={
+                          <PrivateRoute>
+                            <RequestCustody />
+                          </PrivateRoute>
+                        } 
+                      />
                   </Route>
                   <Route path="prison">
-
+                    <Route 
+                      path="dashboard" 
+                      element={
+                        <PrivateRoute>
+                          <PrisonDashboard />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="response/pending" 
+                      element={
+                        <PrivateRoute>
+                          <PrisonResponsePending />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="response/submitted" 
+                      element={
+                        <PrivateRoute>
+                          <PrisonResponseSubmitted />
+                        </PrivateRoute>
+                      } 
+                    />
+                    <Route 
+                      path="response/create" 
+                      element={
+                        <PrivateRoute>
+                          <PrisonResponseCreate />
+                        </PrivateRoute>
+                      } 
+                    />
                   </Route>
                   <Route path="prosecution">
-
+                  <Route 
+                        path="dashboard" 
+                        element={
+                        <PrivateRoute>
+                          <ProsecutorDashboard />
+                        </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/pending/" 
+                        element={
+                          <PrivateRoute>
+                            <ProsecutionResponsePending />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/submitted/" 
+                        element={
+                          <PrivateRoute>
+                            <ProsecutionResponseSubmitted />
+                          </PrivateRoute>
+                        } 
+                      />
+                      <Route 
+                        path="response/create/" 
+                        element={
+                          <PrivateRoute>
+                            <ProsecutionResponse />
+                          </PrivateRoute>
+                        } 
+                      />
                   </Route>
                   <Route path="administration">
                     

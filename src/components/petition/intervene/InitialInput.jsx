@@ -21,6 +21,7 @@ import { SeatContext } from 'contexts/SeatContext';
 import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 const InitialInput = () => {
 
@@ -32,15 +33,16 @@ const InitialInput = () => {
     const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {courttypes}      = useContext(JudiciaryContext)
-    const {benchtypes}      = useContext(SeatContext)
+    const {judiciaries}     = useContext(JudiciaryContext)
+    const {seats}           = useContext(SeatContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
 
     const initialState = {
-        court_type: 1,
-        bench_type: null,
+        judiciary: 1,
+        seat: null,
         state: '',
         district:'',
         establishment: '',
@@ -167,14 +169,14 @@ const InitialInput = () => {
                                     <Form.Group className="mb-3">
                                         <Form.Label>{t('court_type')}<RequiredField /></Form.Label>
                                         <select 
-                                            name="court_type" 
-                                            id="court_type" 
+                                            name="judiciary" 
+                                            id="judiciary" 
                                             className="form-control" 
-                                            value={petition.court_type} 
+                                            value={petition.judiciary} 
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
-                                            { courttypes.map((type, index) => (
-                                                <option key={index} value={type.id}>{type.court_type}</option>
+                                            { judiciaries.map((j, index) => (
+                                                <option key={index} value={j.id}>{language === 'ta' ? j?.judiciary_lname || '' : j?.judiciary_name || ''}</option>
                                             ))}
                                         </select>
                                     </Form.Group>
@@ -184,18 +186,18 @@ const InitialInput = () => {
                                         <label htmlFor="bench_type">{t('hc_bench')}<RequiredField /></label>
                                         <select 
                                             name="bench_type" 
-                                            className={`form-control ${errors.bench_type ? 'is-invalid' : ''} `}
-                                            value={petition.bench_type}
-                                            disabled={ parseInt(petition.court_type) === 2 ? true : false}
+                                            className={`form-control ${errors.seat ? 'is-invalid' : ''} `}
+                                            value={petition.seat}
+                                            disabled={ parseInt(petition.judiciary) === 2 ? true : false}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select bench</option>
-                                            { benchtypes.map((bench, index) => (
-                                                <option key={index} value={bench.bench_code}>{ bench.bench_type}</option>
+                                            { seats.map((s, index) => (
+                                                <option key={index} value={s.seat_code}>{language === 'ta' ? s?.seat_lname || '' : s?.seat_name || ''}</option>
                                             ))}
                                         </select>
                                         <div className="invalid-feedback">
-                                            { errors.bench_type }
+                                            { errors.seat }
                                         </div>
                                     </div>
                                 </div>

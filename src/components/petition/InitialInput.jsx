@@ -1,16 +1,18 @@
-import React from 'react'
+import { LanguageContext } from 'contexts/LanguageContex'
+import React, { useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import { useTranslation } from 'react-i18next'
 
 const InitialInput = ({petition}) => {
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     return (
         <div className="row mb-4">
             <div className="col-md-6">
                 <Form.Group className="mb-3">
                     <Form.Label>{t('court_type')}</Form.Label>
                         <Form.Control
-                        value={petition.court_type.court_type}
+                        value={language === 'ta' ? petition.judiciary?.judiciary_lname : petition.judiciary?.judiciary_name}
                         readOnly={true}
                         ></Form.Control>                                                        
                 </Form.Group>
@@ -19,18 +21,18 @@ const InitialInput = ({petition}) => {
                 <div className="form-group">
                     <Form.Label>{t('hc_bench')}</Form.Label>
                     <Form.Control
-                        value={petition.bench_type ? petition.bench_type.bench_type : null}
+                        value={language === 'ta' ? petition.seat?.seat_lname || '' : petition.seat?.seat_name || ''}
                         readOnly={true}
                     ></Form.Control>
                 </div>
             </div>
-            { petition.court_type.id === 2 && (
+            { petition.judiciary?.id === 2 && (
             <>
                 <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="state">{t('state')}</label>
                         <Form.Control
-                            value={petition.state.state_name}
+                            value={ language === 'ta' ? petition.state?.state_lname || '' : petition.state?.state_name || ''}
                             readOnly={true}
                         ></Form.Control>
                     </div>
@@ -39,7 +41,7 @@ const InitialInput = ({petition}) => {
                     <div className="form-group">
                         <label htmlFor="district">{t('district')}</label>
                         <Form.Control
-                            value={petition.district.district_name}
+                            value={language === 'ta' ? petition.district?.district_lname || '' : petition.district?.district_name || ''}
                             readOnly={true}
                         ></Form.Control>
                     </div>
@@ -48,7 +50,7 @@ const InitialInput = ({petition}) => {
                     <div className="form-group">
                         <label htmlFor="establishment">{t('est_name')}</label>
                         <Form.Control
-                            value={petition.establishment.establishment_name}
+                            value={ language === 'ta' ? petition.establishment?.establishment_lname || '' : petition.establishment?.establishment_name}
                             readOnly={true}
                         ></Form.Control>
                     </div>
@@ -57,57 +59,13 @@ const InitialInput = ({petition}) => {
                     <div className="form-group">
                         <label htmlFor="court">{t('court')}</label>
                         <Form.Control
-                            value={petition.court.court_name}
+                            value={language === 'ta' ? petition.court?.court_lname || '' : petition.court?.court_name || ''}
                             readOnly={true}
                         ></Form.Control>
                     </div>
                 </div>
             </>
             )}
-            {/* <div className="col-md-3">
-                <div className="form-group">
-                    <label htmlFor="caseType">Case Type</label>
-                    <Form.Control
-                        value={petition.case_type.type_name}
-                        readOnly={true}
-                    ></Form.Control>
-                </div>
-            </div>
-            <div className="col-md-3">
-                <div className="form-group">
-                    <label htmlFor="bailType">Bail Type</label>
-                    <Form.Control
-                        value={petition.bail_type.type_name}
-                        readOnly={true}
-                    ></Form.Control>
-                </div>
-            </div>
-            <div className="col-md-3">
-                <Form.Group>
-                    <Form.Label>Compliant Type</Form.Label>
-                    <Form.Control
-                        value={petition.complaint_type.type_name}
-                        readOnly={true}
-                    ></Form.Control>
-                </Form.Group>
-            </div>
-            <div className="col-md-3">
-                <div className="form-group clearfix">
-                <label htmlFor="" className="mr-2">Crime Registered?</label><br></br>
-                <div className="icheck-success d-inline mx-2">
-                    <input type="radio" id="radioPrimary1" name="crime_registered" checked={petition.crime_registered === "1" ? true : false} />
-                    <label htmlFor="radioPrimary1">Yes</label>
-                </div>
-                <div className="icheck-danger d-inline mx-2">
-                    <input type="radio" id="radioPrimary2" name="crime_registered" checked={petition.crime_registered === "2" ? true : false} />
-                    <label htmlFor="radioPrimary2">No</label>
-                </div>
-                <div className="icheck-primary d-inline mx-2">
-                    <input type="radio" id="radioPrimary3" name="crime_registered" checked={petition.crime_registered === "3" ? true : false} />
-                    <label htmlFor="radioPrimary3">Not Known</label>
-                </div>
-                </div>
-            </div> */}
         </div>
     )
 }

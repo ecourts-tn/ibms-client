@@ -1,24 +1,18 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
-import { toast, ToastContainer } from 'react-toastify';
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
-import { getRelations } from '../../redux/features/RelationSlice';
-import api from '../../api';
 import * as Yup from 'yup'
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { RelationContext } from 'contexts/RelationContext';
 
 const Profile = () => {
 
-    const dispatch = useDispatch()
-
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks = useSelector((state) => state.taluks.taluks)
-    const relations = useSelector(state => state.relations.relations)
-    const stateStatus = useSelector(getStatesStatus)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
+    const {relations} = useContext(RelationContext)
 
     const initialState = {
         petitioner_name:'',
@@ -56,28 +50,6 @@ const Profile = () => {
     })
     
     const[errors, setErrors] = useState([])
-
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-          dispatch(getStates())
-        }
-    },[stateStatus, dispatch])
-      
-    useEffect(() => {
-        if(form.state !== ''){
-          dispatch(getDistrictByStateCode(form.state))
-        }
-    },[form.state, dispatch])
-    
-    useEffect(() => {
-        if(form.district !== ''){
-          dispatch(getTalukByDistrictCode(form.district))
-        }
-    },[form.district, dispatch])
-    
-    useEffect(() => {
-        dispatch(getRelations())
-    }, [dispatch])
 
     const handleSubmit = async(e) => {
         e.preventDefault()

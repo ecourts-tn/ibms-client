@@ -1,30 +1,27 @@
-import React, {useState, useEffect, useRef} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react'
 import Button from '@mui/material/Button'
-import { nanoid } from '@reduxjs/toolkit'
 import Form from 'react-bootstrap/Form'
 import { toast, ToastContainer } from 'react-toastify';
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
-import { getPoliceSationByDistrict } from '../../redux/features/PoliceStationSlice'
-import { getEstablishmentByDistrict } from '../../redux/features/EstablishmentSlice';
-import { getRelations } from '../../redux/features/RelationSlice';
 import api from '../../api';
 import * as Yup from 'yup'
+import { nanoid } from '@reduxjs/toolkit';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { RelationContext } from 'contexts/RelationContext';
+import { PoliceStationContext } from 'contexts/PoliceStationContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
 
 
 const BailCancellation = () => {
 
-    const dispatch = useDispatch()
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
+    const {relations} = useContext(RelationContext)
+    const {policeStations} = useContext(PoliceStationContext)
+    const {establishments} = useContext(EstablishmentContext)
 
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks = useSelector((state) => state.taluks.taluks)
-    const relations = useSelector(state => state.relations.relations)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
-    const establishments    = useSelector((state) => state.establishments.establishments)
-    const stateStatus = useSelector(getStatesStatus)
 
     const[searchForm, setSearchForm] = useState({
         state:'',
@@ -82,40 +79,7 @@ const BailCancellation = () => {
         description: ''
     })
     const[errors, setErrors] = useState([])
-
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-          dispatch(getStates())
-        }
-      },[stateStatus, dispatch])
-      
-      useEffect(() => {
-        if(searchForm.state !== ''){
-          dispatch(getDistrictByStateCode(searchForm.state))
-        }
-      },[searchForm.state, dispatch])
     
-      useEffect(() => {
-        if(searchForm.district !== ''){
-          dispatch(getTalukByDistrictCode(searchForm.district))
-        }
-      },[form.district, dispatch])
-
-      useEffect(() => {
-        if( searchForm.district !== ''){
-            dispatch(getEstablishmentByDistrict(searchForm.district))
-        }
-    },[searchForm.district, dispatch])
-     
-      useEffect(() => {
-        dispatch(getRelations())
-      }, [dispatch])
-    
-      useEffect(() => {
-        if(searchForm.district){
-            dispatch(getPoliceSationByDistrict(searchForm.district))
-        }
-    }, [searchForm.district, dispatch])
 
     const[accused, setAccused] = useState([])
 

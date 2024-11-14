@@ -61,11 +61,11 @@ export const AuthProvider = ({ children }) => {
             const userTypeRoutes = {
                 1: "/dashboard",
                 2: "/dashboard",
-                3: "/ibms/prosecution/dashboard",
-                4: "/ibms/prison/dashboard",
-                5: "/ibms/police/dashboard",
-                6: "/ibms/court/dashboard",
-                8: "/ibms/court/dashboard",
+                3: "/prosecution/dashboard",
+                4: "/prison/dashboard",
+                5: "/police/dashboard",
+                6: "/court/dashboard",
+                8: "/court/dashboard",
             };
 
             const usertype = parseInt(response.data.user_type, 10);

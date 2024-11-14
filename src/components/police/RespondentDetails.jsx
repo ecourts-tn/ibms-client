@@ -1,32 +1,30 @@
-import React from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { ToastContainer } from 'react-toastify';
-import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
-import { getPrisons } from '../../redux/features/PrisonSlice'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getRelations } from '../../redux/features/RelationSlice';
 import * as Yup from 'yup'
 import api from '../../api';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { RelationContext } from 'contexts/RelationContext';
+import { PoliceStationContext } from 'contexts/PoliceStationContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { PrisonContext } from 'contexts/PrisonContext';
 
 
 
 const RespondentDetails = ({respondent, addRespondent, respondents, setRespondent, deleteRespondent}) => {
 
-    const dispatch = useDispatch()
-
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks = useSelector((state) => state.taluks.taluks)
-    const relations = useSelector(state => state.relations.relations)
-    const prisons = useSelector((state) => state.prisons.prisons)
-
-    const stateStatus = useSelector(getStatesStatus)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
+    const {relations} = useContext(RelationContext)
+    const {policeStations} = useContext(PoliceStationContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {prisons} = useContext(PrisonContext)
 
     const[errors, setErrors] = useState({})
 
@@ -45,35 +43,7 @@ const RespondentDetails = ({respondent, addRespondent, respondents, setResponden
     })
 
 
-  useEffect(() => {
-    if(stateStatus === 'idle'){
-      dispatch(getStates())
-    }
-  },[stateStatus, dispatch])
-  
-  useEffect(() => {
-    if(respondent.state !== ''){
-      dispatch(getDistrictByStateCode(respondent.state))
-    }
-  },[respondent.state, dispatch])
-
-  useEffect(() => {
-    if(respondent.district !== ''){
-      dispatch(getTalukByDistrictCode(respondent.district))
-    }
-  },[respondent.district, dispatch])
-
-  useEffect(() => {
-    if(respondent.is_custody){
-      dispatch(getPrisons())
-    }
-  },[respondent.is_custody, dispatch])
-
-  useEffect(() => {
-    dispatch(getRelations())
-  }, [dispatch])
-
-  const handleSubmit = async() => {
+    const handleSubmit = async() => {
 
     try{
         await validationSchema.validate(respondent, { abortEarly:false})

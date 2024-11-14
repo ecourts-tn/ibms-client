@@ -1,29 +1,27 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
 import { ToastContainer } from 'react-toastify';
-import { useSelector, useDispatch } from 'react-redux'
-import { getStates, getStatesStatus } from '../../redux/features/StateSlice'
-import { getDistrictByStateCode } from '../../redux/features/DistrictSlice'
-import { getTalukByDistrictCode } from '../../redux/features/TalukSlice'
-import { nanoid } from '@reduxjs/toolkit';
-import { getRelations } from '../../redux/features/RelationSlice';
 import RespondentDetails from './RespondentDetails';
+import { nanoid } from '@reduxjs/toolkit';
 import api from '../../api';
 import * as Yup from 'yup'
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { RelationContext } from 'contexts/RelationContext';
+import { PoliceStationContext } from 'contexts/PoliceStationContext';
+import { EstablishmentContext } from 'contexts/EstablishmentContext';
 
 
 const RequestCustody = () => {
 
-    const dispatch = useDispatch()
-
-    const states = useSelector((state) => state.states.states)
-    const districts = useSelector((state) => state.districts.districts)
-    const taluks = useSelector((state) => state.taluks.taluks)
-    const relations = useSelector(state => state.relations.relations)
-    const policeStations = useSelector((state) => state.police_stations.police_stations)
-    const establishments    = useSelector((state) => state.establishments.establishments)
-    const stateStatus = useSelector(getStatesStatus)
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {taluks}  = useContext(TalukContext)
+    const {relations} = useContext(RelationContext)
+    const {policeStations} = useContext(PoliceStationContext)
+    const {establishments} = useContext(EstablishmentContext)
 
     const[searchForm, setSearchForm] = useState([])
     const[search, setSearch] = useState(1)
@@ -73,28 +71,7 @@ const RequestCustody = () => {
         email_address:Yup.string().required(),
         description: Yup.string().required()
     })
-    useEffect(() => {
-        if(stateStatus === 'idle'){
-          dispatch(getStates())
-        }
-      },[stateStatus, dispatch])
-      
-      useEffect(() => {
-        if(form.state !== ''){
-          dispatch(getDistrictByStateCode(form.state))
-        }
-      },[form.state, dispatch])
-    
-      useEffect(() => {
-        if(form.district !== ''){
-          dispatch(getTalukByDistrictCode(form.district))
-        }
-      },[form.district, dispatch])
-    
-     
-      useEffect(() => {
-        dispatch(getRelations())
-      }, [dispatch])
+   
     
       const [checkedItems, setCheckedItems] = useState({});
       const handleCheckboxChange = (event) => {

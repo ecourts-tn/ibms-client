@@ -41,7 +41,7 @@ const PendingList = () => {
                                                 </div>
                                                 
                                                 <span className="text mr-3">
-                                                    <Link to={`/ibms/court/petition/scrutiny/details`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                                    <Link to={`/court/petition/scrutiny/details`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
                                                 { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>

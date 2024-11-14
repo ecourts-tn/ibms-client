@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import api from '../../api'
 import { toast, ToastContainer } from 'react-toastify';
 import Document from './Document';
-import BasicDetails from '../court/scrutiny/BasicDetails';
+import BasicDetails from 'components/court/scrutiny/BasicDetails';
 
 const ResponseCreate = () => {
     const {state} = useLocation()
@@ -80,7 +80,7 @@ const ResponseCreate = () => {
                             </div>
                             <div id="collapseOne" className="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                                 <div className="container-fluid my-2">
-                                    {/* <BasicDetails petition={petition} crime={crime}/> */}
+                                    <BasicDetails petition={petition} crime={crime}/>
                                 </div>
                             </div>
                         </div>

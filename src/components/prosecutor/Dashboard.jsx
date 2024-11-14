@@ -24,15 +24,15 @@ const Dashboard = () => {
         fecthCases();
     },[])
 
-    useEffect(() => {
-        const fecthCases = async() =>{
-            const response = await api.get("api/bail/petition/list/")
-            if(response.status === 200){
-                setCases(response.data)
-            }
-        }
-        fecthCases();
-    },[])
+    // useEffect(() => {
+    //     const fecthCases = async() =>{
+    //         const response = await api.get("api/bail/petition/list/")
+    //         if(response.status === 200){
+    //             setCases(response.data)
+    //         }
+    //     }
+    //     fecthCases();
+    // },[])
 
     return (
     <>
