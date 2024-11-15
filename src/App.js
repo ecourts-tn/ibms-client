@@ -58,6 +58,8 @@ import JudgeForm from 'components/court/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
 import JudgeList from 'components/court/judge/JudgeList';
 
+import Registration from "components/Registration"
+
 import PoliceDashboard from "components/police/Dashboard"
 import ResponsePending from "components/police/ResponsePending"
 import ResponseCreate from './components/police/ResponseCreate'
@@ -281,8 +283,17 @@ function App() {
                 <Route path="user/registration" element={<Register />} />
               </Route>
               <Route element={<AdminLayout />}>
+                    <Route
+                      path="/auth/user/registration"
+                      element={
+                        <PrivateRoute>
+                          <Registration />
+                        </PrivateRoute>
+                      }
+                    />
                   <Route path="court">
                     <Route path="dashboard" element={<CourtDashboard />}></Route>
+                    
                     <Route 
                       path="petition/listed-today" 
                       element={

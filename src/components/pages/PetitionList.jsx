@@ -123,7 +123,7 @@ const PetitionList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <>
-                                                <span key={index}><a href={`${config.docUrl}${d.document}`} target='_blank'>{ d.title }</a></span><br/>
+                                                <span key={index}><a href={`${config.docUrl}${d.document}`} target='_blank'>{ d.title?.document_name }</a></span><br/>
                                                 {/* <Link
                                                     onClick={handleShowDocument}
                                                 >{d.title}</Link>

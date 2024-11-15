@@ -50,9 +50,9 @@ const Payment = () => {
         txndate:"2024-09-26",
         ru:"https://ecourts-tn.github.io/ibms-client/",
         signature:generateHmac(), 
-        udf1:"deenadayalan",
+        udf1:"",
         udf2:"deenadayalan17@gmail.com",
-        udf3:"8344381139",
+        udf3:"",
     }
 
     const validationSchema = Yup.object({

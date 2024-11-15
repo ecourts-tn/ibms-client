@@ -27,7 +27,7 @@ const DocumentList = ({documents}) => {
             <tbody>
                 { documents.map((d, index) => (
                 <tr key={index}>
-                    <td>{ d.title }</td>
+                    <td>{ d.title?.document_name }</td>
                     <td>
                         <Button 
                             variant="contained"
@@ -38,7 +38,7 @@ const DocumentList = ({documents}) => {
                         { selectedDocument && (
                             <ViewDocument 
                                 url={`${config.docUrl}${selectedDocument.document}`}
-                                title={selectedDocument.title}
+                                title={selectedDocument.title?.document_name}
                                 show={!!selectedDocument}
                                 handleClose={handleClose}
                             />

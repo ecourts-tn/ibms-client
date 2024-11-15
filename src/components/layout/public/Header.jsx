@@ -45,7 +45,7 @@ const Header = () => {
   const filingLinks = [
     { path: "/petition/bail", label: t('bail') },
     { path: "/petition/anticipatory/bail", label: t('abail') },
-    { path: "/petition/relaxation", label: t('condition') },
+    { path: "/petition/relaxation", label: t('condition_relaxation') },
     { path: "/petition/intervene", label: t('intervene') },
     { path: "/petition/modification", label: t('modification') },
     { path: "/petition/surety", label: t('surety') },

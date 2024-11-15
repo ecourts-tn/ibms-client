@@ -162,7 +162,7 @@ const Document = ({swornRequired}) => {
                                 {selectedDocument && (
                                     <ViewDocument
                                         url={`${config.docUrl}${selectedDocument.document}`}
-                                        title={selectedDocument.title}
+                                        title={language === 'ta' ? selectedDocument?.document_lname : selectedDocument?.document_name}
                                         show={!!selectedDocument}
                                         handleClose={handleClose}
                                     />

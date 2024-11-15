@@ -209,7 +209,7 @@ const InitialInput = () => {
                                         <select 
                                             name="seat" 
                                             className={`form-control ${errors.seat ? 'is-invalid' : ''} `}
-                                            value={petition.seat?.id || ''}
+                                            value={petition.seat}
                                             disabled={ parseInt(petition.judiciary) === 2 ? true : false}
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >

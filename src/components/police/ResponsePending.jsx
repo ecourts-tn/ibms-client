@@ -55,7 +55,7 @@ const ResponsePending = () => {
                                             <td>{ petition.crime.complaitnant_name }</td>
                                             <td>{ petition.crime.investigation_officer }</td>
                                             <td>
-                                                <Link to='/ibms/police/response/create/' state={{ efile_no: petition.petition.efile_number }}>
+                                                <Link to='/police/response/create/' state={{ efile_no: petition.petition.efile_number }}>
                                                     <Button
                                                         variant='contained'
                                                         color='success'

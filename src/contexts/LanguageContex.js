@@ -40,11 +40,11 @@ export const LanguageProvider = ({ children }) => {
   // Retrieve the language from session storage or default to 'en'
   const [language, setLanguage] = useState(() => {
     const storedLanguage = sessionStorage.getItem('language');
-    return storedLanguage ? storedLanguage : 'ta';
+    return storedLanguage ? storedLanguage : 'en';
   });
 
   const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'ta' : 'en';
+    const newLanguage = language === 'ta' ? 'ta' : 'en';
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
     sessionStorage.setItem('language', newLanguage); // Store the language in session storage

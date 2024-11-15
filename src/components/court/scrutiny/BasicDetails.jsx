@@ -11,7 +11,7 @@ const BasicDetails = ({petition, crime}) => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const { judiciary, seat, establishment, state, district, court, case_type, bail_type, complaint_type, crime_registered } = petition
-
+    console.log(judiciary)
     return (
         <div>
             { Object.keys(petition).length > 0 && (
@@ -22,7 +22,7 @@ const BasicDetails = ({petition, crime}) => {
                         <Form.Label className="col-sm-3">{t('court_type')}</Form.Label>
                         <div className="col-sm-9">
                             <Form.Control
-                                value={ language === 'ta' ? judiciary.judiciary_lname : judiciary.judiciary_name }
+                                value={ language === 'ta' ? judiciary?.judiciary_lname : judiciary?.judiciary_name }
                                 readOnly={true}
                                 ></Form.Control>
                         </div>
@@ -31,7 +31,7 @@ const BasicDetails = ({petition, crime}) => {
             </div>
             <div className="row">
                 <div className="col-md-12">
-                    { judiciary.id === 1 && (
+                    { judiciary?.id === 1 && (
                     <div className="form-group row">
                         <label htmlFor="bench_type" className="col-sm-3">{t('hc_bench')}</label>
                         <div className="col-sm-9">
@@ -44,7 +44,7 @@ const BasicDetails = ({petition, crime}) => {
                     )}
                 </div>
             </div>  
-            { judiciary.id === 2 && (
+            { judiciary?.id === 2 && (
                 <div className="row mb-0">
                 <div className="col-md-6">
                     <div className="form-group">
@@ -90,7 +90,7 @@ const BasicDetails = ({petition, crime}) => {
                     <div className="form-group">
                         <label htmlFor="caseType">{t('case_type')}</label>
                             <Form.Control
-                                value={ language === 'ta' ? case_type.type_lfull_form : case_type.type_full_form}
+                                value={ language === 'ta' ? case_type?.type_lfull_form : case_type?.type_full_form}
                                 readOnly={true}
                             ></Form.Control>
                     </div>
@@ -99,7 +99,7 @@ const BasicDetails = ({petition, crime}) => {
                     <div className="form-group">
                         <label htmlFor="bailType">{t('bail_type')}</label>
                             <Form.Control
-                                value={ language === 'ta' ? bail_type.type_lname : bail_type.type_name}
+                                value={ language === 'ta' ? bail_type?.type_lname : bail_type?.type_name}
                                 readOnly={true}
                             ></Form.Control>
                     </div>
@@ -108,7 +108,7 @@ const BasicDetails = ({petition, crime}) => {
                     <Form.Group>
                         <Form.Label>{t('complaint_type')}</Form.Label>
                             <Form.Control
-                                value={ language === 'ta' ? complaint_type.type_lname : complaint_type.type_name}
+                                value={ language === 'ta' ? complaint_type?.type_lname : complaint_type?.type_name}
                                 readOnly={true}
                             ></Form.Control>
                     </Form.Group>

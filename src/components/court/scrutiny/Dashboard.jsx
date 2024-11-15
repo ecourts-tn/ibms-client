@@ -297,7 +297,7 @@ const CaseScrutiny = () => {
                             <div className="row">
                                 <div className="col-md-12 d-flex justify-content-center mt-3">
                                     <p className="text-success">
-                                        <CheckIcon /><span className="text-bold">Case verified at {petition.last_modified}</span>
+                                        <CheckIcon /><span className="text-bold">Case verified at {petition.created_at}</span>
                                     </p>
                                 </div>
                             </div>
