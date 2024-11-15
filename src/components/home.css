@@ -1,0 +1,207 @@
+.primary-navbar{
+    /* background-color: #0c4b33; */
+    background-color: #074280;
+}
+.primary-navbar .navbar-toggler{
+    color:#FAFAFA!important;
+}
+.primary-navbar .nav-link{
+    color: white!important;
+    font-size: 16px;
+    padding-left:6px!important;
+    padding-right:6px!important;
+    text-decoration: none;
+}
+
+.primary-navbar .navbar-brand{
+    color:#FAFAFA!important;
+    font-size:20px;
+}
+
+.navbar-nav .dropdown-menu a:hover{
+    background-color: #FFAB1F;
+    color:#FAFAFA;
+}
+
+.dropdown-menu{
+    /* background-color:#0c4b33!important; */
+    background-color: #0f4676;
+    padding-top:0px;
+    padding-bottom:0px;
+    padding:0px !important;
+    border-radius: 0px;
+    min-width:250px;
+}
+.dropdown-menu a.nav-link{
+    color:#FAFAFA!important;
+    padding:8px 8px;
+    border-bottom:1px solid #FAFAFA;
+}
+
+.dropdown-menu a > a {
+    border:none
+}
+
+.secondary-navbar{
+    /* background-color: #286d52; */
+    border-bottom: 1px solid #074280!important;
+    margin-bottom:30px;
+    background-color: #e1e5e6bd;
+}
+.secondary-navbar .navbar-toggler{
+    color:#f0ebeb!important;
+}
+.secondary-navbar .nav-link{
+    color:  #074280;
+    font-size: 16px;
+    padding-left:10px!important;
+    padding-right:10px!important;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+
+.secondary-navbar .dropdown{
+    margin:0; 
+}
+.secondary-navbar a.dropdown-item{
+    padding:10px 5px;
+    min-width: 250px;
+}
+.secondary-navbar a.dropdown-item {
+    text-decoration: none;
+    padding:10px;
+    color:#ece7e7;
+}
+.btn-signin{
+    width:100%;
+    background-color:#024796!important;
+    border-color:#024796!important;
+    color:#FAFAFA!important;
+} 
+
+form input[type="radio"], form input[type="checkbox"]{
+    width:20px;
+}
+    
+
+.form-signin a {
+    text-decoration: none;
+    color: '#024796'
+}
+
+/* .form-signin input, .form-signin select{
+    border:1px solid skyblue;
+} */
+
+.sub-footer h6{
+    color:orange;
+    font-weight:bold;
+    font-size:18px;
+    text-decoration: underline;
+    padding-bottom:10px;
+}
+
+.important-links > li, .quick-links > li{
+    list-style-type: none;
+}
+
+.important-links > li > a, .quick-links > li > a{
+    color:#FAFAFA;
+    text-decoration: none;
+}
+.section-heading{
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.registration-card{
+    border-style: none!important;
+    box-shadow: none;
+}
+.registration-card .card-header{
+    background-color: inherit;
+    border-bottom: none;
+    text-align: center;
+    color:rgba(233, 9, 9)
+}
+.Toastify__toast-container{
+    width:500px;
+}
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm {
+      min-width: 1400px;
+    }
+}
+
+.registration-alert{
+    font-size: 18px!important;
+    font-weight:bold!important;
+}
+legend > span {
+    font-weight:400!important
+}
+.profile .card{
+    border:none;
+    border-radius:0px;
+    box-shadow: none;
+}
+
+.badge {
+    border-radius: 0;
+    font-size: 16px;
+    line-height: 1;
+    padding: .375rem .5625rem;
+    font-weight: bold
+}
+
+.badge-outline-primary {
+   background-color: #405189;
+   border: 1px solid #405189;
+   color:#FAFAFA;
+}
+
+.badge-pill {
+   border-radius: 10rem;
+}
+.navbar-toggler {
+    background-color: #074280; /* Background color */
+    border: px solid #ffffff; /* Border color and width */
+    padding: 1px 10px; /* Adjust padding */
+    border-radius: 4px; /* Rounded corners */
+}
+.navbar-toggler-icon {
+    width: 1.5em;  /* Adjust width */
+    height: 1.5em; /* Adjust height */
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler:hover {
+    background-color: #074280; /* Hover background */
+    border-color: #adb5bd; /* Hover border */
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Focus shadow */
+    outline: none; /* Remove outline */
+}
+.fa, .fas, .far, .fal, .fab {
+    font-family: "Font Awesome 5 Free" !important; /* Or "Font Awesome 5 Brands" for brand icons */
+    font-weight: 900; /* Or lighter if needed */
+  }
+.resize-icons .btn{
+    color:#FAFAFA;
+}
+.resize-icons .btn:hover{
+    background-color: inherit;
+}
+
+.img-captcha{
+    height:40px;
+    width:100%;
+    border: 1px solid grey;
+}
+.btn-captcha{
+    height:40px;
+    border-radius:0px;
+}

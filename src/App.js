@@ -2,45 +2,46 @@ import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import React, { useEffect } from 'react';
 import { Routes, Route, HashRouter } from "react-router-dom"
-import Dashboard from "./components/pages/Dashboard"
-import Home from './components/pages/Home'
-import Register from "./components/pages/Register"
-import PublicLayout from './components/layout/public/PublicLayout'
+/* -------Layout & Providers ----------*/
+import PublicLayout from 'components/layout/public/PublicLayout'
 import AdminLayout from 'components/layout/admin/AdminLayout';
-import BailFiling from "./components/filing/BailFiling"
-import Relaxation from './components/petition/relaxation/Relaxation'
-import IntervenePetition from "components/petition/intervene/NewPetition"
-import Surety from './components/petition/surety/Surety'
-import DischargeSurety from './components/petition/surety/DischargeSurety'
-import Extension from './components/petition/extension/Extension'
-import ReturnPassport from './components/petition/return/ReturnPassport'
-import FilingSearch from './components/pages/kiosk/FilingSearch'
-import CNRSearch from './components/pages/kiosk/CNRSearch'
-import FIRSearch from './components/pages/kiosk/FIRSearch'
-import RegistrationSearch from './components/pages/kiosk/RegistrationSearch'
-import DraftList from "./components/pages/DraftList"
-import Payment from "./components/pages/Payment"
-import PetitionList from "./components/pages/PetitionList"
-import PetitionDetail from "./components/pages/PetitionDetail"
-import PdfGenerator from "./components/pages/PdfGenerator"
-
 import { PrivateRoute } from "./hooks/PrivateRoute";
 import { AuthProvider } from "contexts/AuthContext";
-import Logout from './components/pages/Logout'
-import ChangePassword from './components/pages/ChangePassword'
-import Profile from './components/pages/Profile'
-
-import Litigant from './components/petition/antibail/Litigant'
-
-import ModificationNew from './components/petition/modification/ModificationNew'
-
-
-import ABail from 'components/petition/antibail/ABail';
-import ReturnProperty from 'components/petition/return/ReturnProperty';
-import Pleadings from 'components/pages/Pleadings';
 import { AppProvider } from 'contexts/AppContext';
-import Bail from 'components/filing/Bail';
-
+/* -------Authentication -----------*/
+import Logout from 'components/auth/Logout'
+import Profile from 'components/auth/Profile'
+import Register from "components/auth/Register"
+import Registration from "components/auth/Registration"
+import ChangePassword from 'components/auth/ChangePassword'
+import ResetPassword from 'components/auth/ResetPassword';
+import Home from 'components/Home'
+/* ----------- Filing --------------*/
+import Dashboard from "components/filing/Dashboard"
+import DraftList from "components/filing/DraftList"
+import PetitionList from "components/filing/PetitionList"
+import PetitionDetail from "components/filing/PetitionDetail"
+import BailFiling from "components/filing/bail/BailFiling"
+import Relaxation from 'components/filing/relaxation/Relaxation'
+import IntervenePetition from "components/filing/intervene/NewPetition"
+import Surety from 'components/filing/surety/Surety'
+import DischargeSurety from 'components/filing/surety/DischargeSurety'
+import Extension from 'components/filing/extension/Extension'
+import ReturnPassport from 'components/filing/return/ReturnPassport'
+import PdfGenerator from "components/filing/PdfGenerator"
+import Litigant from 'components/filing/antibail/Litigant'
+import Payment from "components/payment/Payment"
+import ModificationNew from './components/filing/modification/ModificationNew'
+import ABail from 'components/filing/antibail/ABail';
+import ReturnProperty from 'components/filing/return/ReturnProperty';
+import Pleadings from 'components/filing/Pleadings';
+import Bail from 'components/filing/bail/Bail';
+/* -------- Case Status -------------*/ 
+import FilingSearch from 'components/kiosk/FilingSearch'
+import CNRSearch from 'components/kiosk/CNRSearch'
+import FIRSearch from 'components/kiosk/FIRSearch'
+import RegistrationSearch from 'components/kiosk/RegistrationSearch'
+/* ---------------- Court user components --------------------------*/ 
 import CourtDashboard from 'components/court/Dashboard'
 import ScrutinyDashboard from "./components/court/scrutiny/Dashboard"
 import TodayCases from 'components/court/TodayCases';
@@ -57,9 +58,7 @@ import OrderPendingList from './components/court/OrderPendingList'
 import JudgeForm from 'components/court/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/judge/JudgePeriodForm';
 import JudgeList from 'components/court/judge/JudgeList';
-
-import Registration from "components/Registration"
-
+/* -------------- Police user components -------------------------------*/ 
 import PoliceDashboard from "components/police/Dashboard"
 import ResponsePending from "components/police/ResponsePending"
 import ResponseCreate from './components/police/ResponseCreate'
@@ -70,12 +69,12 @@ import ConditionForm from 'components/police/ConditionForm'
 import BailCancellation from './components/police/BailCancellation'
 import RequestCustody from './components/police/RequestCustody'
 import PoliceProfile from 'components/police/Profile'
-
+/* -------------------Prison user components ---------------------------------*/
 import PrisonDashboard from "components/prison/Dashboard"
 import PrisonResponsePending from "components/prison/ResponsePending"
 import PrisonResponseSubmitted from "components/prison/ResponseSubmitted"
 import PrisonResponseCreate from "components/prison/ResponseCreate"
-
+/* --------------------PP/APP user components*/ 
 import ProsecutorDashboard from "components/prosecutor/Dashboard"
 import ProsecutionResponsePending from "components/prosecutor/ResponsePending"
 import ProsecutionResponseSubmitted from "components/prosecutor/ResponseSubmitted"

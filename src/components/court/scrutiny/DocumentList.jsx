@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import config from 'config'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
-import ViewDocument from 'components/pages/ViewDocument'
+import ViewDocument from 'components/common/ViewDocument'
 
 const DocumentList = ({documents}) => {
     const {t} = useTranslation()

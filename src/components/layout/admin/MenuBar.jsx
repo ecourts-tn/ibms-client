@@ -1,14 +1,13 @@
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
-// import highcourtlogo from '../../components/highcourtlogo.png'
 import { useAuth } from 'contexts/AuthContext'
-import { Javascript } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 
 export default function MenuBar() {
 
   const {user, logout} = useAuth()
-
+  const {t} = useTranslation()
 
   const handleLogout = () => {
     logout();
@@ -52,7 +51,7 @@ export default function MenuBar() {
                   <li className="nav-item menu-open">
                     <Link to="/court/dashboard" className="nav-link active">
                       <i className="nav-icon fas fa-tachometer-alt" />
-                      <p>Dashboard</p>
+                      <p>{t('dashboard')}</p>
                     </Link> 
                   </li>
                   {/* <li className="nav-item">

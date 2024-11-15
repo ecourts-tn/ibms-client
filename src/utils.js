@@ -1,5 +1,5 @@
 import { Dangerous } from '@mui/icons-material';
-import './components/pages/header.css'
+import './components/home.css'
 
 export const CreateMarkup = (content) => {
     return {__html: content}

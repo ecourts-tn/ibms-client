@@ -88,7 +88,7 @@ const Header = () => {
               <button type="button" className="btn btn-default" id="normalMode">
                 <i className="fa fa-adjust" style={{ color: '#ffb600' }}></i>
               </button>
-              <span className="ml-3 text-white">{t('screen_reader')}</span>
+              {/* <span className="ml-3 text-white">{t('screen_reader')}</span> */}
             </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (
@@ -105,7 +105,7 @@ const Header = () => {
               )}
               <li className="nav-item">
                 <button className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}>
-                  <strong>{language === 'en' ? 'தமிழ்' : 'English'}</strong>
+                  <strong>{language === 'en' ? 'Tamil' : 'ஆங்கிலம்'}</strong>
                 </button>
               </li>
             </ul>

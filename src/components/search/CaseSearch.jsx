@@ -1,15 +1,14 @@
-import React, { useContext } from 'react';
-import { useState, useEffect } from 'react';
+import api from 'api';
+import * as Yup from 'yup';
+import React, { useState, useEffect, useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Loader from '../Loader';
-import * as Yup from 'yup';
-import api from '../../api';
+import Select from 'react-select'
+import Loader from 'components/filing/Loader';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import Select from 'react-select'
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 
