@@ -32,7 +32,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const Register = () => {
+const AdvocateRegistration = () => {
 
     const navigate = useNavigate();
 
@@ -193,7 +193,7 @@ const Register = () => {
                 toast.error("Please verify your email address", {theme:"colored"})
                 return
             }
-            const response = await api.post("auth/user/register/", form)
+            const response = await api.post("auth/user/Advocate/", form)
             if(response.status === 201){
                 setUser(response.data)
                 setShow(true)
@@ -705,4 +705,4 @@ const Register = () => {
     )
 }
 
-export default Register
+export default AdvocateRegistration

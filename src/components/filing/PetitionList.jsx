@@ -7,11 +7,13 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import { submittedPetition } from 'services/petitionService'
+import Loading from 'components/Loading'
 
 const PetitionList = () => {
 
     const[cases, setCases] = useState([])
-
+    const[loading, setLoading] = useState(true)
     const navigate = useNavigate()
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
@@ -23,19 +25,32 @@ const PetitionList = () => {
     }
     const handleShowDocument = () => setShowDocument(true);
     const handleShowVakalath = () => setShowVakalath(true)
+    // useEffect(() => {
+    //     async function fetchData(){
+    //         try{
+    //             const response = await api.get(`case/filing/submitted-list/`)
+    //             if(response.status === 200){
+    //                 setCases(response.data)
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    //     fetchData();
+    // }, [])
+
     useEffect(() => {
-        async function fetchData(){
+        const fetchPetition = async() => {
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
-                if(response.status === 200){
-                    console.log(response.data)
-                    setCases(response.data)
-                }
+                const response = await submittedPetition()
+                setCases(response)
             }catch(error){
                 console.log(error)
+            }finally{
+                setLoading(false)
             }
         }
-        fetchData();
+        fetchPetition()
     }, [])
 
     const handleSubmit = async(cino) => {
@@ -54,6 +69,7 @@ const PetitionList = () => {
         }
     }
 
+    if(loading) return <Loading />
     return (
         <>
             <ToastContainer />

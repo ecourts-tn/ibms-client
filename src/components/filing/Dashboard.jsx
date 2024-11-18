@@ -80,7 +80,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                 <i className="ion ion-stats-bars" />
                                 </div>
-                                <Link to="/petition/list" className="small-box-footer">
+                                <Link to="/filing/submitted-list" className="small-box-footer">
                                     {t('more_info')} <i className="fas fa-arrow-circle-right" />
                                 </Link>
                             </div>

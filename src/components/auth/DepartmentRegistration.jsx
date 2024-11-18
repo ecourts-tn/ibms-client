@@ -18,7 +18,7 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { PrisonContext } from 'contexts/PrisonContext'
 import { UserTypeContext } from 'contexts/UserTypeContext'
 
-const Registration = () => {
+const DepartmentRegistration = () => {
 
     const initialState = {
         user_type: '',
@@ -443,4 +443,4 @@ const Registration = () => {
     )
 }
 
-export default Registration
+export default DepartmentRegistration

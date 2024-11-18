@@ -3,7 +3,6 @@ import * as Yup from 'yup'
 import React, { useState, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import Loader from 'components/filing/Loader'
 import Select from 'react-select'
 import { RequiredField } from 'utils'
 import { BaseContext } from 'contexts/BaseContext'
@@ -14,6 +13,7 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import FIRDetails from 'components/search/FIRDetails'
+import Loading from 'components/Loading'
 
 const FIRSearch = () => {
 
@@ -101,7 +101,6 @@ const FIRSearch = () => {
             }
         }
     }
-
     return (
         <>
             <div className="row">
@@ -212,7 +211,7 @@ const FIRSearch = () => {
                     </Form.Group>
                 </div>
                 { loading && (
-                    <Loader />
+                    <Loading />
                 )}
                 <div className="col-md-12 d-flex justify-content-center">
                     { showAdditionalFields && (

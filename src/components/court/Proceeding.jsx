@@ -1,13 +1,17 @@
 import React, {useState, useEffect, useContext} from 'react'
 import { ToastContainer, toast } from 'react-toastify'
-import { formatDBDate } from '../../utils'
-import api from '../../api'
+import { formatDBDate } from 'utils'
+import api from 'api'
+import Dropdown from 'react-bootstrap/Dropdown'
+import Form from 'react-bootstrap/Form'
 import { useAuth } from 'contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-
-
-
+import { StateContext } from 'contexts/StateContext'
+import { DistrictContext } from 'contexts/DistrictContext'
+import { EstablishmentContext } from 'contexts/EstablishmentContext'
+import { CourtContext } from 'contexts/CourtContext'
+import { PoliceStationContext } from 'contexts/PoliceStationContext'
 
 const Proceeding = ({efile_no}) => {
     const {user} = useAuth()
@@ -15,14 +19,13 @@ const Proceeding = ({efile_no}) => {
     const {language} = useContext(LanguageContext)
     const[petition, setPetition] = useState({})
     const[litigant, setLitigant] = useState([])
-    const[states, setStates] = useState([])
-    const[districts, setDistricts] = useState([])
-    const[establishments, setEstablishments] = useState([])
-    const[courts, setCourts] = useState([])
-    const[policeDistricts, setPoliceDistricts] = useState([])
-    const[policeStations, setPoliceStations] = useState([])
+    const{states} = useContext(StateContext)
+    const{districts} = useContext(DistrictContext)
+    const{establishments} = useContext(EstablishmentContext)
+    const{courts} = useContext(CourtContext)
+    const{policeStations} = useContext(PoliceStationContext)
     const initialState = {
-        petition: '',
+        efile_no: '',
         case_number: '',
         proceeding: '',
         vakalath_filed: false,
@@ -37,6 +40,7 @@ const Proceeding = ({efile_no}) => {
         condition_court: '',
         establishment: '',
         court:'',
+        jocode:'',
         condition_time:'',
         condition_duration:'',
         is_bond:false,
@@ -51,103 +55,28 @@ const Proceeding = ({efile_no}) => {
     }
     const[form, setForm] = useState(initialState)
 
-    useEffect(() => {
-        const fetchStates = async() => {
-            try{
-                const response = await api.get("base/state/")
-                if(response.status === 200){
-                    setStates(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
+    const [selectedItems, setSelectedItems] = useState([]);
+
+    const handleCheckboxChange = (option) => {
+        if (selectedItems.includes(option)) {
+        setSelectedItems(selectedItems.filter((item) => item !== option));
+        } else {
+        setSelectedItems([...selectedItems, option]);
         }
-        fetchStates();
-    },[])
-
-    useEffect(() => {
-        const fetchDistricts = async() => {
-            try{
-                const response = await api.get("base/district/")
-                if(response.status === 200){
-                    setDistricts(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchDistricts();
-    },[])
-
-
-    useEffect(() => {
-        const fetchEstablishments = async() => {
-            try{
-                const response = await api.get("base/establishment/")
-                if(response.status === 200){
-                    setEstablishments(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchEstablishments();
-    },[])
-
-    useEffect(() => {
-        const fetchCourts = async() => {
-            try{
-                const response = await api.get("base/court/")
-                if(response.status === 200){
-                    setCourts(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchCourts();
-    },[])
-
-
-    useEffect(() => {
-        const fetchPoliceStations = async() => {
-            try{
-                const response = await api.get("base/police-station/")
-                if(response.status === 200){
-                    setPoliceStations(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchPoliceStations();
-    },[])
-
-    useEffect(() => {
-        const fetchPoliceDistricts = async() => {
-            try{
-                const response = await api.get("base/police-district/")
-                if(response.status === 200){
-                    setPoliceDistricts(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fetchPoliceDistricts();
-    },[])
+    };
 
     useEffect(() => {
         async function fetchData(){
             if(efile_no){
                 try{
-                    const response = await api.get(`court/petition/detail/`, { params: {efile_no}})
+                    const response = await api.post(`court/petition/detail/`, {efile_no})
                     if(response.status === 200){
+
                         setPetition(response.data.petition)
                         setLitigant(response.data.litigant)
                         setForm({
                             ...form, 
-                            petition: response.data.petition.efile_number,
+                            efile_no: response.data.petition.efile_number,
                             case_number: response.data.petition.case_no,
                             district: response.data.petition.district.district_code,
                             establishment: response.data.petition.establishment.establishment_code,
@@ -162,7 +91,6 @@ const Proceeding = ({efile_no}) => {
         fetchData();
     },[])
 
-    // console.log(petition)
 
     const handleSubmit = async () => {
         try{
@@ -262,17 +190,31 @@ const Proceeding = ({efile_no}) => {
                         <div className="col-md-12 mb-3">
                             <div className="form-group">
                                 <label htmlFor="accused">Select Accused</label>
-                                <select 
-                                    name="accused" 
-                                    value={form.accused} 
-                                    className="form-control" 
-                                    onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
-                                >
-                                    <option value="">Select Accused</option>
-                                    {litigant.filter(l=>l.litigant_type===1).map((l, index) => (
-                                        <option key={index} value={l.litigant_number}>{l.litigant_name}</option>
-                                    ))}
-                                </select>
+                                <Dropdown>
+                                    <Dropdown.Toggle
+                                        as="div"
+                                        className="form-control d-flex justify-content-between align-items-center"
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <span>
+                                        {selectedItems.length > 0
+                                            ? selectedItems.join(", ")
+                                            : "Select Accused"}
+                                        </span>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu style={{ width: "100%", backgroundColor:'white' }}>
+                                        {litigant.map((l, index) => (
+                                        <Form.Check
+                                            key={index}
+                                            type="checkbox"
+                                            label={l.litigant_name}
+                                            checked={selectedItems.includes(l.litigant_name)}
+                                            onChange={() => handleCheckboxChange(l.litigant_name)}
+                                            style={{ marginLeft: "10px", marginRight: "10px", marginTop:'10px'}}
+                                        />
+                                        ))}
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             </div>
                         </div>
                         { parseInt(form.proceeding) !== 2 && (
@@ -461,7 +403,7 @@ const Proceeding = ({efile_no}) => {
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                     >
                                         <option value="">{t('alerts.select_station')}</option>
-                                        {policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(form.district)).map((ps, index)=>(
+                                        {policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(form.condition_district)).map((ps, index)=>(
                                             <option key={index} value={ps.cctns_code}>{language === 'ta' ? ps.station_lname : ps.station_name}</option>
                                         ))}
                                     </select>

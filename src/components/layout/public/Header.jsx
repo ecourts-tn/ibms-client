@@ -43,16 +43,16 @@ const Header = () => {
   };
 
   const filingLinks = [
-    { path: "/petition/bail", label: t('bail') },
-    { path: "/petition/anticipatory/bail", label: t('abail') },
-    { path: "/petition/relaxation", label: t('condition_relaxation') },
-    { path: "/petition/intervene", label: t('intervene') },
-    { path: "/petition/modification", label: t('modification') },
-    { path: "/petition/surety", label: t('surety') },
-    { path: "/petition/surety-discharge", label: t('discharge_surety') },
-    { path: "/petition/extension-time", label: t('extension') },
-    { path: "/petition/return-passport", label: t('return_passport') },
-    { path: "/petition/return-property", label: t('return_property') },
+    { path: "/filing/bail", label: t('bail') },
+    { path: "/filing/anticipatory/bail", label: t('abail') },
+    { path: "/filing/condition-relaxation", label: t('condition_relaxation') },
+    { path: "/filing/intervene-petition", label: t('intervene') },
+    { path: "/filing/modification-petition", label: t('modification') },
+    { path: "/filing/surety-petition", label: t('surety') },
+    { path: "/filing/surety/discharge", label: t('discharge_surety') },
+    { path: "/filing/extension-time", label: t('extension') },
+    { path: "/filing/return-passport", label: t('return_passport') },
+    { path: "/filing/return-property", label: t('return_property') },
   ];
 
   const caseStatusLinks = [
@@ -125,7 +125,7 @@ const Header = () => {
               {isAuth && (
                 <>
                   <li className="nav-item">
-                    <Link to="/dashboard" className="nav-link">{t('dashboard')}</Link>
+                    <Link to="/filing/dashboard" className="nav-link">{t('dashboard')}</Link>
                   </li>
                   <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
