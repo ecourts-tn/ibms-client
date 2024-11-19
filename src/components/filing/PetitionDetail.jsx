@@ -3,38 +3,45 @@ import { useLocation } from 'react-router-dom'
 import api from '../../api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
+import Loading from 'components/Loading'
+import { getPetitionByeFileNo } from 'services/petitionService'
 
 const PetitionDetail = () => {
 
     const {state} = useLocation()
     const {t} = useTranslation()
+    const[loading, setLoading] = useState(true)
     const[petition, setPetition] = useState({})
     const[petitioner, setPetitioner] = useState([])
     const[respondent, setRespondent] = useState([])
     const[crime, setCrime] = useState({})
     const[objection, setObjection] = useState([])
     const {language} = useContext(LanguageContext)
+
     useEffect(() => {
         async function fetchData(){
-            const response = await api.get(`case/filing/detail/`, {params: {efile_no:state.efile_no}})
-            if(response.status === 200){
-                setPetition(response.data.petition)
-                setCrime(response.data.crime)
-                const filtered_petitioner = response.data.litigant.filter((l => {
-                    return l.litigant_type === 1
-                }))
-                setPetitioner(filtered_petitioner)
-                const filtered_respondent = response.data.litigant.filter((l => {
-                    return l.litigant_type === 2
-                }))
-                setRespondent(filtered_respondent)
-                setObjection(response.data.objection)
+            try{
+                const response = await getPetitionByeFileNo(state.efile_no)
+                setPetition(response.petition)
+                setCrime(response.crime)
+                const { petitioners, respondents } = response.litigant.reduce((acc, litigant) => {
+                    if (litigant.litigant_type === 1) acc.petitioners.push(litigant);
+                    if (litigant.litigant_type === 2) acc.respondents.push(litigant);
+                    return acc;
+                }, { petitioners: [], respondents: [] });
+                setPetitioner(petitioners);
+                setRespondent(respondents);
+                setObjection(response.objection)
+            }catch(error){
+                console.error(error)
+            }finally{
+                setLoading(false)
             }
         }
         fetchData()
     }, [])
 
-
+    if(loading) return <Loading />
     return (
         <>
             { Object.keys(petition).length > 0 && (

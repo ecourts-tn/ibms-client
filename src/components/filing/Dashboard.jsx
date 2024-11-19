@@ -66,7 +66,7 @@ const Dashboard = () => {
                                 <div className="icon">
                                     <i className="ion ion-bag" />
                                 </div>
-                                <Link to="/petition/draft" className="small-box-footer">
+                                <Link to="/filing/draft-list" className="small-box-footer">
                                     {t('more_info')} <i className="fas fa-arrow-circle-right" />
                                 </Link>
                             </div>
@@ -174,7 +174,7 @@ const Dashboard = () => {
                                                 </div>
                                                 
                                                 <span className="text mr-3">
-                                                    <Link to="/petition/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                                    <Link to="/filing/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
                                                 { c.litigant.filter((l) => parseInt(l.litigant_type) ===1 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>

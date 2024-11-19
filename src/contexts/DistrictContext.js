@@ -7,6 +7,7 @@ export const DistrictProvider = ({children}) => {
     const[districts, setDistricts] = useState([])
 
     useEffect(() => {
+        const controller = new AbortController()
         const fetchDistricts = async() => {
             try{
                 const response = await api.get("base/district/")
@@ -18,6 +19,9 @@ export const DistrictProvider = ({children}) => {
             }
         }
         fetchDistricts();
+        return () => {
+            controller.abort()
+        }
     },[])
 
     const contextValue = useMemo(() => ({districts, setDistricts}), [districts])

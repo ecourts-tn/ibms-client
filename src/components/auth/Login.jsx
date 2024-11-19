@@ -1,10 +1,10 @@
+import api from 'api';
+import './auth.css'
+import * as Yup from 'yup'
 import React, {useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom';
-import Spinner from 'react-bootstrap/Spinner';
 import { toast, ToastContainer } from 'react-toastify';
-import api from 'api';
 import { useAuth } from 'contexts/AuthContext';
-import './auth.css'
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
 import Radio from '@mui/material/Radio';
@@ -14,7 +14,7 @@ import Button from '@mui/material/Button'
 import LoginIcon from '@mui/icons-material/LockOpen'
 import useCaptcha from 'hooks/useCaptcha';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import * as Yup from 'yup'
+import Loading from 'components/Loading';
 import { useTranslation } from 'react-i18next';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
@@ -57,7 +57,6 @@ const Login = () => {
         try{
             await validationSchema.validate(form, {abortEarly: false})
             const isCaptchaValid = await verifyCaptcha(form.captcha);
-            console.log(isCaptchaValid)
             if(isCaptchaValid){
                 const {username, password, usertype} = form
                 const response = await api.post('auth/login/', { usertype, username, password }, {
@@ -68,7 +67,6 @@ const Login = () => {
                     theme: "colored"
                 })
             }
-            setLoading(false);
         }catch(error){
             if(error.inner){
                 setLoading(false)
@@ -103,6 +101,8 @@ const Login = () => {
             setLoading(false)
         }
     }
+
+    if(loading) return <Loading />
 
     return (
         <>
@@ -213,11 +213,6 @@ const Login = () => {
                                 color="success"
                             >{t('signin')}</Button>
                         </FormControl>
-                        { loading && (
-                            <div className="d-flex justify-content-center pt-1 pb-3">
-                                <Spinner animation="border" variant="primary" style={{ height:50, width:50}}/>
-                            </div>
-                        )}
                         <div className="mt-1">
                             <p><a href="#">{t('forgot_password')}</a></p>
                             <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="user/registration">{t('register')}</Link></p>

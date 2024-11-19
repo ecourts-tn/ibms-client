@@ -53,10 +53,10 @@ const PetitionList = () => {
         fetchPetition()
     }, [])
 
-    const handleSubmit = async(cino) => {
+    const handleSubmit = async(efile_no) => {
         try{
             if(window.confirm("Are you sure you want to submit the petition")){
-                const response = await api.put(`bail/filing/${cino}/update/`, {is_draft:false})
+                const response = await api.put(`case/filing/update/`, {is_draft:false, efile_number:efile_no})
                 if(response.status === 200){
                     toast.success("Petition submitted successfully",{
                         theme:"colored"
@@ -70,6 +70,7 @@ const PetitionList = () => {
     }
 
     if(loading) return <Loading />
+
     return (
         <>
             <ToastContainer />
@@ -102,7 +103,7 @@ const PetitionList = () => {
                                 <tr>
                                     <td>{ index+1 }</td>
                                     <td>
-                                        <Link to="/petition/detail" state={{efile_no:item.petition.efile_number}}>
+                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
                                             <strong>{ item.petition.efile_number }</strong>
                                         </Link>
                                         <span style={{display:'block'}}>Date: { formatDate(item.petition.efile_date) }</span>
@@ -126,13 +127,13 @@ const PetitionList = () => {
                                     </td>
                                     <td className="text-center">
                                         { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))
                                         }
                                         <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation}</span>
                                         ))
                                         }
                                     </td>

@@ -19,17 +19,19 @@ const MaterialDetails = ({materials, setMaterials}) => {
         produced_date: Yup.date().nullable().required("Produced date is required"),
         reason: Yup.string().required("Reason is required") 
     });
-    const[material, setMaterial] = useState(initialState)
+    const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
     const addMaterial = async(e) => {
         e.preventDefault();
         try{
-            await validationSchema.validate(material, {abortEarly:false})
-            setMaterials((prevMaterials) => [...prevMaterials, material])
-            setMaterial(initialState)
-            toast.success("Material details added successfully", {
-                theme: "colored"
-            })
+            await validationSchema.validate(form, {abortEarly:false})
+            setMaterials((prevMaterials) => [...prevMaterials, form])
+            setForm(initialState)
+            // try {
+            //     toast.success("Material details added successfully", { theme: "colored" });
+            // } catch (err) {
+            //     console.error("Toast error:", err);
+            // }
         }catch(error){
             if(error.inner){
                 const validationErrors = {}
@@ -47,10 +49,12 @@ const MaterialDetails = ({materials, setMaterials}) => {
             <div className="card-header bg-secondary">
                 Material Details
             </div>
-            <div className="card-body">
+            <div className="card-body p-3">
                 <div className="row">
                     <div className="col-md-12">
-                        <MaterialList materials={materials} />
+                        { Object.keys(materials).length > 0 && (
+                            <MaterialList materials={materials} />
+                        )}
                     </div>
                     <div className="col-md-4">
                         <div className="form-group">
@@ -59,8 +63,8 @@ const MaterialDetails = ({materials, setMaterials}) => {
                                 type="text" 
                                 className={`form-control ${errors.name ? 'is-invalid' : ''}`} 
                                 name="name"
-                                value={material.name}
-                                onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                                value={form.name}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
                                 {errors.name}
@@ -74,8 +78,8 @@ const MaterialDetails = ({materials, setMaterials}) => {
                                 type="text" 
                                 className={`form-control ${errors.quantity ? 'is-invalid' : ''}`}
                                 name="quantity"
-                                value={material.quantity}
-                                onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                                value={form.quantity}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
                                 { errors.quantity }
@@ -89,8 +93,8 @@ const MaterialDetails = ({materials, setMaterials}) => {
                                 type="text" 
                                 className={`form-control ${errors.nature ? 'is-invalid' : ''}`}
                                 name="nature"
-                                value={material.nature}
-                                onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                                value={form.nature}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
                                 { errors.nature }
@@ -99,17 +103,17 @@ const MaterialDetails = ({materials, setMaterials}) => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-12">
+                    <div className="col-md-4">
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">Whether material produced before competent court</label>
-                            <div className="col-md-6">
+                            <label htmlFor="" className="col-sm-8 mt-2">Whether material produced before competent court</label>
+                            <div className="col-md-4 mt-2">
                                 <div className="icheck-success d-inline mx-2">
                                     <input 
                                         type="radio" 
                                         id="radioIsProduced1" 
                                         name="is_produced" 
-                                        onChange={(e) => setMaterial({...material, [e.target.name] : true})} 
-                                        checked={material.is_produced === true}
+                                        onChange={(e) => setForm({...form, [e.target.name] : true})} 
+                                        checked={form.is_produced === true}
                                     />
                                     <label htmlFor="radioIsProduced1">Yes</label>
                                 </div>
@@ -118,39 +122,38 @@ const MaterialDetails = ({materials, setMaterials}) => {
                                         type="radio" 
                                         id="radioIsProduced2" 
                                         name="is_produced" 
-                                        onChange={(e) => setMaterial({...material, [e.target.name] : false})} 
-                                        checked={material.is_produced === false}
+                                        onChange={(e) => setForm({...form, [e.target.name] : false})} 
+                                        checked={form.is_produced === false}
                                     />
                                     <label htmlFor="radioIsProduced2">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                         <div className="form-group">
                             <label htmlFor="">Produced date</label>
                             <input 
                                 type="date" 
                                 className={`form-control ${errors.produced_date ? 'is-invalid' : ''}`}
                                 name="produced_date"
-                                value={material.produced_date}
-                                onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                                value={form.produced_date}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
                                 { errors.produced_date }
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-9">
+                    <div className="col-md-6">
                         <div className="form-group">
                             <label htmlFor="">Reason</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.reason ? 'is-invalid' : ''}`}
+                            <textarea 
                                 name="reason"
-                                value={material.reason}
-                                onChange={(e)=> setMaterial({...material, [e.target.name]: e.target.value})}
-                            />
+                                className={`form-control ${errors.reason ? 'is-invalid' : ''}`}
+                                value={form.reason}
+                                onChange={(e)=> setForm({...form, [e.target.name]: e.target.value})}
+                            ></textarea>
                             <div className="invalid-feedback">
                                 { errors.reason }
                             </div>
@@ -171,22 +174,29 @@ const MaterialDetails = ({materials, setMaterials}) => {
 
 const MaterialList = ({materials}) => {
     return(
-        <table className="table table-bordered table-striped">
-            <thead>
+        <table className="table table-bordered table-striped table-sm">
+            <thead className='bg-light'>
                 <tr>
                     <th>#</th>
                     <th>Name</th>
                     <th>Quantity</th>
                     <th>Nature</th>
+                    <th>Remarks</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 { materials.map((m, index)=> (
-                <tr>
+                <tr key={index}>
                     <td>{index+1}</td>
                     <td>{m.name}</td>
                     <td>{m.quantity}</td>
                     <td>{m.nature}</td>
+                    <td>{m.reason}</td>
+                    <td>
+                        <button className="btn btn-sm btn-info">Edit</button>
+                        <button className="btn btn-sm btn-danger ml-2">Delete</button>
+                    </td>
                 </tr>
                 ))}
             </tbody>

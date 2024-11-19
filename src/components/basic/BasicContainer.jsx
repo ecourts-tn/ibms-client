@@ -87,11 +87,11 @@ const BasicContainer = () => {
 
     let validationSchema = Yup.object({
         court_type: Yup.string().required("Please select court type"),
-        // bench_type: Yup.string().when("court_type",(court_type, schema) => {
-        //     if(parseInt(court_type) === 1){
-        //         return schema.required("Please select the bench type")
-        //     }
-        // }),
+        bench_type: Yup.string().when("court_type",(court_type, schema) => {
+            if(parseInt(court_type) === 1){
+                return schema.required("Please select the bench type")
+            }
+        }),
         state: Yup.string().when("court_type", (court_type, schema) => {
             if(parseInt(court_type) === 2){
                 return schema.required("Please select the state")

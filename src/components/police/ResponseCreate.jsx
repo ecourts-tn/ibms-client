@@ -1,22 +1,19 @@
-import React from 'react'
-import { useState, useEffect } from "react"
+import api from 'api'
+import * as Yup from 'yup'
+import React, { useState, useEffect } from 'react'
+import { CreateMarkup, RequiredField } from 'utils';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
 import FormGroup from 'react-bootstrap/FormGroup'
 import FormLabel from 'react-bootstrap/FormLabel'
 import Button from '@mui/material/Button'
-import api from '../../api'
-import { toast, ToastContainer } from 'react-toastify';
-import { CreateMarkup } from '../../utils';
-import * as Yup from 'yup'
-import Document from './Document';
-import Select from 'react-select'
-import { RequiredField } from '../../utils';
-import FIRDetails from './FIRDetails';
-import Loader from './Loader';
-import MaterialDetails from './MaterialDetails';
-import VehicleDetails from './VehicleDetails';
+import Document from 'components/police/Document';
+import FIRDetails from 'components/police/FIRDetails';
+import Loading from 'components/Loading';
+import MaterialDetails from 'components/police/MaterialDetails';
+import VehicleDetails from 'components/police/VehicleDetails';
 
 
 const ResponseCreate = () => {
@@ -54,8 +51,8 @@ const ResponseCreate = () => {
         cnr_number          : '',
         court               : '',
         case_stage          : '',
-        next_hearing        : '',
-        no_of_witness       : '',
+        next_hearing        : undefined,
+        no_of_witness       : undefined,
         previous_case       : '',
         previous_bail       : '',
         other_accused_status: '',
@@ -65,25 +62,7 @@ const ResponseCreate = () => {
         is_material_seized  : '',
         is_vehicle_seized   : '',
     }
-    const initialMaterial = {
-        name: '',
-        quantity:'',
-        nature:'',
-        is_produced: '',
-        produced_date: '',
-        reason: ''
-    }
-    const[material, setMaterial] = useState(initialMaterial)
-    const[materialErrors, setMaterialErrors] = useState({})
     const[materials, setMaterials] = useState([])
-    const vehicleState = {
-        vehicle_name: '',
-        owner_details: '',
-        vehicle_number: '',
-        fastag_details: '',
-        is_owner_accused: ''
-    }
-    const[vehicle, setVehicle] = useState(vehicleState)
     const[vehicles, setVehicles] = useState([])
     const[arrestModify, setArrestModify] = useState(true)
     const[showAdditionalFields, setShowAdditionalFields] = useState(false)
@@ -107,51 +86,15 @@ const ResponseCreate = () => {
         const newDocuments = documents.filter((_, index) => index !== indexToDelete)
         setDocuments(newDocuments)
     }
-
-    
-
-    const deleteMaterial = (material) => {
-
-    }
-    
+  
     const searchValidationSchema = Yup.object({
         crime_number: Yup.number().required("This field should not be blank").typeError("This field should be numeric"),
         crime_year: Yup.number().required("This field should not be blank").typeError("This field should be numeric")
     })
 
-    const materialValidationSchema = Yup.object({
-        name: Yup.string().required(),
-        quantity: Yup.string().required(),
-        nature: Yup.string().required(),
-        is_produced: Yup.string().required(),
-        reason: Yup.string().required()
-    })
-
-    const addMaterial = async(e) => {
-        e.preventDefault()
-        try{
-            console.log(material)
-            // await materialValidationSchema.validate(material, {abortEarly:false})
-            setMaterials(prevState => [prevState, material])
-            toast.success("Materials details added successfully", {
-                theme:"colored"
-            })
-            setMaterial(initialMaterial)
-        }catch(error){
-            if(error.inner){
-                const newErrors = {}
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message
-                })
-                setMaterialErrors(newErrors)
-            }
-        }
-    }
-
-
     const validationSchema = Yup.object({
         offences: Yup.string().required(),
-        date_of_arrest: Yup.string().required(),
+        date_of_arrest: Yup.date().required().typeError('Invalid date format. Please use YYYY-MM-DD.'),
         accused_name: Yup.string().required(),
         specific_allegations: Yup.string().required(),
         materials_used: Yup.string().required(),
@@ -161,6 +104,33 @@ const ResponseCreate = () => {
         other_accused_status: Yup.string().required(),
         reason_not_given: Yup.string().required(),
         other_information: Yup.string().required(),
+        investigation_stage: Yup.string().required(),
+        cnr_number: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('CNR Number required')
+            }
+        }),
+        court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('Court required')
+            }
+        }),
+        case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('CNR Number required')
+            }
+        }),
+        next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('Next hearing required').typeError('Invalid date format. Please use YYYY-MM-DD.')
+            }
+        }),
+        no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
+                .integer('Number of witnesses must be an integer')
+            }
+        }),
     })
     
     const[form, setForm] = useState(initialState)
@@ -228,13 +198,17 @@ const ResponseCreate = () => {
         }
     }
 
-
-
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             await validationSchema.validate(form, {abortEarly:false})
-            const response = await api.post("police/response/create/", form)
+            form.is_police_response = true
+            const post_data = {
+                response: form,
+                materials,
+                vehicles
+            }
+            const response = await api.post("police/response/create/", post_data)
             if(response.status === 201){
                 toast.success("Response added successfully", {
                     theme: "colored"
@@ -243,6 +217,7 @@ const ResponseCreate = () => {
                 navigate("/police/dashboard")
             }
         }catch(error){
+            console.log(error)
             if(error.inner){
                 const newErrors = {};
                 error.inner.forEach((err) => {
@@ -252,6 +227,8 @@ const ResponseCreate = () => {
             }
         }
     }
+
+    if(loading) return <Loading />
 
     return (
     <>
@@ -433,7 +410,7 @@ const ResponseCreate = () => {
                                                     <FormLabel>Offences</FormLabel>
                                                     <FormControl 
                                                         as="textarea" 
-                                                        rows={1}
+                                                        rows={2}
                                                         name="offences"
                                                         value={form.offences}
                                                         className={`form-control ${errors.offences ? 'is-invalid' : null }`}
@@ -448,7 +425,7 @@ const ResponseCreate = () => {
                                                 <FormGroup className='mb-3'>
                                                     <FormLabel>Name of the accused/suspected person(s)</FormLabel>
                                                     <FormControl 
-                                                        type="text"
+                                                        as="textarea"
                                                         name="accused_name"
                                                         value={form.accused_name}
                                                         className={`form-control ${errors.accused_name ? 'is-invalid' : null }`}
@@ -464,7 +441,7 @@ const ResponseCreate = () => {
                                                     <FormLabel>Specific Allegations /Overt Acts against the Petitioner(s)</FormLabel>
                                                     <FormControl 
                                                         as="textarea"
-                                                        rows={1}
+                                                        rows={2}
                                                         name="specific_allegations"
                                                         className={`form-control ${errors.specific_allegations ? 'is-invalid' : null }`}
                                                         value={form.specific_allegations}
@@ -475,7 +452,7 @@ const ResponseCreate = () => {
                                                     </div>
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-12">
+                                            <div className="col-md-6np[">
                                                 <FormGroup className='mb-3'>
                                                     <FormLabel>Materials & Circumstances against the Petitioner</FormLabel>
                                                     <FormControl 
@@ -566,7 +543,7 @@ const ResponseCreate = () => {
                                                 </>
                                                 )}
                                             </div>
-                                            </div>
+                                        </div>
                                         <div className="form-group row">
                                             <label className="col-sm-3">Material seized?</label>
                                             <div className="col-sm-8">
@@ -678,9 +655,13 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">CNR Number</label>
                                                     <FormControl
                                                         name="cnr_number"
+                                                        className={`form-control ${errors.cnr_number ? 'is-invalid' : ''}`}
                                                         value={form.cnr_number}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        { errors.cnr_number }
+                                                    </div>
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-3">
@@ -688,12 +669,15 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">Court</label>
                                                     <select 
                                                         name="court" 
-                                                        className="form-control"
+                                                        className={`form-control ${errors.cnr_number ? 'is-invalid' : ''}`}
                                                         value={form.court}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     >
                                                         <option value="">Select Court</option>
                                                     </select>
+                                                    <div className="invalid-feedback">
+                                                        { errors.court }
+                                                    </div>
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-2">
@@ -701,9 +685,13 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">Stage of the Case</label>
                                                     <FormControl
                                                         name="case_stage"
+                                                        className={`form-control ${errors.case_stage ? 'is-invalid' : ''}`}
                                                         value={form.case_stage}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        { errors.case_stage }
+                                                    </div>
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-2">
@@ -711,42 +699,49 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">Next Hearing Date</label>
                                                     <FormControl 
                                                         type="date"
+                                                        className={`form-control ${errors.next_hearing ? 'is-invalid' : ''}`}
                                                         name="next_hearing"
                                                         value={form.next_hearing}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        { errors.next_hearing }
+                                                    </div>
                                                 </FormGroup>
                                             </div>
                                             <div className="col-md-2">
                                                 <FormGroup className="mb-3">
                                                     <label htmlFor="">No. Of. Witness</label>
                                                     <FormControl
+                                                        type="number"
                                                         name="no_of_witness"
+                                                        className={`form-control ${errors.no_of_witness ? 'is-invalid' : ''}`}
                                                         value={form.no_of_witness}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                                     ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        { errors.no_of_witness }
+                                                    </div>
                                                 </FormGroup>
                                             </div>
                                         </div>
                                         )}
                                         <div className="row">
-                                            <div className="col-md-6">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Antecedents/Previous Cases against the Petitioner(s)</FormLabel>
-                                                    <FormControl
+                                                    <textarea 
                                                         name="previous_case"
                                                         value={form.previous_case}
                                                         className={`form-control ${errors.previous_case ? 'is-invalid' : null}`}
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                                                    ></FormControl>
+                                                    ></textarea>
                                                     <div className="invalid-feedback">
                                                         { errors.previous_case}
                                                     </div>
                                                 </FormGroup>
                                             </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-6">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Details of Previous Bail Applications</FormLabel>
                                                     <FormControl 
@@ -762,7 +757,7 @@ const ResponseCreate = () => {
                                                     </div>
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-6">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Status of other accused</FormLabel>
                                                     <FormControl 
@@ -778,7 +773,7 @@ const ResponseCreate = () => {
                                                         </div>
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-6">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Why Bail/AB Should Not be Granted</FormLabel>
                                                     <FormControl 
@@ -794,7 +789,7 @@ const ResponseCreate = () => {
                                                     </div>
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-6">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Any other Information</FormLabel>
                                                     <FormControl 
@@ -810,7 +805,7 @@ const ResponseCreate = () => {
                                                     </div>
                                                 </FormGroup>
                                             </div>
-                                            <div className="col-md-12">
+                                            <div className="col-md-4">
                                                 <FormGroup className="mb-3">
                                                     <FormLabel>Court Details: FIR/ Committal/Trial/ Appellate</FormLabel>
                                                     <FormControl 
@@ -888,9 +883,6 @@ const ResponseCreate = () => {
                                             ><i className="fa fa-search mr-2"></i>Search</Button>
                                         </Form.Group>
                                     </div>
-                                    { loading && (
-                                        <Loader />
-                                    )}
                                     <div className="col-md-12 d-flex justify-content-center">
                                         { showAdditionalFields && (
                                             <FIRDetails fir={fir} efile_no={state.efile_no} setFirTagged={setFirTagged}/>
