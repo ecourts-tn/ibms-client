@@ -14,7 +14,8 @@ const FIRDetails = ({fir, efile_no, setFirTagged}) => {
     const navigate =  useNavigate()
 
     const tagFir = async() => {
-        const response = await api.post(`case/crime/details/create/`, fir, {params:{efile_no}})
+        fir.efile_no = efile_no
+        const response = await api.post(`case/crime/details/create/`, fir)
         if(response.status === 201){
             handleClose();
             setFirTagged(true)

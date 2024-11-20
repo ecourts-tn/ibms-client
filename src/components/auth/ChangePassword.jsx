@@ -1,11 +1,13 @@
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
 import api from 'api'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { REFRESH_TOKEN } from 'constants'
 
 const ChangePassword = () => {
-
+    const navigate = useNavigate()
     const initialState = {
         old_password    : '',
         new_password    : '',
@@ -21,23 +23,25 @@ const ChangePassword = () => {
         confirm_password: Yup.string().required(t('errors.cpassword_required')).oneOf([Yup.ref('new_password'), null], 'Passwords must match')
     })
 
+    const handleLogout = async () => {
+        const response = await api.post('auth/logout/', {
+          refresh: sessionStorage.getItem(REFRESH_TOKEN),
+        });
+        if (response.status === 205) {
+          sessionStorage.clear();
+          toast.success(t('alerts.logged_out'), { theme: "colored" });
+          setTimeout(() => navigate('/'), 1000);
+        }
+      };
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
             await validationSchema.validate(form, {abortEarly:false})
-            const response = await api.post("api/auth/change-password/", form)
-            switch(response.response.status){
-                case 400:
-                    toast.error(response.response.data.message, {theme: "colored"})
-                    break;
-                case 200:
-                    toast.success(response.response.data.message, {theme:"colored"})
-                    setForm(initialState)
-                    break;
-                case 404:
-                    toast.error(response.response.data.message, {theme:"colored"})
-                    break;
-            }    
+            const response = await api.post("auth/change-password/", form)
+            if(response.status === 200){
+                handleLogout();
+            }
         }catch(error){
             if(error.inner){
                 const newErrors = {}
@@ -45,6 +49,20 @@ const ChangePassword = () => {
                     newErrors[err.path] = err.message
                 });
                 setErrors(newErrors)
+            }
+            if(error.response){
+                switch(error.response.status){
+                    case 400:
+                        toast.error(error.response.data.message, {theme: "colored"})
+                        break;
+                    case 200:
+                        toast.success(error.response.data.message, {theme:"colored"})
+                        setForm(initialState)
+                        break;
+                    case 404:
+                        toast.error(error.response.data.message, {theme:"colored"})
+                        break;
+                }    
             }
         }
     }

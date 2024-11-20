@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useContext} from 'react'
+import React, {useState, useContext} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
 import { toast, ToastContainer } from 'react-toastify';
@@ -11,6 +11,8 @@ import { TalukContext } from 'contexts/TalukContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
+import { RequiredField } from 'utils';
+import Loading from 'components/Loading';
 
 
 const BailCancellation = () => {
@@ -22,8 +24,8 @@ const BailCancellation = () => {
     const {policeStations} = useContext(PoliceStationContext)
     const {establishments} = useContext(EstablishmentContext)
 
-
     const[searchForm, setSearchForm] = useState({
+        search: "1",
         state:'',
         district:'',
         police_station:'',
@@ -34,8 +36,13 @@ const BailCancellation = () => {
         case_number:'',
         case_year:''
     })
-    const[search, setSearch] = useState(1)
     const[searchErrors, setSearchErrors] = useState([])
+    const searchValidationSchema = Yup.object({
+        search: Yup.string().required(),
+        state: Yup.string().required()
+    })
+    const[caseFound, setCaseFound] = useState(false)
+    const[loading, setLoading] = useState(false)
     const[form, setForm] = useState({
         efile_no:'',
         litigant_name:'',
@@ -75,7 +82,6 @@ const BailCancellation = () => {
         description: Yup.string().required()
     })
     const[grounds, setGrounds] = useState({
-        id: nanoid(),
         description: ''
     })
     const[errors, setErrors] = useState([])
@@ -85,22 +91,42 @@ const BailCancellation = () => {
 
     const handleSearch = async(e) => {
         e.preventDefault()
-        if(search === 1){
-            // crime number search
+        setLoading(true)
+        try{
             const response = await api.post('police/search/crime/', searchForm)
             if(response.status === 200){
+                setCaseFound(true)
                 const accused = response.data.litigant.filter((accused) => {
                     return accused.litigant_type === 1
                 })
                 setAccused(accused)
                 setForm({...form, efile_no:response.data.crime.petition})
             }
-        }else{
-            //case number search
-            const response = await api.post('police/search/case/', searchForm)
-            if(response.status === 200){
-                setAccused(response.data)
+        }catch(error){
+            if(error.response){
+                switch(error.response.status){
+                    case 404:
+                        toast.error("Petition details not found", {theme:"colored"});
+                        break;
+                    case 400:
+                        toast.error("Bad request. Please check your input.", { theme: "colored" });
+                        break;
+                    case 401:
+                        toast.error("Unauthorized access. Please log in.", { theme: "colored" });
+                        break;
+                    case 403:
+                        toast.error("You do not have permission to perform this action.", { theme: "colored" });
+                        break;
+                    case 500:
+                        toast.error("Server error. Please try again later.", { theme: "colored" });
+                        break;
+                    default:
+                        toast.error(`Unexpected error: ${error.response.statusText}`, { theme: "colored" });
+                }
+                setCaseFound(false);
             }
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -169,9 +195,9 @@ const BailCancellation = () => {
                                                                 type="radio" 
                                                                 name="search" 
                                                                 id="searchYes" 
-                                                                value={search}
-                                                                checked={ parseInt(search) === 1 ? true : false}
-                                                                onChange={(e) => setSearch(1)} 
+                                                                value="1"
+                                                                checked={searchForm.search === "1"}
+                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name] : e.target.value})} 
                                                             />
                                                             <label htmlFor="searchYes">Search by Crime Number</label>
                                                             </div>
@@ -180,9 +206,9 @@ const BailCancellation = () => {
                                                                 type="radio" 
                                                                 id="searchNo" 
                                                                 name="search" 
-                                                                value={search}
-                                                                checked={ parseInt(search) === 2 ? true : false } 
-                                                                onChange={(e) => setSearch(2)}
+                                                                value="2"
+                                                                checked={ searchForm.search === "2" } 
+                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name] : e.target.value})}
                                                             />
                                                             <label htmlFor="searchNo">Search by Case Number</label>
                                                             </div>
@@ -193,10 +219,10 @@ const BailCancellation = () => {
                                             <div className="row">
                                                 <div className="col-md-10 offset-1">
                                                     <form action="">
-                                                        { parseInt(search) === 1 && (
+                                                        { parseInt(searchForm.search) === 1 && (
                                                         <div className="row">
                                                             <div className="col-md-3">
-                                                                <label htmlFor="state">State</label>
+                                                                <label htmlFor="state">State <RequiredField /></label>
                                                                 <select 
                                                                     name="state" 
                                                                     id="state" 
@@ -215,7 +241,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-4">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="district">District</label><br />
+                                                                    <label htmlFor="district">District<RequiredField /></label><br />
                                                                     <select 
                                                                         name="district" 
                                                                         id="district" 
@@ -224,7 +250,7 @@ const BailCancellation = () => {
                                                                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
                                                                     >
                                                                         <option value="">Select district</option>
-                                                                        { districts.map((item, index) => (
+                                                                        { districts.filter(d => parseInt(d.state) === parseInt(searchForm.state)).map((item, index) => (
                                                                         <option key={index} value={item.district_code }>{ item.district_name }</option>
                                                                         ))}
                                                                     </select>
@@ -235,7 +261,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-5">
                                                             <div className="form-group">
-                                                                <label htmlFor="police_station">Police Station Name</label><br />
+                                                                <label htmlFor="police_station">Police Station Name<RequiredField /></label><br />
                                                                 <select 
                                                                     name="police_station" 
                                                                     id="police_station" 
@@ -244,8 +270,8 @@ const BailCancellation = () => {
                                                                     onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
                                                                 >
                                                                     <option value="">Select station</option>
-                                                                    { policeStations.map((item, index) => (
-                                                                        <option key={index} value={item.id}>{ item.station_name}</option>
+                                                                    { policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(searchForm.district)).map((item, index) => (
+                                                                        <option key={index} value={item.cctns_code}>{ item.station_name}</option>
                                                                     ))}
                                                                 </select>
                                                                 <div className="invalid-feedback">{ errors.police_station }</div>
@@ -253,7 +279,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-2 offset-md-4">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="case_number">Crime Number</label>
+                                                                    <label htmlFor="case_number">Crime Number<RequiredField /></label>
                                                                     <input 
                                                                         type="text" 
                                                                         className={`form-control ${searchErrors.crime_number ? 'is-invalid' : ''}`} 
@@ -268,7 +294,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-2">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="crime_year">Crime Year</label>
+                                                                    <label htmlFor="crime_year">Crime Year<RequiredField /></label>
                                                                     <input 
                                                                         type="text" 
                                                                         className={`form-control ${searchErrors.crime_year ? 'is-invalid' : ''}`}
@@ -283,10 +309,10 @@ const BailCancellation = () => {
                                                             </div>
                                                         </div>
                                                         )}
-                                                        { parseInt(search) === 2 && (
+                                                        { parseInt(searchForm.search) === 2 && (
                                                         <div className="row">
                                                             <div className="col-md-3">
-                                                                <label htmlFor="state">State</label>
+                                                                <label htmlFor="state">State<RequiredField /></label>
                                                                 <select 
                                                                     name="state" 
                                                                     id="state" 
@@ -305,7 +331,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-4">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="district">District</label><br />
+                                                                    <label htmlFor="district">District<RequiredField /></label><br />
                                                                     <select 
                                                                         name="district" 
                                                                         id="district" 
@@ -314,7 +340,7 @@ const BailCancellation = () => {
                                                                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
                                                                     >
                                                                         <option value="">Select district</option>
-                                                                        { districts.map((item, index) => (
+                                                                        { districts.filter(d=>parseInt(d.state)===parseInt(searchForm.state)).map((item, index) => (
                                                                         <option key={index} value={item.district_code }>{ item.district_name }</option>
                                                                         ))}
                                                                     </select>
@@ -325,7 +351,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-5">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="establishment">Establishment Name</label>
+                                                                    <label htmlFor="establishment">Establishment Name<RequiredField /></label>
                                                                     <select 
                                                                         name="establishment" 
                                                                         id="establishment" 
@@ -335,10 +361,7 @@ const BailCancellation = () => {
                                                                     >
                                                                         <option value="">Select Establishment</option>
                                                                         {
-                                                                            establishments.filter((establishment) => {
-                                                                                return establishment.bail_filing && establishment.display
-                                                                            })
-                                                                            .map((item, index) => (
+                                                                            establishments.filter(e=>parseInt(e.district) === parseInt(searchForm.district)).map((item, index) => (
                                                                                 <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
                                                                             ))
                                                                         }
@@ -350,7 +373,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-3 offset-md-3">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="case_type">Case Type</label>
+                                                                    <label htmlFor="case_type">Case Type<RequiredField /></label>
                                                                     <select 
                                                                         name="case_type" 
                                                                         className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
@@ -367,7 +390,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-2">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="case_number">Case Number</label>
+                                                                    <label htmlFor="case_number">Case Number<RequiredField /></label>
                                                                     <input 
                                                                         type="text" 
                                                                         className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
@@ -382,7 +405,7 @@ const BailCancellation = () => {
                                                             </div>
                                                             <div className="col-md-2">
                                                                 <div className="form-group">
-                                                                    <label htmlFor="case_year">Year</label>
+                                                                    <label htmlFor="case_year">Year<RequiredField /></label>
                                                                     <input 
                                                                         type="text" 
                                                                         className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
@@ -407,43 +430,23 @@ const BailCancellation = () => {
                                                                 >Search</Button>
                                                             </div>
                                                         </div>
+                                                        { loading && (
+                                                            <Loading />
+                                                        )}
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-
-                                    {/* <div className="row mt-3">
-                                        <div className="col-md-12">
-                                            <div className="form-group row">
-                                                <label htmlFor="" className="col-sm-1">Select Accused</label>
-                                                <div className="col-sm-4">
-                                                    <Select 
-                                                        isMulti={true}
-                                                        name="district"
-                                                        options={accusedOptions}
-                                                        className={`${errors.district ? 'is-invalid' : null}`}
-                                                        onChange={(e) => {handleSelect(e.target.value)}}
-                                                    />
-                                                    <div className="invalid-feedback">
-                                                        { errors.district }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> */}
-                                    { errors.efile_no && (
-                                        <div className="alert alert-danger mt-2">
-                                            <strong>Please search the case details</strong>
-                                        </div>
-                                    )}
+                                    { caseFound && (
+                                    <>
                                     <div className="card card-light mt-3">
-                                        <div className="card-header">Petitioner Details</div>
+                                        <div className="card-header">Petitioner Details </div>
                                         <div className="card-body">
                                             <div className="row">  
                                             <div className="col-md-3">
                                                 <Form.Group className="mb-3">
-                                                    <Form.Label>Name of the Petitioner</Form.Label>
+                                                    <Form.Label>Name of the Petitioner<RequiredField /></Form.Label>
                                                     <Form.Control
                                                         name="litigant_name" 
                                                         className={`${errors.litigant_name ? 'is-invalid' : ''}`}
@@ -455,7 +458,7 @@ const BailCancellation = () => {
                                             </div>
                                             <div className="col-md-3">
                                                 <Form.Group>
-                                                    <Form.Label>Designation</Form.Label>
+                                                    <Form.Label>Designation<RequiredField /></Form.Label>
                                                     <Form.Control
                                                         name="designation"
                                                         value={form.designation}
@@ -467,7 +470,7 @@ const BailCancellation = () => {
                                             </div>
                                             <div className="col-md-2">
                                                 <Form.Group className="mb-3">
-                                                    <Form.Label>Gender</Form.Label>
+                                                    <Form.Label>Gender<RequiredField /></Form.Label>
                                                     <select 
                                                         name="gender" 
                                                         value={form.gender} 
@@ -550,7 +553,7 @@ const BailCancellation = () => {
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     >
                                                         <option value="">Select District</option>
-                                                        { districts.map((item, index) => (
+                                                        { districts.filter(d=>parseInt(d.state) === parseInt(form.state)).map((item, index) => (
                                                         <option value={item.district_code} key={index}>{item.district_name}</option>
                                                         ))}
                                                     </select>
@@ -567,7 +570,7 @@ const BailCancellation = () => {
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     >
                                                         <option value="">Select Taluk</option>
-                                                        { taluks.map((item, index) => (
+                                                        { taluks.filter(t=>parseInt(t.district) === parseInt(form.district)).map((item, index) => (
                                                         <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
                                                         ))}
                                                     </select>
@@ -676,7 +679,6 @@ const BailCancellation = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    
                                     <div className="row">
                                         <div className="col-md-12">
                                             <div className="form-group">
@@ -702,6 +704,8 @@ const BailCancellation = () => {
                                             >Submit</Button>
                                         </div>
                                     </div>
+                                    </>
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -4,17 +4,17 @@ import * as Yup from 'yup'
 
 const MaterialDetails = ({materials, setMaterials}) => {
     const initialState = {
-        name: '',
+        material_name: '',
         quantity:'',
-        nature:'',
+        quantity_nature:'',
         is_produced: false,
         produced_date: '',
         reason: ''
     }
     const validationSchema = Yup.object({
-        name: Yup.string().required("Name is required"),
+        material_name: Yup.string().required("Name is required"),
         quantity: Yup.string().required("Quantity is required"),
-        nature: Yup.string().required("Nature is required"),
+        quantity_nature: Yup.string().required("Nature is required"),
         is_produced: Yup.boolean(),
         produced_date: Yup.date().nullable().required("Produced date is required"),
         reason: Yup.string().required("Reason is required") 
@@ -61,13 +61,13 @@ const MaterialDetails = ({materials, setMaterials}) => {
                             <label htmlFor="">Name of the material</label>
                             <input 
                                 type="text" 
-                                className={`form-control ${errors.name ? 'is-invalid' : ''}`} 
-                                name="name"
-                                value={form.name}
+                                className={`form-control ${errors.material_name ? 'is-invalid' : ''}`} 
+                                name="material_name"
+                                value={form.material_name}
                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
-                                {errors.name}
+                                {errors.material_name}
                             </div>
                         </div>
                     </div>
@@ -91,13 +91,13 @@ const MaterialDetails = ({materials, setMaterials}) => {
                             <label htmlFor="">Nature of Quantity(Small/Commercial)</label>
                             <input 
                                 type="text" 
-                                className={`form-control ${errors.nature ? 'is-invalid' : ''}`}
-                                name="nature"
-                                value={form.nature}
+                                className={`form-control ${errors.quantity_nature ? 'is-invalid' : ''}`}
+                                name="quantity_nature"
+                                value={form.quantity_nature}
                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
-                                { errors.nature }
+                                { errors.quantity_nature }
                             </div>
                         </div>
                     </div>
@@ -138,6 +138,7 @@ const MaterialDetails = ({materials, setMaterials}) => {
                                 className={`form-control ${errors.produced_date ? 'is-invalid' : ''}`}
                                 name="produced_date"
                                 value={form.produced_date}
+                                readOnly={form.is_produced === true ? false : true }
                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             />
                             <div className="invalid-feedback">
@@ -189,9 +190,9 @@ const MaterialList = ({materials}) => {
                 { materials.map((m, index)=> (
                 <tr key={index}>
                     <td>{index+1}</td>
-                    <td>{m.name}</td>
+                    <td>{m.material_name}</td>
                     <td>{m.quantity}</td>
-                    <td>{m.nature}</td>
+                    <td>{m.quantity_nature}</td>
                     <td>{m.reason}</td>
                     <td>
                         <button className="btn btn-sm btn-info">Edit</button>

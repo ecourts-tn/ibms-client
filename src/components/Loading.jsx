@@ -5,7 +5,7 @@ const Loading = () => {
   return (
     <div className="loading-overlay">
       <img 
-        src={`${process.env.PUBLIC_URL}/images/spinner.webp`}
+        src={`${process.env.PUBLIC_URL}/images/loader.gif`}
         alt="Loading..." 
         className="loading-spinner" 
       />

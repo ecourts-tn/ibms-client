@@ -54,7 +54,7 @@ const ResponseSubmitted = () => {
                                             <td>{ petition.crime.complainant_name }</td>
                                             <td>{ petition.crime.investigation_officer }</td>
                                             <td>
-                                                <Link to='/police/response/details/' state={{ efile_no: petition.petition.efile_number }}>
+                                                <Link to='/police/response/detail/' state={{ efile_no: petition.petition.efile_number }}>
                                                     <Button
                                                         variant='contained'
                                                         color='primary'

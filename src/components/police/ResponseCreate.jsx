@@ -30,9 +30,10 @@ const ResponseCreate = () => {
     const initialSearchForm = {
         state: 33,
         district:2,
+        pdistrict:583,
         police_station: 2958324,
         crime_number: '',
-        crime_year: ''
+        year: ''
     }
     const initialState = {
         efile_no            : '',
@@ -89,7 +90,7 @@ const ResponseCreate = () => {
   
     const searchValidationSchema = Yup.object({
         crime_number: Yup.number().required("This field should not be blank").typeError("This field should be numeric"),
-        crime_year: Yup.number().required("This field should not be blank").typeError("This field should be numeric")
+        year: Yup.number().required("This field should not be blank").typeError("This field should be numeric")
     })
 
     const validationSchema = Yup.object({
@@ -110,11 +111,11 @@ const ResponseCreate = () => {
                 return schema.required('CNR Number required')
             }
         }),
-        court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
-            if(parseInt(investigation_stage) === 2){
-                return schema.required('Court required')
-            }
-        }),
+        // court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+        //     if(parseInt(investigation_stage) === 2){
+        //         return schema.required('Court required')
+        //     }
+        // }),
         case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
             if(parseInt(investigation_stage) === 2){
                 return schema.required('CNR Number required')
@@ -161,17 +162,15 @@ const ResponseCreate = () => {
         try{
             await searchValidationSchema.validate(searchForm, {abortEarly:false})
             setLoading(true)
-            const response = await api.get("external/police/tamilnadu/fir-details/", {
-                params: searchForm
-            })
+            const response = await api.post("external/police/tamilnadu/fir-details/", searchForm)
             if(response.status === 200){
                 setFir({...fir,
                     state: searchForm.state,
                     district: searchForm.district,
                     police_station: searchForm.police_station,
                     fir_number: searchForm.crime_number,
-                    fir_year: searchForm.crime_year,
-                    date_of_occurrence  : response.data.date_of_Occurrence,
+                    fir_year: searchForm.year,
+                    date_of_occurrence  : response.data.date_of_occurrence,
                     investigation_officer: response.data.investigation_officer_name,
                     fir_date_time: response.data.FIR_DATE_Time,
                     place_of_occurrence: response.data.place_of_occurence,
@@ -185,7 +184,6 @@ const ResponseCreate = () => {
                     no_of_accused: response.data.no_of_accused
                 })
                 setShowAdditionalFields(true)
-                setLoading(false)
             }
         }catch(error){
             if(error.inner){
@@ -195,6 +193,8 @@ const ResponseCreate = () => {
                 })
                 setSearchErrors(newErrors)
             }
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -202,7 +202,7 @@ const ResponseCreate = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(form, {abortEarly:false})
-            form.is_police_response = true
+            form.efile_no = state.efile_no
             const post_data = {
                 response: form,
                 materials,
@@ -227,8 +227,6 @@ const ResponseCreate = () => {
             }
         }
     }
-
-    if(loading) return <Loading />
 
     return (
     <>
@@ -867,12 +865,12 @@ const ResponseCreate = () => {
                                             <Form.Label>Year<RequiredField/></Form.Label>
                                             <Form.Control 
                                                 type="text"
-                                                name="crime_year"
-                                                className={`${searchErrors.crime_year ? 'is-invalid' : ''}`}
-                                                value={searchForm.crime_year}
+                                                name="year"
+                                                className={`${searchErrors.year ? 'is-invalid' : ''}`}
+                                                value={searchForm.year}
                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                             ></Form.Control>
-                                            <div className="invalid-feedback">{ searchErrors.crime_year }</div>
+                                            <div className="invalid-feedback">{ searchErrors.year }</div>
                                         </Form.Group>   
                                     </div>  
                                     <div className="col-md-2 mt-4 pt-2">
@@ -897,8 +895,9 @@ const ResponseCreate = () => {
                     </div>
                 </div>
             </div>  
-            </div>    
-        )}      
+        </div>    
+        )}     
+        { loading && <Loading />} 
     </>
   )
 }

@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import { ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import Login from 'components/auth/Login';
+import Translate from './Translate';
 
 
 const Home = () => {
@@ -28,6 +29,7 @@ const Home = () => {
                     <Col md={3} className="">
                         <ToastContainer />
                         { !isAuth ? <Login /> : <Login />}  
+                        <Translate />
                     </Col>
                     {/* <Col md={6} className="mt-5">
                         <Feed />
