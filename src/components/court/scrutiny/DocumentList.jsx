@@ -21,6 +21,7 @@ const DocumentList = ({documents}) => {
             <thead className="bg-secondary">
                 <tr>
                     <th>{t('document_title')}</th>
+                    <td>Hash</td>
                     <th>{t('action')}</th>
                 </tr>
             </thead>
@@ -28,6 +29,7 @@ const DocumentList = ({documents}) => {
                 { documents.map((d, index) => (
                 <tr key={index}>
                     <td>{ d.title?.document_name }</td>
+                    <td>{ d.hash }</td>
                     <td>
                         <Button 
                             variant="contained"

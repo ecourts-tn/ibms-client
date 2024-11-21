@@ -6,8 +6,9 @@ const Translate = () => {
     const[text, setText] = useState('')
     const[translatedText, setTranslatedText] = useState('')
     const[loading, setLoading] = useState(false)
+    
     async function fetchCSRFToken() {
-        const response = await api.get('http://localhost:8000/api/v1/csrf/');
+        const response = await api.get('csrf/');
         const csrfToken = response.headers['x-csrftoken'];
         return csrfToken;
     }
@@ -17,7 +18,7 @@ const Translate = () => {
             setLoading(true)
             const csrfToken = await fetchCSRFToken();
             const response = await api.post(
-                'http://localhost:8000/api/v1/translate/',
+                'translate/',
                 { text: text, source_language: 'en', target_language: 'ta' },
                 {
                     headers: {

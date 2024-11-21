@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import api from '../../api'
-import Button from '@mui/material/Button'
+
 
 const CauseList = () => {
 
@@ -9,7 +9,7 @@ const CauseList = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get("api/bail/petition/list/")
+                const response = await api.get("court/registration/pending/list/")
                 setCases(response.data)
             }catch(err){
                 console.log(err)
@@ -33,12 +33,11 @@ const CauseList = () => {
                                         <thead className="bg-secondary">
                                             <tr>
                                                 <th>S. NO</th>
+                                                <th>eFile Number</th>
                                                 <th>Crime Number/Year</th>
-                                                <th>Case Type</th>
-                                                <th>Bail Type</th>
-                                                <th>Court</th>
                                                 <th>Petitioners</th>
-                                                <th>Item No.</th>
+                                                <th>Hearing Date</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -48,36 +47,29 @@ const CauseList = () => {
                                                         <tr key={index}>
                                                             <td>{ index+1 }</td>
                                                             <td>
-                                                                { c.petition.crime_number } / { c.petition.crime_year }<br/>
-                                                                { c.petition.police_station && (
-                                                                    <span>{ c.petition.police_station.station_name}, {c.petition.crime_district.district_name}</span>
+                                                                { c.petition.efile_number }<br></br>
+                                                                { `${c.petition.filing_type?.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`}
+                                                            </td>
+                                                            <td>
+                                                                { c.crime?.fir_number } / { c.crime?.fir_year }<br/>
+                                                                { c.crime?.police_station && (
+                                                                    <span>{ c.crime.police_station?.station_name}, {c.crime.district?.district_name}</span>
                                                                 )}   
                                                             </td>
-                                                            <td>
-                                                                { c.petition.court_type.id === 2 && (
-                                                                <span>{ c.petition.court.court_name }<br/>{ c.petition.establishment.establishment_name }<br/>{ c.petition.district.district_name }</span>
-                                                                )}
-                                                                { c.petition.court_type.id === 1 && (
-                                                                <span>{ c.petition.court_type.name }<br/>{ c.petition.bench_type.name }</span> 
-                                                                )}
-                                                            </td>
-                                                            <td>{ c.petition.case_type.type_name }</td>
-                                                            <td>{ c.petition.bail_type.type_name }</td>
-                                                            <td>
-                                                                <ol style={{ paddingBottom:1}}>
-                                                                    { c.petitioner.map((p, index) => (
-                                                                        <li key={index}>{p.petitioner_name}</li>
-                                                                        )) 
-                                                                    }
-                                                                </ol>
+                                                            <td className="text-center">
+                                                                { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                                                    <span className="text ml-2">{index+1}. {l.litigant_name}</span>
+                                                                ))}<br/>
+                                                                <span className="text text-danger">Vs</span><br/>
+                                                                { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
+                                                                ))}
                                                             </td>
                                                             <td>
-                                                               <select name="item[]" className="form-control">
-                                                                    <option value="">Select</option>
-                                                                    {cases.map((c, index) => (
-                                                                        <option value={index+1}>{index+1}</option>
-                                                                    ))}
-                                                               </select>
+                                                                <input type="date" />
+                                                            </td>
+                                                            <td>
+                                                                <button className="btn btn-primary btn-sm">Submit</button>
                                                             </td>
                                                         </tr>
                                                         ))

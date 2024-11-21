@@ -41,7 +41,7 @@ const RegistrationPendingList = () => {
                                                 </div>
                                                 
                                                 <span className="text mr-3">
-                                                    <Link to={`/court/petition/registration`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                                    <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
                                                 { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>
@@ -49,7 +49,7 @@ const RegistrationPendingList = () => {
                                                 }
                                                 <span className="text text-danger">Vs</span>
                                                 { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                                 ))
                                                 }
                                                 <div className="float-right">

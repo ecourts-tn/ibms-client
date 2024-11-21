@@ -11,8 +11,10 @@ import Respondent from './Respondent'
 import Grounds from './Grounds'
 import AdvocateDetails from './AdvocateDetails'
 import FeesDetails from './FeesDetails'
+import CrimeDetails from './CrimeDetails'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import DocumentList from './DocumentList'
 
 
 const CaseScrutiny = () => {
@@ -73,7 +75,7 @@ const CaseScrutiny = () => {
                     })
                     setForm(initialState)
                     setTimeout(() => {
-                        navigate("/court/petition/scrutiny")
+                        navigate("/court/case/scrutiny")
                     }, 2000)
                 }
             }catch(error){
@@ -107,21 +109,6 @@ const CaseScrutiny = () => {
         }
     }
 
-    if(!state){
-        return (
-            <div className="content-wrapper">
-                <div className="container-fluid pt-5">
-                    <div className="alert alert-danger">
-                        Details not found
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    console.log(petition)
-    
-
     return (
         <>
             <ToastContainer/>
@@ -141,7 +128,8 @@ const CaseScrutiny = () => {
                                     </div>
                                     <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                                         <div className="card-body">
-                                            <BasicDetails petition={petition} crime={crime}/>
+                                            <BasicDetails petition={petition}/>
+                                            <CrimeDetails crime={crime} />
                                         </div>
                                     </div>
                                 </div>
@@ -181,8 +169,8 @@ const CaseScrutiny = () => {
                                             <AdvocateDetails 
                                                 advocates={advocates} 
                                                 petition={petition}
-                                                documents={documents}
                                             />
+                                            <DocumentList documents={documents} />
                                         </div>
                                     </div>
                                 </div>

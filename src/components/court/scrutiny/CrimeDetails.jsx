@@ -1,9 +1,45 @@
-import React from 'react'
+import React, {useContext, useState} from 'react'
 import { CreateMarkup } from 'utils'
+import Loading from 'components/Loading'
+import api from 'api'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 const CrimeDetails = ({crime}) => {
     const{t} = useTranslation()
+
+    const[translatedText, setTranslatedText] = useState('')
+    const[loading, setLoading] = useState(false)
+    const {language} = useContext(LanguageContext)
+    async function fetchCSRFToken() {
+        const response = await api.get('csrf/');
+        const csrfToken = response.headers['x-csrftoken'];
+        return csrfToken;
+    }
+
+    async function translateText(text) {
+        try{
+            setLoading(true)
+            const csrfToken = await fetchCSRFToken();
+            const response = await api.post(
+                'translate/',
+                { text: text, source_language: 'en', target_language: 'ta' },
+                {
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                    },
+                }
+            );
+        
+            setTranslatedText(response.data)
+        }catch(error){
+            console.error(error)
+        }finally{
+            setLoading(false)
+        }
+    }
+
+
     return (
         <table className="table table-bordered table-striped">
             <tbody>
@@ -48,6 +84,25 @@ const CrimeDetails = ({crime}) => {
                     <td colSpan={4}>
                         <p><strong>{t('gist_in_local')}</strong></p>
                         <span dangerouslySetInnerHTML={CreateMarkup(crime.gist_in_local)}></span>
+                        {/* <button className="btn btn-primary btn-sm" onClick={() => translateText(crime.gist_in_local)}>
+                            {language === 'ta' ? 'ஆங்கிலத்திற்கு மொழிபெயர்க்க' : 'Translate to English'}
+                        </button> */}
+                        {loading && <Loading />}
+                        { translatedText.translated_text && (
+                            <div>
+                                <div className="alert alert-danger mt-1">
+                                    <em className="text-bold">Disclaimer:</em>
+                                    <span className="ml-1">
+                                        The translation provided by this application is generated automatically using machine translation services and may not be 100% accurate. 
+                                    </span>
+                                </div>
+                                <p 
+                                    className="text-muted" 
+                                    style={{fontFamily:'sans-serif!important'}}
+                                    dangerouslySetInnerHTML={CreateMarkup(translatedText.translated_text)}
+                                ></p>
+                            </div>
+                        )}
                     </td>
                 </tr>
             </tbody>

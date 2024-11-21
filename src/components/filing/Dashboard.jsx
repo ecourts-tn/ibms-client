@@ -182,7 +182,7 @@ const Dashboard = () => {
                                                 }
                                                 <span className="text text-danger">Vs</span>
                                                 { c.litigant.filter((l) => parseInt(l.litigant_type) ===2 ).map((l, index) => (
-                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                                 ))
                                                 }
                                                 <div className="float-right">

@@ -69,7 +69,7 @@ const CaseRegistration = () => {
                 })
                 setForm(initialState)
                 setTimeout(() => {
-                    navigate("/court/petition/registration/list/")
+                    navigate("/court/case/registration/")
                 }, 2000)
             }
         }catch(error){
