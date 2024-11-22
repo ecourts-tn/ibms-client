@@ -9,11 +9,12 @@ import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
-import { filingRoutes } from 'routes/filingRoutes';
+import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
 import { courtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
+import { BailFilingRoutes } from 'routes/filingRoutes';
 
 function App() {
   
@@ -24,13 +25,17 @@ function App() {
           <AppProvider>
             <Routes>
               <Route element={<PublicLayout/>}>
+              
                 {publicRoutes.map((route, index) => (
                   <Route key={index} path={route.path} element={route.element} />
                 ))}
                 {filingRoutes.map((route, index) => (
                   <Route key={index} path={route.path} element={route.element} />
                 ))}
+                { BailFilingRoutes() }
+                { ABailFilingRoutes() }
               </Route>
+              
               <Route element={<AdminLayout />}>
                 <Route path="court">
                 { courtRoutes.map((route, index) => (

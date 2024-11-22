@@ -179,7 +179,7 @@ const Payment = () => {
                         </div>
                     </Modal.Footer>
             </Modal>
-            <div className="container my-4" style={{minHeight:'500px'}}>
+            <div className="container my-4">
                 {/* <form method="post"> */}
                     <div className="row">
                         <div className="col-md-8 offset-md-2">

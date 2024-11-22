@@ -19,15 +19,15 @@ const GroundsList = ({grounds, deleteGround, editGround}) => {
                             className="mr-2"
                             onClick={()=>editGround(ground) }
                         >
-                            <i className="fa fa-pencil-alt mr-2"></i>
-                        {t('edit')}</Button>
+                            <i className="fa fa-pencil-alt"></i>
+                        </Button>
                         <Button 
                             variant="danger" 
                             size="sm" 
                             onClick={()=>deleteGround(ground) }
                         >
-                            <i className="fa fa-trash mr-2"></i>
-                        {t('delete')}</Button>
+                            <i className="fa fa-trash"></i>
+                        </Button>
                     </div>
                 </div>
             ))}

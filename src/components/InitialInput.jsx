@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react'
+import api from 'api';
+import * as Yup from 'yup'
 import 'react-toastify/dist/ReactToastify.css';
 import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
-import { toast, ToastContainer } from 'react-toastify';
-import * as Yup from 'yup'
-import api from 'api';
-import Select from 'react-select'
-import { useLocalStorage } from "hooks/useLocalStorage";
-import { RequiredField } from 'utils';
+import React, { useEffect, useState, useContext } from 'react'
+import StepperButton from './filing/bail/StepperButton';
 import FIRSearch from 'components/search/FIRSearch';
 import CaseSearch from 'components/search/CaseSearch';
+import { toast, ToastContainer } from 'react-toastify';
+import { useLocalStorage } from "hooks/useLocalStorage";
+import { RequiredField } from 'utils';
 import { BaseContext } from 'contexts/BaseContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
@@ -21,6 +21,7 @@ import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { bailRoutes } from 'routes/filingRoutes';
 
 
 const InitialInput = () => {
@@ -49,6 +50,7 @@ const InitialInput = () => {
         crime_registered: '',
     }
     const[petition, setPetition] = useState(initialState)
+    const[isSubmitted, setIsSubmitted] = useState(false)
     
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -165,6 +167,7 @@ const InitialInput = () => {
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
+                setIsSubmitted(true); 
             }
           }catch(error){
             if (error.inner){
@@ -179,13 +182,12 @@ const InitialInput = () => {
 
  
     return (
-        <>
+        <div className="container">
             <ToastContainer />
-            {/* <Steps /> */}
             <div className="row">
                 <div className="col-md-12">
                     <div className="row mt-4">
-                        <div className="col-md-8 offset-md-2">
+                        <div className="col-md-12">
                             <div className="row">
                                 <div className="col-md-6">
                                     <Form.Group className="mb-3">
@@ -438,10 +440,11 @@ const InitialInput = () => {
                                 {t('submit')}
                             </Button>
                         </div>
+                        {/* <StepperButton steps={bailRoutes} isCurrentStepSubmitted={isSubmitted} /> */}
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

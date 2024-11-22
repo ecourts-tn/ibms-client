@@ -144,7 +144,7 @@ const PreviousCaseForm = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-2">
+                <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="">{t('disp_next_date')}</label>
                         <input 
@@ -156,7 +156,7 @@ const PreviousCaseForm = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-9">
+                <div className="col-md-6">
                     <div className="form-group">
                         <label htmlFor="">{t('proceedings')}</label>
                         <textarea 
@@ -164,6 +164,18 @@ const PreviousCaseForm = () => {
                             className="form-control" 
                             rows="3"
                             value={petition.prev_proceedings}
+                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                        ></textarea>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="form-group">
+                        <label htmlFor="remarks">{t('remarks')}</label>
+                        <textarea 
+                            name="prev_remarks" 
+                            className="form-control" 
+                            rows="3"
+                            value={petition.prev_remarks}
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         ></textarea>
                     </div>
@@ -195,18 +207,7 @@ const PreviousCaseForm = () => {
                         <label htmlFor="details_correct_no" className="ml-1">{t('no')}</label>
                     </div>
                 </div>
-                <div className="col-md-9">
-                    <div className="form-group">
-                        <label htmlFor="remarks">{t('remarks')}</label>
-                        <textarea 
-                            name="prev_remarks" 
-                            className="form-control" 
-                            rows="3"
-                            value={petition.prev_remarks}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                        ></textarea>
-                    </div>
-                </div>
+               
                 <div className="col-md-12">
                     <div className="form-group">
                         <label htmlFor="previous_bail_application">{t('previous_pending')}</label>

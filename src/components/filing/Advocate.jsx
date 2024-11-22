@@ -80,20 +80,18 @@ const Advocate = () => {
     
     return (
         <div className="container">
-            {/* <div className="card card-outline card-info">
+            <div className="card card-outline card-info">
                 <div className="card-header">
                     <h3 className="card-title"><i className="fas fa-graduation-cap mr-2"></i><strong>Advocate Details</strong></h3>
                 </div>
-                <div className="card-body"> */}
+                <div className="card-body p-2">
                     <div className="row">
-                        <div className="col-md-10 offset-md-1">
-                            <div className="my-5">
-                                <AdvocateList 
-                                    advocates={advocates}
-                                    deleteAdvocate={deleteAdvocate}
-                                    editAdvocate={editAdvocate}
-                                />
-                            </div>
+                        <div className="col-md-12">
+                            <AdvocateList 
+                                advocates={advocates}
+                                deleteAdvocate={deleteAdvocate}
+                                editAdvocate={editAdvocate}
+                            />
                         </div>
                     </div>
                     <AdvocateForm 
@@ -103,8 +101,8 @@ const Advocate = () => {
                         advocates={advocates}
                     />
                 </div>
-        //     </div>
-        // </div>
+            </div>
+        </div>
     )
 }
 
@@ -170,15 +168,10 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         <>
             <ToastContainer />
             <div className="row">
-                {/* <div className="col-md-4 offset-md-4 mb-3">
-                    <select name="" className='form-control'>
-                        <option value="">Test</option>
-                    </select>
-                </div> */}
                 <div className="col-md-6 offset-md-3">
                     <Form.Group className="row mb-3">
-                        <Form.Label  className="col-sm-3">{t('adv_name')}</Form.Label>
-                        <div className="col-sm-9">
+                        <Form.Label  className="col-sm-5">{t('adv_name')}</Form.Label>
+                        <div className="col-sm-7">
                             <Form.Control
                                 name="adv_name"
                                 value={advocate.adv_name}
@@ -191,8 +184,8 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                         </div>
                     </Form.Group>
                     <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-3">{t('enrollment_number')}</Form.Label>
-                        <div className="col-sm-9">
+                        <Form.Label className="col-sm-5">{t('enrollment_number')}</Form.Label>
+                        <div className="col-sm-7">
                             <Form.Control
                                 name="adv_reg"
                                 value={advocate.adv_reg}
@@ -206,8 +199,8 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                         </div>
                     </Form.Group>
                     <Form.Group  className="row mb-3">
-                        <Form.Label className="col-sm-3">{t('mobile_number')}</Form.Label>
-                        <div className="col-sm-9">
+                        <Form.Label className="col-sm-5">{t('mobile_number')}</Form.Label>
+                        <div className="col-sm-7">
                             <Form.Control
                                 name="adv_mobile"
                                 value={advocate.adv_mobile}
@@ -220,8 +213,8 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                         </div>
                     </Form.Group>
                     <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-3">{t('email_address')}</Form.Label>
-                        <div className="col-sm-9">
+                        <Form.Label className="col-sm-5">{t('email_address')}</Form.Label>
+                        <div className="col-sm-7">
                             <Form.Control
                                 name="adv_email"
                                 value={advocate.adv_email}

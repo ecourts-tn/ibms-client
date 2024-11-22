@@ -81,7 +81,7 @@ const GroundsContainer = () => {
     }
 
     return (
-        <div className="container-fluid m-0">
+        <div className="container">
             <div className="card">
                 <div className="card-header">
                     <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>{t('ground')}</strong></h3>

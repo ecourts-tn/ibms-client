@@ -48,7 +48,7 @@ const DraftList = () => {
     const handleEdit = (efile_no) => {
         if (window.confirm("Are you sure you want to edit the petition?")) {
             sessionStorage.setItem('efile_no', efile_no);
-            navigate("/petition/bail");
+            navigate("/filing/bail/initial-input");
         }
     };
 
@@ -153,7 +153,7 @@ const DraftList = () => {
                                         <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                         ))
                                         }
                                     </td>

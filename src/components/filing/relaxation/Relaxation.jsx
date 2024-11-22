@@ -104,7 +104,7 @@ const Relaxation = () => {
           setSelectedRespondent([...selectedRespondent, {
             litigant_name: respondent.litigant_name,
             litigant_type: 2, 
-            designation: respondent.designation,
+            designation: respondent.designation?.designation_name,
             state: respondent.state.state_code,
             district: respondent.district.district_code,
             police_station: respondent.police_station.cctns_code,
@@ -349,7 +349,7 @@ const Relaxation = () => {
                                                                             <>{index+1}. {p.litigant_name}</>
                                                                             ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
                                                                             { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-                                                                            <>{res.litigant_name} {res.designation}</>
+                                                                            <>{res.litigant_name} {res.designation?.designation_name}</>
                                                                             ))} 
                                                                         </option>
                                                                     ))}
@@ -681,7 +681,7 @@ const Relaxation = () => {
                                                                                 <input 
                                                                                     type="text" 
                                                                                     className="form-control" 
-                                                                                    value={res.designation}
+                                                                                    value={res.designation?.designation_name}
                                                                                     readOnly={true}
                                                                                 />
                                                                             </td>

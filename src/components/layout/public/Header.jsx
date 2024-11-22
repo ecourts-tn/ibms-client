@@ -43,7 +43,7 @@ const Header = () => {
   };
 
   const filingLinks = [
-    { path: "/filing/bail", label: t('bail') },
+    { path: "/filing/bail/initial-input", label: t('bail') },
     { path: "/filing/anticipatory/bail", label: t('abail') },
     { path: "/filing/condition-relaxation", label: t('condition_relaxation') },
     { path: "/filing/intervene-petition", label: t('intervene') },

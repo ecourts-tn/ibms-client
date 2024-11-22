@@ -1,7 +1,6 @@
 import '../style.css'
 import api from 'api'
 import React, {useState} from 'react'
-import { Stepper } from 'react-form-stepper'
 import { Button } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { useNavigate, useSearchParams } from 'react-router-dom'
@@ -20,6 +19,7 @@ import Advocate from 'components/filing/Advocate'
 import Document from 'components/filing/Document'
 import EFile from 'components/filing/efile/EFile'
 import InitialInput from 'components/InitialInput'
+import Stepper from 'bs-stepper'
 
 
 function Litigants(props){
@@ -330,27 +330,19 @@ const BailFiling = () => {
 
     return (
         <>
-            <div className="container-fluid" style={{ paddingLeft:'100px', paddingRight:'100px', minHeight:'800px'}}>
+            <div className="container-fluid" style={{ paddingLeft:'100px', paddingRight:'100px', minHeight:'500px'}}>
                 <div className="card" style={{ boxShadow:'none', border:'none'}}>
                     <div className="card-body mt-4" style={{ minHeight:'600px', boxShadow:'none', borderColor:'none'}}>
-                        <Stepper
-                            steps={steps}
-                            activeStep={activeStep}
-                        />
-                        <div className="container">
-                            { getSectionComponent()  }
-                        </div>
+                        <InitialInput />
                     </div>
                     <div className="card-footer" style={{ backgroundColor:'inherit', border:'none'}}>
                         <div className="p-0">
                             <div className="d-flex justify-content-start">
-                                { (activeStep !== 0)
-                                    && <Button onClick={ () => setActiveStep(activeStep - 1) }><i className="fa fa-arrow-left mr-2"></i>{t('previous')}</Button>
+                                {  <Button onClick={ () => setActiveStep(activeStep - 1) }><i className="fa fa-arrow-left mr-2"></i>{t('previous')}</Button>
                                 }
                             </div>
                             <div className="d-flex justify-content-end">
-                                { activeStep !== steps.length - 1 
-                                && <Button 
+                                { <Button 
                                         onClick={ () => setActiveStep(activeStep + 1)}><i className="fa fa-arrow-right mr-2"></i>{t('next')}</Button>
                                 }
                             </div>
