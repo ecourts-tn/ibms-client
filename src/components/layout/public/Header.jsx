@@ -50,8 +50,8 @@ const Header = () => {
     { path: "/filing/intervene-petition/initial-input", label: t('intervene') },
     { path: "/filing/modification-petition/initial-input", label: t('modification') },
     { path: "/filing/surety-petition/initial-input", label: t('surety') },
-    { path: "/filing/surety/discharge", label: t('discharge_surety') },
-    { path: "/filing/extension-time", label: t('extension') },
+    { path: "/filing/surety-discharge/initial-input", label: t('discharge_surety') },
+    { path: "/filing/time-extension/initial-input", label: t('extension') },
     { path: "/filing/return-passport", label: t('return_passport') },
     { path: "/filing/return-property", label: t('return_property') },
   ];
@@ -156,7 +156,7 @@ const Header = () => {
                 <Link to="#contact" className="nav-link">{t('contact')}</Link>
               </li>
               <li className="nav-item">
-                <Link to="#" className="nav-link nav-link-order">{t('verify_order')}</Link>
+                <Link to="/verify-order" className="nav-link">{t('verify_order')}</Link>
               </li>
             </ul>
           </div>

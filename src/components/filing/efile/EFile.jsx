@@ -40,7 +40,7 @@ const EFile = () => {
                                 })
                             }
                             sessionStorage.removeItem("efile_no")
-                            navigate('/dashboard')
+                            navigate('/filing/dashboard')
                         }catch(error){
                             console.error(error)
                         }

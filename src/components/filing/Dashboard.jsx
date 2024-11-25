@@ -4,17 +4,20 @@ import { ToastContainer } from 'react-toastify'
 import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 import { useTranslation } from 'react-i18next'
+import Loading from 'components/Loading'
 import DynamicChart from 'components/DynamicChart'
 
 const Dashboard = () => {
 
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
+    const[loading, setLoading] = useState(false)
     const { t } = useTranslation()
 
     useEffect(() => {
         const fecthCases = async() =>{
             try{
+                setLoading(true)
                 const response = await api.get("case/dashboard/")
                 if(response.status === 200){
                     setCases(response.data.petitions)
@@ -34,6 +37,8 @@ const Dashboard = () => {
                     console.error(`Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
                 }
                 console.error('Error fetching data:', error);
+            }finally{
+                setLoading(false)
             }
         }
         fecthCases();
@@ -55,6 +60,7 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+            { loading && <Loading />}
             <section className="content">
                 <div className="container-fluid">
                     <div className="row">

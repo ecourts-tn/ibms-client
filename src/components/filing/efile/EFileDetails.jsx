@@ -40,36 +40,36 @@ const EFileDetails = () => {
                         { petition && (
                         <>
                             <tr>
-                                <td>Court Type</td>
+                                <td>{t('court_type')}</td>
                                 <td>{ petition.judiciary.judiciary_name }</td>
-                                <td>Bench Type</td>
+                                <td>{t('hc_bench')}</td>
                                 <td>{ petition.seat ?  petition.seat.seat_name : null}</td>
                             </tr>
                             { petition.judiciary.id === 2 && (
                             <>
                                 <tr>
-                                    <td>State</td>
+                                    <td>{t('state')}</td>
                                     <td>{ petition.state.state_name }</td>
-                                    <td>District</td>
+                                    <td>{t('district')}</td>
                                     <td>{ petition.district.district_name }</td>
                                 </tr>
                                 <tr>
-                                    <td>Establishment</td>
+                                    <td>{t('est_name')}</td>
                                     <td>{ petition.establishment.establishment_name }</td>
-                                    <td>Court</td>
+                                    <td>{t('court')}</td>
                                     <td>{ petition.court.court_name }</td>
                                 </tr>
                             </>)}
                             <tr>
-                                <td>Case Type</td>
+                                <td>{t('case_type')}</td>
                                 <td>{ petition.case_type.type_name }</td>
-                                <td>Bail Type</td>
+                                <td>{t('bail_type')}</td>
                                 <td>{ petition.bail_type.type_name }</td>
                             </tr>
                             <tr>
-                                <td>Crime Registered</td>
+                                <td>{t('crime_registered')}</td>
                                 <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
-                                <td>Compliant Type</td>
+                                <td>{t('complaint_type')}</td>
                                 <td>{ petition.complaint_type.type_name }</td>
                             </tr>
                         </>
@@ -131,7 +131,7 @@ const EFileDetails = () => {
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
                                     <td>{ litigant.litigant_name }</td>
-                                    <td>{ litigant.designation }</td>
+                                    <td>{ litigant.designation?.designation_name }</td>
                                     <td>{ litigant.address }</td>
                                     {/* <td>{ litigant.district }</td> */}
                                 </tr>

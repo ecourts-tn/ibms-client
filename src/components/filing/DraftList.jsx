@@ -9,6 +9,7 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import Loading from 'components/Loading'
 
 
 const DraftList = () => {
@@ -22,6 +23,7 @@ const DraftList = () => {
     const handleErrorShow = () => setShowError(true);
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
+    const[loading, setLoading] = useState(false)
     
     const handleShow = (document) => {
         setSelectedDocument(document)
@@ -34,12 +36,15 @@ const DraftList = () => {
     useEffect(() => {
         async function fetchData(){
             try{
+                setLoading(true)
                 const response = await api.get(`case/filing/draft-list/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
             }catch(error){
                 console.log(error)
+            }finally{
+                setLoading(false)
             }
         }
         fetchData();
@@ -112,6 +117,7 @@ const DraftList = () => {
                         </Button>
                     </Modal.Footer>
             </Modal>
+            {loading && <Loading />}
             <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
                 <div className="row">
                     <div className="col-md-12">
@@ -140,7 +146,7 @@ const DraftList = () => {
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
                                     <td style={{fontWeight:700}}>
-                                        <Link to="/petition/detail" state={{efile_no:item.petition.efile_number}}>
+                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
                                             { item.petition.efile_number }
                                         </Link>
                                     </td>

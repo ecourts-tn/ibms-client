@@ -263,3 +263,12 @@ legend > span {
     height:40px;
     border-radius:0px;
 }
+.bs-stepper{
+    margin-bottom: 20px;
+}
+.bs-stepper .step-trigger{
+    padding:0px 2px!important
+}
+.step:hover{
+    background-color: inherit!important;
+}

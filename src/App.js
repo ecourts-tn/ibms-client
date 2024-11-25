@@ -19,6 +19,10 @@ import { ConditionFilingRoutes } from 'routes/conditionRoutes';
 import { InterveneRoutes } from 'routes/interveneRoute';
 import { ModificationFilingRoutes } from 'routes/modificationRoutes';
 import { SuretyRoutes } from 'routes/suretyRoutes';
+import { DischargeRoutes } from 'routes/dischargeRoutes';
+import { ExtensionRoutes } from 'routes/extensionRoutes';
+import NotFound from 'components/layout/public/NotFound';
+import VerifyOrder from 'components/VerifyOrder';
 
 function App() {
   
@@ -42,8 +46,9 @@ function App() {
                 { InterveneRoutes () }
                 { ModificationFilingRoutes()}
                 { SuretyRoutes() }
+                { DischargeRoutes()}
+                { ExtensionRoutes()}
               </Route> 
-              
               <Route element={<AdminLayout />}>
                 <Route path="court">
                 { courtRoutes.map((route, index) => (

@@ -62,7 +62,7 @@ const SuretyDetails = () => {
     const isSuretySelected = (surety) => selectedSurety.some(selected => selected.surety_name === surety.surety_name);
 
     return (
-        <>
+        <div className="container">
             <ToastContainer /> 
                 <table className="table table-bordered table-striped">
                     <thead>
@@ -149,7 +149,7 @@ const SuretyDetails = () => {
                         ))}
                     </tbody>
                 </table>
-        </> 
+        </div> 
     )
 }
 

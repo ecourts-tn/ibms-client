@@ -69,10 +69,10 @@ const PetitionList = () => {
         }
     }
 
-    if(loading) return <Loading />
 
     return (
         <>
+            {loading && <Loading />}
             <ToastContainer />
             <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
                 <div className="row">

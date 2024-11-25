@@ -15,12 +15,12 @@ function NotFound() {
 
     return (
         <>
-            <div className="container-fluid" style={{minHeight:'600px'}}>
-                <section className="content" style={{ paddingTop: "150px", height:"400px"}}>
-                    <div className="error-page">
-                        <h2 className="headline text-warning" style={{fontWeight:400}}><strong>404</strong></h2>
+            <div className="container">
+                <section className="content my-5 py-5">
+                    <div className="error-page py-5">
+                        <h2 className="headline text-danger mr-3" style={{fontWeight:400}}><strong>404</strong></h2>
                         <div className="error-content">
-                            <h3 className="text-warning"><i className="fas fa-exclamation-triangle text-warning" /><strong>Oops! Page not found.</strong></h3>
+                            <h3 className="text-danger"><i className="fas fa-exclamation-triangle text-danger" /><strong>Oops! Page not found.</strong></h3>
                             <p>
                                 We could not find the page you were looking for.
                                 Meanwhile, you may <Link to="/">return to login page</Link> or try using the search form.
@@ -39,7 +39,7 @@ function NotFound() {
                                         <button 
                                             type="submit" 
                                             name="submit" 
-                                            className="btn btn-warning">
+                                            className="btn btn-danger">
                                                 <i className="fas fa-search mr-2" />Search
                                             </button>
                                     </div>
