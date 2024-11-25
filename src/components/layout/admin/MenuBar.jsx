@@ -1,16 +1,31 @@
-import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { useAuth } from 'contexts/AuthContext'
+import React, {useContext, useState} from 'react';
+import api from 'api';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { AuthContext } from 'contexts/AuthContext'
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
+import { REFRESH_TOKEN } from "constants";
+import { toast, ToastContainer } from 'react-toastify';
 
 
 export default function MenuBar() {
 
-  const {user, logout} = useAuth()
+  const {user, logout} = useContext(AuthContext)
   const {t} = useTranslation()
+  const { language, toggleLanguage } = useContext(LanguageContext);
+  const [isAuth, setIsAuth] = useState(false);
+  const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    const response = await api.post('auth/logout/', {
+      refresh: sessionStorage.getItem(REFRESH_TOKEN),
+    });
+    if (response.status === 205) {
+      sessionStorage.clear();
+      setIsAuth(false);
+      toast.success(t('alerts.logged_out'), { theme: "colored" });
+      setTimeout(() => navigate('/'), 1000);
+    }
   };
 
   if (!user) {
@@ -19,6 +34,7 @@ export default function MenuBar() {
 
   return (
       <>
+        <ToastContainer />
         <aside className="main-sidebar sidebar-dark-primary elevation-4">
           <a href="#/" className="brand-link text-center">
             <span className="brand-text font-weight-bold">IBMS - MHC</span>
@@ -73,7 +89,7 @@ export default function MenuBar() {
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/court/case/listed-today" className="nav-link">
+                        <Link to="/court/case/cause-list" className="nav-link">
                           <i className="far fa-circle nav-icon" />
                           <p>Post Cases to Causelist</p>
                         </Link>
@@ -101,7 +117,7 @@ export default function MenuBar() {
                     </a>
                     <ul className="nav nav-treeview"> */}
                       <li className="nav-item">
-                        <Link to="/court/orders/generate/" className="nav-link">
+                        <Link to="/court/case/order" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
                           <p>Generate Orders</p>
                         </Link>
@@ -212,13 +228,13 @@ export default function MenuBar() {
                         <p>Dashboard</p>
                       </Link>  
                     </li> <li className="nav-item">
-                      <Link to="/prison/response/pending" className="nav-link">
+                      <Link to="/prison/jail-remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
                         <p>Pending Response</p>
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/prison/response/submitted" className="nav-link">
+                      <Link to="/prison/jail-remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
                         <p>Submitted Response</p>
                       </Link>
@@ -234,13 +250,13 @@ export default function MenuBar() {
                         <p>Dashboard</p>
                       </Link>  
                     </li> <li className="nav-item">
-                      <Link to="/prosecution/response/pending" className="nav-link">
+                      <Link to="/prosecution/remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
                         <p>Pending Response</p>
                       </Link>
                     </li>
                     <li className="nav-item">
-                      <Link to="/prosecution/response/submitted" className="nav-link">
+                      <Link to="/prosecution/remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
                         <p>Submitted Response</p>
                       </Link>

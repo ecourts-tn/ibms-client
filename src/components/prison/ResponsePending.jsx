@@ -56,7 +56,7 @@ const ResponsePending = () => {
                                                 <span className="text-danger">Vs</span><br/>
                                                 {petition.litigant.filter(l=>l.litigant_type===2).map((l, index)=>(
                                                     <>
-                                                        <span key={index} className="text-center">{index+1}. {l.litigant_name} {l.designation}</span><br/>
+                                                        <span key={index} className="text-center">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span><br/>
                                                     </>
                                                 ))}
                                             </td>
@@ -64,7 +64,7 @@ const ResponsePending = () => {
                                             <td>{ petition.crime.complainant_name }</td>
                                             <td>{ petition.crime.investigation_officer }</td>
                                             <td>
-                                                <Link to='/prison/response/create/' state={{ efile_no: petition.petition.efile_number }}>
+                                                <Link to='/prison/jail-remark/' state={{ efile_no: petition.petition.efile_number }}>
                                                     <Button
                                                         variant='contained'
                                                         color='success'

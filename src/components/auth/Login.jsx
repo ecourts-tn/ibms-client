@@ -4,7 +4,6 @@ import * as Yup from 'yup'
 import React, {useState, useEffect, useContext} from 'react'
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { useAuth } from 'contexts/AuthContext';
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
 import Radio from '@mui/material/Radio';
@@ -18,6 +17,7 @@ import Loading from 'components/Loading';
 import { useTranslation } from 'react-i18next';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { AuthContext } from 'contexts/AuthContext';
 
 
 
@@ -29,7 +29,7 @@ const Login = () => {
     const [isDepartment, setIsDepartment] = useState(false)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
-    const { login } = useAuth();
+    const {login} = useContext(AuthContext)
     const[errors, setErrors] = useState({})
     const[form, setForm] =  useState({
         usertype: '',

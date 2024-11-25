@@ -15,6 +15,10 @@ import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
 import { BailFilingRoutes } from 'routes/filingRoutes';
+import { ConditionFilingRoutes } from 'routes/conditionRoutes';
+import { InterveneRoutes } from 'routes/interveneRoute';
+import { ModificationFilingRoutes } from 'routes/modificationRoutes';
+import { SuretyRoutes } from 'routes/suretyRoutes';
 
 function App() {
   
@@ -34,7 +38,11 @@ function App() {
                 ))}
                 { BailFilingRoutes() }
                 { ABailFilingRoutes() }
-              </Route>
+                { ConditionFilingRoutes() }
+                { InterveneRoutes () }
+                { ModificationFilingRoutes()}
+                { SuretyRoutes() }
+              </Route> 
               
               <Route element={<AdminLayout />}>
                 <Route path="court">

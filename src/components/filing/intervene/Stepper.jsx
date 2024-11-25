@@ -2,14 +2,16 @@ import React from 'react'
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation } from 'react-router-dom';
 
+
+
 const Stepper = () => {
     const {t} = useTranslation()
     const location = useLocation()
     const steps = [
         { path: 'initial-input', label: t('basic_details') },
-        { path: 'litigant', label: t('litigants') },
+        { path: 'petitioner', label: t('petitioner_details') },
+        { path: 'accused-detail', label:t('accused_details')},
         { path: 'ground', label: t('ground') },
-        { path: 'previous-history', label: t('previous_case_details') },
         { path: 'advocate', label: t('advocate_details') },
         { path: 'document', label: t('upload_documents') },
         { path: 'payment', label: t('payment_details') },
@@ -27,7 +29,7 @@ const Stepper = () => {
                     data-target={`#${step.path}`}
                     >
                     <NavLink
-                        to={`/filing/anticipatory-bail/${step.path}`}
+                        to={`/filing/intervene-petition/${step.path}`}
                         className="step-trigger"
                     >
                         <span className="bs-stepper-circle">{index + 1}</span>

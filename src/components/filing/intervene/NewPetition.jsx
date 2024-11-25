@@ -1,10 +1,8 @@
 import api from 'api';
 import * as Yup from 'yup'
-import 'bs-stepper/dist/css/bs-stepper.min.css';
 import React, { useState, useEffect, useRef } from 'react';
 import Button from '@mui/material/Button'
 import Payment from 'components/payment/Payment';
-import Stepper from 'bs-stepper';
 import { toast, ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import GroundsContainer from 'components/grounds/GroundsContainer';
@@ -46,15 +44,7 @@ const NewPetition = () => {
 
     const stepperRef = useRef(null);
 
-    useEffect(() => {
-        stepperRef.current = new Stepper(document.querySelector('#stepper1'), {
-        linear: false,
-        animation: true,
-        });
-    }, []);
-
-    console.log(petition)
-    
+  
 
     const handleChange = (e) => {
             const {name, value} = e.target
@@ -164,104 +154,9 @@ const NewPetition = () => {
             <div className="container-fluid px-md-5">
                 <div className="row">
                     <div className="col-md-12">
-                        <nav aria-label="breadcrumb" className="mt-2 mb-1">
-                            <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
-                                <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">{t('intervene')}</li>
-                            </ol>
-                        </nav>
-                        <div className="card">
-                            <div className="card-body p-1" style={{minHeight:'500px'}}>
-                                <div id="stepper1" className="bs-stepper">
-                                    <div className="bs-stepper-header mb-3">
-                                        <div className="step" data-target="#initial-input">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">{t('basic_details')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#petitioner">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">{t('petitioner_details')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#accused">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">3</span>
-                                            <span className="bs-stepper-label">{t('accused_details')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#respondent">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">4</span>
-                                            <span className="bs-stepper-label">{t('respondent_details')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#grounds">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">5</span>
-                                            <span className="bs-stepper-label">{t('ground')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#documents">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">6</span>
-                                            <span className="bs-stepper-label">{t('upload_documents')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#payment">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">7</span>
-                                            <span className="bs-stepper-label">{t('payment_details')}</span>
-                                            </button>
-                                        </div>
-                                        <div className="line"></div>
-                                        <div className="step" data-target="#efile">
-                                            <button className="step-trigger">
-                                            <span className="bs-stepper-circle">8</span>
-                                            <span className="bs-stepper-label">{t('efile')}</span>
-                                            </button>
-                                        </div> 
-                                    </div>
-                                    <div className="bs-stepper-content">
-                                        <div id="initial-input" className="content">
-                                            <InitialInput></InitialInput>
-                                        </div>
-                                        <div id="petitioner" className="content">
-                                            <Petitioner />
-                                        </div>
-                                        <div id="accused" className="content">
-                                            <AccusedDetails />
-                                        </div>
-                                        <div id="respondent" className="content">
-                                            <Respondent />
-                                        </div>
-                                        <div id="grounds" className="content">
-                                            <GroundsContainer />
-                                        </div>
-                                        <div id="documents" className="content">
-                                            <Documents />
-                                        </div>
-                                        <div id="payment" className="content">
-                                            <Payment />
-                                        </div>
-                                        <div id="efile" className="content text-center">
-                                            <Button
-                                                variant='contained'
-                                                color='success'
-                                                className="mt-4"
-                                            >{t('final_submit')}</Button>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div className="">
+                            <div id="initial-input" className="">
+                                <InitialInput></InitialInput>
                             </div>
                         </div>
                     </div>

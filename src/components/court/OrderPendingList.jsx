@@ -50,11 +50,11 @@ const OrderPendingList = ({}) => {
                                                 }
                                                 <span className="text text-danger">Vs</span>
                                                 { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation}</span>
+                                                    <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                                 ))
                                                 }
                                                 <span className="float-right">
-                                                    <Link to={`/court/bail/generate/order`} state={{efile_no: c.petition.efile_number}}>
+                                                    <Link to={`/court/case/order/generate`} state={{efile_no: c.petition.efile_number}}>
                                                         <Button variant="contained">
                                                             Generate Order
                                                         </Button>

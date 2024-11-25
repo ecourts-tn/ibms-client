@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "contexts/AuthContext";
+import { AuthContext } from "contexts/AuthContext";
+import { useContext } from "react";
 
 export const PrivateRoute = ({ children }) => {
-  const { user } = useAuth();
+  const { user } = useContext(AuthContext);
   if (!user) {
     return <Navigate to="/auth/login" />;
   }

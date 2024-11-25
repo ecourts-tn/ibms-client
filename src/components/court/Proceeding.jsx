@@ -4,7 +4,7 @@ import { formatDBDate } from 'utils'
 import api from 'api'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Form from 'react-bootstrap/Form'
-import { useAuth } from 'contexts/AuthContext'
+import { AuthContext } from 'contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { StateContext } from 'contexts/StateContext'
@@ -14,7 +14,7 @@ import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 
 const Proceeding = ({efile_no}) => {
-    const {user} = useAuth()
+    const {user} = useContext(AuthContext)
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const[petition, setPetition] = useState({})

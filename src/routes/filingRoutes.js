@@ -11,8 +11,8 @@ import DraftList from "components/filing/DraftList"
 import PetitionList from "components/filing/PetitionList"
 import PetitionDetail from "components/filing/PetitionDetail"
 import BailFiling from "components/filing/bail/BailFiling"
-import Relaxation from 'components/filing/relaxation/Relaxation'
-import IntervenePetition from "components/filing/intervene/NewPetition"
+import Relaxation from 'components/filing/relaxation/RelaxationOld'
+import IntervenePetition from "components/filing/intervene/NewPetitionCopy"
 import Surety from 'components/filing/surety/Surety'
 import DischargeSurety from 'components/filing/surety/DischargeSurety'
 import Extension from 'components/filing/extension/Extension'
@@ -115,14 +115,14 @@ export const filingRoutes = [
             </PrivateRoute>
         )
     },  
-    { 
-        path:"filing/condition-relaxation",
-        element:(
-            <PrivateRoute>
-                <Relaxation />
-            </PrivateRoute>
-        )
-    },
+    // { 
+    //     path:"filing/condition-relaxation",
+    //     element:(
+    //         <PrivateRoute>
+    //             <Relaxation />
+    //         </PrivateRoute>
+    //     )
+    // },
     {
         path:"filing/modification-petition",
         element:(
@@ -131,7 +131,7 @@ export const filingRoutes = [
             </PrivateRoute>
         )
     },
-    {   path:"filing/intervene-petition",
+    {   path:"filing/intervene",
         element:(
             <PrivateRoute>
                 <IntervenePetition />

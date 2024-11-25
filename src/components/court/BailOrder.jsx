@@ -58,7 +58,7 @@ const BailOrder = () => {
                                     <p style={{textAlign: 'left'}}>{litigant.filter(l=>l.litigant_type===1).map((l, index)=>(<span><strong>{l.litigant_name}, {l.age}, {l.gender}</strong><br />{l.relation} Name: {l.relation_name}</span>))},</p>
                                     <p style={{textAlign: 'right'}}><br /> ... Petitioner / Accused.</p>
                                     <p style={{textAlign: 'center'}}><br />// Versus //</p>
-                                    <p style={{textAlign: 'left'}}><br />State of Tamilnadu Rep by {litigant.filter(l=>l.litigant_type===2).map((l, index)=>(<span>{l.designation},<br />{l.police_station.station_name}, {l.district.district_name}</span>))}</p>
+                                    <p style={{textAlign: 'left'}}><br />State of Tamilnadu Rep by {litigant.filter(l=>l.litigant_type===2).map((l, index)=>(<span>{l.designation?.designation_name},<br />{l.police_station.station_name}, {l.district.district_name}</span>))}</p>
                                     <p style={{textAlign: 'right'}}><br /> ... Respondent/Complainant.</p>
                                     <p style={{textAlign: 'center'}}>Petition in [CASE NO], [FILING DATE] filed [BAIL TYPE] Cr. P.C. prays to grant [CASE TYPE] to the petitioner in [FIR NO][FIR YEAR] in the file of [Police Station].</p>
                                     <p>&nbsp;This petition is coming on this day for hearing before me, in the presence of [PRESENT PETITIONER ADVOCATE NAME(s)], Advocate(s) for the petitioner and [PROCECUTOR NAME], [PROCECUTOR DESIGNATION] for the respondent and upon hearing both side arguments, this Court passed the following:</p>

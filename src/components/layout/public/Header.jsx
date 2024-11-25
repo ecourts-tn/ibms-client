@@ -1,13 +1,14 @@
+import api from 'api';
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import api from 'api';
 import { REFRESH_TOKEN } from "constants";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next';
 import './header.css';
+import { AuthContext } from 'contexts/AuthContext';
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
@@ -30,7 +31,7 @@ const Header = () => {
     });
     if (response.status === 205) {
       sessionStorage.clear();
-      setIsAuth(false);
+      // setIsAuth(false);
       toast.success(t('alerts.logged_out'), { theme: "colored" });
       setTimeout(() => navigate('/'), 1000);
     }
@@ -44,11 +45,11 @@ const Header = () => {
 
   const filingLinks = [
     { path: "/filing/bail/initial-input", label: t('bail') },
-    { path: "/filing/anticipatory/bail", label: t('abail') },
-    { path: "/filing/condition-relaxation", label: t('condition_relaxation') },
-    { path: "/filing/intervene-petition", label: t('intervene') },
-    { path: "/filing/modification-petition", label: t('modification') },
-    { path: "/filing/surety-petition", label: t('surety') },
+    { path: "/filing/anticipatory-bail/initial-input", label: t('abail') },
+    { path: "/filing/condition-relaxation/initial-input", label: t('condition_relaxation') },
+    { path: "/filing/intervene-petition/initial-input", label: t('intervene') },
+    { path: "/filing/modification-petition/initial-input", label: t('modification') },
+    { path: "/filing/surety-petition/initial-input", label: t('surety') },
     { path: "/filing/surety/discharge", label: t('discharge_surety') },
     { path: "/filing/extension-time", label: t('extension') },
     { path: "/filing/return-passport", label: t('return_passport') },

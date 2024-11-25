@@ -84,9 +84,9 @@ const CrimeDetails = ({crime}) => {
                     <td colSpan={4}>
                         <p><strong>{t('gist_in_local')}</strong></p>
                         <span dangerouslySetInnerHTML={CreateMarkup(crime.gist_in_local)}></span>
-                        {/* <button className="btn btn-primary btn-sm" onClick={() => translateText(crime.gist_in_local)}>
+                        <button className="btn btn-primary btn-sm" onClick={() => translateText(crime.gist_in_local)}>
                             {language === 'ta' ? 'ஆங்கிலத்திற்கு மொழிபெயர்க்க' : 'Translate to English'}
-                        </button> */}
+                        </button>
                         {loading && <Loading />}
                         { translatedText.translated_text && (
                             <div>

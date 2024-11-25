@@ -97,7 +97,7 @@ const PdfGenerator = () => {
                         <div className="col-md-6">
                             { respondent.map((l, index) => (
                                 <>
-                                    <p><strong>{index+1}. {l.litigant_name} rep by {l.designation}</strong><br/>
+                                    <p><strong>{index+1}. {l.litigant_name} rep by {l.designation?.designation_name}</strong><br/>
                                         { l.address}, { l.address }
                                     </p>
                                 </>

@@ -2,32 +2,44 @@ import api from 'api';
 import * as Yup from 'yup'
 import 'bs-stepper/dist/css/bs-stepper.min.css';
 import React, { useState, useEffect, useRef, useContext } from 'react';
+import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button'
+import Payment from 'components/payment/Payment';
 import Stepper from 'bs-stepper';
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
+import InitialInput from '../InitialInput';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search'
-import { toast, ToastContainer } from 'react-toastify';
+import Document from 'components/filing/Document';
+import GroundsContainer from 'components/filing/Ground';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { SeatContext } from 'contexts/SeatContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { useLocalStorage } from 'hooks/useLocalStorage';
+import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/InitialInput';
-import GroundsContainer from 'components/filing/Ground';
-import Document from 'components/filing/Document';
-import Payment from 'components/payment/Payment';
-import SuretyDetails from 'components/filing/surety/SuretyDetails';
 
 
-const Surety = () => {
+const ModificationNew = () => {
+
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
-    const {taluks}  = useContext(TalukContext)
-    const {benchtypes} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
+    const {benchtypes} = useContext(SeatContext)
+    const[bail, setBail] = useState({})
+    const[eFileNumber, seteFileNumber] = useState('')
+    const[isPetition, setIsPetition] = useState(false)
+    const[petitioners, setPetitioners] = useState([])
+    const[selectedPetitioner, setSelectedPetitioner] = useState([])
+    const[selectedRespondent, setSelectedRespondent] = useState([])
+    const[respondents, setRespondents] = useState([])
+    const[advocates, setAdvocates]     = useState([])
+    const[errors, setErrors] = useState({})
+    const [grounds, setGrounds] = useState('')
+    const[cases, setCases] = useState([])
+    const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
         court_type:1,
         bench_type:'',
@@ -38,53 +50,15 @@ const Surety = () => {
         reg_number: '',
         reg_year: ''
     })
+    const[petition, setPetition] = useState({})
     const {t} = useTranslation()
-    const[errors, setErrors] = useState({})
-    const[bail, setBail] = useState({})
-    const[cases, setCases] = useState([])
-    const[searchPetition, setSearchPetition] = useState(1)
-    const[eFileNumber, seteFileNumber] = useState('')
-    const[isPetition, setIsPetition] = useState(false)
-    const[petition, setPetition] = useState({
-        court_type: '',
-        bench_type: '',
-        state: '',
-        district:'',
-        establishment: '',
-        court: '',
-        case_type: 6,
-        bail_type: '',
-        complaint_type: 2,
-        crime_registered: 2,
-    })
     const searchSchema = Yup.object({
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
-                return schema.required(t('errors.bench_required'))
-            }
-        }),
-        state: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.state_required'))
-            }
-        }),
-        district: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.district_required'))
-            }
-        }),
-        establishment: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.est_required'))
-            }
-        }),
-        case_type: Yup.string().required(t('errors.case_type_required')),
-        reg_number: Yup.number().typeError(t('errors.numeric')).required(),
-        reg_year: Yup.number().typeError(t('errors.numeric')).required()
+        case_type: Yup.string().required("Please select the case type"),
+        case_number: Yup.number().required("Please enter case number"),
+        case_year: Yup.number().required("Please enter the case year")
     })
 
-    const[searchErrors, setSearchErrors]            = useState({})
-    const [user, setUser] = useLocalStorage("user", null)
+    const[searchErrors, setSearchErrors] = useState({})
 
     const stepperRef = useRef(null);
 
@@ -95,12 +69,51 @@ const Surety = () => {
         });
     }, []);
 
-    const addBankAccount = () => {}
+    const handlePetitionerCheckBoxChange = (petitioner) => {
+        if (selectedPetitioner.includes(petitioner)) {
+          // If already selected, remove the petitioner from the selected list
+          setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
+        } else {
+          // Otherwise, add the petitioner to the selected list
+          setSelectedPetitioner([...selectedPetitioner, {
+            litigant_name :petitioner.litigant_name,
+            litigant_type :1, 
+            rank: petitioner.rank,
+            gender: petitioner.gender,
+            act: petitioner.act,
+            section: petitioner.section,
+            relation: petitioner.relation,
+            relation_name: petitioner.relation_name,
+            age: petitioner.age,
+            address: petitioner.address,
+            mobile_number: petitioner.mobile_number,
+            email_address: petitioner.email_address,
+            nationality: petitioner.nationality,
+          }]);
+        }
+    };
 
-    const handleBankAccountChange = () =>{}
+    const handleRespondentCheckBoxChange = (respondent) => {
+        if (selectedRespondent.includes(respondent)) {
+          // If already selected, remove the respondent from the selected list
+          setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
+        } else {
+          // Otherwise, add the respondent to the selected list
+          setSelectedRespondent([...selectedRespondent, {
+            litigant_name: respondent.litigant_name,
+            litigant_type: 2, 
+            designation: respondent.designation,
+            state: respondent.state.state_code,
+            district: respondent.district.district_code,
+            police_station: respondent.police_station.cctns_code,
+            address: respondent.address,
+          }]);
+        }
+    };
 
-    const removeBankAccount = () => {}
-
+    const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
+    const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
+    
     useEffect(() => {
         async function fetchData(){
             try{
@@ -115,14 +128,18 @@ const Surety = () => {
         fetchData();
     },[])
 
+
     useEffect(() => {
         const fetchDetails = async() => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet} = response.data
+                    const {petition:pet, litigant, advocate} = response.data
                     setIsPetition(true)
                     setBail(pet)
+                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
+                    setRespondents(litigant.filter(l=>l.litigant_type===2))
+                    setAdvocates(advocate)
                     setPetition({...petition,
                         court_type: pet.court_type.id,
                         bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
@@ -130,35 +147,53 @@ const Surety = () => {
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
                         court: pet.court ? pet.court.court_code : null,
-                        case_type: 6,
-                        reg_type: pet.reg_type.id,
-                        reg_number: pet.reg_number,
-                        reg_year: pet.reg_year,
-                        registration_date: pet.registration_date
+                        case_type: 3,
+                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
+                        complaint_type: pet.complaint_type.id,
+                        crime_registered: pet.crime_registered,
                     })
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        fetchDetails();
+        if(eFileNumber !== ''){
+            fetchDetails()
+        }else{
+            resetPage()
+        }
     },[eFileNumber])
+
+    const petitionDetails = () => {
+        return{
+            
+        }
+    }
 
 
     const handleSearch = async(e) => {
         e.preventDefault()
         try{
-            await searchSchema.validate(searchForm, { abortEarly:false})
-            const response = await api.get("bail/petition/detail/", { params: searchForm})
+            // await searchSchema.validate(searchForm, { abortEarly:false})
+            const response = await api.get("case/bail/approved/single/", { params: searchForm})
+            console.log(response.data)
             if(response.status === 200){
-                // setForm({...form, cino:response.data.petition.cino})
+                setIsPetition(true)
+                setPetition(response.data.petition)
+                setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
+                setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
+                setAdvocates(response.data.advocate)
             }
-            if(response.status === 404){
-                toast.error("Petition details not found",{
-                    theme:"colored"
-                })
-            }
+
         }catch(error){
+            if(error.response){
+                if(error.response.status === 404){
+                    resetPage()
+                    toast.error(error.response.data.message, {
+                        theme:"colored"
+                    })
+                }
+            }
             const newError = {}
             if(error.inner){
                 error.inner.forEach((err) => {
@@ -166,7 +201,7 @@ const Surety = () => {
                 });
                 setSearchErrors(newError)
             }
-            if(error.response){
+            if(error){
                 toast.error(error.response.message,{
                     theme:"colored"
                 })
@@ -174,28 +209,41 @@ const Surety = () => {
         }
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        try{
-            // await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/surety/create/", petition)
-            if(response.status === 201){
-                sessionStorage.setItem("efile_no", response.data.efile_number)
-                toast.success(`${response.data.efile_number} details submitted successfully`, {
-                    theme:"colored"
-                }) 
-            }
-            console.log(response.data)
-          }catch(error){
-            if (error.inner){
-                const newErrors = {};
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message;
-                });
-                setErrors(newErrors);
-            }
+    const handleInitialSubmit = async() => {
+        const post_data = {
+            petition: petition,
+            petitioner:selectedPetitioner,
+            respondent: selectedRespondent,
+        }
+        if (Object.keys(selectedPetitioner).length === 0){
+            alert("Please select atleast one petitioner")
+            return
+        }
+        const response = await api.post("case/filing/relaxation/", post_data)
+        if(response.status === 201){
+            resetPage()
+            setSelectedPetitioner([])
+            setSelectedRespondent([])
+            sessionStorage.setItem("efile_no", response.data.efile_number)
+            toast.success(`${response.data.efile_number} details submitted successfully`,{
+                theme: "colored"
+            })
         }
     }
+
+    const resetPage = () => {
+        setSearchForm({...searchForm, reg_number: '', reg_year: ''})
+        seteFileNumber('')
+        setIsPetition(false)
+        setPetition({})
+        setPetitioners([])
+        setRespondents([])
+        setAdvocates([])
+    }
+
+    useEffect(() => {
+        resetPage()
+    },[searchForm.court_type, searchPetition])
 
     return(
         <>
@@ -207,28 +255,28 @@ const Surety = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                                 <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">{t('discharge_surety')}</li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('modification')}</li>
                             </ol>
                         </nav>
                         <div className="card">
                             <div className="card-body p-1" style={{minHeight:'500px'}}>
                                 <div id="stepper1" className="bs-stepper">
-                                    <div className="bs-stepper-header mb-3" style={{backgroundColor:'#ebf5fb'}}>
+                                    <div className="bs-stepper-header mb-3">
                                         <div className="step" data-target="#initial-input">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">1</span>
-                                            <span className="bs-stepper-label">{t('basic_details')}</span>
+                                            <span className="bs-stepper-label">{t('petition_details')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
-                                        <div className="step" data-target="#surety-details">
+                                        <div className="step" data-target="#litigant">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">2</span>
-                                            <span className="bs-stepper-label">{t('surety_details')}</span>
+                                            <span className="bs-stepper-label">{t('litigants')}</span>
                                             </button>
                                         </div>
                                         <div className="line"></div>
-                                        <div className="step" data-target="#grounds">
+                                        <div className="step" data-target="#ground">
                                             <button className="step-trigger">
                                             <span className="bs-stepper-circle">3</span>
                                             <span className="bs-stepper-label">{t('ground')}</span>
@@ -289,12 +337,12 @@ const Surety = () => {
                                                 </div>
                                             </div>
                                             <div className="row">
-                                                <div className="col-md-6 offset-3">
+                                                <div className="col-md-8 offset-2">
                                                     { parseInt(searchPetition) === 1 && (
                                                         <div className="form-group row">
-                                                            <div className="col-sm-12">
+                                                            <div className="col-sm-8 offset-md-2">
                                                                 <select 
-                                                                    name="eFileNumber" 
+                                                                    name="efile_no" 
                                                                     className="form-control"
                                                                     value={eFileNumber}
                                                                     onChange={(e) => seteFileNumber(e.target.value)}
@@ -315,7 +363,7 @@ const Surety = () => {
                                                     )}
                                                 </div>
                                                 <div className="col-md-8 offset-2">
-                                                { parseInt(searchPetition) === 2 && (
+                                                    { parseInt(searchPetition) === 2 && (
                                                     <form>
                                                         <div className="row">
                                                             <div className="col-md-12 d-flex justify-content-center">
@@ -352,7 +400,7 @@ const Surety = () => {
                                                                                 <label htmlFor="">{t('state')}</label>
                                                                                 <select 
                                                                                     name="state" 
-                                                                                    className={`form-control ${searchErrors.state ? 'is-invalid': ''}`}
+                                                                                    className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                                                                     onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                                 >
                                                                                     <option value="">Select state</option>
@@ -370,7 +418,7 @@ const Surety = () => {
                                                                                 <label htmlFor="">{t('district')}</label>
                                                                                 <select 
                                                                                     name="district" 
-                                                                                    className={`form-control ${searchErrors.district ? 'is-invalid': ''}`}
+                                                                                    className={`form-control ${errors.district ? 'is-invalid': ''}`}
                                                                                     onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                                 >
                                                                                     <option value="">Select district</option>
@@ -392,7 +440,7 @@ const Surety = () => {
                                                                             <label htmlFor="">{t('est_name')}</label>
                                                                             <select 
                                                                                 name="establishment" 
-                                                                                className={`form-control ${searchErrors.establishment ? 'is-invalid': ''}`}
+                                                                                className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
                                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                             >
                                                                                 <option value="">Select establishment</option>
@@ -493,44 +541,261 @@ const Surety = () => {
                                                     </form>
                                                     )}
                                                 </div>
-                                                <div className="col-md-8 offset-md-2">
-                                                { isPetition && (
-                                                    <>
-                                                        <InitialInput petition={bail} />
+                                                <div className="container-fluid mt-5 px-5">
+                                                    { isPetition && (
+                                                        <>
+                                                            <InitialInput petition={bail} />
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{t('select')}</th>
+                                                                        <th>{t('petitioner_name')}</th>
+                                                                        <th>{t('father_husband_guardian')}</th>
+                                                                        <th>{t('age')}</th>
+                                                                        <th>{t('accused_rank')}</th>
+                                                                        <th>{t('act')}</th>
+                                                                        <th>{t('section')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { petitioners.map((petitioner, index) => (
+                                                                    <tr key={index}>
+                                                                        <td>
+                                                                            <div className="icheck-success">
+                                                                                <input 
+                                                                                    type="checkbox" 
+                                                                                    id={`checkboxSuccess${petitioner.litigant_id}`} 
+                                                                                    checked={isPetitionerSelected(petitioner)}
+                                                                                    onChange={() => handlePetitionerCheckBoxChange(petitioner)}
+                                                                                />
+                                                                                <label htmlFor={`checkboxSuccess${petitioner.litigant_id}`}></label>
+                                                                            </div>                                                                            </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.litigant_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.relation_name}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.age}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.rank}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={ petitioner.act}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                        <td>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className="form-control" 
+                                                                                value={petitioner.section}
+                                                                                readOnly={true}
+                                                                            />
+                                                                        </td>
+                                                                    </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className='bg-navy'>
+                                                                        <td colSpan={4}><strong>{t('condition_details')}</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{t('bail_date')}</th>
+                                                                        <th>{t('released_date')}</th>
+                                                                        <th>{t('days_present')}</th>
+                                                                        <th>{t('days_absent')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                        <td><input type="text" className='form-control' readOnly={true} /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{t('respondent_name')}</th>
+                                                                        <th>{t('designation')}</th>
+                                                                        <th>{t('police_station')}</th>
+                                                                        <th>{t('district')}</th>
+                                                                        <th>{t('address')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { respondents.map((res, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>
+                                                                                <div className="icheck-success">
+                                                                                    <input 
+                                                                                        type="checkbox" 
+                                                                                        id={`checkboxSuccess${res.litigant_id}`} 
+                                                                                        checked={isRespondentSelected(res)}
+                                                                                        onChange={() => handleRespondentCheckBoxChange(res)}
+                                                                                    />
+                                                                                    <label htmlFor={`checkboxSuccess${res.litigant_id}`}></label>
+                                                                                </div>                                                                            
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.litigant_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.designation}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.district.district_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={res.address}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                            <table className="table table-bordered table-striped table-sm">
+                                                                <thead>
+                                                                    <tr className="bg-navy">
+                                                                        <td colSpan={6}><strong>{t('advocate_details')}</strong>
+                                                                            <div className="float-right">
+                                                                                <button className="btn btn-success btn-sm"><i className="fa fa-plus mr-2"></i>Add New</button>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th>{t('adv_name')}</th>
+                                                                        <th>{t('enrollment_number')}</th>
+                                                                        <th>{t('mobile_number')}</th>
+                                                                        <th>{t('email_address')}</th>
+                                                                        <th width={120}>{t('action')}</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    { advocates.map((advocate, index) => (
+                                                                        <tr key={index}>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_name}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.enrolment_number}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_mobile}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                <input 
+                                                                                    type="text" 
+                                                                                    className="form-control" 
+                                                                                    value={advocate.advocate_email}
+                                                                                    readOnly={true}
+                                                                                />
+                                                                            </td>
+                                                                            <td>
+                                                                                { !advocate.is_primary && (
+                                                                                    <>
+                                                                                        <IconButton aria-label="delete" disabled color="primary">
+                                                                                            <EditIcon color='info'/>
+                                                                                        </IconButton>
+                                                                                        <IconButton aria-label="delete">
+                                                                                            <DeleteIcon color='error' />
+                                                                                        </IconButton>
+                                                                                    
+                                                                                    </>
+                                                                                )}
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </>
+                                                    )}
+                                                    { isPetition && (
                                                         <div className="d-flex justify-content-center">
                                                             <Button
-                                                                variant='contained'
+                                                                variant="contained"
                                                                 color="success"
-                                                                onClick={handleSubmit}
+                                                                onClick={handleInitialSubmit}
                                                             >
-                                                                Submit
+                                                                {t('submit')}
                                                             </Button>
                                                         </div>
-                                                    </>
-                                                )}
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="surety-details" className="content">
-                                            <div className="container-fluid mt-5 px-5">
-                                                <div className="row">                                    
-                                                    <SuretyDetails />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="grounds" className="content">
-                                            <div className="container-fluid mt-5 px-5">
-                                                <div className="row">                                    
-                                                   <GroundsContainer/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="documents" className="content">
-                                            <div className="container-fluid mt-5 px-5">
-                                                <div className="row">                                    
-                                                    <Document />
-                                                </div>
-                                            </div>
+                                        <div id="litigant" className="content">
+
                                         </div>
                                         <div id="payment" className="content">
                                             <Payment />
@@ -548,6 +813,25 @@ const Surety = () => {
                                                     endIcon={<ArrowForward />}
                                                 >{t('next')}</Button>
                                             </div>
+                                        </div>
+                                        <div id="ground" className="content">
+                                            <GroundsContainer />
+                                            {/* <div className="row">
+                                                <div className="col-md-12">
+                                                    <div className="form-group">
+                                                        <Editor 
+                                                            value={form.grounds} 
+                                                            onChange={(e) => setForm({...form, grounds: e.target.value })} 
+                                                        />
+                                                        <div className="invalid-feedback">
+                                                            { errors.ground }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> */}
+                                        </div>
+                                        <div id="documents" className="content text-center">
+                                            <Document />
                                         </div>
                                         <div id="efile" className="content text-center">
                                             <Button
@@ -567,4 +851,4 @@ const Surety = () => {
     )
 }
 
-export default Surety;
+export default ModificationNew;

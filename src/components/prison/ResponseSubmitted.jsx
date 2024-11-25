@@ -35,6 +35,7 @@ const ResponseSubmitted = () => {
                                         <tr>
                                             <th>S.No</th>
                                             <th>eFile Number Number</th>
+                                            <th>Litigant</th>
                                             <th>Crime Number/Year</th>
                                             <th>Complainant Name</th>
                                             <th>Investigation Officer</th>
@@ -55,7 +56,7 @@ const ResponseSubmitted = () => {
                                                 <span className="text-danger">Vs</span><br/>
                                                 {petition.litigant.filter(l=>l.litigant_type===2).map((l, index)=>(
                                                     <>
-                                                        <span key={index} className="text-center">{index+1}. {l.litigant_name} {l.designation}</span><br/>
+                                                        <span key={index} className="text-center">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span><br/>
                                                     </>
                                                 ))}
                                             </td>

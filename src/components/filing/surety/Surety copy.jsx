@@ -8,6 +8,7 @@ import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search'
 import { toast, ToastContainer } from 'react-toastify';
+import { RequiredField } from 'utils';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { TalukContext } from 'contexts/TalukContext';
@@ -15,11 +16,11 @@ import { SeatContext } from 'contexts/SeatContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/InitialInput';
 import GroundsContainer from 'components/filing/Ground';
 import Document from 'components/filing/Document';
+import SuretyForm from 'components/filing/surety/SuretyForm';
+import InitialInput from 'components/filing/InitialInput';
 import Payment from 'components/payment/Payment';
-import SuretyDetails from 'components/filing/surety/SuretyDetails';
 
 
 const Surety = () => {
@@ -38,7 +39,62 @@ const Surety = () => {
         reg_number: '',
         reg_year: ''
     })
+    const initialState = {
+        cino: '',
+        surety_name: '',
+        relation: '',
+        relative_name:'',
+        aadhar_number: '',
+        address: '',
+        state: '',
+        district: '',
+        taluk: '',
+        pincode: '',
+        phone_number: '',
+        email_address: '',
+        residing_years: '',
+        property_type: '',
+        survey_number: '',
+        site_location:'',
+        site_area:'',
+        site_valuation:'',
+        rent_bill_surety_name: false,
+        property_document:'',
+        employment_type: '',
+        business_address: '',
+        business_state: '',
+        business_district: '',
+        business_taluk: '',
+        business_nature: '',
+        business_rent_paid: '',
+        is_rent_bill_name: false,
+        business_document:'',
+        employer_name: '',
+        designation: '',
+        employer_address: '',
+        employer_state: '',
+        employer_district: '',
+        employer_taluk: '',
+        service_length: '',
+        pf_amount: '',
+        property_details: '',
+        income_tax_paid: '',
+        employment_document: '',
+        bank_accounts: [],
+        accused_duration_year: '',
+        accused_duration_month: '',
+        is_related: false,
+        relation_details: '',
+        others_surety:'',
+        litigation_details: '',
+        other_particulars: '',
+        surety_amount: '',
+        photo: '',
+        signature:'',
+        identity_proof:''
+    }
     const {t} = useTranslation()
+    const[form, setForm] = useState(initialState);
     const[errors, setErrors] = useState({})
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
@@ -148,10 +204,10 @@ const Surety = () => {
     const handleSearch = async(e) => {
         e.preventDefault()
         try{
-            await searchSchema.validate(searchForm, { abortEarly:false})
+            // await searchSchema.validate(searchForm, { abortEarly:false})
             const response = await api.get("bail/petition/detail/", { params: searchForm})
             if(response.status === 200){
-                // setForm({...form, cino:response.data.petition.cino})
+                setForm({...form, cino:response.data.petition.cino})
             }
             if(response.status === 404){
                 toast.error("Petition details not found",{
@@ -166,7 +222,7 @@ const Surety = () => {
                 });
                 setSearchErrors(newError)
             }
-            if(error.response){
+            if(error){
                 toast.error(error.response.message,{
                     theme:"colored"
                 })
@@ -207,7 +263,7 @@ const Surety = () => {
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                                 <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">{t('discharge_surety')}</li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('surety')}</li>
                             </ol>
                         </nav>
                         <div className="card">
@@ -251,7 +307,7 @@ const Surety = () => {
                                         <div className="line"></div>
                                         <div className="step" data-target="#efile">
                                             <button className="step-trigger">
-                                            <span className="bs-stepper-circle">6</span>
+                                            <span className="bs-stepper-circle">4</span>
                                             <span className="bs-stepper-label">{t('efile')}</span>
                                             </button>
                                         </div>
@@ -352,7 +408,7 @@ const Surety = () => {
                                                                                 <label htmlFor="">{t('state')}</label>
                                                                                 <select 
                                                                                     name="state" 
-                                                                                    className={`form-control ${searchErrors.state ? 'is-invalid': ''}`}
+                                                                                    className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                                                                     onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                                 >
                                                                                     <option value="">Select state</option>
@@ -370,7 +426,7 @@ const Surety = () => {
                                                                                 <label htmlFor="">{t('district')}</label>
                                                                                 <select 
                                                                                     name="district" 
-                                                                                    className={`form-control ${searchErrors.district ? 'is-invalid': ''}`}
+                                                                                    className={`form-control ${errors.district ? 'is-invalid': ''}`}
                                                                                     onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                                 >
                                                                                     <option value="">Select district</option>
@@ -392,7 +448,7 @@ const Surety = () => {
                                                                             <label htmlFor="">{t('est_name')}</label>
                                                                             <select 
                                                                                 name="establishment" 
-                                                                                className={`form-control ${searchErrors.establishment ? 'is-invalid': ''}`}
+                                                                                className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
                                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                                             >
                                                                                 <option value="">Select establishment</option>
@@ -514,7 +570,7 @@ const Surety = () => {
                                         <div id="surety-details" className="content">
                                             <div className="container-fluid mt-5 px-5">
                                                 <div className="row">                                    
-                                                    <SuretyDetails />
+                                                    <SuretyForm />
                                                 </div>
                                             </div>
                                         </div>

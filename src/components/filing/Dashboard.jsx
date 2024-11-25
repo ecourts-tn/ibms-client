@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify'
 import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 import { useTranslation } from 'react-i18next'
+import DynamicChart from 'components/DynamicChart'
 
 const Dashboard = () => {
 
@@ -111,6 +112,9 @@ const Dashboard = () => {
                         </div>
                     </div>
                     <div className="row">
+                        {/* <div className="col-md-6">
+                            <DynamicChart />
+                        </div> */}
                         <div className="col-md-3">
                             <div className="card">
                                 <div className="card-header border-0 bg-success">

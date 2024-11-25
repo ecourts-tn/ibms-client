@@ -133,7 +133,7 @@ const PetitionList = () => {
                                         <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation}</span>
+                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                         ))
                                         }
                                     </td>
@@ -161,7 +161,7 @@ const PetitionList = () => {
                                         ))}
                                     </td>
                                     <td>
-                                        <Link to="/petition/pdf" state={{efile_no:item.petition.efile_number}}>Download</Link>
+                                        <Link to="/filing/generate/pdf" state={{efile_no:item.petition.efile_number}}>Download</Link>
                                     </td>
                                 </tr>
                                 ))}

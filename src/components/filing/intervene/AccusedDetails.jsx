@@ -130,7 +130,7 @@ const AccusedDetails = ({addPetitioner}) => {
   }
 
   return (
-    <>
+    <div className="container">
       <ToastContainer />
         { accused.length > 0 && (
           <div className="row">
@@ -460,7 +460,7 @@ const AccusedDetails = ({addPetitioner}) => {
                 ><i className="fa fa-plus mr-2"></i>{t('add_litigant')}</Button>
             </div>
         </div>
-    </>
+    </div>
   )
 }
 

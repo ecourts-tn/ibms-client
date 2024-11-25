@@ -22,7 +22,7 @@ import DraftList from "components/filing/DraftList"
 import PetitionList from "components/filing/PetitionList"
 import PetitionDetail from "components/filing/PetitionDetail"
 import BailFiling from "components/filing/bail/BailFiling"
-import Relaxation from 'components/filing/relaxation/Relaxation'
+import Relaxation from 'components/filing/relaxation/RelaxationOld'
 import IntervenePetition from "components/filing/intervene/NewPetition"
 import Surety from 'components/filing/surety/Surety'
 import DischargeSurety from 'components/filing/surety/DischargeSurety'

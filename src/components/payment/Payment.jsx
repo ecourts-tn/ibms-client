@@ -182,7 +182,7 @@ const Payment = () => {
             <div className="container my-4">
                 {/* <form method="post"> */}
                     <div className="row">
-                        <div className="col-md-8 offset-md-2">
+                        <div className="col-md-10 offset-md-1">
                             <div className="row">
                                 <div className="col-md-12">
                                     { paymentHistory.length > 0 && (

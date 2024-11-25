@@ -167,7 +167,7 @@ const Dashboard = () => {
                                                 ))} 
                                                 <span className="text text-danger">Vs</span>
                                                 { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-                                                    <span className="text ml-2">{res.litigant_name} {res.designation}</span>
+                                                    <span className="text ml-2">{res.litigant_name} {res.designation?.designation_name}</span>
                                                 ))} 
                                                 <div className="float-right">
                                                     <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small>

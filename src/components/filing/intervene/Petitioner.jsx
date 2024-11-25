@@ -183,7 +183,7 @@ const Petitioner = ({addPetitioner}) => {
   }
 
   return (
-    <>
+    <div className="container">
       <ToastContainer />
         <div className="row mt-2">  
             <div className="col-md-3">
@@ -437,14 +437,16 @@ const Petitioner = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>
             </div>
-            <div className="col-md-3 mt-4 pt-2">
-            <Button 
-                variant="secondary"
-                onClick={handleSubmit}
-                ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
-            </div>
+          </div>
+          <div className="row">
+              <div className="col-md-3 mt-2">
+              <Button 
+                  variant="secondary"
+                  onClick={handleSubmit}
+                  ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
+              </div>
         </div>
-    </>
+    </div>
   )
 }
 

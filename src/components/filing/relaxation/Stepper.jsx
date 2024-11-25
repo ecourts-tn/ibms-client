@@ -9,7 +9,6 @@ const Stepper = () => {
         { path: 'initial-input', label: t('basic_details') },
         { path: 'litigant', label: t('litigants') },
         { path: 'ground', label: t('ground') },
-        { path: 'previous-history', label: t('previous_case_details') },
         { path: 'advocate', label: t('advocate_details') },
         { path: 'document', label: t('upload_documents') },
         { path: 'payment', label: t('payment_details') },
@@ -27,7 +26,7 @@ const Stepper = () => {
                     data-target={`#${step.path}`}
                     >
                     <NavLink
-                        to={`/filing/anticipatory-bail/${step.path}`}
+                        to={`/filing/condition-relaxation/${step.path}`}
                         className="step-trigger"
                     >
                         <span className="bs-stepper-circle">{index + 1}</span>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
 import api from "api";
@@ -6,6 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", null);
+  const [isAuth, setIsAuth] = useState(false)
   const navigate = useNavigate();
 
   // call this function when you want to authenticate the user
@@ -15,12 +16,14 @@ export const AuthProvider = ({ children }) => {
         const response = await api.post(`auth/user/info/`)
         if(response.status === 200){
           setUser(response.data)
+          setIsAuth(true)
           setTimeout(() => {
             navigate("/dashboard");
           },1000)
         }
       }catch(error){
         setUser(null)
+        setIsAuth(false)
       }
     }
     
@@ -31,6 +34,7 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem("access")
     sessionStorage.removeItem("refresh")
     sessionStorage.removeItem("user")
+    setIsAuth(false)
     setUser(null);
     navigate("/auth/login", {replace: true });
   };
@@ -40,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       user,
       login,
       logout,
+      isAuth
     }),
     [user]
   );

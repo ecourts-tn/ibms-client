@@ -128,7 +128,7 @@ const PetitionDetail = () => {
                                         <td>
                                         { respondent.map((res, index) => (
                                             <>
-                                                <p><strong>{index+1}. {res.litigant_name} {res.designation}</strong><br/>
+                                                <p><strong>{index+1}. {res.litigant_name} {res.designation?.designation_name}</strong><br/>
                                                     { `${res.police_station.station_name}, ${res.district.district_name}, ${res.address}`}
                                                 </p>
                                             </>
