@@ -267,7 +267,7 @@ const Relaxation = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-md-8 offset-2">
+                    <div className="col-md-12">
                         { parseInt(searchPetition) === 1 && (
                             <div className="form-group row">
                                 <div className="col-sm-8 offset-md-2">
@@ -292,7 +292,7 @@ const Relaxation = () => {
                             </div>
                         )}
                     </div>
-                    <div className="col-md-8 offset-2">
+                    <div className="col-md-12">
                         { parseInt(searchPetition) === 2 && (
                         <form>
                             <div className="row">
@@ -322,7 +322,7 @@ const Relaxation = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-md-6 offset-md-3">
+                                <div className="col-md-8 offset-md-2">
                                     { parseInt(searchForm.judiciary) === 2 && (
                                         <div className="row">
                                             <div className="col-md-6">
@@ -333,9 +333,11 @@ const Relaxation = () => {
                                                         className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                     >
-                                                        <option value="">Select state</option>
+                                                        <option value="">{t('alerts.select_state')}</option>
                                                         { states.map((state, index) => (
-                                                        <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                        <option value={state.state_code} key={index}>
+                                                            { language === 'ta' ? state.state_lname : state.state_name}
+                                                        </option>
                                                         ))}
                                                     </select>
                                                     <div className="invalid-feedback">
@@ -351,9 +353,11 @@ const Relaxation = () => {
                                                         className={`form-control ${errors.district ? 'is-invalid': ''}`}
                                                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                     >
-                                                        <option value="">Select district</option>
+                                                        <option value="">{t('alerts.select_district')}</option>
                                                         { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
-                                                            <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                            <option value={district.district_code} key={index}>
+                                                                { language === 'ta' ? district.district_lname : district.district_name }
+                                                            </option>
                                                         ))}
                                                     </select>
                                                     <div className="invalid-feedback">
@@ -373,9 +377,11 @@ const Relaxation = () => {
                                                     className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
                                                     onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                 >
-                                                    <option value="">Select establishment</option>
+                                                    <option value="">{t('alerts.select_establishment')}</option>
                                                     {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
-                                                        <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                        <option key={index} value={estd.establishment_code}>
+                                                            { language === 'ta' ? estd.establishment_lname : estd.establishment_name}
+                                                        </option>
                                                     ))}
                                                 </select>
                                                 <div className="invalid-feedback">
@@ -412,7 +418,7 @@ const Relaxation = () => {
                                                 className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
                                                 onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="">Select case type</option>
+                                                <option value="">{t('alerts.select_case_type')}</option>
                                                 <option value="1">Bail Application</option>
                                             </select>
                                             <div className="invalid-feedback">

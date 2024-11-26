@@ -18,6 +18,7 @@ import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const ModificationNew = () => {
@@ -25,7 +26,7 @@ const ModificationNew = () => {
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {benchtypes} = useContext(SeatContext)
+    const {seats} = useContext(SeatContext)
     const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
@@ -39,8 +40,8 @@ const ModificationNew = () => {
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
-        court_type:1,
-        bench_type:'',
+        judiciary:1,
+        seat:'',
         state:'',
         district:'',
         establishment:'',
@@ -50,6 +51,7 @@ const ModificationNew = () => {
     })
     const[petition, setPetition] = useState({})
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -130,8 +132,8 @@ const ModificationNew = () => {
                     setRespondents(litigant.filter(l=>l.litigant_type===2))
                     setAdvocates(advocate)
                     setPetition({...petition,
-                        court_type: pet.court_type.id,
-                        bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
+                        judiciary: pet.judiciary?.id,
+                        seat: pet.seat ? pet.seat.seat_code : null,
                         state: pet.state ? pet.state.state_code : null,
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
@@ -271,7 +273,7 @@ const ModificationNew = () => {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-8 offset-2">
+                            <div className="col-md-12">
                                 { parseInt(searchPetition) === 1 && (
                                     <div className="form-group row">
                                         <div className="col-sm-8 offset-md-2">
@@ -296,7 +298,7 @@ const ModificationNew = () => {
                                     </div>
                                 )}
                             </div>
-                            <div className="col-md-8 offset-2">
+                            <div className="col-md-12">
                                 { parseInt(searchPetition) === 2 && (
                                 <form>
                                     <div className="row">
@@ -337,9 +339,11 @@ const ModificationNew = () => {
                                                                 className={`form-control ${errors.state ? 'is-invalid': ''}`}
                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                             >
-                                                                <option value="">Select state</option>
+                                                                <option value="">{t('alerts.select_state')}</option>
                                                                 { states.map((state, index) => (
-                                                                <option value={state.state_code} key={index}>{state.state_name}</option>
+                                                                <option value={state.state_code} key={index}>
+                                                                    { language === 'ta' ? state.state_lname : state.state_name }
+                                                                </option>
                                                                 ))}
                                                             </select>
                                                             <div className="invalid-feedback">
@@ -355,9 +359,11 @@ const ModificationNew = () => {
                                                                 className={`form-control ${errors.district ? 'is-invalid': ''}`}
                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                             >
-                                                                <option value="">Select district</option>
+                                                                <option value="">{t('alerts.select_district')}</option>
                                                                 { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
-                                                                    <option value={district.district_code} key={index}>{district.district_name}</option>
+                                                                    <option value={district.district_code} key={index}>
+                                                                        { language === 'ta' ? district.district_lname : district.district_name }
+                                                                    </option>
                                                                 ))}
                                                             </select>
                                                             <div className="invalid-feedback">
@@ -377,9 +383,11 @@ const ModificationNew = () => {
                                                             className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                         >
-                                                            <option value="">Select establishment</option>
+                                                            <option value="">{t('alerts.select_establishment')}</option>
                                                             {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
-                                                                <option key={index} value={estd.establishment_code}>{estd.establishment_name}</option>
+                                                                <option key={index} value={estd.establishment_code}>
+                                                                    { language === 'ta' ? estd.establishment_lname : estd.establishment_name }
+                                                                </option>
                                                             ))}
                                                         </select>
                                                         <div className="invalid-feedback">
@@ -393,13 +401,15 @@ const ModificationNew = () => {
                                                     <div className="form-group">
                                                         <label htmlFor="">{t('hc_bench')}</label>
                                                         <select 
-                                                            name="bench_type" 
-                                                            className={`form-control ${searchErrors.bench_type ? 'is-invalid': ''}`}
+                                                            name="seat" 
+                                                            className={`form-control ${searchErrors.seat ? 'is-invalid': ''}`}
                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                         >
-                                                            <option value="">Select bench</option>
-                                                            {benchtypes.map((b, index)=>(
-                                                                <option key={index} value={b.bench_code}>{b.bench_type}</option>
+                                                            <option value="">{t('alerts.select_bench_type')}</option>
+                                                            {seats.map((s, index)=>(
+                                                                <option key={index} value={s.seat_code}>
+                                                                    {language === 'ta' ? s?.seat_lname : s?.seat_name }
+                                                                </option>
                                                             ))}
                                                         </select>
                                                         <div className="invalid-feedback">
@@ -416,7 +426,7 @@ const ModificationNew = () => {
                                                         className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
                                                         onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
                                                     >
-                                                        <option value="">Select case type</option>
+                                                        <option value="">{t('alerts.select_case_type')}</option>
                                                         <option value="1">Bail Application</option>
                                                     </select>
                                                     <div className="invalid-feedback">

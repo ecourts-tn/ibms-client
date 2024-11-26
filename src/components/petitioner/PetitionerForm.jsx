@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
+import { useLocation } from 'react-router-dom';
 
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
@@ -32,9 +33,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   const {language} = useContext(LanguageContext)
   const {genders} = useContext(GenderContext)
   const {nationalities} = useContext(NationalityContext)
-
+  const location = useLocation()
   const {t} = useTranslation()
-
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
       litigant: 'o',
@@ -161,8 +161,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       }
     }
   };
-
-
 
   return (
     <>
@@ -525,70 +523,75 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>
             </div>
-            <div className="col-md-3">
-                <div className="form-group">
-                  <label>{t('custody')}<RequiredField /></label><br />
-                  <div>
-                    <div className="icheck-success d-inline mx-2">
-                      <input 
-                        type="radio" 
-                        name="is_custody" 
-                        id="custodyYes" 
-                        value={litigant.is_custody}
-                        checked={ litigant.is_custody }
-                        onChange={(e) => setLitigant({...litigant, [e.target.name]: true})} 
-                      />
-                      <label htmlFor="custodyYes">{t('yes')}</label>
+            { location.pathname !== "/filing/anticipatory-bail/litigant" && (
+              <>
+                <div className="col-md-3">
+                    <div className="form-group">
+                      <label>{t('custody')}<RequiredField /></label><br />
+                      <div>
+                        <div className="icheck-success d-inline mx-2">
+                          <input 
+                            type="radio" 
+                            name="is_custody" 
+                            id="custodyYes" 
+                            value={litigant.is_custody}
+                            checked={ litigant.is_custody }
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: true})} 
+                          />
+                          <label htmlFor="custodyYes">{t('yes')}</label>
+                        </div>
+                        <div className="icheck-danger d-inline mx-2">
+                          <input 
+                            type="radio" 
+                            id="custodyNo" 
+                            name="is_custody" 
+                            value={litigant.is_custody}
+                            checked={ !litigant.is_custody } 
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: false, prison:''})}
+                          />
+                          <label htmlFor="custodyNo">{t('no')}</label>
+                        </div>
+                      </div>
                     </div>
-                    <div className="icheck-danger d-inline mx-2">
-                      <input 
-                        type="radio" 
-                        id="custodyNo" 
-                        name="is_custody" 
-                        value={litigant.is_custody}
-                        checked={ !litigant.is_custody } 
-                        onChange={(e) => setLitigant({...litigant, [e.target.name]: false, prison:''})}
-                      />
-                      <label htmlFor="custodyNo">{t('no')}</label>
+                </div>
+                <div className="col-md-3 mt-2">
+                    <Form.Group>
+                      <Form.Label>{t('custody_days')}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="custody_days"
+                        className={`${errors.custody_days ? 'is-invalid' : ''}`}
+                        disabled={ !litigant.is_custody }
+                        value={litigant.custody_days}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
+                      ></Form.Control>
+                      <div className="invalid-feedback">
+                        {errors.custody_days}
+                      </div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-6 mt-2">
+                    <div className="form-group">
+                      <label htmlFor="prison">{t('prison_name')}</label><br />
+                      <select 
+                        name="prison" 
+                        id="prison" 
+                        className={`form-control ${errors.prison ? 'is-invalid' : ''}`}
+                        disabled={ !litigant.is_custody } 
+                        value={litigant.prison}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
+                      >
+                        <option value="">{t('alerts.select_prison')}</option>
+                        { prisons.map((item, index) => (
+                          <option value={item.prison_code} key={index}>{language === 'ta' ? item.prison_lname : item.prison_name}</option>
+                        ))}
+                      </select>
+                      <div className="invalid-feedback">{ errors.prison}</div>
                     </div>
-                  </div>
-                </div>
-            </div>
-            <div className="col-md-3 mt-2">
-                <Form.Group>
-                  <Form.Label>{t('custody_days')}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="custody_days"
-                    className={`${errors.custody_days ? 'is-invalid' : ''}`}
-                    disabled={ !litigant.is_custody }
-                    value={litigant.custody_days}
-                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
-                  ></Form.Control>
-                  <div className="invalid-feedback">
-                    {errors.custody_days}
-                  </div>
-                </Form.Group>
-              </div>
-            <div className="col-md-6 mt-2">
-                <div className="form-group">
-                  <label htmlFor="prison">{t('prison_name')}</label><br />
-                  <select 
-                    name="prison" 
-                    id="prison" 
-                    className={`form-control ${errors.prison ? 'is-invalid' : ''}`}
-                    disabled={ !litigant.is_custody } 
-                    value={litigant.prison}
-                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
-                  >
-                    <option value="">{t('alerts.select_prison')}</option>
-                    { prisons.map((item, index) => (
-                      <option value={item.prison_code} key={index}>{language === 'ta' ? item.prison_lname : item.prison_name}</option>
-                    ))}
-                  </select>
-                  <div className="invalid-feedback">{ errors.prison}</div>
-                </div>
-              </div>  
+                </div>  
+              </>
+            )}
+            { console.log(location.pathname)}
               <div className="col-md-4 mt-2">
                 <div className="form-group">
                   <label>{t('accused_surrender')}<RequiredField /></label><br />

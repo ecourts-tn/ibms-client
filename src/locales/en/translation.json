@@ -82,7 +82,7 @@
     "identity_proof": "Identity Proof",
     "identity_proof_number": "Identity Proof Number",
     "country_code": "Country Code",
-    "mobile_number": "Mobile Number (for Communication)",
+    "mobile_number": "Mobile Number",
     "email_address": "Email Address",
     "custody": "Whether Accused in Custody",
     "date_of_arrest": "Date of Arrest",

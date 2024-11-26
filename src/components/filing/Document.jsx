@@ -95,7 +95,7 @@ const Document = ({swornRequired}) => {
             })
             const response = await api.delete(`case/document/${document.id}/`)
             if(response.status === 204){
-                setDocumentList(newDocuments)
+                setDocumentList((prevList) => prevList.filter((d) => d.id !== document.id));
                 toast.error("Documents deleted successfully", {
                     theme: "colored"
                 })
@@ -107,26 +107,47 @@ const Document = ({swornRequired}) => {
 
 
     const handleSubmit = async () => {
-        try{
-            form.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/document/`, form, {
-                headers: {
-                    'content-type': 'multipart/form-data',
-                    // 'X-CSRFTOKEN': CSRF_TOKEN
-                },
+    try {
+        // Add efile_no to the form data
+        const formData = new FormData();
+        formData.append("efile_no", sessionStorage.getItem("efile_no"));
+        formData.append("title", form.title);
+        formData.append("document", form.document);
 
-            })
-            if(response.status === 201){
-                setDocumentList(documents => [...documents, response.data])
-                setForm(initialState)
-                toast.success(`Document ${response.data.id} uploaded successfully`, {
-                    theme:"colored"
-                })
-            }
-        }catch(error){
-            console.log(error)
+        const response = await api.post(`case/document/`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        if (response.status === 201) {
+            // Update the document list with the new document
+            setDocumentList((documents) => [...documents, response.data]);
+            // setForm(initialState); // Reset the form state
+            setForm({
+                title: "",
+                document: null,
+            });
+            toast.success(`Document ${response.data.id} uploaded successfully`, {
+                theme: "colored",
+            });
+        }
+    } catch (error) {
+        console.error("Error uploading document:", error);
+
+        // Handle specific error scenarios
+        if (error.response?.status === 400) {
+            toast.error("Invalid form data. Please check your input.", {
+                theme: "colored",
+            });
+        } else {
+            toast.error("An error occurred while uploading. Please try again.", {
+                theme: "colored",
+            });
         }
     }
+};
+
 
     return (
         <div className="container">

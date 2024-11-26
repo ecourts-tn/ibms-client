@@ -59,23 +59,53 @@ const Advocate = () => {
     }
 
     
-    const deleteAdvocate = async (advocate) => {
-        const newAdvocate = advocates.filter((a) => {
-            return a.id !== advocate.id
-        })
-        const response = await api.delete(`case/advocate/${advocate.adv_code}/`) 
-        if(response.status === 200){
-            toast.success(t('alerts.advocate_deleted'), {
-                theme:"colored"
-            })
-            setAdvocates(newAdvocate)
-        }
+    // const deleteAdvocate = async (advocate) => {
+    //     const newAdvocate = advocates.filter((a) => {
+    //         return a.id !== advocate.id
+    //     })
+    //     const response = await api.delete(`case/advocate/${advocate.adv_code}/`) 
+    //     if(response.status === 200){
+    //         toast.success(t('alerts.advocate_deleted'), {
+    //             theme:"colored"
+    //         })
+    //         setAdvocates(newAdvocate)
+    //     }
         
-        toast.error(t('alerts.advocate_deleted'), {
-            theme:"colored"
-        })
-        setAdvocates(newAdvocate)
-    }
+    //     toast.error(t('alerts.advocate_deleted'), {
+    //         theme:"colored"
+    //     })
+    //     setAdvocates(newAdvocate)
+    // }
+    const deleteAdvocate = async (advocate) => {
+        try {
+            // Sending the delete request
+            const response = await api.delete(`case/advocate/${advocate.adv_code}/`);
+    
+            if (response.status === 200 || response.status === 204) {
+                // Successfully deleted, update the state
+                // const newAdvocateList = advocates.filter((a) => a.id !== advocate.id);
+                // setAdvocates(newAdvocateList);  // This triggers a re-render with updated data
+                fetchAdvocates();
+                toast.success(t('alerts.advocate_deleted'), {
+                    theme: "colored",
+                });
+            } else {
+                // If deletion was unsuccessful, handle error
+                toast.error(t('alerts.delete_failed'), {
+                    theme: "colored",
+                });
+            }
+        } catch (error) {
+            console.error("Error deleting advocate:", error);
+    
+            // If an error occurs, show a failure message
+            toast.error(t('alerts.delete_failed'), {
+                theme: "colored",
+            });
+        }
+    };
+    
+    
 
     
     return (
@@ -133,6 +163,58 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         setAdvocate({...advocate, [name]: value})
     }
 
+    const handleChangeAdvReg = (e) => {
+        let value = e.target.value;
+        if (!value.startsWith("MS/")) {
+            value = "MS/";
+        }
+        const parts = value.replace("MS/", "").split("/");
+        let firstPart = parts[0]?.replace(/\D/g, ""); // Keep only digits
+        if (firstPart.length > 6) firstPart = firstPart.slice(0, 6); // Limit to 6 digits
+        let secondPart = parts[1]?.replace(/\D/g, "").slice(0, 4) || "";
+        value = `MS/${firstPart}`;
+        if (firstPart.length >= 5 || secondPart) {
+            value += `/${secondPart}`;
+        }
+        setAdvocate({ ...advocate, adv_reg: value });
+    };
+    useEffect(() => {
+        setAdvocate((prev) => ({ ...prev, adv_reg: "MS/" }));
+    }, []);
+    
+    const handleChangeMobile = (e) => {
+        const { name, value } = e.target;
+
+        if (name === "adv_mobile") {
+            // Remove any non-numeric characters
+            const numericValue = value.replace(/\D/g, "");
+            
+            // Limit the value to 10 digits
+            if (numericValue.length <= 10) {
+                setAdvocate({ ...advocate, [name]: numericValue });
+            }
+        } else {
+            setAdvocate({ ...advocate, [name]: value });
+        }
+    };
+    
+    const handleChangeEmail = (e) => {
+        const { name, value } = e.target;
+    
+        if (name === "adv_email") {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    
+            if (!emailRegex.test(value)) {
+                setErrors({ ...errors, adv_email: "Please enter a valid email address." });
+            } else {
+                setErrors({ ...errors, adv_email: "" });  // Clear the error if valid
+            }
+        }
+    
+        setAdvocate({ ...advocate, [name]: value });
+    };
+    
+
     useEffect(() => {
         if(selectedAdvocate){
             setAdvocate(selectedAdvocate)
@@ -189,7 +271,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                             <Form.Control
                                 name="adv_reg"
                                 value={advocate.adv_reg}
-                                onChange={ handleChange }
+                                onChange={ handleChangeAdvReg }
                                 className={`${errors.adv_reg ? 'is-invalid' : ''}`}
                                 placeholder='MS/----/----'
                             ></Form.Control>
@@ -204,11 +286,12 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                             <Form.Control
                                 name="adv_mobile"
                                 value={advocate.adv_mobile}
-                                onChange={ handleChange }
+                                onChange={ handleChangeMobile }
                                 className={`${errors.adv_mobile ? 'is-invalid' : ''}`}
+                                type="tel"
                             ></Form.Control>
                             <div className="invalid-feedback">
-                                { errors.adv_mobile }
+                                {errors.adv_mobile || "Mobile number must be 10 digits."}
                             </div>
                         </div>
                     </Form.Group>
@@ -218,11 +301,11 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                             <Form.Control
                                 name="adv_email"
                                 value={advocate.adv_email}
-                                onChange={ handleChange }
+                                onChange={ handleChangeEmail }
                                 className={`${errors.adv_email ? 'is-invalid' : ''}`}
                             ></Form.Control>
                             <div className="invalid-feedback">
-                                { errors.adv_email }
+                                 {errors.adv_email || "Please provide a valid email address."}   
                             </div>
                          </div>
                     </Form.Group>
@@ -258,7 +341,7 @@ const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
             </thead>
             <tbody>
               { advocates.map((advocate, index) => (
-                <tr key={index}>
+                <tr key={advocate.id}>
                   <td>{ index+1 }</td>
                   <td>{ advocate.adv_name }</td>
                   <td>{ advocate.adv_reg }</td>
