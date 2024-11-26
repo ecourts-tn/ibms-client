@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import api from 'api'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
+import Loading from 'components/Loading'
 
 
 const Advocate = () => {
@@ -140,6 +141,8 @@ export default Advocate
 
 
 const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
+    const[search, setSearch] = useState('')
+    const[loading, setLoading] = useState(false)
     const initialAdvocate = {
         adv_name: '',
         adv_email: '',
@@ -245,12 +248,50 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         }
     }
 
+    const searchAdvocate = async(e) => {
+        e.preventDefault()
+        try{
+            setLoading(true)
+            const response = await api.post("case/adv/search/", {params:{search}})
+            if(response.status === 200){
+                console.log(response.data)
+                setAdvocate(response.data)
+            }
+        }catch(error){
+            if(error.response?.stauts === 404){
+                toast.error("Advocate details not found", {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
+        }
+    }
+
 
     return (
         <>
+            { loading && <Loading />}
             <ToastContainer />
             <div className="row">
                 <div className="col-md-6 offset-md-3">
+                    <div className="row my-5">
+                        <div className="col-md-10">
+                            <input 
+                                name="search"
+                                type="text" 
+                                className="form-control" 
+                                onChange={(e)=>setSearch(e.target.value)}
+                                placeholder={`${t('mobile_number')}/${t('email_address')}/${t('enrollment_number')}`}
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <button 
+                                className="btn btn-primary btn-block"
+                                onClick={searchAdvocate}
+                            >
+                                {t('search')}
+                            </button>
+                        </div>
+                    </div>
                     <Form.Group className="row mb-3">
                         <Form.Label  className="col-sm-5">{t('adv_name')}</Form.Label>
                         <div className="col-sm-7">
