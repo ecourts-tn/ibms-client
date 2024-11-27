@@ -78,9 +78,10 @@ const Advocate = () => {
     //     setAdvocates(newAdvocate)
     // }
     const deleteAdvocate = async (advocate) => {
+        console.log(advocate)
         try {
             // Sending the delete request
-            const response = await api.delete(`case/advocate/${advocate.adv_code}/`);
+            const response = await api.delete(`case/advocate/${advocate.id}/`);
     
             if (response.status === 200 || response.status === 204) {
                 // Successfully deleted, update the state
@@ -144,6 +145,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const[search, setSearch] = useState('')
     const[loading, setLoading] = useState(false)
     const initialAdvocate = {
+        adv_id:'',
         adv_name: '',
         adv_email: '',
         adv_mobile: '',
@@ -229,7 +231,12 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         try{
             await validationSchema.validate(advocate, { abortEarly:false})
             advocate.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/advocate/`, advocate, )
+            const data = {
+                petition: sessionStorage.getItem("efile_no"),
+                advocate:advocate.adv_id,
+                is_primary:false
+            }
+            const response = await api.post(`case/advocate/`, data)
             if(response.status === 201){
                 setAdvocates(advocates => [...advocates, advocate])
                 toast.success(t('alerts.advocate_added'), {
@@ -238,6 +245,10 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                 setAdvocate(initialAdvocate)
             }
         }catch(error){
+            if(error.response?.status === 400){
+                console.log(error.response)
+                toast.error(error.response.statusText, {theme:"colored"})
+            }
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -250,16 +261,25 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
 
     const searchAdvocate = async(e) => {
         e.preventDefault()
+        setTimeout(() => {})
         try{
             setLoading(true)
-            const response = await api.post("case/adv/search/", {params:{search}})
+            const response = await api.post("case/adv/search/", {search})
             if(response.status === 200){
-                console.log(response.data)
-                setAdvocate(response.data)
+                setAdvocate({
+                    adv_id: response.data.userlogin,
+                    adv_name: response.data.username,
+                    adv_email: response.data.email,
+                    adv_mobile: response.data.mobile,
+                    adv_reg: response.data.adv_reg
+                })
             }
         }catch(error){
-            if(error.response?.stauts === 404){
-                toast.error("Advocate details not found", {theme:"colored"})
+            setAdvocate(initialAdvocate)
+            if (error.response?.status === 404) { 
+                toast.error("Advocate details not found", { theme: "colored" });
+            } else {
+                toast.error("An unexpected error occurred", { theme: "colored" });
             }
         }finally{
             setLoading(false)
@@ -381,30 +401,22 @@ const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
               </tr>
             </thead>
             <tbody>
-              { advocates.map((advocate, index) => (
-                <tr key={advocate.id}>
+              { advocates.map((a, index) => (
+                <tr key={a.id}>
                   <td>{ index+1 }</td>
-                  <td>{ advocate.adv_name }</td>
-                  <td>{ advocate.adv_reg }</td>
-                  <td>{ advocate.adv_mobile }</td>
-                  <td>{ advocate.adv_email }</td>
+                  <td>{ a.advocate?.username }</td>
+                  <td>{ a.advocate?.adv_reg }</td>
+                  <td>{ a.advocate?.mobile }</td>
+                  <td>{ a.advocate?.email }</td>
                   <td>
-                    { !advocate.is_primary && (
-                      <>
-                        <Button
-                          variant='contained'
-                          color='primary'
-                          size='small'
-                          onClick={() => editAdvocate(advocate)}
-                        >Edit</Button>
+                    { !a.is_primary && (
                         <Button
                           variant='contained'
                           color='error'
                           size='small'
                           className='ml-1'
-                          onClick={()=> deleteAdvocate(advocate)}
-                        >Delete</Button>
-                      </>
+                          onClick={()=> deleteAdvocate(a)}
+                        >Remove</Button>
                     )}
                   </td>
                 </tr>

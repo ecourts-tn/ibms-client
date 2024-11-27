@@ -144,13 +144,9 @@ const InitialInput = () => {
                     requests.push(crime_reqeust)
                 }
                 if(parseInt(user.user_type) === 1){
-                    console.log("welcome")
                     const advocate = {
-                        efile_no: efile_no,
-                        adv_name: user.username,
-                        adv_email: user.email,
-                        adv_mobile: user.mobile,
-                        adv_reg: user.adv_reg,
+                        petition: efile_no,
+                        advocate: user.userlogin,
                         is_primary: true
                     }
                     const advocate_request = await api.post(`case/advocate/`, advocate);

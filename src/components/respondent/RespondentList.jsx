@@ -40,7 +40,7 @@ const RespondentList = ({respondents, deleteRespondent, editRespondent}) => {
                   <tr>
                     <td>{t('represented_by')}</td>
                     <td>:</td>
-                    <td>{ res.designation }</td>
+                    <td>{ res.designation?.designation_name }</td>
                   </tr>
                   <tr>
                     <td>{t('address')}</td>

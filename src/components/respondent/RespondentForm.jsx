@@ -113,8 +113,10 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
                         <option value="">{t('alerts.select_district')}</option>
-                        { districts.map((item, index) => (
-                        <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
+                        { districts.filter(d=>parseInt(litigant.state) === parseInt(d.state)).map((dist, index) => (
+                            <option value={dist.district_code} key={index}>
+                                {language === 'ta' ? dist.district_lname : dist.district_name}
+                            </option>
                         ))}
                     </select>
                     </div>

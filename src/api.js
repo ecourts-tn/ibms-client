@@ -6,7 +6,7 @@ axios.defaults.withCredentials = true;
 
 
 const api = axios.create({
-    // baseURL: "http://117.193.76.243/api/v1/"
+    // baseURL: "http://117.193.76.243:8000/api/v1/"
     baseURL: "http://127.0.0.1:8000/api/v1/",
 });
 
