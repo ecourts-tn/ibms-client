@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 const GroundsContainer = () => {
 
     const[grounds, setGrounds] = useState([])
+    const[isUpdate, setIsUpdate] = useState(false)
     const[selectedGround, setSelectedGround] = useState(null)
     const[count, setCount] = useState(0)
     const {t} = useTranslation()
@@ -39,22 +40,38 @@ const GroundsContainer = () => {
 
     const addGround = async (ground) => {
         try{
-            ground.efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.post(`case/ground/`, ground)
-            if(response.status === 201){
-                incrementCount()
-                setGrounds(grounds => [...grounds, ground])
-                toast.success(t('alerts.ground_added'), {theme:"colored"})
+            if(!isUpdate){
+                ground.efile_no = sessionStorage.getItem("efile_no")
+                const response = await api.post(`case/ground/`, ground)
+                if(response.status === 201){
+                    incrementCount()
+                    setGrounds(grounds => [...grounds, ground])
+                    toast.success(t('alerts.ground_added'), {theme:"colored"})
+                }
+            }else{
+                const response = await api.put(`case/ground/update/`, ground)
+                if(response.status === 200){
+                    setIsUpdate(false)
+                    toast.success("ground updated successfully", {theme:"colored"})
+                }
             }
         }catch(error){
             console.error(error)
+        }finally{
+            setIsUpdate(false)
         }
     }
 
     const editGround = async(ground) => {
         try{
-            const response = await api.get(`case/ground/${ground.id}/`)
+            const response = await api.get(`case/ground/detail/`, {
+                params: {
+                    id:ground.id,
+                    efile_no:ground.efile_no
+                }
+            })
             if(response.status === 200){
+                setIsUpdate(true)
                 setSelectedGround(response.data)
             }
         }catch(error){
@@ -63,11 +80,17 @@ const GroundsContainer = () => {
     }
 
     const deleteGround = async(ground) => {
+        console.log(ground)
         try{
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id
             })
-            const response = await api.delete(`case/ground/${ground.id}/`)
+            const response = await api.delete(`case/ground/delete/`, {
+                data:{
+                    id:ground.id,
+                    efile_no:ground.efile_no
+                }
+            })
             if(response.status === 204){
                 setGrounds(newGrounds)
                 decrementCount()
