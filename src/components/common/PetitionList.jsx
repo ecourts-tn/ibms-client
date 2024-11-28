@@ -13,36 +13,19 @@ const PetitionList = ({cases}) => {
                     <i className="ion ion-clipboard mr-1" />
                     <strong>{t('my_petition')}</strong>
                 </h3>
-                <div className="card-tools">
-                    <ul className="pagination pagination-sm">
-                    <li className="page-item"><a href="#/" className="page-link">«</a></li>
-                    <li className="page-item"><a href="#/" className="page-link">1</a></li>
-                    <li className="page-item"><a href="#/" className="page-link">2</a></li>
-                    <li className="page-item"><a href="#/" className="page-link">3</a></li>
-                    <li className="page-item"><a href="#/" className="page-link">»</a></li>
-                    </ul>
-                </div>
             </div>
-            <div className="card-body">
-                <ul className="todo-list" data-widget="todo-list">
+            <div className="card-body" style={{height:"650px", overflowY:"scroll"}}>
+                <ul className="todo-list">
                     { cases.map((c, index) => (
-                        <li key={index}>
-                            <span className="handle">
-                                <i className="fas fa-ellipsis-v" />
-                                <i className="fas fa-ellipsis-v" />
-                            </span>
-                            <div className="icheck-primary d-inline ml-2">
-                                <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
-                                <label htmlFor="todoCheck1" />
-                                <Link to="/filing/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link><br/>
-                            </div>
-                            
+                        <li key={index} className="mb-2">               
+                            <Link to="/filing/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link><br/>
                             <span className="text mr-3">
                                 { c.litigants.filter((l) => parseInt(l.litigant_type) ===1 ).map((l, index) => (
                                     <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                 ))
-                                }
+                                }Deenadayalan
                                 <span className="text text-danger">Vs</span>
+                                 State of Tamil Nadu rep by Inspector of Police
                                 { c.litigants.filter((l) => parseInt(l.litigant_type) ===2 ).map((l, index) => (
                                     <span className="text ml-2" key={index}>
                                         {index+1}. {l.litigant_name} { language === 'ta' ? l.designation?.designation_lname : l.designation?.designation_name }

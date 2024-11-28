@@ -267,7 +267,7 @@ const ResponseCreate = () => {
                                         <tr>
                                             <td>Petition&nbsp;Number</td>
                                             <td>
-                                                {`${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}`}
+                                                {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}
                                             </td>
                                             <td>Crime&nbsp;Number</td>
                                             <td>{`${crime.fir_number }/${ crime.fir_year }`}</td>

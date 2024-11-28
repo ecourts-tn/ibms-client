@@ -92,11 +92,11 @@ const Dashboard = () => {
                             />
                         </div>
                         <div className="row">
-                            <div className="col-md-6">
-                                <DynamicChart />
+                            <div className="col-md-5">
+                                {/* <DynamicChart /> */}
                                 <Calendar />
                             </div>
-                            <div className="col-md-6">
+                            <div className="col-md-7">
                                 <PetitionList cases={cases}/>
                             </div>
                             <div className="col-md-12">

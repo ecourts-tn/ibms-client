@@ -42,7 +42,7 @@ const ResponseDetails = () => {
 
     useEffect(() => {
         async function fetchData(){
-            const response = await api.get(`police/response/detail/`, {params:{efile_no:state.efile_no}})
+            const response = await api.post(`police/response/detail/`, {efile_no:state.efile_no})
             if(response.status === 200){
                 setForm({
                     ...form,
@@ -92,7 +92,7 @@ const ResponseDetails = () => {
                                     <tr>
                                         <td>Petition&nbsp;Number</td>
                                         <td>
-                                            {`${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}`}
+                                            {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}
                                         </td>
                                         <td>Crime&nbsp;Number</td>
                                         <td>{`${crime.fir_number }/${ crime.fir_year }`}</td>

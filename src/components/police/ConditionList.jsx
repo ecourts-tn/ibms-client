@@ -13,7 +13,7 @@ const ConditionList = () => {
 
     useEffect(() => {
         async function fetchPetitions() {
-            const response = await api.get("police/response/pending/list/");
+            const response = await api.get("police/response/pending/");
             setPetitions(response.data)
         }
         fetchPetitions();
