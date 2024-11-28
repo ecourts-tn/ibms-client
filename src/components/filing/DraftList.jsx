@@ -10,6 +10,7 @@ import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import Loading from 'components/Loading'
+import { pendingPetition } from 'services/petitionService'
 
 
 const DraftList = () => {
@@ -34,20 +35,17 @@ const DraftList = () => {
     }
     
     useEffect(() => {
-        async function fetchData(){
+        const fetchPetition = async() => {
             try{
-                setLoading(true)
-                const response = await api.get(`case/filing/draft-list/`)
-                if(response.status === 200){
-                    setCases(response.data)
-                }
+                const response = await pendingPetition()
+                setCases(response)
             }catch(error){
                 console.log(error)
             }finally{
                 setLoading(false)
             }
         }
-        fetchData();
+        fetchPetition();
     }, [])
 
     const handleEdit = (efile_no) => {
@@ -62,31 +60,25 @@ const DraftList = () => {
             try{
                 const response = await api.post("case/filing/final-submit/", { efile_no})
                 if(response.status === 200){
-                    if(response.data.error){
-                        console.log(response.data.error)
-                        setShowError(true)
-                        setErrors(response.data.messages)
-                        // response.data.message.forEach((error) => {
-                        //     toast.error(error, {
-                        //         theme:"colored"
-                        //     })
-                        // })
-                    }else{
-                        try{
-                            const result = await api.put(`case/filing/${efile_no}/final-submit/`)
-                            if(result.status === 200){
-                                toast.success("Petition submitted successfully", {
-                                    theme:"colored"
-                                })
-                            }
-                            navigate('/dashboard')
-                        }catch(error){
-                            console.error(error)
+                    try{
+                        const result = await api.put(`case/filing/final-submit/`, {efile_no})
+                        if(result.status === 200){
+                            toast.success("Petition submitted successfully", {
+                                theme:"colored"
+                            })
                         }
+                        setTimeout(() => {
+                            navigate('/filing/dashboard')
+                        }, 2000)
+                    }catch(error){
+                        console.error(error)
                     }
                 }
             }catch(error){
-                console.log(error)
+                if(error.response?.status === 400){
+                    setShowError(true)
+                    setErrors(error.response?.data.messages)
+                }
             }  
         }
     }
@@ -124,44 +116,47 @@ const DraftList = () => {
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
                                 <li className="breadcrumb-item"><a href="#/">{t('home')}</a></li>
-                                <li className="breadcrumb-item"><a href="#/">{t('petition')}</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">{t('draft')}</li>
+                                <li className="breadcrumb-item"><a href="#/">{t('petitions')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('draft_petition')}</li>
                             </ol>
                         </nav>
-                        <h3><strong>Draft Petitions</strong></h3>
+                        <h3 className='pb-2'><strong>{t('draft_petition')}</strong></h3>
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
-                                <tr>
-                                    <th>S. No</th>
-                                    <th>eFiling Number</th>
-                                    <th>eFile Date</th>
-                                    <th>Litigants</th>
-                                    <th>Documents</th>
-                                    <th>Payment</th>
-                                    <th>Action</th>
+                                <tr className='text-center'>
+                                    <th>{t('sl_no')}</th>
+                                    <th>{t('efile_number')}</th>
+                                    <th>{t('court')}</th>
+                                    <th>{t('litigants')}</th>
+                                    <th>{t('documents')}</th>
+                                    <th>{t('payment')}</th>
+                                    <th>{t('action')}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 { cases.map((item, index) => (
                                 <tr key={index}>
                                     <td>{ index+1 }</td>
-                                    <td style={{fontWeight:700}}>
+                                    <td>
                                         <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
-                                            { item.petition.efile_number }
+                                            <strong>{ item.petition.efile_number }</strong>
                                         </Link>
+                                        <span style={{display:"block"}}>{t('efile_date')}: {formatDate(item.petition.efile_date)}</span>
                                     </td>
-                                    <td>{ formatDate(item.petition.efile_date) }</td>
+                                    <td>
+                                        <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
+                                        <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
+                                        <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
+                                    </td>
                                     <td className="text-center">
-                                        { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                        { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
-                                        ))
-                                        }
-                                        <br/>
-                                        <span className="text text-danger ml-2">Vs</span> <br/>
-                                        { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                        ))}
+                                            <br/>
+                                            <span className="text text-danger ml-2">Vs</span> <br/>
+                                        { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
-                                        ))
-                                        }
+                                        ))}
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (

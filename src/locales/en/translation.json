@@ -364,6 +364,12 @@
     "judge_name": "Judge Name",
     "judge_lname": "Judge Name (in Tamil)",
     "jocode": "J.O Code",
+    "petitions": "Petitions",
+    "efile_number": "eFiling Number",
+    "court_detail": "Court Detail",
+    "payment": "Payment",
+    "efile_date": "eFile Date",
+    "download": "Download",
     "alerts": {
         "select_state": "Select state",
         "select_district": "Select district",

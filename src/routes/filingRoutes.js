@@ -8,7 +8,7 @@ import ChangePassword from 'components/auth/ChangePassword'
 import ResetPassword from 'components/auth/ResetPassword';
 import Dashboard from "components/filing/Dashboard"
 import DraftList from "components/filing/DraftList"
-import PetitionList from "components/filing/PetitionList"
+import SubmittedList from "components/filing/SubmittedList"
 import PetitionDetail from "components/filing/PetitionDetail"
 import BailFiling from "components/filing/bail/BailFiling"
 import Relaxation from 'components/filing/relaxation/RelaxationOld'
@@ -33,6 +33,9 @@ import EFile from "components/filing/efile/EFile";
 import BailStepper from "components/filing/bail/BailStepper";
 import ABailStepper from "components/filing/antibail/ABailStepper"
 import StepperButton from "components/filing/bail/StepperButton";
+import Pleadings from "components/filing/Pleadings";
+import ApprovedList from "components/filing/ApprovedList";
+import ReturnedList from "components/filing/ReturnedList";
 
 const Litigant = () => {
     return(
@@ -115,89 +118,43 @@ export const filingRoutes = [
             </PrivateRoute>
         )
     },  
-    // { 
-    //     path:"filing/condition-relaxation",
-    //     element:(
-    //         <PrivateRoute>
-    //             <Relaxation />
-    //         </PrivateRoute>
-    //     )
-    // },
     {
-        path:"filing/modification-petition",
+        path:"filing/pleadings",
         element:(
             <PrivateRoute>
-                <ModificationNew />
-            </PrivateRoute>
-        )
-    },
-    {   path:"filing/intervene",
-        element:(
-            <PrivateRoute>
-                <IntervenePetition />
+                <Pleadings/>
             </PrivateRoute>
         )
     },
     {
-        path:"filing/surety-petition",
-        element:(
-            <PrivateRoute>
-                <Surety />
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"filing/surety/discharge",
-        element:(
-            <PrivateRoute>
-                <DischargeSurety />
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"filing/extension-time",
-        element:(
-            <PrivateRoute>
-                <Extension></Extension>
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"filing/return-passport",
-        element:(
-            <PrivateRoute>
-                <ReturnPassport/>
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"filing/return-property",
-        element:(
-            <PrivateRoute>
-                <ReturnProperty />
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"pleading",
-        element:(
-            <PrivateRoute>
-                <ReturnProperty/>
-            </PrivateRoute>
-        )
-    },
-    {
-        path:"filing/draft-list",
+        path:"filing/draft",
         element:(
             <PrivateRoute>
                 <DraftList />
             </PrivateRoute>
         )
-    },{
-        path:"filing/submitted-list",
+    },
+    {
+        path:"filing/submitted",
         element:(
             <PrivateRoute>
-                <PetitionList />
+                <SubmittedList />
+            </PrivateRoute>
+        )
+    },
+    {
+        path:"filing/approved",
+        element:(
+            <PrivateRoute>
+                <ApprovedList />
+            </PrivateRoute>
+        )
+    },
+    {
+        path:"filing/returned",
+        element:(
+            <PrivateRoute>
+                <ReturnedList />
             </PrivateRoute>
         )
     },

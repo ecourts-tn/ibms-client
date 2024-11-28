@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 
 const DashboardCard = ({color, title, count, url, icon}) => {
@@ -13,7 +14,9 @@ const DashboardCard = ({color, title, count, url, icon}) => {
                 <div className="icon">
                     <i className={`ion ${icon}`} />
                 </div>
-                <a href={url} className="small-box-footer">{t('more_info')} <i className="fas fa-arrow-circle-right" /></a>
+                <Link to={url} className="small-box-footer">
+                    {t('more_info')} <i className="fas fa-arrow-circle-right" />
+                </Link>
             </div>
         </div>
     )

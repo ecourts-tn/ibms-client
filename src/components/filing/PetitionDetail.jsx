@@ -24,14 +24,18 @@ const PetitionDetail = () => {
                 const response = await getPetitionByeFileNo(state.efile_no)
                 setPetition(response.petition)
                 setCrime(response.crime)
-                const { petitioners, respondents } = response.litigant.reduce((acc, litigant) => {
-                    if (litigant.litigant_type === 1) acc.petitioners.push(litigant);
-                    if (litigant.litigant_type === 2) acc.respondents.push(litigant);
+                const { petitioners, respondents } = response.litigants?.reduce((acc, litigant) => {
+                    // Check if litigant_type is valid and push to appropriate array
+                    if (litigant.litigant_type === 1) {
+                        acc.petitioners.push(litigant);
+                    } else if (litigant.litigant_type === 2) {
+                        acc.respondents.push(litigant);
+                    }
                     return acc;
                 }, { petitioners: [], respondents: [] });
                 setPetitioner(petitioners);
                 setRespondent(respondents);
-                setObjection(response.objection)
+                setObjection(response.objections)
             }catch(error){
                 console.error(error)
             }finally{
@@ -50,9 +54,9 @@ const PetitionDetail = () => {
                         <div className="col-md-12">
                             <nav aria-label="breadcrumb" className="mt-2 mb-1">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li className="breadcrumb-item"><a href="#">Petition</a></li>
-                                    <li className="breadcrumb-item"><a href="#">Detail</a></li>
+                                    <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                    <li className="breadcrumb-item"><a href="#">{t('petitions')}</a></li>
+                                    <li className="breadcrumb-item"><a href="#">{t('detail')}</a></li>
                                     <li className="breadcrumb-item float-right">{petition.efile_number}</li>
                                 </ol>
                             </nav>
@@ -61,9 +65,9 @@ const PetitionDetail = () => {
                             <table className="table table-bordered table-striped table-sm">
                                 <tbody>
                                     <tr>
-                                        <td>e-File Number</td>
+                                        <td>{t('efile_number')}</td>
                                         <td>{petition.efile_number}</td>
-                                        <td>e-File Date</td>
+                                        <td>{t('efile_date')}</td>
                                         <td>{petition.efile_date}</td>
                                     </tr>
                                     { petition.judiciary.id== 2 && (
@@ -111,12 +115,12 @@ const PetitionDetail = () => {
                                 <tbody>
                                     <tr>
                                         <td>
-                                        { petitioner.map((p, index) => (
-                                        <p key={index}>
-                                            <strong>{index+1}. {p.litigant_name}</strong><br/>
-                                            { p.address }
-                                        </p>
-                                        ))}
+                                            { petitioner.map((p, index) => (
+                                                <p key={index}>
+                                                    <strong>{index+1}. {p.litigant_name}</strong><br/>
+                                                    { p.address }
+                                                </p>
+                                            ))}
                                         </td>
                                     </tr>
                                 </tbody>
@@ -127,11 +131,14 @@ const PetitionDetail = () => {
                                     <tr>
                                         <td>
                                         { respondent.map((res, index) => (
-                                            <>
-                                                <p><strong>{index+1}. {res.litigant_name} {res.designation?.designation_name}</strong><br/>
-                                                    { `${res.police_station.station_name}, ${res.district.district_name}, ${res.address}`}
+                                            <React.Fragment>
+                                                <p key={index}>
+                                                    <strong>{index+1}. {res.litigant_name} { language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</strong><br/>
+                                                    { ` ${res.address}, ${ language === 'ta' ? res.police_station.station_lname : res.police_station.station_name}, 
+                                                        ${ language === 'ta' ? res.district.district_lname : res.district.district_name}, 
+                                                    `}
                                                 </p>
-                                            </>
+                                            </React.Fragment>
                                         ))}
                                         </td>
                                     </tr>

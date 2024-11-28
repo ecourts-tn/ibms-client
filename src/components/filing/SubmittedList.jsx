@@ -10,21 +10,21 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { submittedPetition } from 'services/petitionService'
 import Loading from 'components/Loading'
 
-const PetitionList = () => {
+const SubmittedList = () => {
 
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(true)
     const navigate = useNavigate()
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-    const [showDocument, setShowDocument] = useState(false);
-    const [showVakalath, setShowVakalath] = useState(false)
-    const handleClose = () => {
-        setShowDocument(false);
-        setShowVakalath(false)
+    const[selectedDocument, setSelectedDocument] = useState(null)
+    const handleShow = (document) => {
+        setSelectedDocument(document)
     }
-    const handleShowDocument = () => setShowDocument(true);
-    const handleShowVakalath = () => setShowVakalath(true)
+    const handleClose = () => {
+        setSelectedDocument(null)
+    }
+
     // useEffect(() => {
     //     async function fetchData(){
     //         try{
@@ -79,23 +79,23 @@ const PetitionList = () => {
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
                             <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                <li className="breadcrumb-item"><a href="#">Petition</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">Submitted</li>
+                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                <li className="breadcrumb-item"><a href="#">{t('petitions')}</a></li>
+                                <li className="breadcrumb-item active" aria-current="page">{t('submitted_petition')}</li>
                             </ol>
                         </nav>
-                        <h3><strong>Completed Petitions</strong></h3>
+                        <h3 className="pb-2"><strong>{t('submitted_petition')}</strong></h3>
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
                                 <tr>
-                                    <th>S. No</th>
-                                    <th>eFiling Number</th>
-                                    <th>Filing Number</th>
-                                    <th>Court Details</th>
-                                    <th>Litigants</th>
-                                    <th>View Documents</th>
-                                    <th>Court Fee</th>
-                                    <th>Download</th>
+                                    <th>{t('sl_no')}</th>
+                                    <th>{t('efile_number')}</th>
+                                    <th>{t('case_number')}</th>
+                                    <th>{t('court')}</th>
+                                    <th>{t('litigants')}</th>
+                                    <th>{t('documents')}</th>
+                                    <th>{t('payment')}</th>
+                                    <th>{t('download')}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,7 +106,7 @@ const PetitionList = () => {
                                         <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
                                             <strong>{ item.petition.efile_number }</strong>
                                         </Link>
-                                        <span style={{display:'block'}}>Date: { formatDate(item.petition.efile_date) }</span>
+                                        <span style={{display:'block'}}>{t('efile_date')}: { formatDate(item.petition.efile_date) }</span>
                                     </td>
                                     <td>
                                         {item.petition.filing_type ? `${item.petition.filing_type?.type_name}/${item.petition.filing_number}/${item.petition.filing_year}` : null}
@@ -114,9 +114,9 @@ const PetitionList = () => {
                                     <td>
                                         { item.petition.judiciary.id== 2 && (
                                         <>
-                                            { language === 'ta' ? item.petition.court.court_lname : item.petition.court.court_name }, 
-                                            { language === 'ta' ? item.petition.establishment.establishment_lname : item.petition.establishment.establishment_name }, 
-                                            { language === 'ta' ? item.petition.district.district_lname : item.petition.district.district_name }
+                                            <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
+                                            <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
+                                            <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
                                         </>
                                         )}
                                         { item.petition.judiciary.id === 1 && (
@@ -126,34 +126,34 @@ const PetitionList = () => {
                                         )}
                                     </td>
                                     <td className="text-center">
-                                        { item.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                        { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))
                                         }
                                         <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
-                                        { item.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
+                                        { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                            <span className="text ml-2" key={index}>
+                                                {index+1}. {l.litigant_name} { language === 'ta' ? l.designation?.designation_lname : l.designation?.designation_name }</span>
                                         ))
                                         }
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (
-                                            <>
-                                                <span key={index}><a href={`${config.docUrl}${d.document}`} target='_blank'>{ d.title?.document_name }</a></span><br/>
-                                                {/* <Link
-                                                    onClick={handleShowDocument}
-                                                >{d.title}</Link>
-                                                { showDocument && (
-                                                    <ViewDocument 
-                                                        url={`${apiUrl}${d.title}`}
-                                                        show={showDocument} 
-                                                        setShow={setShowDocument} 
-                                                        handleClose={handleClose} 
-                                                        handleShow={handleShowDocument}/>
-                                                )} */}
-                                            </>
+                                            <div>
+                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>
+                                                    { language === 'ta' ?  d.title?.document_lname || null : d.title?.document_name || null}
+                                                </span>
+                                            </div>
                                         ))}
+                                        { selectedDocument && (
+                                            <ViewDocument 
+                                                url={`${config.docUrl}${selectedDocument.document}`}
+                                                title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
+                                                show={!!selectedDocument}
+                                                handleClose={handleClose}
+                                            />
+                                        )}
                                     </td>
                                     <td>
                                         { item.fees.map((fee, index) => (
@@ -161,7 +161,7 @@ const PetitionList = () => {
                                         ))}
                                     </td>
                                     <td>
-                                        <Link to="/filing/generate/pdf" state={{efile_no:item.petition.efile_number}}>Download</Link>
+                                        <Link to="/filing/generate/pdf" state={{efile_no:item.petition.efile_number}}>{t('download')}</Link>
                                     </td>
                                 </tr>
                                 ))}
@@ -174,4 +174,4 @@ const PetitionList = () => {
     )
 }
 
-export default PetitionList
+export default SubmittedList

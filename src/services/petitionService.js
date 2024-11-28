@@ -3,7 +3,7 @@ import api from "api";
 
 export const pendingPetition = async() => {
     try{
-        const response = await api.get("case/filing/pending-list")
+        const response = await api.get("case/filing/pending/")
         if(response.status === 200){
             return response.data
         }
@@ -15,7 +15,31 @@ export const pendingPetition = async() => {
 
 export const submittedPetition = async() => {
     try{
-        const response = await api.get("case/filing/submitted-list/")
+        const response = await api.get("case/filing/submitted/")
+        if(response.status === 200){
+            return response.data
+        } 
+    }catch(error){
+        console.error("Error fetching petitions", error)
+        throw error
+    }
+}
+
+export const approvedPetition = async() => {
+    try{
+        const response = await api.get("case/filing/approved/")
+        if(response.status === 200){
+            return response.data
+        } 
+    }catch(error){
+        console.error("Error fetching petitions", error)
+        throw error
+    }
+}
+
+export const returnedPetition = async() => {
+    try{
+        const response = await api.get("case/filing/returned/")
         if(response.status === 200){
             return response.data
         } 

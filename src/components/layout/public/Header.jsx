@@ -14,16 +14,26 @@ const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState({});
+  const [isHomeDisabled, setIsHomeDisabled] = useState(false)
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+
 
   useEffect(() => {
     const sessionUser = sessionStorage.getItem("user");
     if (sessionStorage.getItem("access")) {
       setIsAuth(true);
+      setIsHomeDisabled(true)
       setUser(JSON.parse(sessionUser));
     }
   }, []);
+
+  const handleHomeClick = (event) => {
+    if (isHomeDisabled) {
+      event.preventDefault(); // Prevent navigation
+    }
+  };
 
   const handleLogout = async () => {
     const response = await api.post('auth/logout/', {
@@ -121,7 +131,16 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav ml-md-5">
               <li className="nav-item">
-                <Link to="/" className="nav-link">{t('home')}</Link>
+                <Link 
+                  to={isHomeDisabled ? "#" : "/"}
+                  className="nav-link" 
+                  onClick={handleHomeClick}
+                  style={{
+                    pointerEvents: isHomeDisabled ? "none" : "auto",
+                    color: isHomeDisabled ? "#797d7f" : "#074280",
+                  }}
+                  aria-disabled={isHomeDisabled}
+                >{t('home')}</Link>
               </li>
               {isAuth && (
                 <>
@@ -137,7 +156,7 @@ const Header = () => {
                     </div>
                   </li>
                   <li className="nav-item">
-                    <Link to="/pleadings" className="nav-link">{t('pleadings')}</Link>
+                    <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
                   </li>
                 </>
               )}

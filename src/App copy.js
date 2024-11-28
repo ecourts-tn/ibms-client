@@ -19,7 +19,7 @@ import Home from 'components/Home'
 /* ----------- Filing --------------*/
 import Dashboard from "components/filing/Dashboard"
 import DraftList from "components/filing/DraftList"
-import PetitionList from "components/filing/PetitionList"
+import PetitionList from "components/filing/SubmittedList"
 import PetitionDetail from "components/filing/PetitionDetail"
 import BailFiling from "components/filing/bail/BailFiling"
 import Relaxation from 'components/filing/relaxation/RelaxationOld'

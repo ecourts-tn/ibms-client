@@ -93,7 +93,12 @@ const Document = ({swornRequired}) => {
             const newDocuments = documents.filter((g) => {
                 return g.id !== document.id
             })
-            const response = await api.delete(`case/document/${document.id}/`)
+            const response = await api.delete(`case/document/delete/`, {
+                data:{
+                    id:document.id,
+                    efile_no:document.efile_no
+                }
+            })
             if(response.status === 204){
                 setDocumentList((prevList) => prevList.filter((d) => d.id !== document.id));
                 toast.error("Documents deleted successfully", {
@@ -169,7 +174,7 @@ const Document = ({swornRequired}) => {
                                 {documentList.map((d, index) => (
                                 <tr>
                                     <td>{ index+1}</td>
-                                    <td>{ d.id }</td>
+                                    <td>{`${d.efile_no}${d.id}`}</td>
                                     <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
                                     <td>{ d.hash }</td>
                                     <td>
