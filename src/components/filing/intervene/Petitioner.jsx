@@ -14,6 +14,8 @@ import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { useTranslation } from 'react-i18next';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+
 
 
 const Petitioner = ({addPetitioner}) => {
@@ -65,11 +67,11 @@ const Petitioner = ({addPetitioner}) => {
     litigant_name: Yup.string().required(),
     relation: Yup.string().required(),
     relation_name: Yup.string().required(),
-    age: Yup.number().required().typeError("This is field should be numeric"),
+    age: Yup.number().required(),
     rank: Yup.string().required(),
     gender: Yup.string().required(),
     address: Yup.string().required(),
-    mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
+    mobile_number: Yup.number().required("The mobile number is required"),
     proof_number: Yup.string().required("Identify proof number is required"),
     act: Yup.string().required(),
     section: Yup.string().required(),
@@ -195,7 +197,7 @@ const Petitioner = ({addPetitioner}) => {
                   className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                   value={litigant.litigant_name} 
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : false }
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
@@ -225,7 +227,7 @@ const Petitioner = ({addPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.age}
                   className={`${errors.age ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleAgeChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.age }</div>
               </Form.Group>
@@ -257,7 +259,7 @@ const Petitioner = ({addPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.relation_name}
                   className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'relation_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
@@ -417,7 +419,7 @@ const Petitioner = ({addPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -433,6 +435,7 @@ const Petitioner = ({addPetitioner}) => {
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onBlur={() => handleBlur(litigant, setErrors)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>

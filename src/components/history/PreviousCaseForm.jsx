@@ -3,6 +3,8 @@ import api from '../../api'
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const PreviousCaseForm = () => {
@@ -13,10 +15,21 @@ const PreviousCaseForm = () => {
         prev_case_status: '',
         prev_disposal_date: null,
         prev_proceedings: '',
-        prev_is_correct: false,
+        prev_is_correct: 2,
         prev_remarks: '',
-        prev_is_pending: false
+        prev_is_pending: 2,
+        prev_disposal_date: ''
     }
+    
+    const currentYear = new Date().getFullYear(); // Get the current year
+
+    // Generate an array of years from 1900 to the current year
+    const years = Array.from({ length: currentYear - 1900 + 1 }, (_, index) => 1900 + index);
+  
+    // State for the input field and validation
+    const [yearInput, setYearInput] = useState('');
+    const [isValid, setIsValid] = useState(true);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     const[petition, setPetition] = useState(initialState)
 
@@ -36,7 +49,64 @@ const PreviousCaseForm = () => {
             }
         }
         fetchData();
+
+        const datePicker = flatpickr(".date-picker", {
+            dateFormat: "m/d/Y", // Date format after selection (mm/dd/yyyy)
+            onChange: (selectedDates) => {
+                // Format the selected date to mm/dd/yyyy before updating the state
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : '';
+                setPetition({
+                    ...petition,
+                    prev_disposal_date: formattedDate // Set the formatted date
+                });
+            }
+        });
+
+        return () => {
+            if (datePicker && typeof datePicker.destroy === "function") {
+                datePicker.destroy();
+            }
+        };
+            
+
+
     },[])
+
+    const formatDate = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in mm/dd/yyyy format
+    };
+
+    const handleYearChange = (e) => {
+        const input = e.target.value;
+    
+        // Allow only numeric characters (0-9) and restrict length to 4 digits
+        const filteredInput = input.replace(/[^0-9]/g, '').slice(0, 4);
+    
+        // Update the input field with the filtered value (only numbers, length capped at 4)
+        setYearInput(filteredInput);
+    
+        // Validate if the input is a valid year (4-digit number within the range)
+        if (filteredInput.length === 4 && !isNaN(filteredInput) && filteredInput >= 1900 && filteredInput <= currentYear) {
+            setIsValid(true);
+            setShowDropdown(false); // Hide dropdown when valid year is entered
+          } else {
+            setIsValid(false);
+            setShowDropdown(filteredInput.length >= 1); // Show dropdown if at least 1 digit is typed
+          }
+      };
+    
+      // Handle dropdown selection
+      const handleDropdownSelect = (e) => {
+        const selectedYear = e.target.value;
+        setYearInput(selectedYear); // Set the selected year in the input field
+        setIsValid(true);
+        setShowDropdown(false); // Hide the dropdown after selection
+      };
+
+    const filteredYears = years.filter(year => year.toString().startsWith(yearInput));
 
     const handleSubmit = async (e) => {
         try{
@@ -120,7 +190,7 @@ const PreviousCaseForm = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-2">
+                {/* <div className="col-md-2">
                     <div className="form-group">
                         <label htmlFor="">{t('case_year')}</label>
                         <input 
@@ -131,6 +201,40 @@ const PreviousCaseForm = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         />
                     </div>
+                </div> */}
+                <div className="col-md-2">
+                <div className="form-group">
+                    <label htmlFor="prev_case_year">Case Year</label>
+
+                    {/* Input field */}
+                    <input
+                    type="text"
+                    name="prev_case_year"
+                    className={`form-control ${yearInput.length === 4 && !isValid ? 'is-invalid' : ''}`}
+                    value={yearInput}
+                    onChange={handleYearChange}
+                    />
+
+                    {/* Show dropdown if input is invalid */}
+                    {!isValid && showDropdown && filteredYears.length > 0 && (
+                    <select
+                        className="form-control"
+                        value={yearInput}
+                        onChange={handleDropdownSelect}
+                        size="5" // Show more options
+                    >
+                        <option value="">Select Year</option>
+                        {filteredYears.map((year) => (
+                        <option key={year} value={year}>
+                            {year}
+                        </option>
+                        ))}
+                    </select>
+                    )}
+
+                    {/* Error message */}
+                    {!isValid && yearInput.length === 4 && <div className="invalid-feedback">Please enter a valid year</div>}
+                </div>
                 </div>
                 <div className="col-md-3">
                     <div className="form-group">
@@ -144,7 +248,7 @@ const PreviousCaseForm = () => {
                         />
                     </div>
                 </div>
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="">{t('disp_next_date')}</label>
                         <input 
@@ -153,6 +257,19 @@ const PreviousCaseForm = () => {
                             className="form-control"
                             value={petition.prev_disposal_date}
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                        />
+                    </div>
+                </div> */}
+                <div className="col-md-3">
+                    <div className="form-group">
+                        <label htmlFor="">{t('disp_next_date')}</label>
+                        <input 
+                            type="text" 
+                            name="prev_disposal_date" 
+                            className="form-control date-picker"
+                            value={petition.prev_disposal_date}
+                            placeholder="dd/mm/yyyy"
+                            readOnly
                         />
                     </div>
                 </div>
@@ -191,8 +308,8 @@ const PreviousCaseForm = () => {
                             id="details_correct_yes" 
                             value="yes" 
                             className="ml-3"
-                            checked={petition.prev_is_correct ? true : false }
-                            onChange={(e) => setPetition({...petition, [e.target.name]:1})} 
+                            checked={petition.prev_is_correct === 1}
+                            onChange={(e) => setPetition({ ...petition, prev_is_correct: 1 })}
                         />
                         <label htmlFor="details_correct_yes" className="ml-1">{t('yes')}</label>
                         <input 
@@ -201,8 +318,8 @@ const PreviousCaseForm = () => {
                             id="details_correct_no" 
                             value="no" 
                             className="ml-3"
-                            checked={!petition.prev_is_correct ? true : false }
-                            onChange={(e) => setPetition({...petition, [e.target.name]:2})} 
+                            checked={petition.prev_is_correct === 2}
+                            onChange={(e) => setPetition({ ...petition, prev_is_correct: 2 })} 
                         />
                         <label htmlFor="details_correct_no" className="ml-1">{t('no')}</label>
                     </div>
@@ -217,8 +334,8 @@ const PreviousCaseForm = () => {
                             id="previous_bail_yes" 
                             value="yes" 
                             className="ml-3"
-                            checked={petition.prev_is_pending ? true : false }
-                            onChange={(e) => setPetition({...petition, [e.target.name]:1})} 
+                            checked={petition.prev_is_pending === 1}
+                            onChange={(e) => setPetition({ ...petition, prev_is_pending:1})} 
                         />
                         <label htmlFor="previous_bail_yes" className="ml-1">{t('yes')}</label>
                         <input 
@@ -227,8 +344,8 @@ const PreviousCaseForm = () => {
                             id="previous_bail_no" 
                             value="no" 
                             className="ml-3" 
-                            checked={!petition.prev_is_pending ? true : false }
-                            onChange={(e) => setPetition({...petition, [e.target.name]:2})} 
+                            checked={petition.prev_is_pending  === 2 }
+                            onChange={(e) => setPetition({...petition, prev_is_pending:2})} 
                         />
                         <label htmlFor="previous_bail_no" className="ml-1">{t('no')}</label>
                     </div>
