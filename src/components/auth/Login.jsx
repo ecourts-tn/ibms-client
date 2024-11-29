@@ -42,7 +42,7 @@ const Login = () => {
         usertype: Yup.string().required(t('errors.usertype_required')),
         username: Yup.string().required(t('errors.username_required')),
         password: Yup.string().required(t('errors.password_required')),
-        captcha: Yup.string().required(t('errors.captcha_required'))
+        // captcha: Yup.string().required(t('errors.captcha_required'))
     })
 
     useEffect(() => {
@@ -56,8 +56,8 @@ const Login = () => {
         e.preventDefault();
         try{
             await validationSchema.validate(form, {abortEarly: false})
-            const isCaptchaValid = await verifyCaptcha(form.captcha);
-            if(isCaptchaValid){
+            // const isCaptchaValid = await verifyCaptcha(form.captcha);
+            // if(isCaptchaValid){
                 const {username, password, usertype} = form
                 const response = await api.post('auth/login/', { usertype, username, password }, {
                     skipInterceptor: true // Custom configuration to skip the interceptor
@@ -66,7 +66,7 @@ const Login = () => {
                 toast.success('logged in successfully', {
                     theme: "colored"
                 })
-            }
+            // }
         }catch(error){
             if(error.inner){
                 setLoading(false)
@@ -162,7 +162,7 @@ const Login = () => {
                                     size="small"
                                     name="username"
                                     value={ form.username }
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value.trim()})}
                                 />
                             </FormControl>
                         </div>

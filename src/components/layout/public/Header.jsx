@@ -1,14 +1,14 @@
-import api from 'api';
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import React, { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import { REFRESH_TOKEN } from "constants";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 import './header.css';
-import { AuthContext } from 'contexts/AuthContext';
+import api from 'api';
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
@@ -36,14 +36,16 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    const response = await api.post('auth/logout/', {
+    const response = await api.post("auth/logout/", {
       refresh: sessionStorage.getItem(REFRESH_TOKEN),
     });
+
     if (response.status === 205) {
       sessionStorage.clear();
-      // setIsAuth(false);
-      toast.success(t('alerts.logged_out'), { theme: "colored" });
-      setTimeout(() => navigate('/'), 1000);
+      toast.success(t("alerts.logged_out"), { theme: "colored" });
+      setIsAuth(false);
+      setUser(null);
+      navigate("/");
     }
   };
 
@@ -80,37 +82,16 @@ const Header = () => {
         <div className="container">
           <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
           <div className="collapse navbar-collapse d-flex justify-content-end" id="primaryNavbarContent">
-            <div className="resize-icons">
-              <button type="button" className="btn btn-default">
-                <i className="fa fa-sitemap"></i>
-              </button>
-              <button type="button" className="btn btn-default" id="decreaseFont">
-                <i className="fa fa-font"></i>-
-              </button>
-              <button type="button" className="btn btn-default" id="defaultFont">
-                <i className="fa fa-font"></i>
-              </button>
-              <button type="button" className="btn btn-default" id="increaseFont">
-                <i className="fa fa-font"></i>+
-              </button>
-              <button type="button" className="btn btn-default" id="highContrast">
-                <i className="fa fa-adjust"></i>
-              </button>
-              <button type="button" className="btn btn-default" id="normalMode">
-                <i className="fa fa-adjust" style={{ color: '#ffb600' }}></i>
-              </button>
-              {/* <span className="ml-3 text-white">{t('screen_reader')}</span> */}
-            </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (
                 <li className="nav-item dropdown">
                   <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown">
-                    <AccountCircleIcon /> {user.userlogin}
+                    <AccountCircleIcon /> {user?.userlogin}
                   </a>
                   <div className="dropdown-menu">
                     <Link to="/auth/profile" className="nav-link">{t('profile')}</Link>
                     <Link to="/auth/change-password" className="nav-link">{t('change_password')}</Link>
-                    <Link onClick={handleLogout} className="nav-link">{t('logout')}</Link>
+                    <button onClick={handleLogout} className="nav-link btn btn-link">{t('logout')}</button>
                   </div>
                 </li>
               )}
