@@ -12,6 +12,7 @@ import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { useTranslation } from 'react-i18next';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 const AccusedDetails = ({addPetitioner}) => {
@@ -160,7 +161,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                   value={litigant.litigant_name} 
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : false }
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
@@ -198,7 +199,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.age}
                   className={`${errors.age ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleAgeChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.age }</div>
               </Form.Group>
@@ -254,7 +255,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.relation_name}
                   className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'relation_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
@@ -390,7 +391,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   type="text"
                   name="pincode"
                   value={litigant.pincode}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handlePincodeChange(e, setLitigant, litigant)}
                 ></Form.Control>
               </Form.Group>
             </div>
@@ -433,7 +434,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -449,6 +450,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onBlur={() => handleBlur(litigant, setErrors)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>

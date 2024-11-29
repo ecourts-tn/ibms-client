@@ -10,6 +10,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { DesignationContext } from 'contexts/DesignationContext'
+import { handleMobileChange, validateEmail, validateMobile, handleBlur } from 'components/commonvalidation/validations';
 
 
 const RespondentForm = ({addRespondent, selectedRespondent}) => {
@@ -28,6 +29,8 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
         district:'',
         police_station: '',
         address:'',
+        mobile_number:'',
+        email_address:'',
     }
     const[litigant, setLitigant] = useState(initialState)
     const[respondentPolice, setRespondentPolice] = useState(false)  
@@ -48,7 +51,11 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     })
     const[errors, setErrors] = useState({})
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrors({});
+        let formIsValid = true;
+        let newErrors = {};
         try{
             await validationSchema.validate(litigant, {abortEarly:false})
             addRespondent(litigant)
@@ -61,6 +68,19 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 });
                 setErrors(newErrors)
                 }
+        }
+        const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
+        if (mobileError) {
+          newErrors.mobile_number = mobileError;
+          formIsValid = false;
+        }
+    
+        const emailError = validateEmail(litigant.email_address);
+        if (emailError) {
+          newErrors.email_address = emailError;
+          formIsValid = false;
+        } else {
+          delete newErrors.email_address; // Clear any existing error
         }
     }
 
@@ -213,7 +233,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="mobile_number" 
                             className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}` }
                             value={litigant.mobile_number}
-                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                            onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                         />
                         <div className="invalid-feedback">{ errors.mobile_number }</div>
                     </Form.Group>
@@ -227,6 +247,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             className={`form-control ${errors.email_address ? 'is-invalid' : ''}` }
                             value={litigant.email_address}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                            onBlur={() => handleBlur(litigant, setErrors)}
                         />
                         <div className="invalid-feedback">{ errors.email_address }</div>
                     </Form.Group>

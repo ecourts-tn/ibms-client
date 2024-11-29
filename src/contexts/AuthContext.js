@@ -1,6 +1,6 @@
 import api from "api";
 import axios from "axios";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useContext, useMemo, useState, useEffect  } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "constants";
@@ -11,7 +11,22 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", null);
   const [isAuth, setIsAuth] = useState(false)
   const navigate = useNavigate();
-  
+  // const [isAuth, setIsAuth] = useState(false);
+  // const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const sessionUser = sessionStorage.getItem("user");
+    const accessToken = sessionStorage.getItem("ACCESS_TOKEN");
+
+    if (accessToken && sessionUser) {
+      setIsAuth(true);
+      setUser(JSON.parse(sessionUser));
+    } else {
+      setIsAuth(false);
+      setUser(null);
+    }
+  }, []);
+
   const login = async (data) => {
     if (!data) return;
     sessionStorage.clear();
@@ -62,17 +77,17 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
-  const contextValue = useMemo(
-    () => ({
-      user,
-      login,
-      logout,
-      isAuth
-    }),
-    [user]
-  );
+  // const contextValue = useMemo(
+  //   () => ({
+  //     user,
+  //     login,
+  //     logout,
+  //     isAuth
+  //   }),
+  //   [user]
+  // );
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={{ isAuth, user, setIsAuth, setUser, login, logout }}>
         {children}
     </AuthContext.Provider>
 )

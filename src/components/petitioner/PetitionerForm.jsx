@@ -18,6 +18,7 @@ import { LanguageContext } from 'contexts/LanguageContex';
 import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
 import { useLocation } from 'react-router-dom';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
@@ -36,6 +37,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   const location = useLocation()
   const {t} = useTranslation()
   const[alternateAddress, setAlternateAddress] = useState(false)
+  
   const initialState = {
       litigant: 'o',
       litigant_name: '',
@@ -69,7 +71,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     }
 
   const[litigant, setLitigant] = useState(initialState)
-  const[errors, setErrors] = useState({})
+  const[errors, setErrors] = useState(initialState)
 
   useEffect(() => {
     setLitigant(selectedPetitioner)
@@ -86,9 +88,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     rank: Yup.string().required(t('errors.rank_required')),
     gender: Yup.string().required(t('errors.gender_required')),
     address: Yup.string().required(t('errors.address_required')),
-    mobile_number: Yup.number()
-      .required(t('errors.mobile_required'))
-      .typeError(t('errors.numeric')),
+    mobile_number: Yup.number().required(t('errors.mobile_required')).typeError(t('errors.numeric')),
     proof_number: Yup.string().required(t('errors.identity_proof_required')),
     act: Yup.string().required(t('errors.act_required')),
     section: Yup.string().required(t('errors.section_required')),
@@ -140,7 +140,11 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     }
   },[litigant.litigant, accused])
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    let formIsValid = true;
+    let newErrors = {};
     try {
       await validationSchema.validate(litigant, { abortEarly: false });
       addPetitioner(litigant);
@@ -160,6 +164,52 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
         toast.error(error.response, { theme: "colored" });
       }
     }
+
+    const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
+    if (mobileError) {
+      newErrors.mobile_number = mobileError;
+      formIsValid = false;
+    }
+
+    const emailError = validateEmail(litigant.email_address);
+    if (emailError) {
+      newErrors.email_address = emailError;
+      formIsValid = false;
+    } else {
+      delete newErrors.email_address; // Clear any existing error
+    }
+    const ageError = handleAgeChange({ target: { value: litigant.age } }, setLitigant, litigant);
+    if (ageError) {
+      newErrors.age = ageError;
+      formIsValid = false;
+    }
+
+    const pincodeError = handlePincodeChange({ target: { value: litigant.pincode } }, setLitigant, litigant);
+    if([pincodeError]) {
+      newErrors.pincode = pincodeError;
+      formIsValid = false;
+    }
+
+   // Validate the litigant_name
+   const nameError = handleNameChange({ target: { value: litigant.litigant_name } }, setLitigant, litigant);
+   if (nameError) {
+       newErrors.litigant_name = nameError;
+       formIsValid = false;
+   }
+
+   // Validate the relation_name
+   const relationNameError = handleNameChange({ target: { value: litigant.relation_name } }, setLitigant, litigant);
+   if (relationNameError) {
+       newErrors.relation_name = relationNameError;
+       formIsValid = false;
+   }
+
+   if (!formIsValid) {
+       setErrors(newErrors); // Update the errors state
+   }
+
+   return formIsValid;
+
   };
 
   return (
@@ -194,7 +244,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                   value={litigant.litigant_name} 
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : false }
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
               </Form.Group>
@@ -232,7 +282,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.age}
                   className={`${errors.age ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleAgeChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.age }</div>
               </Form.Group>
@@ -288,7 +338,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   readOnly={litigant.litigant !== 'o' ? 'readOnly' : null }
                   value={litigant.relation_name}
                   className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleNameChange(e, setLitigant, litigant, 'relation_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
@@ -424,7 +474,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   type="text"
                   name="pincode"
                   value={litigant.pincode}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handlePincodeChange(e, setLitigant, litigant)}
                 ></Form.Control>
               </Form.Group>
             </div>
@@ -503,7 +553,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -519,8 +569,9 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  onBlur={() => handleBlur(litigant, setErrors)}
                 ></Form.Control>
-                <div className="invalid-feedback">{ errors.email_address }</div>
+                {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
             </div>
             { location.pathname !== "/filing/anticipatory-bail/litigant" && (
