@@ -1,27 +1,3 @@
-// const getEnvConfig = () => {
-//     const env = process.env.REACT_APP_ENV || 'development';
-    
-//     const config = {
-//       development: {
-//         apiUrl: process.env.REACT_APP_DEV_API_URL,
-//         featureFlag: process.env.REACT_APP_DEV_FEATURE_FLAG === 'true',
-//       },
-//       staging: {
-//         apiUrl: process.env.REACT_APP_STAGING_API_URL,
-//         featureFlag: process.env.REACT_APP_STAGING_FEATURE_FLAG === 'true',
-//       },
-//       production: {
-//         apiUrl: process.env.REACT_APP_PROD_API_URL,
-//         featureFlag: process.env.REACT_APP_PROD_FEATURE_FLAG === 'true',
-//       },
-//     };
-  
-//     return config[env];
-//   };
-  
-//   export default getEnvConfig();
-  
-
 const config = {
   development: {
     apiUrl: "http://127.0.0.1:8000/api/",
