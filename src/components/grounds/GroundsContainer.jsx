@@ -80,7 +80,6 @@ const GroundsContainer = () => {
     }
 
     const deleteGround = async(ground) => {
-        console.log(ground)
         try{
             const newGrounds = grounds.filter((g) => {
                 return g.id !== ground.id

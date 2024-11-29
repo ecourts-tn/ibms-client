@@ -1,14 +1,14 @@
-import React, { useContext } from "react";
+import api from 'api';
+import './header.css';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+import React, { useState, useEffect, useContext } from "react";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { REFRESH_TOKEN } from "constants";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import './header.css';
-import api from 'api';
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
@@ -35,17 +35,19 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    const response = await api.post("auth/logout/", {
-      refresh: sessionStorage.getItem(REFRESH_TOKEN),
-    });
-
-    if (response.status === 205) {
-      sessionStorage.clear();
-      toast.success(t("alerts.logged_out"), { theme: "colored" });
-      setIsAuth(false);
-      setUser(null);
-      navigate("/");
+    try{
+      const response = await api.post("auth/logout/", {refresh: sessionStorage.getItem(REFRESH_TOKEN)});
+      if (response.status === 205) {
+        sessionStorage.clear();
+        toast.success(t("alerts.logged_out"), { theme: "colored" });
+        setIsAuth(false);
+        setUser(null);
+        navigate("/");
+      }
+    }catch(error){
+      console.log(error)
     }
+
   };
 
   const renderDropdownLinks = (links) => {
