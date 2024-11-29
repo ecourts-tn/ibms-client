@@ -44,11 +44,11 @@ const CaseScrutiny = () => {
             try{
                 const response = await api.post("court/petition/detail/", {efile_no:state.efile_no})
                 if(response.status === 200){
-                    const { petition, litigant, grounds, advocate, fees, crime, documents} = response.data
+                    const { petition, litigants, grounds, advocates, fees, crime, documents} = response.data
                     setPetition(petition)
-                    setLitigant(litigant)
+                    setLitigant(litigants)
                     setGrounds(grounds)
-                    setAdvocates(advocate)
+                    setAdvocates(advocates)
                     setDocuments(documents)
                     setFees(fees)
                     setCrime(crime)
@@ -59,6 +59,8 @@ const CaseScrutiny = () => {
         }
         fetchData();
     },[])
+
+    console.log(documents)
  
     const handleSubmit = async () => {
         if(form.status === 1){

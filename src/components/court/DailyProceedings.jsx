@@ -37,10 +37,10 @@ const DailyProceedings = () => {
             try{
                 const response = await api.post(`court/petition/detail/`, {efile_no:state.efile_no})
                 if(response.status === 200){
-                    const { petition, grounds, advocate, police_response, ppremarks, crime, litigant } = response.data
+                    const { petition, grounds, advocates, police_response, ppremarks, crime, litigants } = response.data
                     setPetition(petition)
-                    setLitigant(litigant)
-                    setAdvocates(advocate)
+                    setLitigant(litigants)
+                    setAdvocates(advocates)
                     setGrounds(grounds)
                     setCrime(crime)
                     setProsecutionRemarks(ppremarks)
@@ -217,7 +217,7 @@ const DailyProceedings = () => {
                                             <div className="card-body p-3">
                                                 <div className="row">
                                                     <div className="col-md-12">
-                                                        {prosecutionRemarks.length < 1 ?(
+                                                        {prosecutionRemarks?.length < 1 ?(
                                                             <PPRemarks accused={litigant}/>
                                                         ): (
                                                             <>

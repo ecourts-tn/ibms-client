@@ -13,16 +13,16 @@ const Calendar = () => {
 
     return (
         <div className="card">
-            <div className="card-header border-0 bg-success">
+            <div className="card-header border-0 bg-primary">
                 <h3 className="card-title">
                     <i className="far fa-calendar-alt mr-2" />
                     {t('calendar')}
                 </h3>
-                <div className="card-tools">
+                {/* <div className="card-tools">
                     <div className="btn-group">
                         <button
                             type="button"
-                            className="btn btn-success btn-sm dropdown-toggle"
+                            className="btn btn-primary btn-sm dropdown-toggle"
                             data-toggle="dropdown"
                             data-offset={-52}
                         >
@@ -55,7 +55,7 @@ const Calendar = () => {
                     >
                         <i className="fas fa-times" />
                     </button>
-                </div>
+                </div> */}
             </div>
             <div className="card-body pt-0">
                 <FullCalendar

@@ -73,7 +73,7 @@ const Proceeding = ({efile_no}) => {
                     if(response.status === 200){
 
                         setPetition(response.data.petition)
-                        setLitigant(response.data.litigant)
+                        setLitigant(response.data.litigants)
                         setForm({
                             ...form, 
                             efile_no: response.data.petition.efile_number,
@@ -203,7 +203,7 @@ const Proceeding = ({efile_no}) => {
                                         </span>
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu style={{ width: "100%", backgroundColor:'white' }}>
-                                        {litigant.map((l, index) => (
+                                        {litigant.filter(l=>l.litigant_type === 1).map((l, index) => (
                                         <Form.Check
                                             key={index}
                                             type="checkbox"

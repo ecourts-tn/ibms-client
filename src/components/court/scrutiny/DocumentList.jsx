@@ -20,6 +20,7 @@ const DocumentList = ({documents}) => {
         <table className="table table-striped table-bordered table-sm mt-3">
             <thead className="bg-secondary">
                 <tr>
+                    <th>Document No.</th>
                     <th>{t('document_title')}</th>
                     <td>Hash</td>
                     <th>{t('action')}</th>
@@ -28,6 +29,7 @@ const DocumentList = ({documents}) => {
             <tbody>
                 { documents.map((d, index) => (
                 <tr key={index}>
+                    <td>{`${d.efile_no}${d.id}`}</td>
                     <td>{ d.title?.document_name }</td>
                     <td>{ d.hash }</td>
                     <td>

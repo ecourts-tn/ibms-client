@@ -44,12 +44,12 @@ const CaseRegistration = () => {
             try{
                 const response = await api.post(`court/petition/detail/`, {efile_no:state.efile_no})
                 if(response.status === 200){
-                    const { petition, litigant, grounds, advocate, crime, documents} = response.data
+                    const { petition, litigants, grounds, advocates, crime, documents} = response.data
                     setPetition(petition)
-                    setLitigant(litigant)
+                    setLitigant(litigants)
                     setCrime(crime)
                     setGrounds(grounds)
-                    setAdvocates(advocate)
+                    setAdvocates(advocates)
                     setDocuments(documents)
                 }
             }catch(err){

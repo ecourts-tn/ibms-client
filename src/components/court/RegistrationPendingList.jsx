@@ -1,15 +1,25 @@
+import api from 'api'
 import React, {useState, useEffect} from 'react'
-import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
+import Loading from 'components/Loading'
 
 const RegistrationPendingList = () => {
     const[cases, setCases] = useState([])
+    const[loading, setLoading] = useState(false)
     useEffect(() => {
         const fecthCases = async() =>{
-            const response = await api.get("court/registration/pending/list/")
-            if(response.status === 200){
-                setCases(response.data)
+            try{
+                setLoading(true)
+                const response = await api.get("court/registration/pending/")
+                if(response.status === 200){
+                    setCases(response.data)
+                }
+
+            }catch(error){
+                console.error(error)
+            }finally{
+                setLoading(false)
             }
         }
         fecthCases();
@@ -17,6 +27,7 @@ const RegistrationPendingList = () => {
 
     return (
         <div>
+            {loading && <Loading />}
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row">
@@ -43,12 +54,12 @@ const RegistrationPendingList = () => {
                                                 <span className="text mr-3">
                                                     <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
                                                 </span>
-                                                { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                                { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>
                                                 ))
                                                 }
                                                 <span className="text text-danger">Vs</span>
-                                                { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                                { c.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                                     <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                                 ))
                                                 }

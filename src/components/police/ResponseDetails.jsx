@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useState, useEffect } from "react"
 import { useLocation } from 'react-router-dom';
 import api from '../../api'
 import { toast, ToastContainer } from 'react-toastify';
 import { CreateMarkup } from '../../utils';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 const ResponseDetails = () => {
     const {state} = useLocation()
@@ -13,6 +15,8 @@ const ResponseDetails = () => {
     const[crime, setCrime] = useState({})
     const[accused, setAccused] = useState([])
     const[response, setResponse] = useState([])
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const initialState = {
         cino                : '',
         offences            : '',
@@ -100,8 +104,25 @@ const ResponseDetails = () => {
                                         <td>{ crime.fir_date_time }</td>
                                     </tr>
                                     <tr>
+                                        <td>{t('court')}</td>
+                                        <td colSpan={5}>
+                                            { petition.judiciary?.id === 2 && (
+                                                language === 'ta' ? 
+                                                    `${petition.court?.court_lname}, ${petition.establishment?.establishment_lname}, ${petition.district?.district_lname}` 
+                                                    : 
+                                                    `${petition.court?.court_name}, ${petition.establishment?.establishment_name}, ${petition.district?.district_name}`
+                                            )}
+                                            { petition.judiciary?.id === 1 && (
+                                                language === 'ta' ? 
+                                                    `${petition.seat?.seat_lname}, ${petition.judiciary?.judiciary_lname}` 
+                                                    : 
+                                                    `${petition.seat?.seat_name}, ${petition.judiciary?.judiciary_name}`
+                                             )}
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>Police&nbsp;Station</td>
-                                        <td>{ crime.police_station ? crime.police_station : null }</td>
+                                        <td>{ crime.police_station ? crime.police_station?.station_name : null }</td>
                                         <td>Date of Occurence</td>
                                         <td>{ crime.date_of_occurrence }</td>
                                         <td>Complainant&nbsp;Name</td>

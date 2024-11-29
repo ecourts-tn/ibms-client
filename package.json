@@ -52,6 +52,7 @@
     "react-time-ago": "^7.3.3",
     "react-to-pdf": "^1.0.1",
     "react-toastify": "^10.0.6",
+    "react-webcam": "^7.2.0",
     "yup": "^1.4.0"
   },
   "scripts": {

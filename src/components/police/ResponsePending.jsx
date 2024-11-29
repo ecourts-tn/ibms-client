@@ -51,6 +51,7 @@ const ResponsePending = () => {
                                             <th>{t('efile_number')}</th>
                                             <th>{t('court')}</th>
                                             <th>Crime Number/Year</th>
+                                            <th>Date & Place of Occurence</th>
                                             <th>Accused Details</th>
                                         </tr>
                                     </thead>
@@ -70,6 +71,10 @@ const ResponsePending = () => {
                                                 <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
                                             </td>
                                             <td>{ item.crime?.fir_number }/{ item.crime?.fir_year }</td>
+                                            <td>
+                                                { item.crime?.date_of_occurrence}<br/>
+                                                { item.crime?.place_of_occurrence}
+                                            </td>
                                             <td className="text-center">
                                                 { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2" style={{display:'block'}} key={index}>{index+1}. {l.litigant_name}</span>

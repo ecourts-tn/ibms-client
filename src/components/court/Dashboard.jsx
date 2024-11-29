@@ -1,171 +1,116 @@
 import React, {useState, useEffect} from 'react'
-import api from 'api'
+import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
-import DashboardCard from 'components/common/DashboardCard'
+import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
+import DashboardCard from 'components/common/DashboardCard'
+import Calendar from 'components/common/Calendar'
+import PetitionList from 'components/common/PetitionList'
 
 const Dashboard = () => {
 
-    const[cases, setCases] = useState([])
     const[count, setCount] = useState({})
-    const {t} = useTranslation()
+    const[cases, setCases] = useState([])
+    const[loading, setLoading] = useState(false)
+    const { t } = useTranslation()
+
+    const fetchDashboardData = async () => {
+        try {
+            setLoading(true)
+            const countsEndpoint = 'court/dashboard/counts/';
+            const petitionsEndpoint = 'court/dashboard/petitions/';
+            // Use Promise.all to fetch both endpoints in parallel
+            const [countsResponse, petitionsResponse] = await Promise.all([
+                api.get(countsEndpoint),
+                api.get(petitionsEndpoint),
+            ]);
+            // Extract the data from the responses
+            const counts = countsResponse.data;
+            const petitions = petitionsResponse.data;           
+            setCount(counts)
+            setCases(petitions?.petitions)
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+            throw error;
+        }finally{
+            setLoading(false)
+        }
+    };
 
     useEffect(() => {
-        const fecthCases = async() =>{
-            const response = await api.get("court/dashboard/")
-            if(response.status === 200){
-                setCases(response.data.petitions)
-                setCount({
-                    'total': response.data.total,
-                    'approved': response.data.approved,
-                    'returned': response.data.returned,
-                    'rejected': response.data.rejected
-                })
-            }
-        }
-        fecthCases();
-    },[])
-
-    useEffect(() => {
-        const fecthCases = async() =>{
-            const response = await api.get("court/petition/submitted/list/")
-            if(response.status === 200){
-                setCases(response.data)
-            }
-        }
-        fecthCases();
+        fetchDashboardData();
     },[])
 
     return (
-    <>
-        <div className="content-wrapper">
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-sm-12">
-                        <ol className="breadcrumb mt-2">
-                            <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
-                            <li className="breadcrumb-item"><a href="#">{t('court')}</a></li>
-                            <li className="breadcrumb-item active">{t('dashboard')}</li>
-                        </ol>
-                        <div className="row">
-                            <DashboardCard
-                                color="bg-info"
-                                count={count.total}
-                                title={t('total_petition')}
-                                icon="ion-bag"
-                                url={null}
-                            ></DashboardCard>
-                            <DashboardCard
-                                color="bg-success"
-                                count={count.approved}
-                                title={t('approved_petition')}
-                                icon="ion-stats-bars"
-                                url={null}
-                            ></DashboardCard>
-                            <DashboardCard
-                                color="bg-warning"
-                                count={count.returned}
-                                title={t('returned_petition')}
-                                icon="ion-person-add"
-                                url={null}
-                            ></DashboardCard>
-                            <DashboardCard
-                                color="bg-danger"
-                                count={count.rejected}
-                                title={t('rejected_petition')}
-                                icon="ion-pie-graph"
-                                url={null}
-                            ></DashboardCard>
-                        </div>
-                        <div className="row">
-                            <div className="col-md-3">
-                                <div className="card">
-                                    <div className="card-header border-0 bg-success">
-                                    <h3 className="card-title">
-                                        <i className="far fa-calendar-alt" />
-                                        {t('calendar')}
-                                    </h3>
-                                    <div className="card-tools">
-                                        <div className="btn-group">
-                                        <button type="button" className="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown" data-offset={-52}>
-                                            <i className="fas fa-bars" />
-                                        </button>
-                                        <div className="dropdown-menu" role="menu">
-                                            <a href="#" className="dropdown-item">Add new event</a>
-                                            <a href="#" className="dropdown-item">Clear events</a>
-                                            <div className="dropdown-divider" />
-                                            <a href="#" className="dropdown-item">View calendar</a>
-                                        </div>
-                                        </div>
-                                        <button type="button" className="btn btn-success btn-sm" data-card-widget="collapse">
-                                        <i className="fas fa-minus" />
-                                        </button>
-                                        <button type="button" className="btn btn-success btn-sm" data-card-widget="remove">
-                                        <i className="fas fa-times" />
-                                        </button>
-                                    </div>
+        <>
+            <ToastContainer />
+            <div className="content-wrapper">
+                <div className="container-fluid">
+                    <div className="content-header">
+                        <div className="container-fluid">
+                            <div className="row mb-2">
+                                <div className="col-sm-6">
+                                    <h3 className="m-0"><strong>{t('dashboard')}</strong></h3>
                                 </div>
-                                <div className="card-body pt-0">
-                                    <div id="calendar" style={{width: '100%'}} />
-                                </div>
-                            </div>
-                            </div>
-                            <div className="col-md-9">
-                                <div className="card" style={{minHeight:'500px'}}>
-                                    <div className="card-header">
-                                    <h3 className="card-title">
-                                        <i className="ion ion-clipboard mr-1" />
-                                        <strong>Pending Scrutiny</strong>
-                                    </h3>
-                                    <div className="card-tools">
-                                        <ul className="pagination pagination-sm">
-                                        <li className="page-item"><a href="#" className="page-link">«</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">1</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">2</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">3</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">»</a></li>
-                                        </ul>
-                                    </div>
-                                    </div>
-                                    <div className="card-body">
-                                    <ul className="todo-list" data-widget="todo-list">
-                                        { cases.map((c, index) => (
-                                            <li key={index}>
-                                                <span className="handle">
-                                                    <i className="fas fa-ellipsis-v" />
-                                                    <i className="fas fa-ellipsis-v" />
-                                                </span>
-                                                <div className="icheck-primary d-inline ml-2">
-                                                    <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
-                                                    <label htmlFor="todoCheck1" />
-                                                </div>
-                                                
-                                                <span className="text mr-3">
-                                                    <Link to={`/court/case/scrutiny/detail`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
-                                                </span>
-                                                { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
-                                                    <span className="text ml-2">{index+1}. {p.litigant_name}</span>
-                                                ))} 
-                                                <span className="text text-danger">Vs</span>
-                                                { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-                                                    <span className="text ml-2">{res.litigant_name} {res.designation?.designation_name}</span>
-                                                ))} 
-                                                <div className="float-right">
-                                                    {/* <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small> */}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                    </div>
+                                <div className="col-sm-6">
+                                    <ol className="breadcrumb float-sm-right">
+                                        <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                        <li className="breadcrumb-item active">{t('dashboard')}</li>
+                                    </ol>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <section className="content">
+                        <div className="container-fluid">
+                            <div className="row">
+                                <DashboardCard
+                                    color={'bg-info'}
+                                    count={count.total}
+                                    title={t('total_petition')}
+                                    icon={'ion-bag'}
+                                    url={`/filing/draft`}
+                                />
+                                    <DashboardCard 
+                                    color={'bg-success'}
+                                    count={count.submitted}
+                                    title={t('draft_petition')}
+                                    icon={'ion-bag'}
+                                    url={`/filing/draft`}
+                                />
+                                <DashboardCard 
+                                    color={'bg-warning'}
+                                    count={count.approved}
+                                    title={t('pending_petition')}
+                                    icon={'ion-bag'}
+                                    url={`/filing/draft`}
+                                />
+                                <DashboardCard 
+                                    color={'bg-danger'}
+                                    count={count.returned}
+                                    title={t('draft_petition')}
+                                    icon={'ion-bag'}
+                                    url={`/filing/draft`}
+                                />
+                            </div>
+                            <div className="row">
+                                <div className="col-md-5">
+                                    <Calendar />
+                                </div>
+                                <div className="col-md-7">
+                                    <PetitionList 
+                                        cases={cases}
+                                        title={t('petitions')}
+                                        url={`/court/case/scrutiny/detail/`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
             </div>
-        </div>
-    </>
+        </>
   )
 }
 

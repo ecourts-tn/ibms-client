@@ -97,7 +97,11 @@ const Dashboard = () => {
                                 <Calendar />
                             </div>
                             <div className="col-md-7">
-                                <PetitionList cases={cases}/>
+                                <PetitionList 
+                                    cases={cases} 
+                                    title={t('my_petition')}
+                                    url={`/filing/detail/`}
+                                />
                             </div>
                             <div className="col-md-12">
                             </div>
