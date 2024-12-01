@@ -1,6 +1,6 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
 import InitialInput from "components/InitialInput";
 import PetitionerContainer from "components/petitioner/PetitionerContainer";

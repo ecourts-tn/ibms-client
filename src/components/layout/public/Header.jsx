@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { REFRESH_TOKEN } from "constants";
@@ -82,6 +82,13 @@ const Header = () => {
         <div className="container">
           <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
           <div className="collapse navbar-collapse d-flex justify-content-end" id="primaryNavbarContent">
+            <div className="resize-icons">
+              <button type="button" class="btn btn-default"><i class="fa fa-sitemap"></i></button>
+              <button type="button" class="btn btn-default" id="decreaseFont"><i class="fa fa-font"></i>-</button>
+              <button type="button" class="btn btn-default" id="defaultFont"><i class="fa fa-font"></i></button>
+              <button type="button" class="btn btn-default" id="increaseFont"><i class="fa fa-font"></i>+</button>
+              <button type="button" class="btn btn-default" id="highContrast"><i class="fa fa-adjust"></i></button>
+            </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (
                 <li className="nav-item dropdown">

@@ -1,5 +1,5 @@
+import api from 'api'
 import React, {useState, useEffect} from 'react'
-import api from '../../api'
 import Button from '@mui/material/Button'
 import { Link } from 'react-router-dom'
 
@@ -10,7 +10,7 @@ const OrderPendingList = ({}) => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get("court/registration/pending/list/")
+                const response = await api.get("court/registration/pending/")
                 setCases(response.data)
             }catch(err){
                 console.log(err)

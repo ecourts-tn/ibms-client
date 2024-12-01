@@ -62,7 +62,7 @@ export default function MenuBar() {
               { user && (
               <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 {/* Start - Court user menu */}
-                { parseInt(user.user_type) === 8 && (
+                { parseInt(user.group) === 3 && (
                 <>
                   <li className="nav-item menu-open">
                     <Link to="/court/dashboard" className="nav-link active">
@@ -92,6 +92,12 @@ export default function MenuBar() {
                         <Link to="/court/case/cause-list" className="nav-link">
                           <i className="far fa-circle nav-icon" />
                           <p>Post Cases to Causelist</p>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/court/case/cause-list/publish" className="nav-link">
+                          <i className="far fa-circle nav-icon" />
+                          <p>Publish Causelist</p>
                         </Link>
                       </li>
                     {/* </ul>
@@ -160,11 +166,17 @@ export default function MenuBar() {
                       <p>Reports</p>
                     </Link>
                   </li>   
+                  <li className="nav-item">
+                    <Link to="case/post-cause-list" className="nav-link">
+                      <i className="nav-icon far fa-circle text-info" />
+                      <p>Draggable List</p>
+                    </Link>
+                  </li>   
                 </>
                 )}
                 { /* End - Court user menu */} 
                 { /* Start - Police user menu */}
-                { parseInt(user.user_type) === 5 && (
+                { parseInt(user.group) === 7 && (
                 <>
                   <li className="nav-item menu-open">
                     <Link to="/police/dashboard" className="nav-link active">
@@ -220,7 +232,7 @@ export default function MenuBar() {
                 )}
                 { /* End - Police user menu */}
                 { /* Start - Prison user menu */}
-                { parseInt(user.user_type) === 4 && (
+                { parseInt(user.group) === 8 && (
                   <>
                     <li className="nav-item menu-open">
                       <Link to="/prison/dashboard" className="nav-link active">
@@ -242,7 +254,7 @@ export default function MenuBar() {
                   </>
                 )}
                 {/** End - Prison user menu */}
-                { parseInt(user.user_type) === 3 && (
+                { parseInt(user.group) === 9 && (
                   <>
                     <li className="nav-item menu-open">
                       <Link to="/prosecution/dashboard" className="nav-link active">

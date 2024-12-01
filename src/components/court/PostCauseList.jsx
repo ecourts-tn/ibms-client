@@ -1,18 +1,28 @@
-import React, {useState, useEffect} from 'react'
-import api from '../../api'
+import React, {useState, useEffect, useContext} from 'react'
+import api from 'api'
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
+import Loading from 'components/Loading'
+import 'components/court/style.css'
 
 
-const CauseList = () => {
-
+const PostCauseList = () => {
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
+    const [loading, setLoading] = useState(false)
     const[cases, setCases] = useState([])
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get("court/registration/pending/list/")
+                setLoading(true)
+                const response = await api.get("court/registration/pending/")
                 setCases(response.data)
             }catch(err){
                 console.log(err)
+            }finally{
+                setLoading(false)
             }
         }
         fetchData();
@@ -20,12 +30,13 @@ const CauseList = () => {
 
     return (
         <div className="content-wrapper">
+            { loading && <Loading />}
             <div className="container-fluid mt-3">
                 <div className="card card-outline card-primary">
                     <div className="card-header">
                         <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Cause List</strong></h3>
                     </div>
-                    <div className="card-body">
+                    <div className="card-body admin-card">
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="table-responsive">
@@ -47,8 +58,10 @@ const CauseList = () => {
                                                         <tr key={index}>
                                                             <td>{ index+1 }</td>
                                                             <td>
-                                                                { c.petition.efile_number }<br></br>
-                                                                { `${c.petition.filing_type?.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`}
+                                                                <Link to="/court/case/scrutiny/detail" state={{efile_no:c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                                                <span style={{display:"block"}}>
+                                                                    { `${c.petition.filing_type?.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`}
+                                                                </span>
                                                             </td>
                                                             <td>
                                                                 { c.crime?.fir_number } / { c.crime?.fir_year }<br/>
@@ -57,11 +70,11 @@ const CauseList = () => {
                                                                 )}   
                                                             </td>
                                                             <td className="text-center">
-                                                                { c.litigant.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                                                { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                                     <span className="text ml-2">{index+1}. {l.litigant_name}</span>
                                                                 ))}<br/>
                                                                 <span className="text text-danger">Vs</span><br/>
-                                                                { c.litigant.filter((l) => l.litigant_type ===2 ).map((l, index) => (
+                                                                { c.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                                                     <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
                                                                 ))}
                                                             </td>
@@ -89,4 +102,4 @@ const CauseList = () => {
     )
 }
 
-export default CauseList
+export default PostCauseList

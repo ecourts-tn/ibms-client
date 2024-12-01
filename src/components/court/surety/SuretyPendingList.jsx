@@ -1,5 +1,5 @@
+import api from 'api'
 import React, {useState,useEffect} from 'react'
-import api from '../../api'
 import Button from '@mui/material/Button'
 import { Link } from 'react-router-dom'
 

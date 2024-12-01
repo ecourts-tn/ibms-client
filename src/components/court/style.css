@@ -10,3 +10,17 @@
     text-decoration: none;
     display:block;
 }
+
+.cause-list li {
+    list-style-type: none;
+}
+.cause-list-items {
+    background:#f2f3f4;
+    padding:10px;
+    margin:10px 0px;
+    border:1px solid navy;
+    border-left: 4px solid navy;
+}
+.admin-card{
+    min-height: 500px;
+}

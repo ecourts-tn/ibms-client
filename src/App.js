@@ -10,7 +10,7 @@ import { AppProvider } from 'contexts/AppContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
 import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
-import { courtRoutes } from 'routes/courtRoutes';
+import { CourtRoutes, courtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
@@ -50,11 +50,7 @@ function App() {
                 { ExtensionRoutes()}
               </Route> 
               <Route element={<AdminLayout />}>
-                <Route path="court">
-                { courtRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} />
-                ))}
-                </Route>
+                  { CourtRoutes() }
                 <Route path="police">
                   { policeRoutes.map((route, index) => (
                   <Route key={index} path={route.path} element={route.element} />

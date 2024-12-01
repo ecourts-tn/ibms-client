@@ -37,6 +37,8 @@ const Login = () => {
         password:'',
         captcha: ''
     })
+
+    console.log(userTypes)
     
     const validationSchema = Yup.object({
         usertype: Yup.string().required(t('errors.usertype_required')),
@@ -123,7 +125,7 @@ const Login = () => {
                             </div>
                         </div>
                     </div>
-                    { !isDepartment && (
+                    {/* { !isDepartment && (
                     <div className="col-md-12">
                         <RadioGroup
                             row
@@ -139,19 +141,19 @@ const Login = () => {
                         <p className="text-danger mb-3 text-center" style={{marginTop:'-15px', fontSize:'14px', fontWeight:'bold'}}>{ errors.usertype }</p>
                     </div>
                     )}
-                    { isDepartment && (
+                    { isDepartment && ( */}
                     <div className="col-md-12">
                         <div className="form-group">
                             <label htmlFor="">{t('usertype')}</label>
                             <select name="usertype" className="form-control" onChange={(e)=>setForm({...form, [e.target.name]: e.target.value})}>
                                 <option value="">{t('alerts.select_usertype')}</option>
-                                { userTypes.filter(ut => ut.department_user).map((u, index) => (
-                                <option key={index} value={u.id}>{ language === 'ta' ? u.user_ltype : u.user_type}</option>
+                                { userTypes.map((u, index) => (
+                                <option key={index} value={u.id}>{ language === 'ta' ? u.name : u.name }</option>
                                 ))}
                             </select>
                         </div>
                     </div>
-                    )}
+                    {/* )} */}
                     <div className="col-md-12">
                         <div className="form-group mb-3">
                             <FormControl fullWidth>

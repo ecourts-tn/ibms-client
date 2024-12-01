@@ -1,14 +1,12 @@
+import api from 'api'
 import React, {useState, useEffect} from 'react'
 import { useLocation } from 'react-router-dom'
 import { Link } from 'react-router-dom'
-import Modal from 'react-bootstrap/Modal'
+import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import CheckIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/CancelRounded'
-import { toast, ToastContainer } from 'react-toastify'
-// import { Document, Page } from 'react-pdf';
-import api from '../../api'
-import ViewDocument from './ViewDocument'
+import ViewDocument from 'components/common/ViewDocument'
 
 const SuretyVerify = () => {
 
