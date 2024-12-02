@@ -20,7 +20,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
 
     const [ground, setGround] = useState(initialState);
     const [errors, setErrors] = useState({});
-    const [remainingChars, setRemainingChars] = useState(10); // Set to 10 as per your requirement
+    const [remainingChars, setRemainingChars] = useState(3000); // Set to 10 as per your requirement
     const { t } = useTranslation();
 
     // Save the ground to the parent component
@@ -30,7 +30,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
             await validationSchema.validate(ground, { abortEarly: false });
             addGround(ground); // If valid, add the ground and reset
             setGround(initialState);
-            setRemainingChars(10); // Reset remaining characters to 10 after save
+            setRemainingChars(3000); // Reset remaining characters to 10 after save
         } catch (error) {
             const newErrors = {};
             error.inner.forEach((err) => {
@@ -45,7 +45,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         if (selectedGround) {
             setGround(selectedGround);
         }
-        setRemainingChars(10); // Ensure it starts at 10
+        setRemainingChars(3000); // Ensure it starts at 10
         setErrors({ description: '' }); // Clear any errors on initial render
     }, [selectedGround]);
 
@@ -54,7 +54,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         const newValue = e.target.value;
 
         // Directly calculate the remaining characters from the input
-        const updatedRemainingChars = 10 - newValue.length;
+        const updatedRemainingChars = 3000 - newValue.length;
 
         // Update state if the length is within the limit (10 characters)
         if (updatedRemainingChars >= 0) {
@@ -62,7 +62,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
             setRemainingChars(updatedRemainingChars); // Update remaining characters correctly
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         } else {
-            setErrors({ ...errors, description: 'Maximum 10 characters only allowed' }); // Show error message if limit is exceeded
+            setErrors({ ...errors, description: 'Maximum 3000 characters only allowed' }); // Show error message if limit is exceeded
         }
     };
 
@@ -74,15 +74,15 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         const newContent = ground.description + pastedContent;
 
         // Check if the new content exceeds the 10 character limit
-        if (newContent.length > 10) {
+        if (newContent.length > 3000) {
             e.preventDefault(); // Prevent the paste
-            const truncatedContent = newContent.slice(0, 10); // Truncate to 10 characters
+            const truncatedContent = newContent.slice(0, 3000); // Truncate to 10 characters
             setGround({ ...ground, description: truncatedContent });
             setRemainingChars(0); // No remaining characters if truncated
         } else {
             // Allow the paste if it's within the limit
             setGround({ ...ground, description: newContent });
-            setRemainingChars(10 - newContent.length); // Update remaining characters correctly
+            setRemainingChars(3000 - newContent.length); // Update remaining characters correctly
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         }
     };

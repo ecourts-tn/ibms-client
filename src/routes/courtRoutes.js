@@ -26,7 +26,7 @@ import GenerateODT from "components/court/orders/GenreateODT";
 import BailBond from "components/court/orders/BailBond";
 
 const courtRoutes = [
-    { path: "dashbaord", component: <Dashboard /> },
+    { path: "dashboard", component: <Dashboard /> },
     { path: "case/scrutiny", component: <PendingList /> },
     { path: "case/scrutiny/detail", component: <ScrutinyDashboard /> },
     { path: "case/registration", component: <RegistrationPendingList /> },

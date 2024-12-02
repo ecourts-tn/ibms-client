@@ -69,11 +69,11 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 setErrors(newErrors)
                 }
         }
-        const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
-        if (mobileError) {
-          newErrors.mobile_number = mobileError;
-          formIsValid = false;
-        }
+        // const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
+        // if (mobileError) {
+        //   newErrors.mobile_number = mobileError;
+        //   formIsValid = false;
+        // }
     
         const emailError = validateEmail(litigant.email_address);
         if (emailError) {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import api from '../../api'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
@@ -7,13 +7,19 @@ import { useTranslation } from 'react-i18next'
 import DashboardCard from 'components/common/DashboardCard'
 import Calendar from 'components/common/Calendar'
 import PetitionList from 'components/common/PetitionList'
+import { AuthContext } from 'contexts/AuthContext'
+import { JudgeContext } from 'contexts/JudgeContext'
 
 const Dashboard = () => {
 
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false)
+
     const { t } = useTranslation()
+
+    const {user} = useContext(AuthContext)
+    const {judge, setJudge} = useContext(JudgeContext)
 
     const fetchDashboardData = async () => {
         try {
@@ -40,6 +46,20 @@ const Dashboard = () => {
 
     useEffect(() => {
         fetchDashboardData();
+    },[])
+
+    useEffect(() => {
+        const fetchCourtDetails = async() => {
+            try{
+                const response = await api.post(`base/judge-period/detail/`, {court:user.court})
+                if(response.status === 200){
+                    setJudge(response.data)
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        fetchCourtDetails()
     },[])
 
     return (

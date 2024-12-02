@@ -9,6 +9,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import {toast, ToastContainer} from 'react-toastify'
+import Loading from 'components/Loading'
 
 const JudgePeriodForm = () => {
 
@@ -27,11 +28,12 @@ const JudgePeriodForm = () => {
         judge_lname: '',
         jocode: '',
         joining_date: '',
-        releiving_date: '',
+        releiving_date: '0000-00-00',
         is_incharge: false
     }
     const [form, setForm] = useState(initialState)
     const [errors, setErrors] = useState({})
+    const [loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
         state: Yup.string().required(),
         district: Yup.string().required(),
@@ -41,14 +43,37 @@ const JudgePeriodForm = () => {
         judge_name: Yup.string().required(),
         judge_name: Yup.string().required(),
         joining_date: Yup.date().required(),
-        releiving_date: Yup.date().required(),
+        // releiving_date: Yup.date().required(),
         is_incharge: Yup.boolean().required()
     })
+
+    const searchJudicialOfficer = async() => {
+        if(form.jocode === '' || form.jocode === null){
+            toast.error("Please enter the correct J.O Code", {theme:"colored"})
+            return
+        }
+        try{
+            setLoading(true)
+            const response = await api.post(`base/judge/search/`, {jocode: form.jocode})
+            console.log(response.data)
+            if(response.status === 200){
+                setForm({
+                    ...form,
+                    judge_name: response.data.judge_name,
+                    judge_lname: response.data.judge_lname
+                })
+            }
+        }catch(error){
+            console.error(error)
+        }finally{
+            setLoading(false)
+        }
+    }
 
     const handleSubmit = async() => {
         try{
             await validationSchema.validate(form, {abortEarly: false})
-            const response = await api.post(``, form)
+            const response = await api.post(`base/judge-period/`, form)
             if(response.status === 201){
                 toast.success("Judge period added successfully", {theme:"colored"})
             }
@@ -67,6 +92,7 @@ const JudgePeriodForm = () => {
     return (
         <div className="content-wrapper">
             <ToastContainer />
+            { loading && <Loading />}
             <div className="container-fluid mt-3">
                 <div className="card card-outline card-primary">
                     <div className="card-header">
@@ -143,13 +169,37 @@ const JudgePeriodForm = () => {
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
                                                 <option value="">{t('alerts.select_court')}</option>
-                                                {courts.filter(c => parseInt(c.establishment) === parseInt(form.establishment)).map((c, index) => (
+                                                {courts.filter(c => c.establishment === form.establishment).map((c, index) => (
                                                 <option key={index} value={c.court_code}>{ language === 'ta' ? c.court_lname : c.court_name }</option>    
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
                                                 { errors.court }
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
+                                        <label htmlFor="" className="col-sm-4">{t('jocode')}</label>
+                                        <div className="col-sm-4">
+                                            <input 
+                                                type="text" 
+                                                className={`form-control ${errors.jocode ? 'is-invalid' : ''}`} 
+                                                name="jocode"
+                                                value={form.jocode}
+                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                            />
+                                            <div className="invalid-feedback">
+                                                { errors.jocode }
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <Button
+                                                variant='contained'
+                                                color='primary'
+                                                onClick={searchJudicialOfficer}
+                                            >
+                                                Search
+                                            </Button>
                                         </div>
                                     </div>
                                     <div className="form-group row">
@@ -164,21 +214,6 @@ const JudgePeriodForm = () => {
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.judge_name }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">{t('jocode')}</label>
-                                        <div className="col-sm-8">
-                                            <input 
-                                                type="text" 
-                                                className={`form-control ${errors.jocode ? 'is-invalid' : ''}`} 
-                                                name="jocode"
-                                                value={form.jocode}
-                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
-                                            />
-                                            <div className="invalid-feedback">
-                                                { errors.jocode }
                                             </div>
                                         </div>
                                     </div>
@@ -238,7 +273,7 @@ const JudgePeriodForm = () => {
                                                     checked={form.is_incharge}
                                                     onChange={(e) => setForm({...form, [e.target.name]: !form.is_incharge})}
                                                 />
-                                                <label for="isInchargeCheckbox">
+                                                <label for="isInchargeCheckbox">Incharge?
                                                 </label>
                                             </div>
                                         </div>
@@ -247,6 +282,7 @@ const JudgePeriodForm = () => {
                                         <Button
                                             variant='contained'
                                             color='success'
+                                            onClick={handleSubmit}
                                         >{t('submit')}</Button>
                                     </div>
                                 </form>

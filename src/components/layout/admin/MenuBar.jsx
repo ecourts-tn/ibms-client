@@ -89,7 +89,7 @@ export default function MenuBar() {
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/court/case/cause-list" className="nav-link">
+                        <Link to="/court/case/cause-list/post" className="nav-link">
                           <i className="far fa-circle nav-icon" />
                           <p>Post Cases to Causelist</p>
                         </Link>
@@ -164,12 +164,6 @@ export default function MenuBar() {
                     <Link to="#" className="nav-link">
                       <i className="nav-icon far fa-circle text-info" />
                       <p>Reports</p>
-                    </Link>
-                  </li>   
-                  <li className="nav-item">
-                    <Link to="case/post-cause-list" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Draggable List</p>
                     </Link>
                   </li>   
                 </>

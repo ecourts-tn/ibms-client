@@ -1,9 +1,11 @@
 import React, { useContext } from 'react'
 import DateChange from './DateChange'
 import { LanguageContext } from 'contexts/LanguageContex'
+import { JudgeContext } from 'contexts/JudgeContext'
 
 const Header = () => {
   const {language, toggleLanguage} = useContext(LanguageContext)
+  const {judge} = useContext(JudgeContext)
   return (
     <>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
@@ -23,6 +25,14 @@ const Header = () => {
             <a className="nav-link" data-widget="control-sidebar" data-controlsidebar-slide="true" href="#" role="button">
               <i className="fas fa-th-large" />
             </a>
+          </li>
+        </ul>
+      </nav>
+      <nav className="main-header navbar navbar-expand bg-navy">
+        <ul className="navbar-nav ml-auto">
+          <li className="nav-item">
+              <strong>{judge.judge?.judge_name} ({judge.judge?.jocode})</strong> {judge.court?.designation_name}, 
+              { judge.court?.court_name}
           </li>
         </ul>
       </nav>

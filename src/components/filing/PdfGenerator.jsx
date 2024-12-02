@@ -34,13 +34,13 @@ const PdfGenerator = () => {
             const response = await api.get(`case/filing/detail/`, {params:{efile_no:state.efile_no}})
             if(response.status === 200){
                 setPetition(response.data.petition)
-                setAdvocates(response.data.advocate)
+                setAdvocates(response.data.advocates)
                 setCrime(response.data.crime)
-                const filtered_petitioner = response.data.litigant.filter((l => {
+                const filtered_petitioner = response.data.litigants.filter((l => {
                     return l.litigant_type === 1
                 }))
                 setPetitioner(filtered_petitioner)
-                const filtered_respondent = response.data.litigant.filter((l => {
+                const filtered_respondent = response.data.litigants.filter((l => {
                     return l.litigant_type === 2
                 }))
                 setRespondent(filtered_respondent)

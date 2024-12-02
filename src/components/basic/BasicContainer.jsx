@@ -134,7 +134,7 @@ const BasicContainer = () => {
                             console.log(response2.message)
                         }
                     }
-                    if(parseInt(user.user.user_type) === 1){
+                    if(parseInt(user.user.group_id) === 1){
                         const advocate = {
                             advocate_name: user.user.username,
                             advocate_email: user.user.email,
