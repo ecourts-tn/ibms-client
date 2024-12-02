@@ -14,11 +14,12 @@ const PublishCasueList = () => {
     const {language} = useContext(LanguageContext)
     const [loading, setLoading] = useState(false)
     const [cases, setCases] = useState([]);
+    const [hearingDate, setHearingDate] = useState('')
 
     const handleSearch = async() => {
         try {
             setLoading(true)
-            const response = await api.get("court/registration/pending/");
+            const response = await api.get("court/cause-list/", {params:{hearing_date: hearingDate}});
             setCases(response.data);
         } catch (err) {
             console.log(err);
@@ -28,9 +29,13 @@ const PublishCasueList = () => {
     }
 
     const handlePublish = async() => {
+        const selectedFields = cases.map(({ petition }) => ({
+            efile_number: petition.efile_number,
+            date_next_list: petition.date_next_list,
+          }));
         try{
             setLoading(true)
-            const response = await api.post(``, cases)
+            const response = await api.post(`court/cause-list/publish/`, selectedFields)
             if(response.status === 200){
                 toast.success("Cause list published successfully", {theme:"colored"})
             }
@@ -67,8 +72,10 @@ const PublishCasueList = () => {
                                 <div className="form-group row">
                                     <div className="col-md-8">
                                         <input 
-                                            type="date" 
+                                            type="date"
+                                            name={hearingDate}
                                             className="form-control" 
+                                            onChange={(e) => setHearingDate(e.target.value)}
                                         />
                                     </div>
                                     <div className="cos-md-2">

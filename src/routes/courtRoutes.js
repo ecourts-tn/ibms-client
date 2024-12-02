@@ -51,12 +51,12 @@ const courtRoutes = [
 
 const CourtLayout = () => (
     <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
+        {/* <div className="container-fluid" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
-                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div> */}
                 <Outlet />
-            </div>
-        </div>
+            {/* </div>
+        </div> */}
     </PrivateRoute>
 );
 
