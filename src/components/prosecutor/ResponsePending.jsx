@@ -31,7 +31,7 @@ const ResponsePending = () => {
                 <div className="container-fluid mt-3">
                     <div className="card card-outline card-primary">
                         <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Pending Response</strong></h3>
+                            <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Pending Remarks</strong></h3>
                         </div>
                         <div className="card-body">
                             <div className="row">

@@ -68,30 +68,30 @@ const Dashboard = () => {
                                 <DashboardCard
                                     color={'bg-info'}
                                     count={count.total}
-                                    title={t('total_petition')}
+                                    title="Pending Remarks"
                                     icon={'ion-bag'}
-                                    url={`/filing/draft`}
+                                    url="#"
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
                                     count={count.submitted}
-                                    title={t('draft_petition')}
+                                    title="Submitted Remarks"
                                     icon={'ion-bag'}
-                                    url={`/filing/draft`}
+                                    url="#"
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}
                                     count={count.approved}
-                                    title={t('pending_petition')}
+                                    title="Pending Cases"
                                     icon={'ion-bag'}
-                                    url={`/filing/draft`}
+                                    url="#"
                                 />
                                 <DashboardCard 
                                     color={'bg-danger'}
                                     count={count.returned}
-                                    title={t('draft_petition')}
+                                    title="Disposed Cases"
                                     icon={'ion-bag'}
-                                    url={`/filing/draft`}
+                                    url="#"
                                 />
                             </div>
                             <div className="row">

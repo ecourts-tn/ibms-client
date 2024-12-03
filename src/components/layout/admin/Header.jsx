@@ -10,19 +10,19 @@ const Header = () => {
     <>
       <nav className="main-header navbar navbar-expand navbar-white navbar-light">
         <DateChange />
-        <span className='mx-5'>
-          <span className="text-primary">
-            <strong className="text-primary">{judge.judge?.judge_name} ({judge.judge?.jocode}) {judge.is_incharge ? '(Incharge)' : ''}</strong>
+        { parseInt(judge?.id) === 2 && (
+          <span className='mx-5'>
+            <span className="text-primary">
+              <strong className="text-primary">{judge.judge?.judge_name} ({judge.judge?.jocode}) {judge.is_incharge ? '(Incharge)' : ''}</strong>
+            </span>
+            <span style={{display:'block', marginTop:'-5px'}} className="text-muted">
+              <strong>
+                {`${judge.court?.designation_name}, ${judge.court?.court_name}`}
+              </strong>
+            </span>
           </span>
-          <span style={{display:'block', marginTop:'-5px'}} className="text-muted">
-            <strong>
-              {`${judge.court?.designation_name}, ${judge.court?.court_name}`}
-            </strong>
-          </span>
-        </span>
-        <span className="text-danger">
 
-        </span>
+        )}
         <ul className="navbar-nav ml-auto">
           <li className="nav-item">
             <button className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}>

@@ -236,13 +236,13 @@ export default function MenuBar() {
                     </li> <li className="nav-item">
                       <Link to="/prison/jail-remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
+                        <p>Update Bail Details</p>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prison/jail-remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
+                        <p>Released Report</p>
                       </Link>
                     </li>        
                   </>
@@ -258,13 +258,13 @@ export default function MenuBar() {
                     </li> <li className="nav-item">
                       <Link to="/prosecution/remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
+                        <p>Pending Remarks</p>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prosecution/remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
+                        <p>Submitted Remarks</p>
                       </Link>
                     </li>       
                   </>

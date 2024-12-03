@@ -88,28 +88,28 @@ const Dashboard = () => {
                                 <DashboardCard
                                     color={'bg-info'}
                                     count={count.total}
-                                    title={t('total_petition')}
+                                    title="Total Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
                                     count={count.submitted}
-                                    title={t('draft_petition')}
+                                    title="Approved Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}
                                     count={count.approved}
-                                    title={t('pending_petition')}
+                                    title="Returened Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                 <DashboardCard 
                                     color={'bg-danger'}
                                     count={count.returned}
-                                    title={t('draft_petition')}
+                                    title="Rejected Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
