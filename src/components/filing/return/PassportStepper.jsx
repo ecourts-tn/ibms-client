@@ -26,7 +26,7 @@ const Stepper = () => {
                     data-target={`#${step.path}`}
                     >
                     <NavLink
-                        to={`/filing/condition-relaxation/${step.path}`}
+                        to={`/filing/return-passport/${step.path}`}
                         className="step-trigger"
                     >
                         <span className="bs-stepper-circle">{index + 1}</span>

@@ -23,6 +23,8 @@ import { DischargeRoutes } from 'routes/dischargeRoutes';
 import { ExtensionRoutes } from 'routes/extensionRoutes';
 import NotFound from 'components/layout/public/NotFound';
 import VerifyOrder from 'components/VerifyOrder';
+import { ReturnPassportRoutes } from 'routes/passportRoutes';
+import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
 
 function App() {
   
@@ -48,6 +50,8 @@ function App() {
                 { SuretyRoutes() }
                 { DischargeRoutes()}
                 { ExtensionRoutes()}
+                { ReturnPassportRoutes()}
+                { ReturnPropertyRoutes() }
               </Route> 
               <Route element={<AdminLayout />}>
                   { CourtRoutes() }

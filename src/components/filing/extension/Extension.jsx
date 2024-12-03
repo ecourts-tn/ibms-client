@@ -105,7 +105,7 @@ const Extension = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -122,12 +122,12 @@ const Extension = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigant, advocate} = response.data
+                    const {petition:pet, litigants, advocates} = response.data
                     setIsPetition(true)
                     setBail(pet)
-                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(litigant.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocate)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
+                    setAdvocates(advocates)
                     setPetition({...petition,
                         court_type: pet.court_type.id,
                         bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
@@ -278,10 +278,10 @@ const Extension = () => {
                                     >
                                         <option value="">Select petition</option>
                                         { cases.map((c, index) => (
-                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigants.filter(l=>l.litigant_type===1).map((p, index) => (
                                                 <>{index+1}. {p.litigant_name}</>
                                                 ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                { c.litigants.filter(l=>l.litigant_type===2).map((res, index) => (
                                                 <>{res.litigant_name} {res.designation?.designation_name}</>
                                                 ))} 
                                             </option>
@@ -474,7 +474,7 @@ const Extension = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>Petitioner Details</strong></td>
@@ -554,7 +554,7 @@ const Extension = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className='bg-navy'>
                                             <td colSpan={4}><strong>Condition Details</strong></td>
@@ -637,7 +637,7 @@ const Extension = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>Advocate Details</strong>

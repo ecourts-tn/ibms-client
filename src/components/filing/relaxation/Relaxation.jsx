@@ -109,7 +109,7 @@ const Relaxation = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -126,11 +126,11 @@ const Relaxation = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigant, advocate} = response.data
+                    const {petition:pet, litigants, advocate} = response.data
                     setIsPetition(true)
                     setBail(pet)
-                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(litigant.filter(l=>l.litigant_type===2))
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
                     setAdvocates(advocate)
                     setPetition({...petition,
                         judiciary: pet.judiciary.id,
@@ -166,8 +166,8 @@ const Relaxation = () => {
             if(response.status === 200){
                 setIsPetition(true)
                 setPetition(response.data.petition)
-                setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
-                setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
+                setPetitioners(response.data.litigants.filter(l=>l.litigant_type===1))
+                setRespondents(response.data.litigants.filter(l=>l.litigant_type===2))
                 setAdvocates(response.data.advocate)
             }
 
@@ -279,10 +279,10 @@ const Relaxation = () => {
                                     >
                                         <option value="">Select petition</option>
                                         { cases.map((c, index) => (
-                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigants.filter(l=>l.litigant_type===1).map((p, index) => (
                                                 <>{index+1}. {p.litigant_name}</>
                                                 ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                { c.litigants.filter(l=>l.litigant_type===2).map((res, index) => (
                                                 <>{res.litigant_name} {res.designation?.designation_name}</>
                                                 ))} 
                                             </option>
@@ -481,7 +481,7 @@ const Relaxation = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -561,7 +561,7 @@ const Relaxation = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className='bg-navy'>
                                             <td colSpan={4}><strong>{t('condition_details')}</strong></td>
@@ -582,7 +582,7 @@ const Relaxation = () => {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>

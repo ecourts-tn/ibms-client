@@ -149,7 +149,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -289,10 +289,10 @@ const Surety = () => {
                                     >
                                         <option value="">Select petition</option>
                                         { cases.map((c, index) => (
-                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigants.filter(l=>l.litigant_type===1).map((p, index) => (
                                                 <>{index+1}. {p.litigant_name}</>
                                                 ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                { c.litigants.filter(l=>l.litigant_type===2).map((res, index) => (
                                                 <>{res.litigant_name} {res.designation?.designation_name}</>
                                                 ))} 
                                             </option>

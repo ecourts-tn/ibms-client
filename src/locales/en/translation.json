@@ -206,7 +206,7 @@
     "case_year":"Year",
     "select": "Select",
     "petitioner_name": "Petitioner Name",
-    "father_husband_guardian": "Father/Husband/Guardian Rank",
+    "father_husband_guardian": "Father/Husband/Guardian Name",
     "condition_details": "Condition Details",
     "bail_date": "Bail Order Date",
     "released_date": "Released Date",

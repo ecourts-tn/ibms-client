@@ -87,12 +87,14 @@ const handleSubmit = async () => {
             setIsFinalSubmit(false);
           } else {
             try {
-              const result = await api.put(`case/filing/${efile_no}/final-submit/`);
+              const result = await api.put(`case/filing/final-submit/`, {efile_no});
               if (result.status === 200) {
                 toast.success("Petition filed successfully", { theme: "colored" });
               }
               sessionStorage.removeItem("efile_no");
-              navigate("/filing/dashboard");
+              setTimeout(() => {
+                navigate("/filing/dashboard");
+              }, 1000)
             } catch (error) {
               console.error(error);
             }

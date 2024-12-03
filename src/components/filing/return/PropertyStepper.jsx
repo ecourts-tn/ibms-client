@@ -7,7 +7,7 @@ const Stepper = () => {
     const location = useLocation()
     const steps = [
         { path: 'initial-input', label: t('basic_details') },
-        // { path: 'litigant', label: t('litigants') },
+        { path: 'litigant', label: t('litigants') },
         { path: 'ground', label: t('ground') },
         { path: 'advocate', label: t('advocate_details') },
         { path: 'document', label: t('upload_documents') },
@@ -26,7 +26,7 @@ const Stepper = () => {
                     data-target={`#${step.path}`}
                     >
                     <NavLink
-                        to={`/filing/condition-relaxation/${step.path}`}
+                        to={`/filing/return-passport/${step.path}`}
                         className="step-trigger"
                     >
                         <span className="bs-stepper-circle">{index + 1}</span>

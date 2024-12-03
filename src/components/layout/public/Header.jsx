@@ -64,8 +64,8 @@ const Header = () => {
     { path: "/filing/surety-petition/initial-input", label: t('surety') },
     { path: "/filing/surety-discharge/initial-input", label: t('discharge_surety') },
     { path: "/filing/time-extension/initial-input", label: t('extension') },
-    { path: "/filing/return-passport", label: t('return_passport') },
-    { path: "/filing/return-property", label: t('return_property') },
+    { path: "/filing/return-passport/initial-input", label: t('return_passport') },
+    { path: "/filing/return-property/initial-input", label: t('return_property') },
   ];
 
   const caseStatusLinks = [
