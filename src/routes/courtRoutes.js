@@ -24,6 +24,7 @@ import GenerateOrder from "components/court/orders/GenerateOrder";
 import UploadOrder from "components/court/orders/UploadOrder";
 import GenerateODT from "components/court/orders/GenreateODT";
 import BailBond from "components/court/orders/BailBond";
+import GenerateStyledDocx from "components/court/orders/HtmlToDocx";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },

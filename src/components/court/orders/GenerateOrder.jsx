@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import {toast, ToastContainer} from 'react-toastify'
 import Button from '@mui/material/Button'
 import * as Yup from 'yup'
+import GenerateStyledDocx from './HtmlToDocx'
 
 const GenerateOrder = () => {
 
@@ -22,7 +23,7 @@ const GenerateOrder = () => {
         case_year:''
     }
     const[form, setForm] = useState(initialState)
-    const[orders, setOrders] = useState([])
+    const[order, setOrder] = useState({})
     const[errors, setErrors] = useState({})
     const[loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
@@ -31,12 +32,14 @@ const GenerateOrder = () => {
         case_year:Yup.string().required()
     })
 
-    const handleSearch = async() => {
+    const handleSearch = async(e) => {
+        e.preventDefault()
         try{
             setLoading(true)
-            const response = await api.post(``, form)
+            const response = await api.post(`court/petition/detail/`, form)
+
             if(response.status === 200){
-                setOrders(response.data)
+                setOrder(response.data)
             }
         }catch(error){
             console.log(error)
@@ -45,7 +48,8 @@ const GenerateOrder = () => {
         }
     }
 
-    const handleSubmit = async() => {
+    const handleSubmit = async(e) => {
+        e.preventDefault()
         try{
             setLoading(true)
             await validationSchema.validate(form, {abortEarly:false})
@@ -97,7 +101,7 @@ const GenerateOrder = () => {
                     <div className="card-body">
                         <div className="row">
                             <div className="col-md-6">
-                                <form onSubmit={handleSubmit}>
+                                <form>
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">Select Casetype</label>
                                         <div className="col-sm-8">
@@ -109,7 +113,7 @@ const GenerateOrder = () => {
                                             >
                                                 <option value="">{t('alerts.select_case_type')}</option>
                                                 {casetypes.map((t, index) => (
-                                                <option key={index} value={t.type_code}>{ language === 'ta' ? t.type_lfull_form : t.type_full_form }</option>    
+                                                <option key={index} value={t.id}>{ language === 'ta' ? t.type_lfull_form : t.type_full_form }</option>    
                                                 ))}
                                             </select>
                                             <div className="invalid-feedback">
@@ -137,7 +141,7 @@ const GenerateOrder = () => {
                                         <div className="col-sm-8">
                                             <input 
                                                 type="text" 
-                                                className={`form-control ${form.case_year ? 'is-invalid' : ''}`}
+                                                className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
                                                 name="case_year"
                                                 value={form.case_year}
                                                 onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
@@ -148,14 +152,23 @@ const GenerateOrder = () => {
                                         </div>
                                     </div>
                                     <div className="form-group row">
-                                        <Button
-                                            variant='contained'
-                                            color='primary'
-                                            type="submit"
-                                            onClick={handleSearch}
-                                        >{t('submit')}</Button>
+                                        <div className="col-md-4 offset-md-4">
+                                            <Button
+                                                variant='contained'
+                                                color='primary'
+                                                type="submit"
+                                                onClick={handleSearch}
+                                            >{t('submit')}</Button>
+                                        </div>
                                     </div>
-                                    <div className="form-group row">
+                                    <div className="form-group row mt-5">
+                                        <div className="col-md-4 offset-md-4">
+                                            { Object.keys(order).length > 0 && (
+                                                <GenerateStyledDocx order={order}/>
+                                            )}
+                                        </div>
+                                    </div>
+                                    {/* <div className="form-group row">
                                         <label htmlFor="" className='col-sm-4'>Select document</label>
                                         <div className="col-md-8">
                                             <input 
@@ -174,7 +187,7 @@ const GenerateOrder = () => {
                                             type="submit"
                                             onClick={handleGenerate}
                                         >{t('generate_order')}</Button>
-                                    </div>
+                                    </div> */}
                                 </form>
                             </div>
                         </div>

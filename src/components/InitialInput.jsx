@@ -143,7 +143,7 @@ const InitialInput = () => {
                     const crime_reqeust = await api.post(`case/crime/details/create/`, fir);
                     requests.push(crime_reqeust)
                 }
-                if(parseInt(user.user_type) === 1){
+                if(parseInt(user.group) === 1){
                     const advocate = {
                         petition: efile_no,
                         advocate: user.userlogin,

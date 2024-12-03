@@ -27,7 +27,7 @@ const Litigant = () => {
 
 const propertyRoutes = [
     { path: "initial-input", component: <ReturnProperty /> },
-    { path: "litigant", component: <Litigant /> },
+    // { path: "litigant", component: <Litigant /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },
@@ -38,7 +38,7 @@ const propertyRoutes = [
 const ReturnPropertyLayout = () => (
     
     <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
+        <div className="container" style={{ minHeight:'500px'}}>
             {/* <nav aria-label="breadcrumb" className="mt-2 mb-1">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>

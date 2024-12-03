@@ -24,10 +24,12 @@ import { AuthContext } from 'contexts/AuthContext';
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
-    const { captchaImageUrl, fetchCaptcha, captchaValid, verifyCaptcha } = useCaptcha();
+    // const { captchaImageUrl, fetchCaptcha, captchaValid, verifyCaptcha } = useCaptcha();
     const {userTypes} = useContext(UserTypeContext)
     const [isDepartment, setIsDepartment] = useState(false)
     const {language} = useContext(LanguageContext)
+    const [captchaValid, setCaptchaValid] = useState(null);
+    const [captchaImageUrl, setCaptchaImageUrl] = useState('');
     const {t} = useTranslation()
     const {login} = useContext(AuthContext)
     const[errors, setErrors] = useState({})
@@ -45,6 +47,43 @@ const Login = () => {
         password: Yup.string().required(t('errors.password_required')),
         // captcha: Yup.string().required(t('errors.captcha_required'))
     })
+
+    const fetchCaptcha = async () => {
+        try {
+            const response = await api.get('auth/generate-captcha/', {
+                responseType: 'blob',
+                withCredentials: true,
+            });
+            const imageBlob = URL.createObjectURL(response.data);
+            setCaptchaImageUrl(imageBlob);
+        } catch (error) {
+            console.error('Error fetching CAPTCHA:', error);
+        }
+    };
+
+    // Verify CAPTCHA and fetch new one if invalid
+    const verifyCaptcha = async (captchaValue) => {
+        try {
+            const response = await api.post(
+                'auth/verify-captcha/',
+                { captcha: captchaValue },
+                { withCredentials: true }
+            );
+
+            if (response.data.success) {
+                setCaptchaValid(true);
+                return true;
+            } else {
+                setCaptchaValid(false);
+                await fetchCaptcha(); // Call fetchCaptcha here if verification fails
+                return false;
+            }
+        } catch (error) {
+            console.error('Error verifying CAPTCHA:', error);
+            setCaptchaValid(false);
+            return false;
+        }
+    };
 
     useEffect(() => {
         // load the captcha code when page gets loaded
@@ -215,7 +254,7 @@ const Login = () => {
                         </FormControl>
                         <div className="mt-1">
                             <p><a href="#">{t('forgot_password')}</a></p>
-                            <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="user/registration">{t('register')}</Link></p>
+                            <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="auth/registration">{t('register')}</Link></p>
                         </div>
                     </div>
                 </div>

@@ -44,7 +44,7 @@ const AdvocateRegistration = () => {
         navigate("/")
     }
     const initialState = {
-        user_type: 1,
+        group: 1,
         username: '',
         is_notary: false,
         bar_code:'',
@@ -193,7 +193,7 @@ const AdvocateRegistration = () => {
                 toast.error("Please verify your email address", {theme:"colored"})
                 return
             }
-            const response = await api.post("auth/user/Advocate/", form)
+            const response = await api.post("auth/user/register/", form)
             if(response.status === 201){
                 setUser(response.data)
                 setShow(true)

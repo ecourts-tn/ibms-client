@@ -29,13 +29,14 @@ const PublishCasueList = () => {
     }
 
     const handlePublish = async() => {
-        const selectedFields = cases.map(({ petition }) => ({
-            efile_number: petition.efile_number,
-            date_next_list: petition.date_next_list,
+        const selectedFields = cases.map((c, index ) => ({
+            efile_number: c.petition.efile_number,
+            date_next_list: c.petition.date_next_list,
+            item_no:index+1
           }));
         try{
             setLoading(true)
-            const response = await api.post(`court/cause-list/publish/`, selectedFields)
+            const response = await api.put(`court/cause-list/publish/`, selectedFields)
             if(response.status === 200){
                 toast.success("Cause list published successfully", {theme:"colored"})
             }

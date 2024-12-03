@@ -1,6 +1,6 @@
 // hooks/useVerifyCaptcha.js
 import { useState } from 'react';
-import api from '../api';
+import api from 'api';
 
 const useCaptcha = () => {
     const [captchaValid, setCaptchaValid] = useState(null);

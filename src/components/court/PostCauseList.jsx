@@ -49,6 +49,10 @@ const PostCauseList = () => {
             const response = await api.post(`court/cause-list/`, payload);
             if(response.status === 201){
                 toast.success("Case posted successfully", {theme:"colored"})
+                const newCases = cases.filter(
+                    (c) => c.petition.efile_number !== caseData.petition.efile_number
+                );
+                setCases(newCases); 
             }
         } catch (err) {
             toast.error("Something went wrong!", {theme:"colored"})

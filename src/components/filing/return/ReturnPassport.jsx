@@ -126,12 +126,12 @@ const ReturnPassport = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigant, advocate} = response.data
+                    const {petition:pet, litigants, advocates} = response.data
                     setIsPetition(true)
                     setBail(pet)
-                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(litigant.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocate)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
+                    setAdvocates(advocates)
                     setPetition({...petition,
                         judiciary: pet.judiciary.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -481,7 +481,7 @@ const ReturnPassport = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -561,28 +561,7 @@ const ReturnPassport = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
-                                    <thead>
-                                        <tr className='bg-navy'>
-                                            <td colSpan={4}><strong>{t('condition_details')}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <th>{t('bail_date')}</th>
-                                            <th>{t('released_date')}</th>
-                                            <th>{t('days_present')}</th>
-                                            <th>{t('days_absent')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><input type="text" className='form-control' readOnly={true} /></td>
-                                            <td><input type="text" className='form-control' readOnly={true} /></td>
-                                            <td><input type="text" className='form-control' readOnly={true} /></td>
-                                            <td><input type="text" className='form-control' readOnly={true} /></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
@@ -643,6 +622,29 @@ const ReturnPassport = () => {
                                                 </td>
                                             </tr>
                                         ))}
+                                    </tbody>
+                                </table>
+                                <table className="table table-bordered table-striped">
+                                    <thead>
+                                        <tr className='bg-navy'>
+                                            <td colSpan={5}><strong>Passport Details</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Nationality</th>
+                                            <th>Passport Type</th>
+                                            <th>Passport Authority</th>
+                                            <th>Issued Date</th>
+                                            <th>Expiry Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><input type="text" className='form-control'/></td>
+                                            <td><input type="text" className='form-control'/></td>
+                                            <td><input type="text" className='form-control'/></td>
+                                            <td><input type="text" className='form-control'/></td>
+                                            <td><input type="text" className='form-control'/></td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </>
