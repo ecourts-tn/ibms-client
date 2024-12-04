@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import * as Yup from 'yup'
+import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
@@ -41,7 +42,29 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
         }
     }, [selectedRespondent])
 
-    console.log(litigant)
+    useEffect(() => {
+        async function getCrimeDetail()  {
+            try{
+                const efile_no = sessionStorage.getItem("efile_no")
+                const response = await api.get(`case/crime/detail/`, {
+                    params:{efile_no}
+                })
+                if(response.status === 200){
+                    const {state, district, police_station} = response.data
+                    setLitigant({...litigant, 
+                        state: state?.state_code,
+                        district: district?.district_code,
+                        police_station: police_station?.cctns_code
+                    })
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }
+        getCrimeDetail()
+    },[])
+
+
 
     const validationSchema = Yup.object({
         litigant_name: Yup.string().required(t('errors.respondent_name_required')),
@@ -113,6 +136,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         id="state" 
                         className="form-control"
                         value={litigant.state}
+                        disabled={ litigant.state !== '' }
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
                         <option value="">{t('alerts.select_state')}</option>
@@ -129,6 +153,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         name="district" 
                         id="district" 
                         className="form-control"
+                        disabled={ litigant.district !== ''}
                         value={litigant.district}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
@@ -147,6 +172,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <select 
                             name="police_station" 
                             id="police_station" 
+                            disabled={litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}

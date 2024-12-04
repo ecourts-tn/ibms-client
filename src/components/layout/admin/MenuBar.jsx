@@ -123,13 +123,13 @@ export default function MenuBar() {
                     </a>
                     <ul className="nav nav-treeview"> */}
                       <li className="nav-item">
-                        <Link to="/court/case/order" className="nav-link">
+                        <Link to="/court/case/order/generate" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
                           <p>Generate Orders</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="#" className="nav-link">
+                        <Link to="/court/case/order/upload" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
                           <p>Publish/Upload Orders</p>
                         </Link>

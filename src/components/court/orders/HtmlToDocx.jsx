@@ -87,7 +87,7 @@ const GenerateStyledDocx = ({order}) => {
               },
               children: [
                 new TextRun({
-                  text: `Present: Thiru. S. Karthikeyan.`,
+                  text: `Present: Thiru. S. Karthikeyan, Judge, High Court, Chennai.`,
                   font: "Times New Roman",
                   size: fontSizePx,
                   bold: true,

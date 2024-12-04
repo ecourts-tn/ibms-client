@@ -274,7 +274,7 @@ const InitialInput = () => {
                                             onChange={(e) => setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_establishment')}</option>
-                                            {  establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((item, index) => (
+                                            {  establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district) && e.bail_filing).map((item, index) => (
                                                     <option value={item.establishment_code} key={index}>{language === 'ta' ? item.establishment_lname : item.establishment_name}</option>
                                             ))}
                                         </select>
@@ -294,7 +294,7 @@ const InitialInput = () => {
                                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_court')}</option>
-                                            {   courts.filter(c=>c.establishment===petition.establishment)
+                                            {   courts.filter(c=>c.establishment===petition.establishment && c.bail_filing)
                                                 .map((item, index) => (
                                                     <option key={index} value={item.court_code}>{ language === 'ta' ? item.court_lname : item.court_name }</option>
                                                 ))
@@ -390,7 +390,7 @@ const InitialInput = () => {
                                 )}
                                 </div>
                             </div> 
-                            { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch />)}
+                            { parseInt(petition.complaint_type) === 1 && parseInt(petition.crime_registered) === 1 && (<FIRSearch petition={petition}/>)}
                             { parseInt(petition.complaint_type) === 3 && <CaseSearch />}
                             { parseInt(petition.complaint_type) === 2 && (
                                 <div className="row">

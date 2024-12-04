@@ -131,7 +131,8 @@ const CaseScrutiny = () => {
                                     <div id="collapseOne" className="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                                         <div className="card-body">
                                             <BasicDetails petition={petition}/>
-                                            <CrimeDetails crime={crime} />
+                                            { crime && (<CrimeDetails crime={crime} />)}
+                                            
                                         </div>
                                     </div>
                                 </div>

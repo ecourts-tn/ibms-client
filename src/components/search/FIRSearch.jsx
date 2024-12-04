@@ -1,6 +1,6 @@
 import api from 'api'
 import * as Yup from 'yup'
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Select from 'react-select'
@@ -15,7 +15,7 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import FIRDetails from 'components/search/FIRDetails'
 import Loading from 'components/Loading'
 
-const FIRSearch = () => {
+const FIRSearch = ({petition}) => {
 
     const {fir, setFir, setAccused} = useContext(BaseContext)
     const {states} = useContext(StateContext)
@@ -46,6 +46,16 @@ const FIRSearch = () => {
         crime_number: Yup.number().required("Please enter FIR number").typeError(t('errors.numeric')),
         year: Yup.number().required("Please enter year").typeError(t('errors.numeric'))
     })
+
+    useEffect(() => {
+        setForm({...form, 
+            state: petition?.state,
+            rdistrict: petition?.district
+        })
+    },[])
+
+    console.log(petition)
+    console.log(form)
 
     const handleSearch = async (e) => {
         e.preventDefault()
@@ -116,6 +126,7 @@ const FIRSearch = () => {
                             className={ `form-control ${errors.state ? 'is-invalid': ''}`}
                             value={form.state}
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}    
+                            disabled={ form.state !== "" ? true : false }
                         >
                         <option value="">{t('alerts.select_state')}</option>
                         { states.map((item, index) => (
@@ -129,16 +140,19 @@ const FIRSearch = () => {
                 </div>
                 <div className="col-md-4">
                     <div className="form-group">
-                        <label htmlFor="rdistrict">{t('revenue_district')}<RequiredField/></label><br />
-                        <Select 
-                            name="rdistrict"
-                            placeholder={t('alerts.select_district')}
-                            options={districts.filter(d=>parseInt(d.state)===parseInt(form.state)).map((district) => { return { 
-                                value:district.district_code, label: language === 'ta' ? district.district_lname : district.district_name
-                            }})} 
-                            className={`${errors.rdistrict ? 'is-invalid' : null}`}
-                            onChange={(e) => setForm({...form, rdistrict:e.value})}
-                        />
+                        <label htmlFor="rdistrict">{t('revenue_district')}<RequiredField/></label>
+                        <select 
+                            name="rdistrict" 
+                            className="form-control"
+                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                            value={form.rdistrict}
+                            disabled={ form.rdistrict !== "" ? true : false }
+                        >
+                            <option value="">Select district</option>
+                            { districts.map((district, index) => (
+                                <option key={index} value={district.district_code}>{language === 'ta' ? district.district_lname : district.district_name}</option>
+                            ))}
+                        </select>
                         <div className="invalid-feedback">
                             { errors.rdistrict }
                         </div>
