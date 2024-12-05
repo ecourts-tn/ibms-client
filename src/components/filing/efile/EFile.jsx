@@ -6,11 +6,17 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import EFileDetails from 'components/filing/efile/EFileDetails';
+import { ModelClose } from 'utils';
+import 'components/layout/public/header.css'
+
 
 const EFile = () => {
   const navigate = useNavigate();
-  const [isFinalSubmit, setIsFinalSubmit] = useState(false);
-  const [show, setShow] = useState(false);
+  const[errors, setErrors] = useState([])
+  const[show, setShow] = useState(false);
+  const[showError, setShowError] = useState(false)
+  const handleErrorClose = () => setShowError(false);
+  const { t } = useTranslation();
   const [checkboxStates, setCheckboxStates] = useState([
     { id: 1, checked: false, label: 'I solemnly state that the contents provided by me are true to the best of my knowledge and belief. And that conceals nothing and that no part of it is false.' },
     { id: 2, checked: false, label: 'I have signed the form by means of an electronic signature.' },
@@ -19,13 +25,11 @@ const EFile = () => {
     { id: 5, checked: false, label: 'I have signed the form by means of an electronic signature.' },
     // Add more checkboxes dynamically here
   ]);
-  const [isConfirm, setIsConfirm] = useState(false);
-  const { t } = useTranslation();
 
-//   const handleClose = () => setShow(false);
-const handleClose = () => {
-    console.log("Modal is being closed");
-    setShow(false);
+  //   const handleClose = () => setShow(false);
+  const handleClose = () => {
+      console.log("Modal is being closed");
+      setShow(false);
   };
   const handleShow = () => setShow(true);
 
@@ -40,76 +44,61 @@ const handleClose = () => {
     );
   };
 
-//   const handleSubmit = async () => {
-//     const efile_no = sessionStorage.getItem('efile_no');
-//     if (efile_no) {
-//       try {
-//         const response = await api.post('case/filing/final-submit/', { efile_no });
-//         if (response.status === 200) {
-//           if (response.data.error) {
-//             response.data.message.forEach((error) => {
-//               toast.error(error, {
-//                 theme: 'colored',
-//               });
-//             });
-//             setIsFinalSubmit(false);
-//           } else {
-//             try {
-//               const result = await api.put(`case/filing/${efile_no}/final-submit/`);
-//               if (result.status === 200) {
-//                 toast.success('Petition filed successfully', {
-//                   theme: 'colored',
-//                 });
-//               }
-//               sessionStorage.removeItem('efile_no');
-//               navigate('/filing/dashboard');
-//             } catch (error) {
-//               console.error(error);
-//             }
-//           }
-//         }
-//       } catch (error) {
-//         console.log(error);
-//       }
-//     }
-//   };
-
 const handleSubmit = async () => {
     const efile_no = sessionStorage.getItem("efile_no");
     if (efile_no) {
       try {
         const response = await api.post("case/filing/final-submit/", { efile_no });
         if (response.status === 200) {
-          if (response.data.error) {
-            response.data.message.forEach((error) => {
-              toast.error(error, { theme: "colored" });
-            });
-            setIsFinalSubmit(false);
-          } else {
-            try {
-              const result = await api.put(`case/filing/final-submit/`, {efile_no});
-              if (result.status === 200) {
-                toast.success("Petition filed successfully", { theme: "colored" });
-              }
-              sessionStorage.removeItem("efile_no");
-              setTimeout(() => {
-                navigate("/filing/dashboard");
-              }, 1000)
-            } catch (error) {
-              console.error(error);
+          try {
+            const result = await api.put(`case/filing/final-submit/`, {efile_no});
+            if (result.status === 200) {
+              toast.success("Petition filed successfully", { theme: "colored" });
             }
+            sessionStorage.removeItem("efile_no");
+            setTimeout(() => {
+              navigate("/filing/dashboard");
+            }, 500)
+          } catch (error) {
+            console.error(error);
           }
         }
-      } catch (error) {
-        console.error(error);
+      }catch (error) {
+        if(error.response?.status === 400){
+          setShowError(true)
+          setErrors(error.response?.data.messages)
+        }
       }
     }
   };
   
-
   return (
     <>
       <ToastContainer />
+        <Modal 
+          show={showError} 
+          onHide={handleErrorClose} 
+          backdrop="static"
+          keyboard={false}
+          size="xl"
+        >
+          <Modal.Header >
+              <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
+              <ModelClose handleClose={handleErrorClose}/>
+          </Modal.Header>
+          <Modal.Body>
+              <ul className='error'>
+                { errors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+          </Modal.Body>
+          <Modal.Footer>
+              <Button variant="contained" onClick={handleErrorClose}>
+                  {t('close')}
+              </Button>
+          </Modal.Footer>
+        </Modal>
       <div className="row mt-5">
         <div className="col-md-6 offset-3">
           {/* Dynamically render checkboxes */}
@@ -154,44 +143,19 @@ const handleSubmit = async () => {
         keyboard={false}
         size="xl"
       >
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>
             <strong>{t('draft_application')}</strong>
           </Modal.Title>
+          <ModelClose handleClose={handleClose} />
         </Modal.Header>
         <Modal.Body>
           <EFileDetails />
         </Modal.Body>
-        <Modal.Footer style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          {/* <div>
-            <input
-              type="checkbox"
-              checked={isConfirm}
-              onChange={(e) => setIsConfirm(!isConfirm)}
-            />{' '}
-            <span style={{ color: '#D93900', paddingLeft: '2px' }}>
-              <strong>{t('confirmation')}</strong>
-            </span>
-          </div> */}
-          <div>
-            {/* {isConfirm && (
-              <Button
-                variant="contained"
-                color="success"
-                onClick={() => {
-                  setIsFinalSubmit(!isFinalSubmit);
-                  handleClose();
-                }}
-              >
-                {t('submit')}
-              </Button>
-            )} */}
-          </div>
-          <div>
-            <Button variant="contained" onClick={handleClose}>
-              {t('close')}
-            </Button>
-          </div>
+        <Modal.Footer style={{ justifyContent: 'end'}}>
+          <Button variant="contained" onClick={handleClose}>
+            {t('close')}
+          </Button>
         </Modal.Footer>
       </Modal>
     </>

@@ -19,6 +19,7 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { RequiredField } from '../../utils'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
+import Loading from 'components/Loading'
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -72,14 +73,11 @@ const AdvocateRegistration = () => {
         notary_order: ''
     }
     const[districts, setDistricts] = useState([])
-    const [form, setForm] = useState(initialState)
+    const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
     const[mobileOtp, setMobileOtp] = useState(false)
     const[emailOtp, setEmailOtp] = useState(false)
-
-    const[mobileLoading, setMobileLoading] = useState(false)
-    const[emailLoading, setEmailLoading] = useState(false)
-
+    const[loading, setLoading] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
     const[emailVerified, setEmailVerified]   = useState(false)
 
@@ -108,21 +106,8 @@ const AdvocateRegistration = () => {
         fecthDistricts()
     },[])
 
+    
 
-    const sendMobileOTP = () => {
-        if(form.mobile === ''){
-            toast.error(t('alerts.mobile_required'),{
-                theme:"colored"
-            })
-        }else{
-            setMobileLoading(true)
-            toast.success(t('alerts.mobile_otp_sent'),{
-                theme:"colored"
-            })
-            setMobileLoading(false)
-            setMobileOtp(true)
-        }
-    }
 
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
@@ -136,27 +121,6 @@ const AdvocateRegistration = () => {
             })
             setMobileVerified(false)
             setMobileOtp(true)
-        }
-    }
-
-    const sendEmailOTP = async () => {
-        if(form.email === ''){
-            toast.error(t('alerts.email_required'),{
-                theme:"colored"
-            })
-        }else{
-            try{
-                setEmailLoading(true)
-                const response = await api.post("external/email/sent-otp/", {email_address: form.email})
-                toast.success(t('alerts.email_otp_sent'),{
-                    theme:"colored"
-                })
-                setEmailOtp(true)
-                setEmailLoading(false)
-
-            }catch(err){
-                console.log(err)
-            }
         }
     }
 
@@ -181,6 +145,52 @@ const AdvocateRegistration = () => {
             setEmailOtp(true)
         }
     }
+
+    const sendMobileOTP = async() => {
+        try{
+            setLoading(true)
+            const response = await api.post(`auth/mobile/verify/`, {mobile:form.mobile})
+            if(response.status === 200){
+                toast.success(t('alerts.mobile_otp_sent'),{
+                    theme:"colored"
+                })
+                setMobileOtp(true)
+            }
+        }catch(error){
+            if(error.response?.status === 400 || error.response?.status === 409){
+                toast.error(error.response.data.message, {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
+        }
+    }
+
+    const sendEmailOTP = async() => {
+        setLoading(true)
+        try{
+            const response = await api.post(`auth/email/verify/`, {email:form.email})
+            if(response.status === 200){
+                try{
+                    const response2 = await api.post("external/email/sent-otp/", {email_address: form.email})
+                    if(response2.status === 200){
+                        toast.success(t('alerts.email_otp_sent'),{theme:"colored"})
+                        setEmailOtp(true)
+                    }
+                }catch(err){
+                    console.log(err)
+                }
+            }
+        }catch(error){
+            console.log(error)
+            if(error.response?.status === 400 || error.response?.status === 409){
+                toast.error(error.response?.data.message, {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
+        }
+
+    }
+
     
     const handleSubmit = async (e) => {
         e.preventDefault();       
@@ -223,6 +233,7 @@ const AdvocateRegistration = () => {
     return (
         <form onSubmit={handleSubmit} method="POST">
             <ToastContainer />
+            { loading && <Loading />}
             <Modal 
                 show={show} 
                 onHide={handleClose} 
@@ -545,7 +556,7 @@ const AdvocateRegistration = () => {
                                                 </div>
 
                                             )}
-                                            { mobileLoading && (<Spinner variant="primary"/>)}
+                                            {/* { mobileLoading && (<Spinner variant="primary"/>)} */}
                                             { mobileOtp && !mobileVerified && (
                                                 <div className="col-sm-3">
                                                     <div className="row">
@@ -600,7 +611,7 @@ const AdvocateRegistration = () => {
                                                         {t('send_otp')}</Button>
                                                 </div>
                                             )}
-                                            { emailLoading && (<Spinner variant="primary"/>)}
+                                            {/* { emailLoading && (<Spinner variant="primary"/>)} */}
                                             { emailOtp  && !emailVerified && (
                                                 <div className="col-sm-3">
                                                     <div className="row">

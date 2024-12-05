@@ -39,3 +39,14 @@ export const RequiredField = () => {
     )
 }
 
+export const ModelClose = (props) => {
+    return(
+        <i 
+            className="fa fa-times btn-close" 
+            data-bs-dismiss="modal" 
+            aria-label="Close"
+            onClick={props.handleClose}
+        ></i>
+    )
+}
+
