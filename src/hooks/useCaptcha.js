@@ -9,7 +9,7 @@ const useCaptcha = () => {
     // Define fetchCaptcha inside the hook
     const fetchCaptcha = async () => {
         try {
-            const response = await api.get('auth/generate-captcha/', {
+            const response = await api.get('auth/captcha/generate/', {
                 responseType: 'blob',
                 withCredentials: true,
             });
@@ -24,7 +24,7 @@ const useCaptcha = () => {
     const verifyCaptcha = async (captchaValue) => {
         try {
             const response = await api.post(
-                'auth/verify-captcha/',
+                'auth/captcha/verify/',
                 { captcha: captchaValue },
                 { withCredentials: true }
             );

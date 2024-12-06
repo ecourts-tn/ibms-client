@@ -18,7 +18,7 @@ const EFileDetails = () => {
                 const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
-                    setLitigants(response.data.litigant)
+                    setLitigants(response.data.litigants)
                     setGrounds(response.data.grounds)
                 }
             }catch(error){

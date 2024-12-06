@@ -15,6 +15,7 @@ const Header = () => {
   const [isAuth, setIsAuth] = useState(false);
   const [user, setUser] = useState({});
   const [isHomeDisabled, setIsHomeDisabled] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false); // State for High Contrast Mode
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -48,6 +49,16 @@ const Header = () => {
       navigate("/");
     }
   };
+
+  // const toggleDarkMode = () => {
+  //   setIsDarkMode(!isDarkMode);
+  // };
+  // // Inline CSS for body
+  // const bodyStyle = {
+  //   backgroundColor: isDarkMode ? '#121212' : '', // Dark mode background vs light mode
+  //   color: isDarkMode ? 'white' : 'black', // Yellow text color in dark mode, black in light mode
+  // };
+
 
   const renderDropdownLinks = (links) => {
     return links.map((link) => (
@@ -88,6 +99,12 @@ const Header = () => {
               <button type="button" class="btn btn-default" id="defaultFont"><i class="fa fa-font"></i></button>
               <button type="button" class="btn btn-default" id="increaseFont"><i class="fa fa-font"></i>+</button>
               <button type="button" class="btn btn-default" id="highContrast"><i class="fa fa-adjust"></i></button>
+              {/* <button
+                type="button" class="btn btn-default"
+                onClick={toggleDarkMode}
+              >
+              <i className="fa fa-adjust"></i>
+              </button> */}
             </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (

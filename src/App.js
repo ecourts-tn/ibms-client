@@ -23,6 +23,7 @@ import { DischargeRoutes } from 'routes/dischargeRoutes';
 import { ExtensionRoutes } from 'routes/extensionRoutes';
 import NotFound from 'components/layout/public/NotFound';
 import VerifyOrder from 'components/VerifyOrder';
+import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 
 function App() {
   
@@ -66,6 +67,9 @@ function App() {
                   <Route key={index} path={route.path} element={route.element} />
                 ))}
                 </Route>
+              </Route>
+              <Route path='registration' element={<DepartmentRegistration/>}>
+
               </Route>
             </Routes>
           </AppProvider>

@@ -217,7 +217,7 @@ const Login = () => {
                         </FormControl>
                         <div className="mt-1">
                             <p><a href="#">{t('forgot_password')}</a></p>
-                            <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="user/registration">{t('register')}</Link></p>
+                            <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="auth/registration">{t('register')}</Link></p>
                         </div>
                     </div>
                 </div>
