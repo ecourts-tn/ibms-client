@@ -59,15 +59,14 @@ const CaseScrutiny = () => {
         }
         fetchData();
     },[])
-
-    console.log(documents)
  
     const handleSubmit = async () => {
         if(form.status === 1){
             // update main table only
             try{
-                const response = await api.post(`case/filing/${state.efile_no}/scrutiny/`, {
-                    verification_date: form.complaince_date,
+                const response = await api.post(`court/case/registration/`, {
+                    efile_no: state.efile_no,
+                    verification_date: form.verification_date,
                     status:form.status,
                     is_verified:true
                 })
@@ -75,7 +74,6 @@ const CaseScrutiny = () => {
                     toast.success("Petition verified successfully", {
                         theme:"colored"
                     })
-                    setForm(initialState)
                     setTimeout(() => {
                         navigate("/court/case/scrutiny")
                     }, 2000)
@@ -87,24 +85,20 @@ const CaseScrutiny = () => {
         else if(form.status === 2){
             // update main table and add objection history
             try{
-                const response = await api.put(`case/filing/${state.efile_no}/update/`, {
-                    verification_date: form.complaince_date,
-                    status:form.status,
-                    is_verified:true
+                const response = await api.post(`court/case/objection/`, {
+                    efile_no : state.efile_no,
+                    objection_date: form.verification_date,
+                    complaince_date: form.complaince_date,
+                    remarks: form.remarks
                 })
-                if(response.status === 200){
-                    const response = await api.post(`case/filing/${state.efile_no}/objection/create/`, {
-                        objection_date: form.verification_date,
-                        complaince_date: form.complaince_date,
-                        remarks: form.remarks
+                if(response.status === 201){
+                    toast.success("Petition verified successfully", {
+                        theme:"colored"
                     })
-                    if(response.status === 201){
-                        toast.success("Petition verified successfully", {
-                            theme:"colored"
-                        })
-                    }
+                    setTimeout(() => {
+                        navigate("/court/case/scrutiny/")
+                    }, 2000)
                 }
-                setForm(initialState)
             }catch(error){
                 console.log(error)
             }
