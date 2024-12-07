@@ -17,7 +17,17 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useTranslation } from 'react-i18next'
+<<<<<<< HEAD
 import Loading from 'components/Loading'
+=======
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
+import { IconButton } from '@mui/material'; // For the toggle button
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
+
+
+>>>>>>> santhosh
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -71,8 +81,13 @@ const AdvocateRegistration = () => {
         notary_order: ''
     }
     const[districts, setDistricts] = useState([])
+<<<<<<< HEAD
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
+=======
+    const [form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState(initialState)
+>>>>>>> santhosh
     const[mobileOtp, setMobileOtp] = useState(false)
     const[emailOtp, setEmailOtp] = useState(false)
     const[loading, setLoading] = useState(false)
@@ -106,6 +121,215 @@ const AdvocateRegistration = () => {
 
     
 
+<<<<<<< HEAD
+=======
+    useEffect(() => {
+        const appointmentDatePicker = flatpickr(".appointment-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable past dates for appointment date
+            defaultDate: form.appointment_date,
+            onChange: (selectedDates1) => {
+                const formattedDate1 = selectedDates1[0] ? formatDate1(selectedDates1[0]) : "";
+                setForm({ ...form, appointment_date: formattedDate1 });
+            },
+        });
+
+        return () => {
+            if (appointmentDatePicker && typeof appointmentDatePicker.destroy === "function") {
+                appointmentDatePicker.destroy();
+            }
+        };
+    }, [form]);
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+
+        if (value === '') {
+            setForm({
+                ...form,
+                password: '',
+                confirm_password: '', // Clear confirm password when password is cleared
+            });
+            setErrors({
+                ...errors,
+                password: '',
+                confirm_password: '', // Clear errors as well
+            });
+            return; // Do nothing further if password is cleared
+        }
+
+        // Check if the password length exceeds 20 characters
+        if (value.length > 20) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: 'Password cannot exceed 20 characters.',
+            }));
+            return;
+        }
+
+        // Regex for password validation: At least 8-20 characters, at least one uppercase, one lowercase, one number, and one special character
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/\\|`~\-_]).{8,20}$/;
+
+        // Check if password is valid according to regex
+        if (!passwordRegex.test(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: 'Password must be between 8-20 characters, include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            }));
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: '', // Clear error if valid
+            }));
+        }
+
+
+        // Update the form state with the new password value
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        // Check if password and confirm password match
+        if (form.confirm_password && form.confirm_password !== value) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                confirm_password: 'Passwords do not match.',
+            }));
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                confirm_password: '', // Clear error if passwords match
+            }));
+        }
+    };
+
+    // Password strength check - validate password criteria
+    const validatePasswordCriteria = (password) => {
+        return {
+            length: password.length >= 8 && password.length <= 20,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        };
+    };
+
+    const passwordCriteria = validatePasswordCriteria(form.password);
+
+    // Handle confirm password change
+    const handleConfirmPasswordChange = (e) => {
+        const { name, value } = e.target;
+
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        // Check if password and confirm password match
+        if (form.password && form.password !== value) {
+            setErrors({
+                ...errors,
+                confirm_password: 'Passwords do not match.',
+            });
+        } else {
+            setErrors({
+                ...errors,
+                confirm_password: '',
+            });
+        }
+    };
+
+    const handleFileChange = (e, fileType) => {
+        const file = e.target.files[0]; // Get the first file
+        if (!file) return; // If no file is selected, return early
+    
+        let errorMessage = '';
+    
+        // PDF Validation (for notary_order and reg_certificate)
+        if (fileType === 'notary_order' || fileType === 'reg_certificate') {
+            // Validate file type (only PDF)
+            if (file.type !== 'application/pdf') {
+                errorMessage = 'Only PDF files are allowed for Notary Order and Bar Certificate.';
+            }
+    
+            // Validate file size (max 5MB for PDF)
+            if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
+                errorMessage = errorMessage || 'File size must be less than 5MB.';
+            }
+        }
+    
+        // Image Validation (for profile_photo)
+        else if (fileType === 'profile_photo') {
+            // Validate file type (only images allowed)
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!allowedImageTypes.includes(file.type)) {
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed for Profile Photo.';
+            }
+    
+            // Validate file size (max 3MB for image)
+            if (file.size > 3 * 1024 * 1024) { // 3MB in bytes
+                errorMessage = errorMessage || 'Image size must be less than 3MB.';
+            }
+        }
+
+        else if (fileType === 'identity_proof') {
+            // Check for allowed file types (PDF or Image)
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (file.type === 'application/pdf') {
+                // If it's a PDF, no need to check further for image types
+                if (file.size > 5 * 1024 * 1024) { // 5MB for PDF size limit
+                    errorMessage = errorMessage || 'File size must be less than 5MB.';
+                }
+            } else if (!allowedImageTypes.includes(file.type)) {
+                // If it's not a valid image type
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed for Identity Proof.';
+            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
+                // Validate file size (max 3MB for image)
+                errorMessage = errorMessage || 'Image size must be less than 3MB.';
+            }
+        }
+    
+        // If there's an error, show it
+        if (errorMessage) {
+            setErrors({
+                ...errors,
+                [fileType]: errorMessage,
+            });
+            return; // Stop further execution if file type or size is invalid
+        }
+    
+        // If validation passes, update the form with the file data
+        setForm({
+            ...form,
+            [fileType]: {
+                name: file.name, // Display the file name
+                file: file, // Store the actual file
+            },
+        });
+    
+        // Clear any previous errors for this file type
+        setErrors({
+            ...errors,
+            [fileType]: '',
+        });
+    };
+   
+    const sendMobileOTP = () => {
+        if(form.mobile === ''){
+            toast.error(t('alerts.mobile_required'),{
+                theme:"colored"
+            })
+        }else{
+            setMobileLoading(true)
+            toast.success(t('alerts.mobile_otp_sent'),{
+                theme:"colored"
+            })
+            setMobileLoading(false)
+            setMobileOtp(true)
+        }
+    }
+>>>>>>> santhosh
 
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
