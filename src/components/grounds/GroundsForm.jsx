@@ -56,7 +56,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         // Directly calculate the remaining characters from the input
         const updatedRemainingChars = 3000 - newValue.length;
 
-        // Update state if the length is within the limit (3000 characters)
+        // Update state if the length is within the limit (10 characters)
         if (updatedRemainingChars >= 0) {
             setGround({ ...ground, description: newValue });
             setRemainingChars(updatedRemainingChars); // Update remaining characters correctly
@@ -86,11 +86,6 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         }
     };
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();  // Prevent the default behavior (line break)
-        }
-      };
 
     return (
         <>
@@ -102,7 +97,6 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
                             value={ground.description}
                             onChange={handleEditorChange}  // Handle text change
                             onPaste={handlePaste}  // Handle paste event
-                            onKeyDown={handleKeyDown} 
                             style={{ minHeight: '300px', width: '100%' }}  // Added width to ensure it's full-width
                         />
                         {/* Display remaining characters */}

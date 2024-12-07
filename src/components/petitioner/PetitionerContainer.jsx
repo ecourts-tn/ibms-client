@@ -71,20 +71,20 @@ const PetitionerContainer = () => {
 
     }
 
-    const deletePetitioner =async(petitioner) => {
+    const deletePetitioner =async (petitioner) => {
         const newPetitioners = petitioners.filter((p) => {
             return p.litigant_id !== petitioner.litigant_id
         })
         try{
             if(window.confirm("Are you sure want to delete the litigant")){
                 const response = await api.delete(`litigant/${petitioner.litigant_id}/delete/`)
-                // if(response.status === 204){
+                if(response.status === 204){
                     setPetitioners(newPetitioners)
                     toast.error(t('alerts.petitioner_deleted').replace('{petitioner}', petitioner.litigant_id), {
                         theme: "colored"
-                    }) 
-                    handleClose(); 
-                // }
+                    })
+                    handleClose()
+                }
             }
         }catch(error){
             console.log(error)
