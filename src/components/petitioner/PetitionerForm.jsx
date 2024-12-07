@@ -18,7 +18,7 @@ import { LanguageContext } from 'contexts/LanguageContex';
 import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
 import { useLocation } from 'react-router-dom';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
@@ -88,7 +88,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     rank: Yup.string().required(t('errors.rank_required')),
     gender: Yup.string().required(t('errors.gender_required')),
     address: Yup.string().required(t('errors.address_required')),
-    mobile_number: Yup.number().required(t('errors.mobile_required')).typeError(t('errors.numeric')),
+    mobile_number: Yup.number().required(t('errors.mobile_required')),
     proof_number: Yup.string().required(t('errors.identity_proof_required')),
     act: Yup.string().required(t('errors.act_required')),
     section: Yup.string().required(t('errors.section_required')),
@@ -110,6 +110,32 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     //   })
     //   .nullable(),
   });
+
+  const handleChange = (e) => {
+      const { name, value } = e.target;
+
+      // Update form state
+      setLitigant((prevForm) => ({
+          ...prevForm,
+          [name]: value,  // Dynamically update the field
+      }));
+
+      // Validate the field and update errors
+      const errorMessage = validateEmail(name, value);  // Validate the email field
+      setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: errorMessage,  // Set the error message for the specific field
+      }));
+  };
+
+  // const handleBlur = (e) => {
+  //     const { name, value } = e.target;
+  //     const errorMessage = validateEmail(name, value);  // Validate the field on blur
+  //     setErrors((prevErrors) => ({
+  //         ...prevErrors,
+  //         [name]: errorMessage,  // Set the error message for the specific field
+  //     }));
+  // };
 
   useEffect(() => {
     if(accused){
@@ -171,13 +197,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     //   formIsValid = false;
     // }
 
-    const emailError = validateEmail(litigant.email_address);
-    if (emailError) {
-      newErrors.email_address = emailError;
-      formIsValid = false;
-    } else {
-      delete newErrors.email_address; // Clear any existing error
-    }
+    
     const ageError = handleAgeChange({ target: { value: litigant.age } }, setLitigant, litigant);
     if (ageError) {
       newErrors.age = ageError;
@@ -267,7 +287,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   >
                     <option value="">{t('alerts.select_gender')}</option>
                     { genders.map((g, index) => (
-                      <option value={g.id} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                      <option value={g.name} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
                     ))}
                   </select>
                 )}
@@ -553,7 +573,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
+                  // onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -568,8 +589,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   name="email_address"
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                  onBlur={() => handleBlur(litigant, setErrors)}
+                  onChange={handleChange}
+                  // onBlur={handleBlur}
                 ></Form.Control>
                 {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
