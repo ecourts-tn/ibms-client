@@ -14,7 +14,7 @@ import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { useTranslation } from 'react-i18next';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 
@@ -137,6 +137,22 @@ const Petitioner = ({addPetitioner}) => {
   //   dispatch(getRelations())
   // }, [dispatch])
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Update form state
+    setLitigant((prevForm) => ({
+        ...prevForm,
+        [name]: value,  // Dynamically update the field
+    }));
+
+    // Validate the field and update errors
+    const errorMessage = validateEmail(name, value);  // Validate the email field
+    setErrors((prevErrors) => ({
+        ...prevErrors,
+        [name]: errorMessage,  // Set the error message for the specific field
+    }));
+  };
 
   useEffect(() => {
     if(accused){
@@ -434,8 +450,8 @@ const Petitioner = ({addPetitioner}) => {
                   name="email_address"
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                  onBlur={() => handleBlur(litigant, setErrors)}
+                  onChange={handleChange}
+                  // onBlur={() => handleBlur(litigant, setErrors)}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.email_address }</div>
               </Form.Group>

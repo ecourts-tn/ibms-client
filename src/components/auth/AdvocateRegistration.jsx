@@ -23,6 +23,13 @@ import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
 import Loading from 'components/Loading'
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
+import { IconButton } from '@mui/material'; // For the toggle button
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggl
+
+
 
 
 
@@ -53,9 +60,7 @@ const AdvocateRegistration = () => {
         group: 1,
         username: '',
         is_notary: false,
-        bar_code:'',
-        reg_number:'',
-        reg_year:'',
+        adv_reg: '',
         gender: 1,
         date_of_birth: '',
         litigation_place: 1,
@@ -78,13 +83,15 @@ const AdvocateRegistration = () => {
         notary_order: ''
     }
     const[districts, setDistricts] = useState([])
-    const[form, setForm] = useState(initialState)
-    const[errors, setErrors] = useState({})
+    const [form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState(initialState)
     const[mobileOtp, setMobileOtp] = useState(false)
     const[emailOtp, setEmailOtp] = useState(false)
     const[loading, setLoading] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
     const[emailVerified, setEmailVerified]   = useState(false)
+    const [showPassword, setShowPassword] = useState(false); 
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
     const validationSchema = Yup.object({
         username: Yup.string().required(t('errors.username_required')),
@@ -97,6 +104,37 @@ const AdvocateRegistration = () => {
         email: Yup.string().email().required(t('errors.email_required'))
     })
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // Update form state
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,  // Dynamically update the field
+        }));
+
+        // Validate the field and update errors
+        const errorMessage = validateEmail(name, value);  // Validate the email field
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMessage,  // Set the error message for the specific field
+        }));
+    };
+
+    const formatDate = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    const formatDate1 = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
     useEffect(() => {
         const fecthDistricts = async() => {
             try{
@@ -108,11 +146,233 @@ const AdvocateRegistration = () => {
                 console.error(error)
             }
         }
-        fecthDistricts()
-    },[])
+        fecthDistricts();
+
+        const dateOfBirthPicker = flatpickr(".date-of-birth-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable future dates for date of birth
+            defaultDate: form.date_of_birth,
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                setForm({ ...form, date_of_birth: formattedDate });
+            },
+        });
+
+        return () => {
+            if (dateOfBirthPicker && typeof dateOfBirthPicker.destroy === "function") {
+                dateOfBirthPicker.destroy();
+            }
+        };
+    }, [form]);
 
     
 
+    useEffect(() => {
+        const appointmentDatePicker = flatpickr(".appointment-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable past dates for appointment date
+            defaultDate: form.appointment_date,
+            onChange: (selectedDates1) => {
+                const formattedDate1 = selectedDates1[0] ? formatDate1(selectedDates1[0]) : "";
+                setForm({ ...form, appointment_date: formattedDate1 });
+            },
+        });
+
+        return () => {
+            if (appointmentDatePicker && typeof appointmentDatePicker.destroy === "function") {
+                appointmentDatePicker.destroy();
+            }
+        };
+    }, [form]);
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+
+        if (value === '') {
+            setForm({
+                ...form,
+                password: '',
+                confirm_password: '', // Clear confirm password when password is cleared
+            });
+            setErrors({
+                ...errors,
+                password: '',
+                confirm_password: '', // Clear errors as well
+            });
+            return; // Do nothing further if password is cleared
+        }
+
+        // Check if the password length exceeds 20 characters
+        if (value.length > 20) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: 'Password cannot exceed 20 characters.',
+            }));
+            return;
+        }
+
+        // Regex for password validation: At least 8-20 characters, at least one uppercase, one lowercase, one number, and one special character
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;"'<>,.?/\\|`~\-_]).{8,20}$/;
+
+        // Check if password is valid according to regex
+        if (!passwordRegex.test(value)) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: 'Password must be between 8-20 characters, include at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            }));
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                password: '', // Clear error if valid
+            }));
+        }
+
+
+        // Update the form state with the new password value
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        // Check if password and confirm password match
+        if (form.confirm_password && form.confirm_password !== value) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                confirm_password: 'Passwords do not match.',
+            }));
+        } else {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                confirm_password: '', // Clear error if passwords match
+            }));
+        }
+    };
+
+    // Password strength check - validate password criteria
+    const validatePasswordCriteria = (password) => {
+        return {
+            length: password.length >= 8 && password.length <= 20,
+            lowercase: /[a-z]/.test(password),
+            uppercase: /[A-Z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        };
+    };
+
+    const passwordCriteria = validatePasswordCriteria(form.password);
+
+    // Handle confirm password change
+    const handleConfirmPasswordChange = (e) => {
+        const { name, value } = e.target;
+
+        setForm({
+            ...form,
+            [name]: value,
+        });
+
+        // Check if password and confirm password match
+        if (form.password && form.password !== value) {
+            setErrors({
+                ...errors,
+                confirm_password: 'Passwords do not match.',
+            });
+        } else {
+            setErrors({
+                ...errors,
+                confirm_password: '',
+            });
+        }
+    };
+
+    const handleFileChange = (e, fileType) => {
+        const file = e.target.files[0]; // Get the first file
+        if (!file) return; // If no file is selected, return early
+    
+        let errorMessage = '';
+    
+        // PDF Validation (for notary_order and reg_certificate)
+        if (fileType === 'notary_order' || fileType === 'reg_certificate') {
+            // Validate file type (only PDF)
+            if (file.type !== 'application/pdf') {
+                errorMessage = 'Only PDF files are allowed for Notary Order and Bar Certificate.';
+            }
+    
+            // Validate file size (max 5MB for PDF)
+            if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
+                errorMessage = errorMessage || 'File size must be less than 5MB.';
+            }
+        }
+    
+        // Image Validation (for profile_photo)
+        else if (fileType === 'profile_photo') {
+            // Validate file type (only images allowed)
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!allowedImageTypes.includes(file.type)) {
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed for Profile Photo.';
+            }
+    
+            // Validate file size (max 3MB for image)
+            if (file.size > 3 * 1024 * 1024) { // 3MB in bytes
+                errorMessage = errorMessage || 'Image size must be less than 3MB.';
+            }
+        }
+
+        else if (fileType === 'identity_proof') {
+            // Check for allowed file types (PDF or Image)
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (file.type === 'application/pdf') {
+                // If it's a PDF, no need to check further for image types
+                if (file.size > 5 * 1024 * 1024) { // 5MB for PDF size limit
+                    errorMessage = errorMessage || 'File size must be less than 5MB.';
+                }
+            } else if (!allowedImageTypes.includes(file.type)) {
+                // If it's not a valid image type
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed for Identity Proof.';
+            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
+                // Validate file size (max 3MB for image)
+                errorMessage = errorMessage || 'Image size must be less than 3MB.';
+            }
+        }
+    
+        // If there's an error, show it
+        if (errorMessage) {
+            setErrors({
+                ...errors,
+                [fileType]: errorMessage,
+            });
+            return; // Stop further execution if file type or size is invalid
+        }
+    
+        // If validation passes, update the form with the file data
+        setForm({
+            ...form,
+            [fileType]: {
+                name: file.name, // Display the file name
+                file: file, // Store the actual file
+            },
+        });
+    
+        // Clear any previous errors for this file type
+        setErrors({
+            ...errors,
+            [fileType]: '',
+        });
+    };
+   
+    // const sendMobileOTP = () => {
+    //     if(form.mobile === ''){
+    //         toast.error(t('alerts.mobile_required'),{
+    //             theme:"colored"
+    //         })
+    //     }else{
+    //         setMobileLoading(true)
+    //         toast.success(t('alerts.mobile_otp_sent'),{
+    //             theme:"colored"
+    //         })
+    //         setMobileLoading(false)
+    //         setMobileOtp(true)
+    //     }
+    // }
 
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
@@ -235,6 +495,53 @@ const AdvocateRegistration = () => {
         }
     }
 
+    const handleEnrolmentno = (e) => {
+        const { name, value } = e.target;
+    
+        // Convert the input value to uppercase
+        const upperCaseValue = value.toUpperCase();
+    
+        // Regex to allow first 3 characters as uppercase letters, then slashes and numbers
+        const regexFirstPart = /^[A-Z]{3}/; // Only allows uppercase letters for the first 3 characters
+        const regexSecondPart = /^[0-9/]*$/; // Allows only uppercase letters, numbers, and slashes
+    
+        // Validate the first part (first 3 characters)
+        if (upperCaseValue.length <= 2 && upperCaseValue.length <= 3) {
+            // If length is 3 or less, ensure all characters are uppercase letters
+            if (/^[A-Z]*$/.test(upperCaseValue)) {
+                setForm({
+                    ...form,
+                    [name]: upperCaseValue, // Update the specific field with uppercase value
+                });
+            } else {
+                // If invalid character is entered for the first 3 chars, show error
+                setErrors({
+                    ...errors,
+                    [name]: 'The first 3 characters must be uppercase letters.',
+                });
+            }
+        } else {
+            // Validate the remaining part (after 3 characters)
+            const remainingPart = upperCaseValue.slice(3); // Get the part after the first 3 characters
+    
+            if (regexSecondPart.test(remainingPart)) {
+                // If valid, update the state with the full value
+                setForm({
+                    ...form,
+                    [name]: upperCaseValue,
+                });
+                setErrors({ ...errors, [name]: '' }); // Clear error message if valid
+            } else {
+                // Show error if the remaining part contains invalid characters
+                setErrors({
+                    ...errors,
+                    [name]: 'Allowed Only 3 characters and after slashes and numbers are allowed.',
+                });
+            }
+        }
+    };
+    
+
     return (
         <form onSubmit={handleSubmit} method="POST">
             <ToastContainer />
@@ -287,16 +594,17 @@ const AdvocateRegistration = () => {
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
-                                    <div className="col-md-8 offset-md-2">
-                                        <div className="form-group row mb-3">
+                                    <div className="col-md-9 offset-md-2">
+                                        <div className="form-group row md-3">
                                             <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
-                                            <div className="col-sm-9">
+                                            <div className="col-sm-8">
                                                 <input 
                                                     type="text" 
                                                     name="username" 
                                                     value={form.username}
                                                     className={`form-control ${errors.username ? 'is-invalid' : null}`}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    onChange={(e) => handleNameChange(e, setForm, form, 'username')}
+                                                    // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
                                                     { errors.username }
@@ -322,17 +630,24 @@ const AdvocateRegistration = () => {
                                                         { errors.gender }
                                                     </div>
                                                 </FormControl>
-                                            </div>
-                                            <div className="col-sm-2">
+                                            </div> </div>
+                                            <div className="form-group row mb-3">
+                                            <div className="col-sm-3">
                                                 <label htmlFor="">{t('date_of_birth')}<RequiredField/></label>
                                             </div>
                                             <div className="col-sm-3">
                                                 <input 
-                                                    type="date" 
-                                                    className={`form-control ${errors.date_of_birth ? 'is-invalid' : null }`}
+                                                    type="text" 
+                                                    className="form-control date-of-birth-picker"
                                                     name="date_of_birth"
                                                     value={form.date_of_birth}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    placeholder="DD/MM/YYYY"
+                                                    onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+                                                    style={{
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid #ccc', // Optional: Adjust border
+                                                        padding: '8px',            // Optional: Adjust padding
+                                                    }}
                                                 />
                                                 <div className="invalid-feedback">
                                                     { errors.date_of_birth}
@@ -356,66 +671,43 @@ const AdvocateRegistration = () => {
                                                 </FormControl>
                                             </div>
                                         </div>
+                                        { parseInt(form.litigation_place) === 2 && (
+                                            
+                                            <div className="form-group row mb-3">
+                                                <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
+                                                <div className="col-sm-6">
+                                                    <select 
+                                                        name="district" 
+                                                        id="district" 
+                                                        className="form-control"
+                                                        value={form.district}
+                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    >
+                                                        <option value="">Select District</option>
+                                                        { districts.map((item, index) => (
+                                                            <option value={item.district_code} key={index}>{item.district_name}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        )}
                                         { parseInt(form.user_type) === 1 && (
                                         <>
                                             <div className="form-group row mb-3">
                                                 <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>
-                                                <div className="col-sm-9">
-                                                    <div className="row">
-                                                        <div className="col-sm-3">
-                                                            <TextField 
-                                                                id="bar_code" 
-                                                                label="State Code" 
-                                                                name="bar_code"
-                                                                value={form.bar_code}
-                                                                size="small"
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                            />
-                                                        </div>
-                                                        <div className="col-sm-3">
-                                                            <TextField 
-                                                                id="reg_number" 
-                                                                label="Reg. No." 
-                                                                name="reg_number"
-                                                                size="small"
-                                                                value={form.reg_number}
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                            />
-                                                        </div>
-                                                        <div className="col-sm-3">
-                                                            <TextField 
-                                                                id="reg_year" 
-                                                                label="Reg. Year" 
-                                                                name="reg_year"
-                                                                size="small"
-                                                                value={form.reg_year}
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                            />
-                                                        </div>
-                                                    </div>
+                                                <div className="col-sm-3">
+                                                    <input
+                                                        type='text'
+                                                        name="adv_reg"
+                                                        value={form.adv_reg}
+                                                        onChange={handleEnrolmentno}
+                                                        className={`form-control ${errors.adv_reg ? 'is-invalid' : 'adv_reg'}`}
+                                                        placeholder='MS/----/----'
+                                                    />
+                                                    {errors.adv_reg && <div className="invalid-feedback">{errors.adv_reg}</div>} {/* Show error message */}
                                                 </div>
                                             </div>
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
-                                                <div className="col-sm-9">
-                                                    <Button
-                                                        component="label"
-                                                        role={undefined}
-                                                        variant="contained"
-                                                        tabIndex={-1}
-                                                        color="warning"
-                                                        startIcon={<CloudUploadIcon />}
-                                                        >
-                                                        {t('upload_bar_certificate')}
-                                                        <VisuallyHiddenInput 
-                                                            type="file"
-                                                            name="reg_certificate"
-                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
-                                                        />
-                                                    </Button>
-                                                    <span className="mx-2">{ form.reg_certificate.name }</span>
-                                                </div>
-                                            </div>
+                                            
                                             <div className="form-group row">
                                                 <label htmlFor="" className="col-sm-3">{t('notary')}<RequiredField/></label>
                                                 <div className="col-md-9">
@@ -435,99 +727,149 @@ const AdvocateRegistration = () => {
                                             </div>
                                             { form.is_notary === "true" && (
                                             <div className="form-group row">
-                                                <label htmlFor="" className="col-sm-3">{t('appointment_date')}<RequiredField/></label>
+                                                <div className="col-sm-3">
+                                                    <label htmlFor="">{t('appointment_date')}<RequiredField/></label>
+                                                </div>
                                                 <div className="col-sm-3">
                                                     <input 
                                                         type="date"     
                                                         name="appointment_date" 
-                                                        className="form-control" 
+                                                        className="form-control appointment-date-picker" 
+                                                        value={form.appointment_date || ''}
+                                                        placeholder="DD/MM/YYYY"
+                                                        onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', // Optional: Adjust border
+                                                            padding: '8px',            // Optional: Adjust padding
+                                                        }}
                                                     />
+                                                    <div className="invalid-feedback">
+                                                    { errors.appointment_date}
                                                 </div>
-                                                <div className="col-md-2">
-                                                    <label htmlFor="">{t('notary_order')}<RequiredField/></label>
                                                 </div>
-                                                <div className="col-md-4">
-                                                    <Button
-                                                        component="label"
-                                                        role={undefined}
-                                                        variant="contained"
-                                                        tabIndex={-1}
-                                                        color="warning"
-                                                        startIcon={<CloudUploadIcon />}
-                                                        >
-                                                        {t('upload_notary_order')}
-                                                        <VisuallyHiddenInput 
-                                                            type="file"
-                                                            name="notary_order"
-                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})} 
-                                                        />
-                                                    </Button>
-                                                    <span className="mx-2">{ form.notary_order.name }</span>
-                                                </div>
+                                                
                                             </div>
                                             )}
                                         </>    
                                         )}
-                                        { parseInt(form.litigation_place) === 2 && (
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
-                                                <div className="col-sm-6">
-                                                    <select 
-                                                        name="district" 
-                                                        id="district" 
-                                                        className="form-control"
-                                                        value={form.district}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="">Select District</option>
-                                                        { districts.map((item, index) => (
-                                                            <option value={item.district_code} key={index}>{item.district_name}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        )}
+                                        
                                         <div className="form-group row">
                                             <label className="col-form-label col-sm-3 pt-0">{t('password')}<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
+                                                <div className="input-group" style={{ position: 'relative' }}>
                                                     <input
-                                                        type="password"
+                                                       type={showPassword ? 'text' : 'password'} 
                                                         name="password"
                                                         value={form.password}
                                                         className={`form-control ${errors.password ? 'is-invalid' : null }`}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={handlePasswordChange}
+                                                        style={{
+                                                            paddingRight: '35px', // Make room for the icon inside the input
+                                                        }}
                                                     />
+                                                   <IconButton
+                                                        onClick={() => setShowPassword(!showPassword)} // Toggle the visibility
+                                                        edge="end"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '10px', // Positioned on the right side inside the input field
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)', // Centered vertically
+                                                            color: '#6c757d', // Icon color (you can adjust this)
+                                                        }}
+                                                    >
+                                                        {showPassword ? <VisibilityOff /> : <Visibility />} {/* Eye icons */}
+                                                    </IconButton>
+                                                    </div>
                                                     <div className="invalid-feedback">
                                                         { errors.password }
                                                     </div>
                                                 </FormControl>
                                             </div> 
                                         </div>
-                                        <div className="form-group row" style={{ marginTop:"-20px"}}>
-                                            <div className="col-sm-3"></div>   
+                                        {/* Password Requirements List */}
+                                        {form.password.length > 0 && (
+                                        <div className="form-group row" style={{ marginTop: '-20px' }}>
+                                            <div className="col-sm-3"></div>
                                             <div className="col-sm-9">
                                                 <small className="text-teal">
-                                                    <ul style={{ marginLeft:"-25px", fontWeight:700}}>
-                                                        <li>Your password can't be too similar to your other personal information.</li>
-                                                        <li>Your password must contain at least 8 characters.</li>
-                                                        <li>Your password can't be a commonly used password.</li>
-                                                        <li>Your password can't be entirely numeric.</li>
+                                                    <ul style={{ marginLeft: '-25px', fontWeight: 700 }}>
+                                                        <li
+                                                            style={{
+                                                                color: passwordCriteria.length ? 'green' : 'red',
+                                                                textDecoration: passwordCriteria.length ? 'none' : 'line-through',
+                                                            }}
+                                                        >
+                                                            Password must be between 8-20 characters.
+                                                        </li>
+                                                        <li
+                                                            style={{
+                                                                color: passwordCriteria.lowercase ? 'green' : 'red',
+                                                                textDecoration: passwordCriteria.lowercase ? 'none' : 'line-through',
+                                                            }}
+                                                        >
+                                                            Your password must include at least one lowercase letter.
+                                                        </li>
+                                                        <li
+                                                            style={{
+                                                                color: passwordCriteria.uppercase ? 'green' : 'red',
+                                                                textDecoration: passwordCriteria.uppercase ? 'none' : 'line-through',
+                                                            }}
+                                                        >
+                                                            Your password must include at least one uppercase letter.
+                                                        </li>
+                                                        <li
+                                                            style={{
+                                                                color: passwordCriteria.number ? 'green' : 'red',
+                                                                textDecoration: passwordCriteria.number ? 'none' : 'line-through',
+                                                            }}
+                                                        >
+                                                            Your password must include at least one number.
+                                                        </li>
+                                                        <li
+                                                            style={{
+                                                                color: passwordCriteria.special ? 'green' : 'red',
+                                                                textDecoration: passwordCriteria.special ? 'none' : 'line-through',
+                                                            }}
+                                                        >
+                                                            Your password must include at least one special character.
+                                                        </li>
                                                     </ul>
-                                                </small> 
+                                                </small>
                                             </div>
                                         </div>
+                                        )}
                                         <div className="form-group row mb-3">
                                             <label className="col-form-label col-sm-3 pt-0">{t('confirm_password')}<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <FormControl fullWidth className="mb-3">
+                                                <div className="input-group" style={{ position: 'relative' }}>
                                                     <input
-                                                        type="password" 
+                                                        type={showConfirmPassword ? 'text' : 'password'}
                                                         name="confirm_password" 
                                                         className={`form-control ${errors.confirm_password ? 'is-invalid' : null }`}
                                                         value={form.confirm_password}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                                        onChange={handleConfirmPasswordChange}
+                                                        style={{
+                                                            paddingRight: '35px', // Make room for the icon inside the input
+                                                        }}
                                                     />
+                                                    <IconButton
+                                                        onClick={() => setShowConfirmPassword(!showConfirmPassword )} // Toggle the visibility
+                                                        edge="end"
+                                                        style={{
+                                                            position: 'absolute',
+                                                            right: '10px', // Positioned on the right side inside the input field
+                                                            top: '50%',
+                                                            transform: 'translateY(-50%)', // Centered vertically
+                                                            color: '#6c757d', // Icon color (you can adjust this)
+                                                        }}
+                                                    >
+                                                        {showConfirmPassword  ? <VisibilityOff /> : <Visibility />} {/* Eye icons */}
+                                                    </IconButton>
+                                                    </div>
                                                     <div className="invalid-feedback">
                                                         { errors.confirm_password }
                                                     </div>
@@ -543,7 +885,8 @@ const AdvocateRegistration = () => {
                                                         name="mobile" 
                                                         className={`form-control ${errors.mobile ? 'is-invalid' : null }`}
                                                         value={form.mobile}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleMobileChange(e, setForm, form, 'mobile')}
+                                                        // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     />
                                                     <div className="invalid-feedback">
                                                         { errors.mobile }
@@ -600,7 +943,9 @@ const AdvocateRegistration = () => {
                                                     name="email" 
                                                     className={`form-control ${errors.email ? 'is-invalid' : null}`}
                                                     value={form.email}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    onChange={handleChange}
+                                                    // onBlur={() => handleBlur(form, setErrors)}
+                                                    // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
                                                     { errors.email }
@@ -657,6 +1002,71 @@ const AdvocateRegistration = () => {
                                                 ></textarea>
                                             </div>
                                         </div>
+                                        { form.is_notary === "true" && (
+                                        <div className="form-group row mb-3">
+                                            <label htmlFor="" className='col-form-label col-sm-3'>{t('notary_order')}<RequiredField/></label>
+                                            <div className="col-sm-9">
+                                                <Button
+                                                    component="label"
+                                                    role={undefined}
+                                                    variant="contained"
+                                                    tabIndex={-1}
+                                                    color="warning"
+                                                    startIcon={<CloudUploadIcon />}
+                                                    >
+                                                    {t('upload_notary_order')}
+                                                    <VisuallyHiddenInput 
+                                                        type="file"
+                                                        name="notary_order"
+                                                        onChange={(e) => handleFileChange(e, 'notary_order')}
+                                                        accept=".pdf"
+                                                    />
+                                                </Button>
+                                                {/* Display selected file name */}
+                                                {form.notary_order && form.notary_order.name && (
+                                                    <span className="mx-2">{form.notary_order.name}</span>
+                                                )}
+                                                {/* Display error message if any */}
+                                                {errors.notary_order && (
+                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
+                                                        {errors.notary_order}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        )}
+                                                
+                                        <div className="form-group row mb-3">
+                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
+                                                <div className="col-sm-9">
+                                                    <Button
+                                                        component="label"
+                                                        role={undefined}
+                                                        variant="contained"
+                                                        tabIndex={-1}
+                                                        color="warning"
+                                                        startIcon={<CloudUploadIcon />}
+                                                        >
+                                                        {t('upload_bar_certificate')}
+                                                        <VisuallyHiddenInput 
+                                                            type="file"
+                                                            name="reg_certificate"
+                                                            accept=".pdf" // Only PDF accepted
+                                                            onChange={(e) => handleFileChange(e, 'reg_certificate')}
+                                                        />
+                                                    </Button>
+                                                    {/* Display selected file name */}
+                                                    {form.reg_certificate && form.reg_certificate.name && (
+                                                        <span className="mx-2">{form.reg_certificate.name}</span>
+                                                    )}
+                                                    {/* Display error message if any */}
+                                                    {errors.reg_certificate && (
+                                                        <div className="invalid-feedback" style={{ display: 'block' }}>
+                                                            {errors.reg_certificate}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                        </div>
                                         <div className="form-group row mb-3">
                                             <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}</label>
                                             <div className="col-sm-9">
@@ -672,10 +1082,20 @@ const AdvocateRegistration = () => {
                                                     <VisuallyHiddenInput 
                                                         type="file" 
                                                         name="profile_photo"
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.files[0]})}
+                                                        accept="image/*" // Allow image files
+                                                        onChange={(e) => handleFileChange(e, 'profile_photo')}
                                                     />
                                                 </Button>
-                                                <span className="mx-2">{ form.profile_photo.name}</span>
+                                                {/* Display selected file name */}
+                                                {form.profile_photo && form.profile_photo.name && (
+                                                    <span className="mx-2">{form.profile_photo.name}</span>
+                                                )}
+                                                {/* Display error message if any */}
+                                                {errors.profile_photo && (
+                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
+                                                        {errors.profile_photo}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
@@ -693,10 +1113,16 @@ const AdvocateRegistration = () => {
                                                     <VisuallyHiddenInput 
                                                         type="file"
                                                         name="identity_proof"
-                                                        onChange={(e) => setForm({...form, [e.target.name] : e.target.files[0]})} 
+                                                        onChange={(e) => handleFileChange(e, 'identity_proof')}  
+                                                        accept=".pdf, image/*" 
                                                     />
                                                 </Button>
-                                                <span className="mx-2">{ form.identity_proof.name }</span>
+                                                <span className="mx-2">{form.identity_proof && form.identity_proof.name}</span>
+                                                {errors.identity_proof && (
+                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
+                                                        {errors.identity_proof}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         

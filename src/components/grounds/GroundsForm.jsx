@@ -20,7 +20,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
 
     const [ground, setGround] = useState(initialState);
     const [errors, setErrors] = useState({});
-    const [remainingChars, setRemainingChars] = useState(3000); // Set to 10 as per your requirement
+    const [remainingChars, setRemainingChars] = useState(3000); // Set to 3000 as per your requirement
     const { t } = useTranslation();
 
     // Save the ground to the parent component
@@ -30,7 +30,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
             await validationSchema.validate(ground, { abortEarly: false });
             addGround(ground); // If valid, add the ground and reset
             setGround(initialState);
-            setRemainingChars(3000); // Reset remaining characters to 10 after save
+            setRemainingChars(3000); // Reset remaining characters to 3000 after save
         } catch (error) {
             const newErrors = {};
             error.inner.forEach((err) => {
@@ -45,7 +45,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         if (selectedGround) {
             setGround(selectedGround);
         }
-        setRemainingChars(3000); // Ensure it starts at 10
+        setRemainingChars(3000); // Ensure it starts at 3000
         setErrors({ description: '' }); // Clear any errors on initial render
     }, [selectedGround]);
 
@@ -56,7 +56,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         // Directly calculate the remaining characters from the input
         const updatedRemainingChars = 3000 - newValue.length;
 
-        // Update state if the length is within the limit (10 characters)
+        // Update state if the length is within the limit (3000 characters)
         if (updatedRemainingChars >= 0) {
             setGround({ ...ground, description: newValue });
             setRemainingChars(updatedRemainingChars); // Update remaining characters correctly
@@ -73,10 +73,10 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
         // Combine the current content and pasted content
         const newContent = ground.description + pastedContent;
 
-        // Check if the new content exceeds the 10 character limit
+        // Check if the new content exceeds the 3000 character limit
         if (newContent.length > 3000) {
             e.preventDefault(); // Prevent the paste
-            const truncatedContent = newContent.slice(0, 3000); // Truncate to 10 characters
+            const truncatedContent = newContent.slice(0, 3000); // Truncate to 3000 characters
             setGround({ ...ground, description: truncatedContent });
             setRemainingChars(0); // No remaining characters if truncated
         } else {
@@ -86,6 +86,11 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         }
     };
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();  // Prevent the default behavior (line break)
+        }
+      };
 
     return (
         <>
@@ -97,6 +102,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
                             value={ground.description}
                             onChange={handleEditorChange}  // Handle text change
                             onPaste={handlePaste}  // Handle paste event
+                            onKeyDown={handleKeyDown} 
                             style={{ minHeight: '300px', width: '100%' }}  // Added width to ensure it's full-width
                         />
                         {/* Display remaining characters */}
