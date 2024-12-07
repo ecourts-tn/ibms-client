@@ -17,20 +17,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useTranslation } from 'react-i18next'
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
-import flatpickr from 'flatpickr';
-import "flatpickr/dist/flatpickr.min.css";
-import { IconButton } from '@mui/material'; // For the toggle button
-import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
 import Loading from 'components/Loading'
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggl
-
-
-
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -359,21 +351,6 @@ const AdvocateRegistration = () => {
         });
     };
    
-    // const sendMobileOTP = () => {
-    //     if(form.mobile === ''){
-    //         toast.error(t('alerts.mobile_required'),{
-    //             theme:"colored"
-    //         })
-    //     }else{
-    //         setMobileLoading(true)
-    //         toast.success(t('alerts.mobile_otp_sent'),{
-    //             theme:"colored"
-    //         })
-    //         setMobileLoading(false)
-    //         setMobileOtp(true)
-    //     }
-    // }
-
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
             toast.success(t('alerts.mobile_otp_verified'),{
