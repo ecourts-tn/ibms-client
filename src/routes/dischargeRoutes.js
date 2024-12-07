@@ -11,11 +11,12 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import DischargeStepper from "components/filing/surety/DischargeStepper";
 import Surety from "components/filing/surety/Surety";
+import DischargeSurety from "components/filing/surety/DischargeSurety";
 import SuretyDetails from "components/filing/surety/SuretyDetails";
 
 
 const dischargeRoutes = [
-    { path: "initial-input", component: <Surety /> },
+    { path: "initial-input", component: <DischargeSurety /> },
     { path: "surety-detail", component: <SuretyDetails /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
@@ -27,7 +28,7 @@ const dischargeRoutes = [
 const DischargeLayout = () => (
     
     <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
+        <div className="container" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <DischargeStepper />

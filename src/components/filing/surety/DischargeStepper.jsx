@@ -24,7 +24,7 @@ const DischargeStepper = () => {
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                     <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                    <li className="breadcrumb-item active" aria-current="page">{t('surety')}</li>
+                    <li className="breadcrumb-item active" aria-current="page">{t('discharge_surety')}</li>
                 </ol>
             </nav>
             <div id="stepper1" className="bs-stepper">

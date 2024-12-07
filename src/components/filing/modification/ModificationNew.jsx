@@ -108,7 +108,7 @@ const ModificationNew = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -125,12 +125,12 @@ const ModificationNew = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigant, advocate} = response.data
+                    const {petition:pet, litigants, advocates} = response.data
                     setIsPetition(true)
                     setBail(pet)
-                    setPetitioners(litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(litigant.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocate)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
+                    setAdvocates(advocates)
                     setPetition({...petition,
                         judiciary: pet.judiciary?.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -285,10 +285,10 @@ const ModificationNew = () => {
                                             >
                                                 <option value="">Select petition</option>
                                                 { cases.map((c, index) => (
-                                                    <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigant.filter(l=>l.litigant_type===1).map((p, index) => (
+                                                    <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigants.filter(l=>l.litigant_type===1).map((p, index) => (
                                                         <>{index+1}. {p.litigant_name}</>
                                                         ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                        { c.litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                                                        { c.litigants.filter(l=>l.litigant_type===2).map((res, index) => (
                                                         <>{res.litigant_name} {res.designation?.designation_name}</>
                                                         ))} 
                                                     </option>
@@ -489,7 +489,7 @@ const ModificationNew = () => {
                                 { isPetition && (
                                     <>
                                         <InitialInput petition={bail} />
-                                        <table className="table table-bordered table-striped table-sm">
+                                        <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr className="bg-navy">
                                                     <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -497,7 +497,7 @@ const ModificationNew = () => {
                                                 <tr>
                                                     <th>{t('select')}</th>
                                                     <th>{t('petitioner_name')}</th>
-                                                    <th>{t('father_husband_guardian')}</th>
+                                                    <th>{t('parentage')}</th>
                                                     <th>{t('age')}</th>
                                                     <th>{t('accused_rank')}</th>
                                                     <th>{t('act')}</th>
@@ -569,7 +569,7 @@ const ModificationNew = () => {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <table className="table table-bordered table-striped table-sm">
+                                        <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr className='bg-navy'>
                                                     <td colSpan={4}><strong>{t('condition_details')}</strong></td>
@@ -629,7 +629,7 @@ const ModificationNew = () => {
                                                             <input 
                                                                 type="text" 
                                                                 className="form-control" 
-                                                                value={res.designation}
+                                                                value={res.designation?.designation_name}
                                                                 readOnly={true}
                                                             />
                                                         </td>
@@ -653,7 +653,7 @@ const ModificationNew = () => {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <table className="table table-bordered table-striped table-sm">
+                                        {/* <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr className="bg-navy">
                                                     <td colSpan={6}><strong>{t('advocate_details')}</strong>
@@ -721,7 +721,7 @@ const ModificationNew = () => {
                                                     </tr>
                                                 ))}
                                             </tbody>
-                                        </table>
+                                        </table> */}
                                     </>
                                 )}
                                 { isPetition && (

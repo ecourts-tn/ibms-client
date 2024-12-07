@@ -17,6 +17,7 @@ const RespondentContainer = () => {
     const handleShow = () => setShow(true);
     const[respondents, setRespondents] = useState([])
     const[selectedRespondent, setSelectedRespondent] = useState(null)
+    const[cirme, setCrime] = useState({})
     const {t} = useTranslation()
     useEffect(() => {
         const fetchLitigants =  async() => {

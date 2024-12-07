@@ -24,9 +24,10 @@ import GenerateOrder from "components/court/orders/GenerateOrder";
 import UploadOrder from "components/court/orders/UploadOrder";
 import GenerateODT from "components/court/orders/GenreateODT";
 import BailBond from "components/court/orders/BailBond";
+import GenerateStyledDocx from "components/court/orders/HtmlToDocx";
 
 const courtRoutes = [
-    { path: "dashbaord", component: <Dashboard /> },
+    { path: "dashboard", component: <Dashboard /> },
     { path: "case/scrutiny", component: <PendingList /> },
     { path: "case/scrutiny/detail", component: <ScrutinyDashboard /> },
     { path: "case/registration", component: <RegistrationPendingList /> },
@@ -51,12 +52,12 @@ const courtRoutes = [
 
 const CourtLayout = () => (
     <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
+        {/* <div className="container-fluid" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
-                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div> */}
                 <Outlet />
-            </div>
-        </div>
+            {/* </div>
+        </div> */}
     </PrivateRoute>
 );
 

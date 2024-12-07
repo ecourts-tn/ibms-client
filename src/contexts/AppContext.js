@@ -22,6 +22,7 @@ import { DesignationProvider } from "contexts/DesignationContext";
 import { UserTypeProvider } from "contexts/UserTypeContext";
 import { DocumentProvider } from "contexts/DocumentContext";
 import { CaseTypeProvider } from "./CaseTypeContext";
+import { JudgeProvider } from "./JudgeContext";
 
 export const AppProvider = ({children}) => {
     return(
@@ -47,9 +48,11 @@ export const AppProvider = ({children}) => {
                                                                                     <GenderProvider>
                                                                                         <NationalityProvider>
                                                                                             <DesignationProvider>
-                                                                                                    <DocumentProvider>
+                                                                                                <DocumentProvider>
+                                                                                                    <JudgeProvider>
                                                                                                         {children}
-                                                                                                    </DocumentProvider>
+                                                                                                    </JudgeProvider>
+                                                                                                </DocumentProvider>
                                                                                             </DesignationProvider>
                                                                                         </NationalityProvider>
                                                                                     </GenderProvider>

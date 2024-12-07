@@ -140,7 +140,7 @@ const Modification = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted-list/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }

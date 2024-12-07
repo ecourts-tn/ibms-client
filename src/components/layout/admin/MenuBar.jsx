@@ -89,7 +89,7 @@ export default function MenuBar() {
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="/court/case/cause-list" className="nav-link">
+                        <Link to="/court/case/cause-list/post" className="nav-link">
                           <i className="far fa-circle nav-icon" />
                           <p>Post Cases to Causelist</p>
                         </Link>
@@ -123,13 +123,13 @@ export default function MenuBar() {
                     </a>
                     <ul className="nav nav-treeview"> */}
                       <li className="nav-item">
-                        <Link to="/court/case/order" className="nav-link">
+                        <Link to="/court/case/order/generate" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
                           <p>Generate Orders</p>
                         </Link>
                       </li>
                       <li className="nav-item">
-                        <Link to="#" className="nav-link">
+                        <Link to="/court/case/order/upload" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
                           <p>Publish/Upload Orders</p>
                         </Link>
@@ -164,12 +164,6 @@ export default function MenuBar() {
                     <Link to="#" className="nav-link">
                       <i className="nav-icon far fa-circle text-info" />
                       <p>Reports</p>
-                    </Link>
-                  </li>   
-                  <li className="nav-item">
-                    <Link to="case/post-cause-list" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Draggable List</p>
                     </Link>
                   </li>   
                 </>
@@ -242,13 +236,13 @@ export default function MenuBar() {
                     </li> <li className="nav-item">
                       <Link to="/prison/jail-remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
+                        <p>Update Bail Details</p>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prison/jail-remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
+                        <p>Released Report</p>
                       </Link>
                     </li>        
                   </>
@@ -264,13 +258,13 @@ export default function MenuBar() {
                     </li> <li className="nav-item">
                       <Link to="/prosecution/remark/pending" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Pending Response</p>
+                        <p>Pending Remarks</p>
                       </Link>
                     </li>
                     <li className="nav-item">
                       <Link to="/prosecution/remark/submitted" className="nav-link">
                         <i className="nav-icon far fa-circle text-info" />
-                        <p>Submitted Response</p>
+                        <p>Submitted Remarks</p>
                       </Link>
                     </li>       
                   </>

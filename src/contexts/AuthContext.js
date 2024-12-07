@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
             const userTypeRoutes = {
                 1: "/filing/dashboard",
                 2: "/filing/dashboard",
-                3: "/court/dashboard",
+                3: "court/dashboard",
                 4: "/court/dashboard",
                 7: "/police/dashboard",
                 8: "/prison/dashboard",

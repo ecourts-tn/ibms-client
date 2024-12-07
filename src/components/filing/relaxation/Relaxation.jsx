@@ -560,7 +560,7 @@ const Relaxation = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -640,7 +640,7 @@ const Relaxation = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className='bg-navy'>
                                             <td colSpan={4}><strong>{t('condition_details')}</strong></td>
@@ -661,7 +661,7 @@ const Relaxation = () => {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped table-sm">
+                                <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>

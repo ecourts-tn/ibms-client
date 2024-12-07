@@ -24,10 +24,12 @@ import { AuthContext } from 'contexts/AuthContext';
 const Login = () => {
 
     const [loading, setLoading]   = useState(false);
-    const { captchaImageUrl, fetchCaptcha, captchaValid, verifyCaptcha } = useCaptcha();
+    // const { captchaImageUrl, fetchCaptcha, captchaValid, verifyCaptcha } = useCaptcha();
     const {userTypes} = useContext(UserTypeContext)
     const [isDepartment, setIsDepartment] = useState(false)
     const {language} = useContext(LanguageContext)
+    const [captchaValid, setCaptchaValid] = useState(null);
+    const [captchaImageUrl, setCaptchaImageUrl] = useState('');
     const {t} = useTranslation()
     const {login} = useContext(AuthContext)
     const[errors, setErrors] = useState({})
@@ -38,14 +40,50 @@ const Login = () => {
         captcha: ''
     })
 
-    console.log(userTypes)
-    
+   
     const validationSchema = Yup.object({
         usertype: Yup.string().required(t('errors.usertype_required')),
         username: Yup.string().required(t('errors.username_required')),
         password: Yup.string().required(t('errors.password_required')),
         // captcha: Yup.string().required(t('errors.captcha_required'))
     })
+
+    const fetchCaptcha = async () => {
+        try {
+            const response = await api.get('auth/captcha/generate/', {
+                responseType: 'blob',
+                withCredentials: true,
+            });
+            const imageBlob = URL.createObjectURL(response.data);
+            setCaptchaImageUrl(imageBlob);
+        } catch (error) {
+            console.error('Error fetching CAPTCHA:', error);
+        }
+    };
+
+    // Verify CAPTCHA and fetch new one if invalid
+    const verifyCaptcha = async (captchaValue) => {
+        try {
+            const response = await api.post(
+                'auth/captcha/verify/',
+                { captcha: captchaValue },
+                { withCredentials: true }
+            );
+
+            if (response.data.success) {
+                setCaptchaValid(true);
+                return true;
+            } else {
+                setCaptchaValid(false);
+                await fetchCaptcha(); // Call fetchCaptcha here if verification fails
+                return false;
+            }
+        } catch (error) {
+            console.error('Error verifying CAPTCHA:', error);
+            setCaptchaValid(false);
+            return false;
+        }
+    };
 
     useEffect(() => {
         // load the captcha code when page gets loaded
@@ -104,11 +142,10 @@ const Login = () => {
         }
     }
 
-    if(loading) return <Loading />
-
     return (
         <>
             <ToastContainer />
+            { loading && <Loading />}
             <form onSubmit={handleSubmit}>
                 <div className="row">
                     <div className="col-md-12">
@@ -125,7 +162,7 @@ const Login = () => {
                             </div>
                         </div>
                     </div>
-                    {/* { !isDepartment && (
+                    { !isDepartment && (
                     <div className="col-md-12">
                         <RadioGroup
                             row
@@ -141,19 +178,19 @@ const Login = () => {
                         <p className="text-danger mb-3 text-center" style={{marginTop:'-15px', fontSize:'14px', fontWeight:'bold'}}>{ errors.usertype }</p>
                     </div>
                     )}
-                    { isDepartment && ( */}
+                    { isDepartment && (
                     <div className="col-md-12">
                         <div className="form-group">
                             <label htmlFor="">{t('usertype')}</label>
                             <select name="usertype" className="form-control" onChange={(e)=>setForm({...form, [e.target.name]: e.target.value})}>
                                 <option value="">{t('alerts.select_usertype')}</option>
-                                { userTypes.map((u, index) => (
+                                { userTypes.filter(u=>u.id !== 1 && u.id !== 2).map((u, index) => (
                                 <option key={index} value={u.id}>{ language === 'ta' ? u.name : u.name }</option>
                                 ))}
                             </select>
                         </div>
                     </div>
-                    {/* )} */}
+                    )} 
                     <div className="col-md-12">
                         <div className="form-group mb-3">
                             <FormControl fullWidth>
