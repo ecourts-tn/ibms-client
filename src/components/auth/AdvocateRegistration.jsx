@@ -23,7 +23,7 @@ import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, han
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
-import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggl
 
 
 
