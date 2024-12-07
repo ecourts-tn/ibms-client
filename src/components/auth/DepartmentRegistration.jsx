@@ -8,7 +8,9 @@ import TextField  from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { toast, ToastContainer } from 'react-toastify';
-import api from 'api'
+import api from 'api';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+
 
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
@@ -17,6 +19,8 @@ import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { PrisonContext } from 'contexts/PrisonContext'
 import { UserTypeContext } from 'contexts/UserTypeContext'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const DepartmentRegistration = () => {
 
@@ -38,6 +42,7 @@ const DepartmentRegistration = () => {
         email: ''
     }
     const[form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState(initialState)
 
 
     const handleSubmit = async() => {
@@ -60,6 +65,31 @@ const DepartmentRegistration = () => {
 
         }
     }
+
+    const formatDate = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    useEffect(() => {
+        const dateOfBirthPicker = flatpickr(".date-of-birth-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable future dates for date of birth
+            defaultDate: form.date_of_birth,
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                setForm({ ...form, date_of_birth: formattedDate });
+            },
+        });
+
+        return () => {
+            if (dateOfBirthPicker && typeof dateOfBirthPicker.destroy === "function") {
+                dateOfBirthPicker.destroy();
+            }
+        };
+    }, [form]);
 
     const {userTypes:usertypes} = useContext(UserTypeContext)
     const {states}    = useContext(StateContext)
@@ -94,7 +124,7 @@ const DepartmentRegistration = () => {
                                                     <option value="">Select usertype</option>
                                                     {
                                                         usertypes.map((type, index) => (
-                                                            <option value={type.id} key={index}>{ type.user_type}</option>
+                                                            <option value={type.id} key={index}>{ type.name}</option>
                                                         ))
                                                     }
                                                 </select>
@@ -108,7 +138,7 @@ const DepartmentRegistration = () => {
                                                     name="username" 
                                                     value={form.username}
                                                     className="form-control" 
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    onChange={(e) => handleNameChange(e, setForm, form, 'username')}
                                                 />
                                             </div>
                                         </div>
@@ -135,11 +165,20 @@ const DepartmentRegistration = () => {
                                             <div className="col-sm-3">
                                                 <input 
                                                     type="date" 
-                                                    className="form-control" 
+                                                    className="form-control date-of-birth-picker" 
                                                     name="date_of_birth"
                                                     value={form.date_of_birth}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    placeholder="DD/MM/YYYY"
+                                                    onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
+                                                    style={{
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid #ccc', // Optional: Adjust border
+                                                        padding: '8px',            // Optional: Adjust padding
+                                                    }}
                                                 />
+                                                <div className="invalid-feedback">
+                                                    { errors.date_of_birth}
+                                                </div>
                                             </div>
                                         </div>
                                         { parseInt(form.user_type) === 1 && (
