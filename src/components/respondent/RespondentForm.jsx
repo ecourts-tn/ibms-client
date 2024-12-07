@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import * as Yup from 'yup'
+import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
@@ -10,7 +11,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { DesignationContext } from 'contexts/DesignationContext'
-import { handleMobileChange, validateEmail, validateMobile, handleBlur } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateEmail, handleNameChange } from 'components/commonvalidation/validations';
 
 
 const RespondentForm = ({addRespondent, selectedRespondent}) => {
@@ -35,13 +36,52 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     const[litigant, setLitigant] = useState(initialState)
     const[respondentPolice, setRespondentPolice] = useState(false)  
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+
+        // Update form state
+        setLitigant((prevForm) => ({
+            ...prevForm,
+            [name]: value,  // Dynamically update the field
+        }));
+
+        // Validate the field and update errors
+        const errorMessage = validateEmail(name, value);  // Validate the email field
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMessage,  // Set the error message for the specific field
+        }));
+    };
+
     useEffect(() => {
         if(selectedRespondent){
             setLitigant(selectedRespondent)
         }
     }, [selectedRespondent])
 
-    console.log(litigant)
+    useEffect(() => {
+        async function getCrimeDetail()  {
+            try{
+                const efile_no = sessionStorage.getItem("efile_no")
+                const response = await api.get(`case/crime/detail/`, {
+                    params:{efile_no}
+                })
+                if(response.status === 200){
+                    const {state, district, police_station} = response.data
+                    setLitigant({...litigant, 
+                        state: state?.state_code,
+                        district: district?.district_code,
+                        police_station: police_station?.cctns_code
+                    })
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }
+        getCrimeDetail()
+    },[])
+
+
 
     const validationSchema = Yup.object({
         litigant_name: Yup.string().required(t('errors.respondent_name_required')),
@@ -69,11 +109,11 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 setErrors(newErrors)
                 }
         }
-        const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
-        if (mobileError) {
-          newErrors.mobile_number = mobileError;
-          formIsValid = false;
-        }
+        // const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
+        // if (mobileError) {
+        //   newErrors.mobile_number = mobileError;
+        //   formIsValid = false;
+        // }
     
         const emailError = validateEmail(litigant.email_address);
         if (emailError) {
@@ -113,6 +153,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         id="state" 
                         className="form-control"
                         value={litigant.state}
+                        disabled={ litigant.state !== '' }
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
                         <option value="">{t('alerts.select_state')}</option>
@@ -129,6 +170,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         name="district" 
                         id="district" 
                         className="form-control"
+                        disabled={ litigant.district !== ''}
                         value={litigant.district}
                         onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                     >
@@ -147,6 +189,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <select 
                             name="police_station" 
                             id="police_station" 
+                            disabled={litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}
@@ -220,7 +263,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="litigant_name"
                             value={litigant.litigant_name}
                             className={`${errors.litigant_name ? 'is-invalid' : ''}`}
-                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                            onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.litigant_name }</div>
                     </Form.Group>
@@ -233,7 +276,8 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="mobile_number" 
                             className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}` }
                             value={litigant.mobile_number}
-                            onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
+                            onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
+                            // onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                         />
                         <div className="invalid-feedback">{ errors.mobile_number }</div>
                     </Form.Group>
@@ -246,8 +290,8 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="email_address" 
                             className={`form-control ${errors.email_address ? 'is-invalid' : ''}` }
                             value={litigant.email_address}
-                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                            onBlur={() => handleBlur(litigant, setErrors)}
+                            onChange={handleChange}
+                            // onBlur={() => handleBlur(litigant, setErrors)}
                         />
                         <div className="invalid-feedback">{ errors.email_address }</div>
                     </Form.Group>

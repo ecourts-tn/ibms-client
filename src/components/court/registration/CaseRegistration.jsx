@@ -1,18 +1,18 @@
+import api from 'api'
 import React from 'react'
-import api from '../../api'
+import * as Yup from 'yup'
 import { useState, useEffect } from 'react'
-import Button from '@mui/material/Button';
-import BasicDetails from './scrutiny/BasicDetails';
-import Petitioner from './scrutiny/Petitioner';
-import Respondent from './scrutiny/Respondent';
-import Grounds from './scrutiny/Grounds';
-import AdvocateDetails from './scrutiny/AdvocateDetails';
-import DocumentList from './scrutiny/DocumentList';
 import { toast, ToastContainer } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
-import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
-import CrimeDetails from './scrutiny/CrimeDetails';
+import Button from '@mui/material/Button';
+import BasicDetails from 'components/court/scrutiny/BasicDetails';
+import Petitioner from 'components/court/scrutiny/Petitioner';
+import Respondent from 'components/court/scrutiny/Respondent';
+import Grounds from 'components/court/scrutiny/Grounds';
+import AdvocateDetails from 'components/court/scrutiny/AdvocateDetails';
+import DocumentList from 'components/court/scrutiny/DocumentList';
+import CrimeDetails from 'components/court/scrutiny/CrimeDetails';
 
 const CaseRegistration = () => {
 

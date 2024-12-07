@@ -134,7 +134,7 @@ const BasicContainer = () => {
                             console.log(response2.message)
                         }
                     }
-                    if(parseInt(user.user.user_type) === 1){
+                    if(parseInt(user.user.group_id) === 1){
                         const advocate = {
                             advocate_name: user.user.username,
                             advocate_email: user.user.email,
@@ -257,7 +257,7 @@ const BasicContainer = () => {
                                         <label htmlFor="establishment">Establishment Name<RequiredField /></label>
                                         <Select 
                                             name="establishment"
-                                            options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
+                                            options={establishments.filter(e=>parseInt(e.district)=== parseInt(petition.district)).filter(e=>e.bail_filing === true).map((est) => { return { value:est.establishment_code, label:est.establishment_name}})} 
                                             className={`${errors.establishment ? 'is-invalid' : null}`}
                                             onChange={(e) => setPetition({...petition, establishment:e.value})}
                                         />

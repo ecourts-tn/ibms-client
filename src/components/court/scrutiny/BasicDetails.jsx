@@ -6,12 +6,11 @@ import { LanguageContext } from 'contexts/LanguageContex'
 
 
 const BasicDetails = ({petition, crime}) => {
-    console.log(petition)
     const doNothing = () => {}
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const { judiciary, seat, establishment, state, district, court, case_type, bail_type, complaint_type, crime_registered } = petition
-    console.log(judiciary)
+
     return (
         <div>
             { Object.keys(petition).length > 0 && (

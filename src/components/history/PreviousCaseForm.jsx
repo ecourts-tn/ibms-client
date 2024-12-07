@@ -168,11 +168,11 @@ const PreviousCaseForm = () => {
                                 <td><strong>Status</strong></td>
                                 <td>Pending</td>
                                 <td><strong>Business&nbsp;/&nbsp;Order&nbsp;Date</strong></td>    
-                                <td>09-09-2024</td>
+                                <td>-</td>
                             </tr>        
                             <tr>
                                 <td><strong>Proceeding</strong></td>
-                                <td colSpan={3}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem eos rem quam tenetur ut. Laboriosam iure totam hic repellendus enim rem neque nesciunt ullam! Aliquam, vitae! Omnis eos quo odio!</td>
+                                <td colSpan={3}>---</td>
                             </tr>
                         </tbody>
                     </table>

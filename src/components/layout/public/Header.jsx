@@ -12,8 +12,10 @@ import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
-  const { isAuth, user, setIsAuth, setUser } = useContext(AuthContext);
+  const [isAuth, setIsAuth] = useState(false);
+  const [user, setUser] = useState({});
   const [isHomeDisabled, setIsHomeDisabled] = useState(false)
+  const [isDarkMode, setIsDarkMode] = useState(false); // State for High Contrast Mode
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -50,6 +52,16 @@ const Header = () => {
 
   };
 
+  // const toggleDarkMode = () => {
+  //   setIsDarkMode(!isDarkMode);
+  // };
+  // // Inline CSS for body
+  // const bodyStyle = {
+  //   backgroundColor: isDarkMode ? '#121212' : '', // Dark mode background vs light mode
+  //   color: isDarkMode ? 'white' : 'black', // Yellow text color in dark mode, black in light mode
+  // };
+
+
   const renderDropdownLinks = (links) => {
     return links.map((link) => (
       <Link to={link.path} key={link.path} className="nav-link">{link.label}</Link>
@@ -65,8 +77,8 @@ const Header = () => {
     { path: "/filing/surety-petition/initial-input", label: t('surety') },
     { path: "/filing/surety-discharge/initial-input", label: t('discharge_surety') },
     { path: "/filing/time-extension/initial-input", label: t('extension') },
-    { path: "/filing/return-passport", label: t('return_passport') },
-    { path: "/filing/return-property", label: t('return_property') },
+    { path: "/filing/return-passport/initial-input", label: t('return_passport') },
+    { path: "/filing/return-property/initial-input", label: t('return_property') },
   ];
 
   const caseStatusLinks = [
@@ -83,6 +95,19 @@ const Header = () => {
         <div className="container">
           <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
           <div className="collapse navbar-collapse d-flex justify-content-end" id="primaryNavbarContent">
+            <div className="resize-icons">
+              <button type="button" class="btn btn-default"><i class="fa fa-sitemap"></i></button>
+              <button type="button" class="btn btn-default" id="decreaseFont"><i class="fa fa-font"></i>-</button>
+              <button type="button" class="btn btn-default" id="defaultFont"><i class="fa fa-font"></i></button>
+              <button type="button" class="btn btn-default" id="increaseFont"><i class="fa fa-font"></i>+</button>
+              <button type="button" class="btn btn-default" id="highContrast"><i class="fa fa-adjust"></i></button>
+              {/* <button
+                type="button" class="btn btn-default"
+                onClick={toggleDarkMode}
+              >
+              <i className="fa fa-adjust"></i>
+              </button> */}
+            </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (
                 <li className="nav-item dropdown">

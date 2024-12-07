@@ -7,6 +7,7 @@ import PetitionerList from './PetitionerList'
 import {toast} from 'react-toastify'
 import api from '../../api'
 import { useTranslation } from 'react-i18next'
+import { LocalConvenienceStoreOutlined } from '@mui/icons-material'
 
 const PetitionerContainer = () => {
 
@@ -20,7 +21,10 @@ const PetitionerContainer = () => {
     
     useEffect(() => {
         const fetchPetitioners = async() => {
-            if(efile_no){
+            try{
+                if(!efile_no){
+                    return;
+                }
                 const response = await api.get("litigant/list/", {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((petitioner)=> {
@@ -28,6 +32,8 @@ const PetitionerContainer = () => {
                     })
                     setPetitioners(filtered_data)
                 }
+            }catch(error){
+                console.error(error)
             }
         }
         fetchPetitioners()
@@ -65,20 +71,20 @@ const PetitionerContainer = () => {
 
     }
 
-    const deletePetitioner =async (petitioner) => {
+    const deletePetitioner =async(petitioner) => {
         const newPetitioners = petitioners.filter((p) => {
             return p.litigant_id !== petitioner.litigant_id
         })
         try{
             if(window.confirm("Are you sure want to delete the litigant")){
                 const response = await api.delete(`litigant/${petitioner.litigant_id}/delete/`)
-                if(response.status === 204){
+                // if(response.status === 204){
                     setPetitioners(newPetitioners)
                     toast.error(t('alerts.petitioner_deleted').replace('{petitioner}', petitioner.litigant_id), {
                         theme: "colored"
-                    })
-                    handleClose()
-                }
+                    }) 
+                    handleClose(); 
+                // }
             }
         }catch(error){
             console.log(error)

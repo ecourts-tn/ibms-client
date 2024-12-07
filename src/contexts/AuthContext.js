@@ -11,8 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", null);
   const [isAuth, setIsAuth] = useState(false)
   const navigate = useNavigate();
-  // const [isAuth, setIsAuth] = useState(false);
-  // const [user, setUser] = useState(null);
 
   useEffect(() => {
     const sessionUser = sessionStorage.getItem("user");
@@ -21,10 +19,11 @@ export const AuthProvider = ({ children }) => {
     if (accessToken && sessionUser) {
       setIsAuth(true);
       setUser(JSON.parse(sessionUser));
-    } else {
-      setIsAuth(false);
-      setUser(null);
-    }
+    } 
+    // else {
+    //   setIsAuth(false);
+    //   setUser(null);
+    // }
   }, []);
 
   const login = async (data) => {
@@ -39,18 +38,17 @@ export const AuthProvider = ({ children }) => {
         const response = await api.post(`auth/user/info/`);
         if (response.status === 200) {
             setUser(response.data);
-
             const userTypeRoutes = {
                 1: "/filing/dashboard",
                 2: "/filing/dashboard",
-                3: "/prosecution/dashboard",
-                4: "/prison/dashboard",
-                5: "/police/dashboard",
-                6: "/court/dashboard",
-                8: "/court/dashboard",
+                3: "court/dashboard",
+                4: "/court/dashboard",
+                7: "/police/dashboard",
+                8: "/prison/dashboard",
+                9: "/prosecution/dashboard",
             };
 
-            const usertype = parseInt(response.data.user_type, 10);
+            const usertype = parseInt(response.data.group, 10);
             const route = userTypeRoutes[usertype];
 
             if (route) {
@@ -77,17 +75,19 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
-  // const contextValue = useMemo(
-  //   () => ({
-  //     user,
-  //     login,
-  //     logout,
-  //     isAuth
-  //   }),
-  //   [user]
-  // );
+  const contextValue = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+      isAuth,
+      setUser,
+      setIsAuth
+    }),
+    [user]
+  );
   return (
-    <AuthContext.Provider value={{ isAuth, user, setIsAuth, setUser, login, logout }}>
+    <AuthContext.Provider value={contextValue}>
         {children}
     </AuthContext.Provider>
 )

@@ -272,3 +272,10 @@ legend > span {
 .step:hover{
     background-color: inherit!important;
 }
+
+.error > li{
+    list-style-type: none;
+    color:  #cb4335;
+    font-weight: bold;
+    margin:5px 0px;
+}

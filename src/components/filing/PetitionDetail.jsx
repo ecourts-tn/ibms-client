@@ -147,13 +147,24 @@ const PetitionDetail = () => {
                             { Object.keys(objection).length > 0 && (
                             <>
                             <h6 className="text-center text-danger"><strong>Objections</strong></h6>
-                            <table className="table table-bordered">
-                                <tbody>
+                            <table className="table table-bordered table-striped">
+                                <thead className='bg-secondary'>
                                     <tr>
-                                        <td>
-                                        
-                                        </td>
+                                        <th>#</th>
+                                        <th>Objection Date</th>
+                                        <th>Remarks</th>
+                                        <th>Complaince Date</th>
                                     </tr>
+                                </thead>
+                                <tbody>
+                                    { objection.map((o, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>{o.objection_date}</td>
+                                        <td>{o.remarks}</td>
+                                        <td>{o.complaince_date}</td>
+                                    </tr> 
+                                    ))}
                                 </tbody>
                             </table>
                             </>

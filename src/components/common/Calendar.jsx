@@ -1,15 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid'; // For the day grid view
 import { useTranslation } from 'react-i18next';
 
-const Calendar = () => {
+const Calendar = ({upcoming}) => {
     const { t } = useTranslation();
 
-    const events = [
-        { title: 'Event 1', date: '2024-12-01' },
-        { title: 'Event 2', date: '2024-12-05' },
-    ];
+    // const events = [
+    //     { title: 'Event 1', date: '2024-12-01' },
+    //     { title: 'Event 2', date: '2024-12-05' },
+    // ];
+    const[events, setEvents] = useState([])
+    useEffect(() => {
+        // Map events to a specific format and update state
+        const formattedEvents = upcoming.map((u, index) => ({
+            title: `${u.reg_type?.type_name}/${u.reg_number}/${u.reg_year}`,  // Use the event title
+            date: u.date_next_list,    // Use the event date
+        }));
+
+        setEvents(formattedEvents); // Update upcoming state
+    }, [upcoming]); // Run this effect only once after mount
+
+
 
     return (
         <div className="card">

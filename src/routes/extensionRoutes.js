@@ -15,7 +15,7 @@ import Stepper from "components/filing/extension/Stepper";
 
 const extensionRoutes = [
     { path: "initial-input", component: <Extension /> },
-    { path: "litigant", component: <PetitionerContainer /> },
+    // { path: "litigant", component: <PetitionerContainer /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },
@@ -26,7 +26,7 @@ const extensionRoutes = [
 const ExtensionLayout = () => (
     
     <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
+        <div className="container" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <Stepper />
