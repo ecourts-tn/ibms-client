@@ -4,6 +4,7 @@ import { formatDBDate } from 'utils'
 import api from 'api'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Form from 'react-bootstrap/Form'
+import * as Yup from 'yup'
 import { AuthContext } from 'contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
@@ -12,10 +13,13 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
+import { JudgeContext } from 'contexts/JudgeContext'
+import { useNavigate } from 'react-router-dom'
 
 const Proceeding = ({efile_no}) => {
     const {user} = useContext(AuthContext)
     const {t} = useTranslation()
+    const navigate = useNavigate()
     const {language} = useContext(LanguageContext)
     const[petition, setPetition] = useState({})
     const[litigant, setLitigant] = useState([])
@@ -24,6 +28,7 @@ const Proceeding = ({efile_no}) => {
     const{establishments} = useContext(EstablishmentContext)
     const{courts} = useContext(CourtContext)
     const{policeStations} = useContext(PoliceStationContext)
+    const {judge} = useContext(JudgeContext)
     const initialState = {
         efile_no: '',
         case_number: '',
@@ -38,6 +43,7 @@ const Proceeding = ({efile_no}) => {
         condition_district: '',
         condition_establishment: '',
         condition_court: '',
+        police_station:'',
         establishment: '',
         court:'',
         jocode:'',
@@ -54,8 +60,73 @@ const Proceeding = ({efile_no}) => {
         order_remarks: '',
     }
     const[form, setForm] = useState(initialState)
-
+    const [errors, setErrors] = useState({})
     const [selectedItems, setSelectedItems] = useState([]);
+    const validationSchema = Yup.object({
+        vakalath_filed: Yup.boolean().required(),
+        proceeding: Yup.string().required("Please select the proceeding type"),
+        accused: Yup.string().required("Please select the accused"),
+        bond_type: Yup.string().required("Please select the bond type"),
+        no_of_surety: Yup.string().when("bond_type", (bond_type, schema) => {
+            if(parseInt(bond_type) === 2){
+                return schema.required("Please enter the no of surety")
+            }
+        }),
+        surety_amount: Yup.string().when("proceeding", (proceeding, schema) => {
+            if(parseInt(proceeding) === 1){
+                return schema.required("Please enter the surety amount")
+            }
+        }),
+        condition: Yup.boolean().required("Please select condition"),
+        appear_location: Yup.string().when("condition", (condition, schema) => {
+            if(parseInt(condition) === 1){
+                return schema.required("Please select the place of condition")
+            }
+        }),
+        condition_state: Yup.string().when("appear_location", (appear_location, schema) => {
+            if(parseInt(appear_location) === 1 || parseInt(appear_location) === 2){
+                return schema.required("Please select the state")
+            }
+        }),
+        condition_district: Yup.string().when("appear_location", (appear_location, schema) => {
+            if(parseInt(appear_location) === 1 || parseInt(appear_location) === 2){
+                return schema.required("Please select the district")
+            }
+        }),
+        condition_establishment: Yup.string().when("appear_location", (appear_location, schema) => {
+            if(parseInt(appear_location) === 1){
+                return schema.required("Please select the estacondition_establishment")
+            }
+        }),
+        condition_court: Yup.string().when("appear_location", (appear_location, schema) => {
+            if(parseInt(appear_location) === 1){
+                return schema.required("Please select the court")
+            }
+        }),
+        police_station: Yup.string().when("appear_location", (appear_location, schema) => {
+            if(parseInt(appear_location) === 2){
+                return schema.required("Please select the police station")
+            }
+        }),
+        condition_time: Yup.string().when("condition", (condition, schema) => {
+            if(condition){
+                return schema.required("Please enter the condition time")
+            }
+        }),
+        condition_duration: Yup.string().when("condition", (condition, schema) => {
+            if(condition){
+                return schema.required("Please select the condition duration")
+            }
+        }),
+        next_date: Yup.date().when("proceeding", (proceeding, schema) => {
+            if(parseInt(proceeding) === 3 || parseInt(proceeding) === 4){
+                return schema.required("Please enter the next date")
+            }
+        }),
+        order_remarks: Yup.string().required("Please enter the business remarks")
+    })
+
+    // console.log(judge)
 
     const handleCheckboxChange = (option) => {
         if (selectedItems.includes(option)) {
@@ -80,7 +151,8 @@ const Proceeding = ({efile_no}) => {
                             case_number: response.data.petition.case_no,
                             district: response.data.petition.district.district_code,
                             establishment: response.data.petition.establishment.establishment_code,
-                            court: response.data.petition.court.court_code
+                            court: response.data.petition.court.court_code,
+                            jocode: judge.judge.jocode
                         })
                     }
                 }catch(error){
@@ -94,15 +166,27 @@ const Proceeding = ({efile_no}) => {
 
     const handleSubmit = async () => {
         try{
+            // await validationSchema.validate(form, {abortEarly:false})
+            // form.jocode = judge.jocode
             const response = await api.post("court/proceeding/create/", form)
             if(response.status === 201){
-                toast.success("Proceedings details added successfully", {
-                    theme: "colored"
-                })
+                setTimeout(() => {
+                    toast.success("Proceedings details added successfully", {
+                        theme: "colored"
+                    })
+                }, 1000)
                 setForm(initialState)
+                navigate("/court/case/proceeding/")
             }
         }catch(error){
-            if(error.response.status === 400){
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
+            if(error.response?.status === 400){
                 console.log("error")
                 toast.error("Something went wrong",{
                     theme:"colored"
@@ -176,7 +260,7 @@ const Proceeding = ({efile_no}) => {
                                 <select 
                                     name="proceeding" 
                                     value={form.proceeding} 
-                                    className="form-control" 
+                                    className={`form-control ${errors.proceeding ? 'is-invalid' : ''}`}
                                     onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                 >
                                     <option value="">Select Proceeding</option>
@@ -185,6 +269,9 @@ const Proceeding = ({efile_no}) => {
                                     <option value="3">Interim Order</option>
                                     <option value="4">Adjournment</option>
                                 </select>
+                                <div className="invalid-feedback">
+                                    { errors.proceeding }
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-12 mb-3">
@@ -252,11 +339,14 @@ const Proceeding = ({efile_no}) => {
                                 <div className="col-sm-2">
                                     <input 
                                         type="text" 
-                                        className="form-control" 
+                                        className={`form-control ${errors.no_of_surety ? 'is-invalid' : ''}`}
                                         name="no_of_surety"
                                         value={form.no_of_surety} 
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     />
+                                    <div className="invalid-feedback">
+                                        { errors.no_of_surety }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -267,11 +357,14 @@ const Proceeding = ({efile_no}) => {
                                 <div className="col-sm-4">
                                     <input 
                                         type="text" 
-                                        className="form-control" 
+                                        className={`form-control ${errors.surety_amount ? 'is-invalid' : ''}`} 
                                         name="surety_amount"
                                         value={form.surety_amount}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     />
+                                    <div className="invalid-feedback">
+                                        { errors.surety_amount }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -308,7 +401,7 @@ const Proceeding = ({efile_no}) => {
                                 <div className="col-sm-8">
                                     <select 
                                         name="appear_location" 
-                                        className="form-control"
+                                        className={`form-control ${errors.appear_location ? 'is-invalid' : ''}`}
                                         value={form.appear_location}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
@@ -317,6 +410,9 @@ const Proceeding = ({efile_no}) => {
                                         <option value="2">{ language === 'ta' ? 'காவல் நிலையம்' : 'Police Station'}</option>
                                         <option value="3">{ language === 'ta' ? 'மற்றவை' : 'Other'}</option>
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.appear_location }
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -328,7 +424,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('state')}</label>
                                     <select 
                                         name="condition_state"
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_state ? 'is-invalid' : ''}`}
                                         value={form.condition_state}
                                         onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
                                     >
@@ -337,6 +433,9 @@ const Proceeding = ({efile_no}) => {
                                         <option key={index} value={state.state_code}>{ language === 'ta' ? state.state_lname : state.state_name}</option>   
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.condition_state }
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-md-6">
@@ -344,7 +443,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('district')}</label>
                                     <select 
                                         name="condition_district" 
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_district ? 'is-invalid' : ''}`}
                                         value={form.condition_district}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                     >
@@ -353,6 +452,9 @@ const Proceeding = ({efile_no}) => {
                                         <option key={index} value={district.district_code}>{ language === 'ta' ? district.district_lname : district.district_name}</option>    
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.condition_district }
+                                    </div>
                                 </div>
                             </div>
                         { parseInt(form.appear_location) === 1 && (
@@ -362,7 +464,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('est_name')}</label>
                                     <select 
                                         name="condition_establishment"
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_establishment ? 'is-invalid' : ''}`}
                                         value={form.condition_establishment}
                                         onChange={(e) => setForm({...form, [e.target.name] : e.target.value })}
                                     >
@@ -371,6 +473,9 @@ const Proceeding = ({efile_no}) => {
                                         <option key={index} value={est.establishment_code}>{language === 'ta' ? est.establishment_lname : est.establishment_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.condition_establishment }
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-md-12">
@@ -378,7 +483,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('court')}</label>
                                     <select 
                                         name="condition_court"
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_court ? 'is-invalid' : ''}`}
                                         value={form.condition_court}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
@@ -387,6 +492,9 @@ const Proceeding = ({efile_no}) => {
                                         <option key={index} value={court.court_code} >{language === 'ta' ? court.court_lname : court.court_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.condition_court }
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -398,7 +506,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('police_station')}</label>
                                     <select 
                                         name="police_station" 
-                                        className="form-control"
+                                        className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                                         value={form.police_station}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
                                     >
@@ -407,6 +515,9 @@ const Proceeding = ({efile_no}) => {
                                             <option key={index} value={ps.cctns_code}>{language === 'ta' ? ps.station_lname : ps.station_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.police_station }
+                                    </div>
                                 </div>
                             </div>
                         </>    
@@ -416,11 +527,14 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('condition_time')}</label>
                                     <input 
                                         type="text" 
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_time ? 'is-invalid' : ''}`}
                                         name="condition_time"
                                         value={form.condition_time}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
                                     />
+                                    <div className="invalid-feedback">
+                                        { errors.condition_time }
+                                    </div>
                                 </div>
                             </div>
                             <div className="col-md-6">
@@ -428,7 +542,7 @@ const Proceeding = ({efile_no}) => {
                                     <label htmlFor="">{t('condition_duration')}</label>
                                     <select 
                                         name="condition_duration"
-                                        className="form-control"
+                                        className={`form-control ${errors.condition_duration ? 'is-invalid' : ''}`}
                                         value={form.condition_duration}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     >
@@ -436,6 +550,9 @@ const Proceeding = ({efile_no}) => {
                                         <option value="1">Until Further Order</option>
                                         <option value="2">Whenever Need</option>
                                     </select>
+                                    <div className="invalid-feedback">
+                                        { errors.condition_duration }
+                                    </div>
                                 </div>
                             </div>
                         </>
@@ -460,11 +577,14 @@ const Proceeding = ({efile_no}) => {
                                     <div className="col-sm-4">
                                         <input 
                                             type="date" 
-                                            className="form-control" 
+                                            className={`form-control ${errors.next_date ? 'is-invalid' : ''}`}
                                             name="next_date"
                                             value={form.next_date}
                                             onChange={(e) =>setForm({...form,[e.target.name]:e.target.value})}
                                         />
+                                        <div className="invalid-feedback">
+                                            { errors.next_date }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -480,10 +600,13 @@ const Proceeding = ({efile_no}) => {
                                     name="order_remarks" 
                                     cols="30" 
                                     rows="5" 
-                                    className="form-control"
+                                    className={`form-control ${errors.order_remarks ? 'is-invalid' : ''}`}
                                     value={form.order_remarks}
                                     onChange={(e)=>setForm({...form, [e.target.name]:e.target.value})}
-                                ></textarea>                
+                                ></textarea>    
+                                <div className="invalid-feedback">
+                                    { errors.order_remarks }    
+                                </div>            
                             </div>
                         </div>
                         { efile_no && (

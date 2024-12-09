@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react'
 import { ToastContainer, toast } from 'react-toastify'
 import UploadIcon from '@mui/icons-material/UploadRounded'
 import Button from '@mui/material/Button'
-import api from '../../api';
-import config from '../../config'
+import api from 'api';
+import config from 'config'
 
 
 const Document = () => {
