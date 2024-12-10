@@ -23,7 +23,6 @@ const Stepper = () => {
                     <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                     <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
                     <li className="breadcrumb-item active" aria-current="page">{t('condition_relaxation')}</li>
-                    <p className='text-center'><strong>Condition Relaxation Petition</strong></p>
                 </ol>
             </nav>
             <div id="stepper1" className="bs-stepper">

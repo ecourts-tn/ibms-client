@@ -174,7 +174,7 @@ const ReturnPassport = () => {
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
                         court: pet.court ? pet.court.court_code : null,
-                        case_type: 3,
+                        case_type: 7,
                         bail_type: pet.bail_type ? pet.bail_type.type_code: null,
                         complaint_type: pet.complaint_type.id,
                         crime_registered: pet.crime_registered,
