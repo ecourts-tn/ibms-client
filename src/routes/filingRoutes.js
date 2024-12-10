@@ -36,6 +36,7 @@ import StepperButton from "components/filing/bail/StepperButton";
 import Pleadings from "components/filing/Pleadings";
 import ApprovedList from "components/filing/ApprovedList";
 import ReturnedList from "components/filing/ReturnedList";
+import ProceedingDetail from "components/filing/ProceedingDetail";
 
 const Litigant = () => {
     return(
@@ -163,6 +164,14 @@ export const filingRoutes = [
         element:(
             <PrivateRoute>
                 <PetitionDetail />
+            </PrivateRoute>
+        )
+    },
+    {
+        path:"proceeding/detail",
+        element:(
+            <PrivateRoute>
+                <ProceedingDetail />
             </PrivateRoute>
         )
     },

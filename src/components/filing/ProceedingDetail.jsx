@@ -1,13 +1,12 @@
 import React, {useState,useEffect, useContext} from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import api from '../../api'
+import api from 'api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
 import Loading from 'components/Loading'
-import { getPetitionByeFileNo } from 'services/petitionService'
-import { truncateChars } from 'utils'
+import 'components/filing/style.css'
 
-const PetitionDetail = () => {
+const ProceedingDetail = () => {
 
     const {state} = useLocation()
     const {t} = useTranslation()
@@ -15,30 +14,31 @@ const PetitionDetail = () => {
     const[petition, setPetition] = useState({})
     const[petitioner, setPetitioner] = useState([])
     const[respondent, setRespondent] = useState([])
-    const[proceedings, setProceedings] = useState([])
-    const[crime, setCrime] = useState({})
-    const[objection, setObjection] = useState([])
+    const[proceeding, setProceeding] = useState({})
     const {language} = useContext(LanguageContext)
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await getPetitionByeFileNo(state.efile_no)
-                setPetition(response.petition)
-                setCrime(response.crime)
-                const { petitioners, respondents } = response.litigants?.reduce((acc, litigant) => {
-                    // Check if litigant_type is valid and push to appropriate array
-                    if (litigant.litigant_type === 1) {
-                        acc.petitioners.push(litigant);
-                    } else if (litigant.litigant_type === 2) {
-                        acc.respondents.push(litigant);
-                    }
-                    return acc;
-                }, { petitioners: [], respondents: [] });
-                setPetitioner(petitioners);
-                setRespondent(respondents);
-                setObjection(response.objections)
-                setProceedings(response.proceedings)
+                const response = await api.post(`court/proceeding/detail/`, {
+                    efile_no:state.efile_no,
+                    id: state.id
+                })
+                if(response.status === 200){
+                    setPetition(response.data.petition)
+                    const { petitioners, respondents } = response.data.litigants?.reduce((acc, litigant) => {
+                        // Check if litigant_type is valid and push to appropriate array
+                        if (litigant.litigant_type === 1) {
+                            acc.petitioners.push(litigant);
+                        } else if (litigant.litigant_type === 2) {
+                            acc.respondents.push(litigant);
+                        }
+                        return acc;
+                    }, { petitioners: [], respondents: [] });
+                    setPetitioner(petitioners);
+                    setRespondent(respondents);
+                    setProceeding(response.data.proceeding)
+                }
             }catch(error){
                 console.error(error)
             }finally{
@@ -50,7 +50,7 @@ const PetitionDetail = () => {
 
     return (
         <>
-            { loading && <Loading />}
+            { loading && <Loading /> }
             { Object.keys(petition).length > 0 && (
                 <div className="container my-4">
                     <div className="row">
@@ -113,7 +113,7 @@ const PetitionDetail = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                            <h6 className="text-center text-danger"><strong>{t('petitioner_details')}</strong></h6>
+                            <h6 className="text-center text-danger"><strong>Petitioner / Respondent</strong></h6>
                             <table className="table table-bordered">
                                 <tbody>
                                     <tr>
@@ -126,11 +126,6 @@ const PetitionDetail = () => {
                                             ))}
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                            <h6 className="text-center text-danger"><strong>{t('respondent_details')}</strong></h6>
-                            <table className="table table-bordered">
-                                <tbody>
                                     <tr>
                                         <td>
                                         { respondent.map((res, index) => (
@@ -147,58 +142,27 @@ const PetitionDetail = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                            { Object.keys(objection).length > 0 && (
-                            <>
-                            <h6 className="text-center text-danger"><strong>Objections</strong></h6>
-                            <table className="table table-bordered table-striped">
-                                <thead className='bg-secondary'>
+                            <table className="table table-borderless">
+                                <thead style={{backgroundColor:"#052963", color:"#FAFAFA"}}>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Objection Date</th>
-                                        <th>Remarks</th>
-                                        <th>Complaince Date</th>
+                                        <th colSpan={2}>Daily Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    { objection.map((o, index) => (
                                     <tr>
-                                        <td>{index+1}</td>
-                                        <td>{o.objection_date}</td>
-                                        <td>{o.remarks}</td>
-                                        <td>{o.complaince_date}</td>
-                                    </tr> 
-                                    ))}
-                                </tbody>
-                            </table>
-                            </>
-                            )}
-                             { Object.keys(proceedings).length > 0 && (
-                            <>
-                            <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
-                            <table className="table table-bordered table-striped">
-                                <thead className='bg-secondary'>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Business Date</th>
-                                        <th>Business</th>
-                                        <th>Next Date</th>
+                                        <td><strong>Business&nbsp;Date:</strong></td>
+                                        <td>{ proceeding.order_date}</td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    { proceedings.map((p, index) => (
                                     <tr>
-                                        <td>{index+1}</td>
-                                        <td>
-                                            <Link to={`/proceeding/detail/`} state={{efile_no:p.efile_no, id:p.id}}>{p.order_date}</Link>
-                                        </td>
-                                        <td>{ truncateChars(p.order_remarks, 100)}</td>
-                                        <td>{p.next_date}</td>
-                                    </tr> 
-                                    ))}
+                                        <td><strong>Business:</strong></td>
+                                        <td>{ proceeding.order_remarks }</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Next&nbsp;Date:</strong></td>
+                                        <td>{ proceeding.next_date}</td>
+                                    </tr>
                                 </tbody>
                             </table>
-                            </>
-                            )}
                         </div>
                     </div>
                 </div>
@@ -207,4 +171,4 @@ const PetitionDetail = () => {
     )
 }
 
-export default PetitionDetail
+export default ProceedingDetail

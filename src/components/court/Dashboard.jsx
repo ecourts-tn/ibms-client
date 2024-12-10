@@ -14,6 +14,7 @@ const Dashboard = () => {
 
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
+    const[calendar, setCalendar] = useState([])
     const[loading, setLoading] = useState(false)
 
     const { t } = useTranslation()
@@ -26,16 +27,20 @@ const Dashboard = () => {
             setLoading(true)
             const countsEndpoint = 'court/dashboard/counts/';
             const petitionsEndpoint = 'court/dashboard/petitions/';
+            const calendarEndpoint = 'case/dashboard/upcoming/'
             // Use Promise.all to fetch both endpoints in parallel
-            const [countsResponse, petitionsResponse] = await Promise.all([
+            const [countsResponse, petitionsResponse, calendarResponse] = await Promise.all([
                 api.get(countsEndpoint),
                 api.get(petitionsEndpoint),
+                api.get(calendarEndpoint)
             ]);
             // Extract the data from the responses
             const counts = countsResponse.data;
-            const petitions = petitionsResponse.data;           
+            const petitions = petitionsResponse.data;       
+            const upcoming = calendarResponse.data    
             setCount(counts)
             setCases(petitions?.petitions)
+            setCalendar(upcoming)
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             throw error;
@@ -116,7 +121,7 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-5">
-                                    <Calendar />
+                                    <Calendar upcoming={calendar}/>
                                 </div>
                                 <div className="col-md-7">
                                     <PetitionList 

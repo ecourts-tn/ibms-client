@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { useLocation } from 'react-router-dom';
-import { CreateMarkup } from '../../utils';
+import { CreateMarkup } from 'utils';
 
 import Button from '@mui/material/Button'
-import api from '../../api'
-import Document from './Document';
+import api from 'api'
+import Document from 'components/court/common/Document';
 
 const ResponseCreate = () => {
 
@@ -51,7 +51,7 @@ const ResponseCreate = () => {
     const handleSubmit = async(e) => {
         e.preventDefault()
         try{
-            const response = await api.post("api/bail/prosecution/remarks/create/", form)
+            const response = await api.post("prosecution/remarks/create/", form)
             if(response.status === 201){
                 toast.success("Remarks added successfully", {
                     theme: "colored"

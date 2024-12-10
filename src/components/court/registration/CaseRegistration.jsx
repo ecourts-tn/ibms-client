@@ -6,13 +6,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Button from '@mui/material/Button';
-import BasicDetails from 'components/court/scrutiny/BasicDetails';
-import Petitioner from 'components/court/scrutiny/Petitioner';
-import Respondent from 'components/court/scrutiny/Respondent';
-import Grounds from 'components/court/scrutiny/Grounds';
-import AdvocateDetails from 'components/court/scrutiny/AdvocateDetails';
-import DocumentList from 'components/court/scrutiny/DocumentList';
-import CrimeDetails from 'components/court/scrutiny/CrimeDetails';
+import BasicDetails from 'components/court/common/BasicDetails';
+import Petitioner from 'components/court/common/Petitioner';
+import Respondent from 'components/court/common/Respondent';
+import Grounds from 'components/court/common/Grounds';
+import AdvocateDetails from 'components/court/common/AdvocateDetails';
+import DocumentList from 'components/court/common/DocumentList';
+import CrimeDetails from 'components/court/common/CrimeDetails';
 
 const CaseRegistration = () => {
 
