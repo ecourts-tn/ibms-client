@@ -9,7 +9,7 @@ const DailyProceedingsList = ({}) => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get("court/registration/pending/")
+                const response = await api.get("court/proceeding/pending/")
                 setCases(response.data)
             }catch(err){
                 console.log(err)
