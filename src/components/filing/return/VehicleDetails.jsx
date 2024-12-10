@@ -15,7 +15,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             className="form-control" 
                             name="vehicle_name"
                             value={vehicle.vehicle_name}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            onChange={(e) => setVehicle({...vehicle, vehicle_name: e.target.value})}
                         />
                     </div>
                 </div>
@@ -27,7 +27,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             className="form-control" 
                             name="owner_details"
                             value={vehicle.owner_details}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            onChange={(e) => setVehicle({...vehicle, owner_details: e.target.value})}
                         />
                     </div>
                 </div>
@@ -38,8 +38,8 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             type="text" 
                             className="form-control" 
                             name="owner_details"
-                            value={vehicle.owner_details}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            value={vehicle.owner_address}
+                            onChange={(e) => setVehicle({...vehicle, owner_address: e.target.value})}
                         ></textarea>
                     </div>
                 </div>
@@ -51,7 +51,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             className="form-control" 
                             name="vehicle_number"
                             value={vehicle.vehicle_number}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            onChange={(e) => setVehicle({...vehicle, vehicle_number: e.target.value})}
                         />
                     </div>
                 </div>
@@ -63,7 +63,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             className="form-control" 
                             name="fastag_details"
                             value={vehicle.fastag_details}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            onChange={(e) => setVehicle({...vehicle, fastag_details: e.target.value})}
                         />
                     </div>
                 </div>
@@ -74,7 +74,7 @@ const VehicleDetails = ({vehicle, setVehicle}) => {
                             name="is_owner_accused" 
                             className="form-control"
                             value={vehicle.is_owner_accused}
-                            onChange={(e) => setVehicle({...vehicle, [e.target.name]: e.target.value})}
+                            onChange={(e) => setVehicle({...vehicle, is_owner_accused: e.target.value})}
                         >
                             <option value="Yes">{t('yes')}</option>
                             <option value="No">{t('no')}</option>

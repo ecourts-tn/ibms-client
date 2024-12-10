@@ -16,7 +16,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                             className="form-control" 
                             name="name"
                             value={material.name}
-                            onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                            onChange={(e) => setMaterial({...material, name: e.target.value})}
                         />
                     </div>
                 </div>
@@ -28,7 +28,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                             className="form-control" 
                             name="quantity"
                             value={material.quantity}
-                            onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                            onChange={(e) => setMaterial({...material, quantity: e.target.value})}
                         />
                     </div>
                 </div>
@@ -40,7 +40,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                             className="form-control" 
                             name="nature"
                             value={material.nature}
-                            onChange={(e) => setMaterial({...material, [e.target.name]: e.target.value})}
+                            onChange={(e) => setMaterial({...material, nature: e.target.value})}
                         />
                     </div>
                 </div>
@@ -51,7 +51,7 @@ const MaterialDetails = ({material, setMaterial, addMaterial}) => {
                             name="remarks" 
                             className="form-control"
                             value={material.remarks}
-                            onChange={(e) => setMaterial({...material, [e.target.name] : e.target.value})}
+                            onChange={(e) => setMaterial({...material, remarks : e.target.value})}
                         ></textarea>
                     </div>
                 </div>

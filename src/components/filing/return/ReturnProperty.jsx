@@ -83,51 +83,78 @@ const RetrunProperty = () => {
 
     const[searchErrors, setSearchErrors] = useState({})
 
+    const isPetitionerSelected = (petitioners) => {
+        return selectedPetitioner.includes(petitioners.litigant_id);
+      };
+    const isRespondentSelected = (respondent) => selectedRespondent.includes(respondent.litigant_id);
 
-    const handlePetitionerCheckBoxChange = (petitioner) => {
-        if (selectedPetitioner.includes(petitioner)) {
-          // If already selected, remove the petitioner from the selected list
-          setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
+      const handlePetitionerCheckBoxChange = (petitioner) => {
+        const isSelected = isPetitionerSelected(petitioner);
+        if (isSelected) {
+          // Remove from selected petitioners if unchecked
+          setSelectedPetitioner(selectedPetitioner.filter(id => id !== petitioner.litigant_id));
         } else {
-          // Otherwise, add the petitioner to the selected list
-          setSelectedPetitioner([...selectedPetitioner, {
-            litigant_name :petitioner.litigant_name,
-            litigant_type :1, 
-            rank: petitioner.rank,
-            gender: petitioner.gender,
-            act: petitioner.act,
-            section: petitioner.section,
-            relation: petitioner.relation,
-            relation_name: petitioner.relation_name,
-            age: petitioner.age,
-            address: petitioner.address,
-            mobile_number: petitioner.mobile_number,
-            email_address: petitioner.email_address,
-            nationality: petitioner.nationality,
-          }]);
+          // Add to selected petitioners if checked
+          setSelectedPetitioner([...selectedPetitioner, petitioner.litigant_id]);
+        }
+      };
+
+      const handleRespondentCheckBoxChange = (respondent) => {
+        const isSelected = isRespondentSelected(respondent);
+        if (isSelected) {
+            // Remove from selected if already selected
+            setSelectedRespondent(selectedRespondent.filter(r => r !== respondent.litigant_id));
+        } else {
+            // Add to selected if not already selected
+            setSelectedRespondent([...selectedRespondent,respondent.litigant_id]);
         }
     };
 
-    const handleRespondentCheckBoxChange = (respondent) => {
-        if (selectedRespondent.includes(respondent)) {
-          // If already selected, remove the respondent from the selected list
-          setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
-        } else {
-          // Otherwise, add the respondent to the selected list
-          setSelectedRespondent([...selectedRespondent, {
-            litigant_name: respondent.litigant_name,
-            litigant_type: 2, 
-            designation: respondent.designation?.designation_name,
-            state: respondent.state.state_code,
-            district: respondent.district.district_code,
-            police_station: respondent.police_station.cctns_code,
-            address: respondent.address,
-          }]);
-        }
-    };
 
-    const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
-    const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
+    // const handlePetitionerCheckBoxChange = (petitioner) => {
+    //     if (selectedPetitioner.includes(petitioner)) {
+    //       // If already selected, remove the petitioner from the selected list
+    //       setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
+    //     } else {
+    //       // Otherwise, add the petitioner to the selected list
+    //       setSelectedPetitioner([...selectedPetitioner, {
+    //         litigant_name :petitioner.litigant_name,
+    //         litigant_type :1, 
+    //         rank: petitioner.rank,
+    //         gender: petitioner.gender,
+    //         act: petitioner.act,
+    //         section: petitioner.section,
+    //         relation: petitioner.relation,
+    //         relation_name: petitioner.relation_name,
+    //         age: petitioner.age,
+    //         address: petitioner.address,
+    //         mobile_number: petitioner.mobile_number,
+    //         email_address: petitioner.email_address,
+    //         nationality: petitioner.nationality,
+    //       }]);
+    //     }
+    // };
+
+    // const handleRespondentCheckBoxChange = (respondent) => {
+    //     if (selectedRespondent.includes(respondent)) {
+    //       // If already selected, remove the respondent from the selected list
+    //       setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
+    //     } else {
+    //       // Otherwise, add the respondent to the selected list
+    //       setSelectedRespondent([...selectedRespondent, {
+    //         litigant_name: respondent.litigant_name,
+    //         litigant_type: 2, 
+    //         designation: respondent.designation?.designation_name,
+    //         state: respondent.state.state_code,
+    //         district: respondent.district.district_code,
+    //         police_station: respondent.police_station.cctns_code,
+    //         address: respondent.address,
+    //       }]);
+    //     }
+    // };
+
+    // const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
+    // const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
     
 
     const addMaterial = () => {}
@@ -225,37 +252,98 @@ const RetrunProperty = () => {
         }
     }
 
-    const handleInitialSubmit = async() => {
+    // const handleInitialSubmit = async() => {
+    //     const post_data = {
+    //         petition: petition,
+    //         petitioner:selectedPetitioner,
+    //         respondent: selectedRespondent,
+    //     }
+    //     if (Object.keys(selectedPetitioner).length === 0){
+    //         alert("Please select atleast one petitioner")
+    //         return
+    //     }
+    //     const response = await api.post("case/filing/relaxation/", post_data)
+    //     if(response.status === 201){
+    //         resetPage()
+    //         setSelectedPetitioner([])
+    //         setSelectedRespondent([])
+    //         sessionStorage.setItem("efile_no", response.data.efile_number)
+    //         toast.success(`${response.data.efile_number} details submitted successfully`,{
+    //             theme: "colored"
+    //         })
+    //     }
+    // }
+
+    const handleInitialSubmit = async () => {
+        // Ensure that at least one petitioner is selected
+        if (selectedPetitioner.length === 0) {
+            alert("Please select at least one petitioner");
+            return;
+        }
+
+        let propertyDetails = null;
+
+        if (parseInt(propertyType) === 1) {
+            // Include material details for propertyType 1
+            propertyDetails = { propertyType: 1, material };
+        } else if (parseInt(propertyType) === 2) {
+            // Include vehicle details for propertyType 2
+            propertyDetails = { propertyType: 2, vehicle };
+        }
+        
+        // Prepare the data to be sent to the backend
         const post_data = {
-            petition: petition,
-            petitioner:selectedPetitioner,
-            respondent: selectedRespondent,
+            petition: petition, // Petition data (you already set this state)
+            // petitioner: selectedPetitioner, // Only the selected petitioners
+            // respondent: selectedRespondent, // Only the selected respondents
+            litigants: selectedPetitioner.concat(selectedRespondent),
+            propertyDetails,
+            
+        };
+
+        try {
+            // Make the API request to submit the data
+            const response = await api.post("case/filing/allied/create/", post_data);
+
+            if (response.status === 201) {
+                // Reset the form and selected data on successful submission
+                resetPage();
+                setSelectedPetitioner([]);
+                setSelectedRespondent([]);
+                
+                // Store efile number in sessionStorage
+                sessionStorage.setItem("efile_no", response.data.efile_number);
+                
+                // Show success message
+                toast.success(`${response.data.efile_number} details submitted successfully`, {
+                    theme: "colored",
+                });
+            }
+        } catch (error) {
+            // Handle any errors during submission
+            toast.error("Error submitting the data. Please try again.", {
+                theme: "colored",
+            });
+            console.error(error);
         }
-        if (Object.keys(selectedPetitioner).length === 0){
-            alert("Please select atleast one petitioner")
-            return
-        }
-        const response = await api.post("case/filing/relaxation/", post_data)
-        if(response.status === 201){
-            resetPage()
-            setSelectedPetitioner([])
-            setSelectedRespondent([])
-            sessionStorage.setItem("efile_no", response.data.efile_number)
-            toast.success(`${response.data.efile_number} details submitted successfully`,{
-                theme: "colored"
-            })
-        }
-    }
+    };
+
+    // const resetPage = () => {
+    //     setSearchForm({...searchForm, reg_number: '', reg_year: ''})
+    //     seteFileNumber('')
+    //     setIsPetition(false)
+    //     setPetition({})
+    //     setPetitioners([])
+    //     setRespondents([])
+    //     setAdvocates([])
+    // }
 
     const resetPage = () => {
-        setSearchForm({...searchForm, reg_number: '', reg_year: ''})
-        seteFileNumber('')
-        setIsPetition(false)
-        setPetition({})
-        setPetitioners([])
-        setRespondents([])
-        setAdvocates([])
-    }
+        setSelectedPetitioner([]);
+        setSelectedRespondent([]);
+        setPetition({});
+        
+    };
 
     useEffect(() => {
         resetPage()
@@ -597,6 +685,7 @@ const RetrunProperty = () => {
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
                                         </tr>
                                         <tr>
+                                            <th>{t('select')}</th>
                                             <th>{t('respondent_name')}</th>
                                             <th>{t('designation')}</th>
                                             <th>{t('police_station')}</th>
@@ -631,6 +720,14 @@ const RetrunProperty = () => {
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.designation?.designation_name}
+                                                        readOnly={true}
+                                                    />
+                                                </td>
+                                                <td>
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control" 
+                                                        value={res.police_station?.station_name}
                                                         readOnly={true}
                                                     />
                                                 </td>
