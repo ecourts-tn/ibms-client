@@ -3,7 +3,11 @@ import React from 'react'
 const PoliceResponse = ({response}) => {
 
     if (!response) {
-        return <p className='text-danger px-3'><strong>Police response detail not found</strong></p>
+        return (
+            <div className="alert alert-warning">
+                <strong>Response not yet filed by concerned Police Station</strong>
+            </div>
+        )
     }
     return (
         <table className="table table-bordered table-striped table-sm mt-2">

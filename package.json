@@ -1,7 +1,6 @@
 {
   "name": "ibms-client",
   "version": "0.1.0",
-  "homepage": "",
   "private": false,
   "dependencies": {
     "@craco/craco": "^7.1.0",
