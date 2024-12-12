@@ -8,21 +8,24 @@ import PaymentHistory from './PaymentHistory';
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import RedirectForm from './RedirectForm';
 
 const Payment = () => {
     const location = useLocation()
     const {t} = useTranslation()
+    const paymentId = uuidv4()
+    const subdirectory = "/ibms";
     const initialState = {
-        txnid:"PAY202409260000001",
+        txnid:paymentId,
         amount:"20",
         scamt:"0.00",
-        return_url:`${window.location.protocol}//${window.location.hostname}:${window.location.port}${location.pathname}`,
+        return_url: `${window.location.href}?status=success`,
+        // return_url:`${window.location.protocol}//${window.location.hostname}:${window.location.port}${subdirectory}${location.pathname}`,
         udf1:"",
         udf2:"deenadayalan17@gmail.com",
         udf3:"",
     }
-
     const validationSchema = Yup.object({
         udf1: Yup.string().required("Please selete the payer"),
         udf3: Yup.number("Enter valid number").required("Please enter the mobile number"),
