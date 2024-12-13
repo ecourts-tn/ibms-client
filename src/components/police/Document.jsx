@@ -15,10 +15,12 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
         document: ''
     }
     const[form, setForm] = useState(initialState)
+     const[errors, setErrors] = useState(initialState)
 
     const validationSchema = {
         
     }
+   
 
     const handleSubmit = async () => {
         try{
@@ -44,6 +46,51 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
         }
     }
 
+    const handleFileChange = (e, fileType) => {
+        const file = e.target.files[0]; // Get the first file
+        if (!file) return; // If no file is selected, return early
+    
+        let errorMessage = '';
+    
+        // PDF Validation (for notary_order and reg_certificate)
+        if (fileType === 'document' ) {
+            // Validate file type (only PDF)
+            if (file.type !== 'application/pdf') {
+                errorMessage = 'Only PDF files are allowed for Response Documents';
+            }
+    
+            // Validate file size (max 5MB for PDF)
+            if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
+                errorMessage = errorMessage || 'File size must be less than 5MB.';
+            }
+        }
+    
+    
+        // If there's an error, show it
+        if (errorMessage) {
+            setErrors({
+                ...errors,
+                [fileType]: errorMessage,
+            });
+            return; // Stop further execution if file type or size is invalid
+        }
+    
+        // If validation passes, update the form with the file data
+        setForm({
+            ...form,
+            [fileType]: {
+                name: file.name, // Display the file name
+                file: file, // Store the actual file
+            },
+        });
+    
+        // Clear any previous errors for this file type
+        setErrors({
+            ...errors,
+            [fileType]: '',
+        });
+    };
+
     return (
         <>
             <ToastContainer />
@@ -53,6 +100,7 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
                         <tr>
                             <th>S.No</th>
                             <th>Title</th>
+                            <th>Name</th>
                             <th>Document</th>
                         </tr>
                     </thead>
@@ -61,6 +109,7 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
                         <tr>
                             <td>{ index+1}</td>
                             <td>{ document.title }</td>
+                            <td>{ form.document.name }</td>
                             <td>
                                 <a href={`${config.apiUrl}${document.document}`} target="_blank" className="btn btn-info btn-sm">View</a>
                                 <button className="btn btn-danger btn-sm ml-2" onClick={() => {deleteDocument(index)}}>Delete</button>
@@ -93,8 +142,20 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
                             name="document" 
                             className="form-control"
                             // value={petition.supporting_document}
-                            onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
+                            // onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
+                            onChange={(e) => handleFileChange(e, 'document')}
+                            accept=".pdf"
                         />
+                        {/* Display selected file name */}
+                        {form.document && form.document.name && (
+                            <span className="mx-2">{form.document.name}</span>
+                        )}
+                        {/* Display error message if any */}
+                        {errors.document && (
+                            <div className="invalid-feedback" style={{ display: 'block' }}>
+                                {errors.document}
+                            </div>
+                        )}
                         </div>
                     </div>
                     <div className="col-md-1 mt-4 pt-2">
@@ -104,7 +165,9 @@ const Document = ({documents, setDocuments, addDocument, deleteDocument}) => {
                                 color="info"
                                 onClick={() => addDocument(form)}
                                 startIcon={<UploadIcon/>}
+                                
                             >
+                            
                                 Upload
                             </Button>
                         </div>

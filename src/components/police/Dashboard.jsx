@@ -96,7 +96,7 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-5">
-                                    <Calendar />
+                                    {/* <Calendar /> */}
                                 </div>
                                 <div className="col-md-7">
                                     <PetitionList 

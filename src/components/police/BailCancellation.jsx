@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
 import { toast, ToastContainer } from 'react-toastify';
@@ -13,6 +13,7 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { RequiredField } from 'utils';
 import Loading from 'components/Loading';
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 const BailCancellation = () => {
@@ -41,6 +42,7 @@ const BailCancellation = () => {
         search: Yup.string().required(),
         state: Yup.string().required()
     })
+    const[selectedRespondent, setSelectedRespondent] = useState([])
     const[caseFound, setCaseFound] = useState(false)
     const[loading, setLoading] = useState(false)
     const[form, setForm] = useState({
@@ -61,10 +63,13 @@ const BailCancellation = () => {
         pincode:'',
         mobile_number:'',
         email_address:'',
+        grounds:'',
     })
 
+    const [petition,setPetition] = useState({})
+
     const validationSchema = Yup.object({
-        efile_no: Yup.string().required(),
+        // efile_no: Yup.string().required(),
         litigant_name: Yup.string().required(),
         designation: Yup.string().required(),
         gender: Yup.string().required(),
@@ -75,19 +80,34 @@ const BailCancellation = () => {
         district:'',
         taluk:'',
         address:Yup.string().required(),
-        post_office:Yup.string().required(),
-        pincode:Yup.string().required(),
+        // post_office:Yup.string().required(),
+        // pincode:Yup.string().required(),
         mobile_number:Yup.string().required(),
-        email_address:Yup.string().required(),
-        description: Yup.string().required()
+        // email_address:Yup.string().required(),
+        grounds: Yup.string().required()
     })
-    const[grounds, setGrounds] = useState({
-        description: ''
-    })
+    
     const[errors, setErrors] = useState([])
     
 
     const[accused, setAccused] = useState([])
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+  
+        // Update form state
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value,  // Dynamically update the field
+        }));
+  
+        // Validate the field and update errors
+        const errorMessage = validateEmail(name, value);  // Validate the email field
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMessage,  // Set the error message for the specific field
+        }));
+    };
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -96,6 +116,7 @@ const BailCancellation = () => {
             const response = await api.post('police/search/crime/', searchForm)
             if(response.status === 200){
                 setCaseFound(true)
+                setPetition(response.data.petition)
                 const accused = response.data.litigant.filter((accused) => {
                     return accused.litigant_type === 1
                 })
@@ -129,31 +150,36 @@ const BailCancellation = () => {
             setLoading(false)
         }
     }
+    const isRespondentSelected = (respondent) => selectedRespondent.includes(respondent.litigant_id);
 
-    const [checkedItems, setCheckedItems] = useState({});
-    const handleCheckboxChange = (event) => {
-        const { id, checked } = event.target;
-        setCheckedItems((prevCheckedItems) => ({
-        ...prevCheckedItems,
-        [id]: checked
-        }));
+    const handleRespondentCheckBoxChange = (respondent) => {
+        const isSelected = isRespondentSelected(respondent);
+        if (isSelected) {
+            // Remove from selected if already selected
+            setSelectedRespondent(selectedRespondent.filter(r => r !== respondent.litigant_id));
+        } else {
+            // Add to selected if not already selected
+            setSelectedRespondent([...selectedRespondent,respondent.litigant_id]);
+        }
     };
 
     const handleSubmit = async(e) => {
         e.preventDefault()
         try{
             const post_data = {
-                form: form,
-                accused: accused,
-                grounds:grounds
+                petitioner: form,
+                accused: selectedRespondent,
+                petition: petition,
+              
             }
-            const merged = {...form,...grounds}
+            // const merged = {...form,...grounds}
             await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("police/filing/cancellation/bail/", post_data)
             if(response.status === 201){
                 toast.success("Bail cancellation petition submitted successfully", {theme:"colored"})
             }
         }catch(error){
+            console.log(error.inner)
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -451,7 +477,7 @@ const BailCancellation = () => {
                                                         name="litigant_name" 
                                                         className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                                                         value={form.litigant_name} 
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleNameChange(e, setForm, form, 'litigant_name')}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">{ errors.litigant_name }</div>
                                                 </Form.Group>
@@ -463,7 +489,7 @@ const BailCancellation = () => {
                                                         name="designation"
                                                         value={form.designation}
                                                         className={`${errors.designation ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleNameChange(e, setForm, form, 'designation')}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">{ errors.designation }</div>
                                                 </Form.Group>
@@ -475,7 +501,9 @@ const BailCancellation = () => {
                                                         name="gender" 
                                                         value={form.gender} 
                                                         className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
+                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     >
+                                                        <option value="Select">Select</option>
                                                         <option value="Male">Male</option>
                                                         <option value="Female">Female</option>
                                                         <option value="Other">Other</option>
@@ -520,7 +548,7 @@ const BailCancellation = () => {
                                                         name="relation_name"
                                                         value={form.relation_name}
                                                         className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleNameChange(e, setForm, form, 'relation_name')}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">{ errors.relation_name }</div>
                                                 </Form.Group>
@@ -606,7 +634,7 @@ const BailCancellation = () => {
                                                         type="text"
                                                         name="pincode"
                                                         value={form.pincode}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handlePincodeChange(e, setForm, form, 'pincode')}
                                                     ></Form.Control>
                                                 </Form.Group>
                                             </div>
@@ -618,7 +646,7 @@ const BailCancellation = () => {
                                                         name="mobile_number"
                                                         className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                                                         value={form.mobile_number}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleMobileChange(e, setForm, form, 'mobile_number')}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">
                                                     { errors.mobile_number}
@@ -633,7 +661,7 @@ const BailCancellation = () => {
                                                         name="email_address"
                                                         value={form.email_address}
                                                         className={`${errors.email_address ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={handleChange}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">{ errors.email_address }</div>
                                                 </Form.Group>
@@ -663,8 +691,8 @@ const BailCancellation = () => {
                                                                             <input
                                                                                 type="checkbox"
                                                                                 id={a.litigant_id}
-                                                                                checked={checkedItems[a.litigant_id] || false}
-                                                                                onChange={handleCheckboxChange}
+                                                                                checked={isRespondentSelected(a)}
+                                                                                onChange={() => handleRespondentCheckBoxChange(a)}
                                                                             />
                                                                         </td>
                                                                         <td>{a.litigant_name}</td>
@@ -684,14 +712,14 @@ const BailCancellation = () => {
                                             <div className="form-group">
                                                 <label htmlFor="">Grounds</label>
                                                 <textarea 
-                                                    name="description" 
+                                                    name="grounds" 
                                                     cols="30" 
                                                     rows="10" 
-                                                    className={`form-control ${errors.description ? 'is-invalid' : null }`}
-                                                    value={grounds.description}
-                                                    onChange={(e) => setGrounds({...grounds, [e.target.name]: e.target.value})}
+                                                    className={`form-control ${errors.grounds ? 'is-invalid' : null }`}
+                                                    value={form.grounds}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 ></textarea>
-                                                <div className="invalid-feedback">{ errors.description }</div>
+                                                <div className="invalid-feedback">{ errors.grounds }</div>
                                             </div>
                                         </div>
                                     </div>

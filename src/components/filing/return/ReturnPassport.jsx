@@ -87,7 +87,7 @@ const ReturnPassport = () => {
             // Add to selected if not already selected
             setSelectedRespondent([...selectedRespondent,respondent.litigant_id]);
         }
-    };
+      };
 
     const handlePassportInputChange = (index, field, value) => {
         const updatedPassportDetails = [...passportDetails];

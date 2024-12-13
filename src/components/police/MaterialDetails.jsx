@@ -1,6 +1,9 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {toast, ToastContainer} from 'react-toastify'
 import * as Yup from 'yup'
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const MaterialDetails = ({materials, setMaterials}) => {
     const initialState = {
@@ -21,6 +24,32 @@ const MaterialDetails = ({materials, setMaterials}) => {
     });
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
+
+    const formatDate = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    useEffect(() => {
+        const produced_date = flatpickr(".produced_date-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable past dates for appointment date
+            defaultDate: form.produced_date,
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                setForm({ ...form, produced_date: formattedDate });
+            },
+        });
+
+        return () => {
+            if (produced_date && typeof produced_date.destroy === "function") {
+                produced_date.destroy();
+            }
+        };
+    }, [form]);
+
     const addMaterial = async(e) => {
         e.preventDefault();
         try{
@@ -135,11 +164,17 @@ const MaterialDetails = ({materials, setMaterials}) => {
                             <label htmlFor="">Produced date</label>
                             <input 
                                 type="date" 
-                                className={`form-control ${errors.produced_date ? 'is-invalid' : ''}`}
+                                className={`form-control produced_date-date-picker ${errors.produced_date ? 'is-invalid' : ''}`}
                                 name="produced_date"
                                 value={form.produced_date}
                                 readOnly={form.is_produced === true ? false : true }
                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                 placeholder="DD/MM/YYYY"
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    border: '1px solid #ccc', // Optional: Adjust border
+                                    padding: '8px',            // Optional: Adjust padding
+                                }}
                             />
                             <div className="invalid-feedback">
                                 { errors.produced_date }
