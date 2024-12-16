@@ -11,7 +11,7 @@ import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 
 
@@ -158,6 +158,7 @@ const SuretyForm = () => {
             
             const postData = {
                 ...surety,
+               bank_accounts: bankAccounts,
             };
 
             // console.log("PostData to send:", postData);
@@ -172,7 +173,8 @@ const SuretyForm = () => {
                 toast.success("Surety Details added successfully", {
                     theme:"colored"
                 })
-                setSurety(initialState)
+                setSurety(initialState);
+                setBankAccounts([]);
             }
         }catch(error){
             if(error.inner){
@@ -424,7 +426,8 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="aadhar_number" 
                                 value={surety.aadhar_number} 
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                onChange={(e) => handleAadharChange(e, setSurety, surety, 'aadhar_number')}
                                 className={`form-control ${errors.aadhar_number ? 'is-invalid' : null}`}
                             />
                             <div className="invalid-feedback">
@@ -716,7 +719,7 @@ const SuretyForm = () => {
                                         value={surety.employer_name} 
                                         // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
                                         onChange={(e) => handleNameChange(e, setSurety, surety, 'employer_name')}
-                                        className="form-control"
+                                        className={`form-control ${errors.employer_name ? 'is-invalid' : null }`}
                                     />
                                 </div>
                             </div>

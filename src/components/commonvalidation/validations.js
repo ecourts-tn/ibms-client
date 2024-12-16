@@ -86,6 +86,27 @@ export const handleMobileChange = (e, setField, field, fieldName) => {
     return 'Mobile number should be a valid number and up to 10 digits only';
 };
 
+// Validate Aadhar Number (for example, valid if it's 10 digits)
+export const handleAadharChange = (e, setField, field, fieldName) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Allow only numbers
+    if (value.length <= 12) {
+        setField({ ...field, [fieldName]: value });
+      return '';
+    }
+    return 'Aadharcard number should be a valid number and up to 12 digits only';
+};
+
+// Validate CSR Number
+export const handleNumberChange = (e, setField, field, fieldName) => {
+    const value = e.target.value.replace(/[^0-9/]/g, ''); // Allow only numbers
+    if (value !== '') {
+        setField({ ...field, [fieldName]: value }); // Update field value
+        return ''; // Clear any existing error message if the value is valid
+    }
+    setField({ ...field, [fieldName]: value });
+    // Return error message if the value is empty
+    return 'CSR Number should be a valid number digits only';
+};
 
 export const handleAgeChange = (e, setLitigant, litigant) => {
     const value = e.target.value;

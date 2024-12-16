@@ -1,12 +1,20 @@
 import api from 'api'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
 import Loading from 'components/Loading'
+import { LanguageContext } from 'contexts/LanguageContex';
+import { useTranslation } from 'react-i18next'; 
 
 const RegistrationPendingList = () => {
     const[cases, setCases] = useState([])
-    const[loading, setLoading] = useState(false)
+    const[loading, setLoading] = useState(false);
+    const { t } = useTranslation();
+    const { language } = useContext(LanguageContext);
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
+    const [totalItems, setTotalItems] = useState(0);
     useEffect(() => {
         const fecthCases = async() =>{
             try{
@@ -14,6 +22,7 @@ const RegistrationPendingList = () => {
                 const response = await api.get("court/registration/pending/")
                 if(response.status === 200){
                     setCases(response.data)
+                    setTotalItems(response.data.length);
                 }
 
             }catch(error){
@@ -24,6 +33,27 @@ const RegistrationPendingList = () => {
         }
         fecthCases();
     },[])
+
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentCases = cases.slice(indexOfFirstItem, indexOfLastItem); // Slice cases for the current page
+
+    // Handle page change
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Handle items per page change
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(Number(event.target.value)); // Update items per page
+        setCurrentPage(1); // Reset to the first page whenever the items per page change
+    };
+
+    // Calculate total number of pages
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
 
     return (
         <div>
@@ -39,8 +69,23 @@ const RegistrationPendingList = () => {
                             <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
                                 <div className="card-header"><strong>Case Registration - Pending List</strong></div>
                                 <div className="card-body">
+                                    <div className="row mb-3">
+                                        <div className="col-md-1" style={{ display: 'flex' }}>
+                                            <label className="mr-3">{t('Filter')}:</label>
+                                            <select
+                                                className="form-control col-md-6"
+                                                value={itemsPerPage}
+                                                onChange={handleItemsPerPageChange}
+                                            >
+                                                <option value={10}>10</option>
+                                                <option value={15}>15</option>
+                                                <option value={25}>25</option>
+                                                <option value={50}>50</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <ul className="todo-list" data-widget="todo-list">
-                                        { cases.map((c, index) => (
+                                        { currentCases.map((c, index) => (
                                             <li key={index}>
                                                 <span className="handle">
                                                     <i className="fas fa-ellipsis-v" />
@@ -71,6 +116,27 @@ const RegistrationPendingList = () => {
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    {/* Pagination Controls */}
+                    <div className="d-flex justify-content-between mt-3">
+                        <div className="pagination">
+                            <ul className="pagination">
+                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                    <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
+                                </li>
+                                {pageNumbers.map((number) => (
+                                    <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+                                        <button className="page-link" onClick={() => paginate(number)}>{number}</button>
+                                    </li>
+                                ))}
+                                <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
+                                    <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="page-info">
+                            <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {totalItems} {t('entries')}</span>
                         </div>
                     </div>
                 </div>
