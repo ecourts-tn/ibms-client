@@ -1,24 +1,18 @@
 import api from 'api';
 import * as Yup from 'yup'
 import { toast, ToastContainer } from 'react-toastify';
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
-import Payment from 'components/payment/Payment';
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import ArrowBack  from '@mui/icons-material/ArrowBack';
-import InitialInput from '../InitialInput';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import InitialInput from 'components/filing/InitialInput';
 import SearchIcon from '@mui/icons-material/Search'
-import Document from 'components/filing/Document';
-import GroundsContainer from 'components/filing/Ground';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { useLocalStorage } from 'hooks/useLocalStorage';
+import { useNavigate } from 'react-router-dom';
 
 
 const Relaxation = () => {
@@ -27,6 +21,10 @@ const Relaxation = () => {
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
     const {seats} = useContext(SeatContext)
+    const {language} = useContext(LanguageContext)
+    const [user, setUser] = useLocalStorage("user", null)
+    const {t} = useTranslation()
+    const[petition, setPetition] = useState({})
     const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
@@ -34,9 +32,7 @@ const Relaxation = () => {
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
     const[selectedRespondent, setSelectedRespondent] = useState([])
     const[respondents, setRespondents] = useState([])
-    const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
-    const [grounds, setGrounds] = useState('')
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
@@ -49,9 +45,7 @@ const Relaxation = () => {
         reg_number: '',
         reg_year: ''
     })
-    const[petition, setPetition] = useState({})
-    const {language} = useContext(LanguageContext)
-    const {t} = useTranslation()
+    const navigate = useNavigate()
     const searchSchema = Yup.object({
         case_type: Yup.string().required("Please select the case type"),
         case_number: Yup.number().required("Please enter case number"),
@@ -86,52 +80,7 @@ const Relaxation = () => {
         }
     };
 
-
-    // const handlePetitionerCheckBoxChange = (petitioner) => {
-    //     if (selectedPetitioner.includes(petitioner)) {
-    //       // If already selected, remove the petitioner from the selected list
-    //       setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
-    //     } else {
-    //       // Otherwise, add the petitioner to the selected list
-    //       setSelectedPetitioner([...selectedPetitioner, {
-    //         litigant_id :petitioner.litigant_id,
-    //         // litigant_type :1, 
-    //         // rank: petitioner.rank,
-    //         // gender: petitioner.gender,
-    //         // act: petitioner.act,
-    //         // section: petitioner.section,
-    //         // relation: petitioner.relation,
-    //         // relation_name: petitioner.relation_name,
-    //         // age: petitioner.age,
-    //         // address: petitioner.address,
-    //         // mobile_number: petitioner.mobile_number,
-    //         // email_address: petitioner.email_address,
-    //         // nationality: petitioner.nationality,
-    //       }]);
-    //     }
-    // };
-
-    // const handleRespondentCheckBoxChange = (respondent) => {
-    //     if (selectedRespondent.includes(respondent)) {
-    //       // If already selected, remove the respondent from the selected list
-    //       setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
-    //     } else {
-    //       // Otherwise, add the respondent to the selected list
-    //       setSelectedRespondent([...selectedRespondent, {
-    //         litigant_id: respondent.litigant_id,
-    //         // litigant_type: 2, 
-    //         // designation: respondent.designation?.designation_name,
-    //         // state: respondent.state.state_code,
-    //         // district: respondent.district.district_code,
-    //         // police_station: respondent.police_station.cctns_code,
-    //         // address: respondent.address,
-    //       }]);
-    //     }
-    // };
-
-    // const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_id === petitioner.litigant_id);
-    // const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_id === respondent.litigant_id);
-    
+   
     useEffect(() => {
         async function fetchData(){
             try{
@@ -152,12 +101,11 @@ const Relaxation = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigants, advocates} = response.data
+                    const {petition:pet, litigants } = response.data
                     setIsPetition(true)
                     setBail(pet)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
                     setRespondents(litigants.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocates)
                     setPetition({...petition,
                         judiciary: pet.judiciary.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -166,9 +114,7 @@ const Relaxation = () => {
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
                         court: pet.court ? pet.court.court_code : null,
                         case_type: 3,
-                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
-                        complaint_type: pet.complaint_type.id,
-                        crime_registered: pet.crime_registered,
+                        crime_registered: pet.crime_registered
                     })
                 }
             }catch(error){
@@ -194,7 +140,6 @@ const Relaxation = () => {
                 setPetition(response.data.petition)
                 setPetitioners(response.data.litigants.filter(l=>l.litigant_type===1))
                 setRespondents(response.data.litigants.filter(l=>l.litigant_type===2))
-                setAdvocates(response.data.advocate)
             }
 
         }catch(error){
@@ -221,34 +166,6 @@ const Relaxation = () => {
         }
     }
 
-    // const handleInitialSubmit = async() => {
-
-    //     if (selectedPetitioner.length === 0) {
-    //         alert("Please select at least one petitioner");
-    //         return;
-    //     }
-
-    //     const post_data = {
-    //         petition: petition,
-    //         petitioner:selectedPetitioner,
-    //         respondent: selectedRespondent,
-    //     }
-    //     // if (Object.keys(selectedPetitioner).length === 0){
-    //     //     alert("Please select atleast one petitioner")
-    //     //     return
-    //     // }
-    //     const response = await api.post("case/filing/relaxation/", post_data)
-    //     if(response.status === 201){
-    //         resetPage()
-    //         setSelectedPetitioner([])
-    //         setSelectedRespondent([])
-    //         sessionStorage.setItem("efile_no", response.data.efile_number)
-    //         toast.success(`${response.data.efile_number} details submitted successfully`,{
-    //             theme: "colored"
-    //         })
-    //     }
-    // }
-
     const handleInitialSubmit = async () => {
         // Ensure that at least one petitioner is selected
         if (selectedPetitioner.length === 0) {
@@ -259,8 +176,6 @@ const Relaxation = () => {
         // Prepare the data to be sent to the backend
         const post_data = {
             petition: petition, // Petition data (you already set this state)
-            // petitioner: selectedPetitioner, // Only the selected petitioners
-            // respondent: selectedRespondent, // Only the selected respondents
             litigants: selectedPetitioner.concat(selectedRespondent)
         };
 
@@ -276,11 +191,25 @@ const Relaxation = () => {
                 
                 // Store efile number in sessionStorage
                 sessionStorage.setItem("efile_no", response.data.efile_number);
+                if(parseInt(user.group) === 1){
+                    const advocate = {
+                        petition: sessionStorage.getItem("efile_no"),
+                        advocate: user.userlogin,
+                        is_primary: true
+                    }
+                    const advocate_request = await api.post(`case/advocate/`, advocate);
+                    if(advocate_request.status === 201){
+                        console.log("adovcate created successfully")
+                    }
+                }        
                 
                 // Show success message
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme: "colored",
                 });
+                setTimeout(() => {
+                    navigate('/filing/condition-relaxation/ground')
+                }, 1000)
             }
         } catch (error) {
             // Handle any errors during submission
@@ -291,15 +220,6 @@ const Relaxation = () => {
         }
     };
  
-    // const resetPage = () => {
-    //     setSearchForm({...searchForm, reg_number: '', reg_year: ''})
-    //     seteFileNumber('')
-    //     setIsPetition(false)
-    //     setPetition({})
-    //     setPetitioners([])
-    //     setRespondents([])
-    //     setAdvocates([])
-    // }
     const resetPage = () => {
         setSelectedPetitioner([]);
         setSelectedRespondent([]);
@@ -560,7 +480,7 @@ const Relaxation = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-                                <table className="table table-bordered table-striped">
+                                <table className="table table-bordered">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -579,7 +499,7 @@ const Relaxation = () => {
                                         { petitioners.map((petitioner, index) => (
                                         <tr key={index}>
                                             <td>
-                                                <div className="icheck-success">
+                                                <div className="icheck-success m-0 p-0">
                                                     <input 
                                                         type="checkbox" 
                                                         id={`checkboxSuccess${petitioner.litigant_id}`} 
@@ -588,53 +508,53 @@ const Relaxation = () => {
                                                     />
                                                     <label htmlFor={`checkboxSuccess${petitioner.litigant_id}`}></label>
                                                 </div>                                                                            </td>
-                                            <td>
-                                                <input 
+                                            <td>{petitioner.litigant_name}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={petitioner.litigant_name}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
-                                            <td>
-                                                <input 
+                                            <td>{petitioner.relation_name}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={petitioner.relation_name}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
-                                            <td>
-                                                <input 
+                                            <td>{petitioner.age}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={petitioner.age}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
-                                            <td>
-                                                <input 
+                                            <td>{petitioner.rank}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={petitioner.rank}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
-                                            <td>
-                                                <input 
+                                            <td>{ petitioner.act}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={ petitioner.act}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
-                                            <td>
-                                                <input 
+                                            <td>{petitioner.section}
+                                                {/* <input 
                                                     type="text" 
                                                     className="form-control" 
                                                     value={petitioner.section}
                                                     readOnly={true}
-                                                />
+                                                /> */}
                                             </td>
                                         </tr>
                                         ))}
@@ -661,7 +581,7 @@ const Relaxation = () => {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <table className="table table-bordered table-striped">
+                                <table className="table table-bordered">
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
@@ -679,7 +599,7 @@ const Relaxation = () => {
                                         { respondents.map((res, index) => (
                                             <tr key={index}>
                                                 <td>
-                                                    <div className="icheck-success">
+                                                    <div className="icheck-success m-0 p-0">
                                                         <input 
                                                             type="checkbox" 
                                                             id={`checkboxSuccess${res.litigant_id}`} 
@@ -689,45 +609,45 @@ const Relaxation = () => {
                                                         <label htmlFor={`checkboxSuccess${res.litigant_id}`}></label>
                                                     </div>                                                                            
                                                 </td>
-                                                <td>
-                                                    <input 
+                                                <td>{res.litigant_name}
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.litigant_name}
                                                         readOnly={true}
-                                                    />
+                                                    /> */}
                                                 </td>
-                                                <td>
-                                                    <input 
+                                                <td>{res.designation?.designation_name}
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.designation?.designation_name}
                                                         readOnly={true}
-                                                    />
+                                                    /> */}
                                                 </td>
-                                                <td>
-                                                    <input 
+                                                <td>{res.police_station?.station_name}
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.police_station?.station_name}
                                                         readOnly={true}
-                                                    />
+                                                    /> */}
                                                 </td>
-                                                <td>
-                                                    <input 
+                                                <td>{res.district.district_name}
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.district.district_name}
                                                         readOnly={true}
-                                                    />
+                                                    /> */}
                                                 </td>
-                                                <td>
-                                                    <input 
+                                                <td>{res.address}
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control" 
                                                         value={res.address}
                                                         readOnly={true}
-                                                    />
+                                                    /> */}
                                                 </td>
                                             </tr>
                                         ))}

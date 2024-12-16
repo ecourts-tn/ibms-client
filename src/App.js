@@ -31,7 +31,7 @@ function App() {
   
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter basename="/ibms">
         <AuthProvider>
           <AppProvider>
             <Routes>

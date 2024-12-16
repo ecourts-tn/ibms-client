@@ -121,7 +121,7 @@ const DraftList = () => {
                             </ol>
                         </nav>
                         <h3 className='pb-2'><strong>{t('draft_petition')}</strong></h3>
-                        <table className="table table-striped table-bordered">
+                        <table className="table table-bordered">
                             <thead className="bg-secondary">
                                 <tr className='text-center'>
                                     <th>{t('sl_no')}</th>
@@ -182,14 +182,14 @@ const DraftList = () => {
                                     </td>
                                     <td>
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             color="primary"
                                             onClick={() => handleEdit(item.petition.efile_number)}
                                         >
                                             <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
                                         </Button>
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             color="success"
                                             className="ml-1"
                                             onClick = {(e) => handleSubmit(item.petition.efile_number) }
