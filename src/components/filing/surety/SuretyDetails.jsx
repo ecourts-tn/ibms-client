@@ -2,18 +2,27 @@ import api from 'api'
 import config from 'config'
 import React, {useState, useEffect} from 'react'
 import {toast, ToastContainer} from 'react-toastify'
-import ViewDocument from 'components/common/ViewDocument'
 import { useTranslation } from 'react-i18next'
+import Modal from 'react-bootstrap/Modal'
+import ViewSurety from './ViewSurety'
+import Button from 'react-bootstrap/Button'
 
 const SuretyDetails = () => {
 
-    const [sureties, setSureties] = useState([])
-    const[selectedSurety, setSelectedSurety] = useState([])
-    const [show, setShow] = useState(false);
     const {t} = useTranslation()
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [sureties, setSureties] = useState([])
+    const [surety, setSurety] = useState(null)
+    const [selectedSurety, setSelectedSurety] = useState([])
+    const [showModal, setShowModal] = useState(false);
 
+    const handleShow = (surety) => {
+        setSurety(surety);  // Set selected surety details
+        setShowModal(true);         // Show the modal
+    };
+    
+    const handleClose = () => {
+        setShowModal(false);        // Close the modal
+    };
 
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -64,7 +73,26 @@ const SuretyDetails = () => {
     return (
         <div className="container">
             <ToastContainer /> 
-                <table className="table table-bordered table-striped">
+            <Modal 
+                show={showModal} 
+                onHide={handleClose} 
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title><strong>{t('surety_details')}</strong></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ViewSurety surety={surety}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="contained" color="primary" onClick={handleClose}>
+                    {t('close')}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+                <table className="table table-bordered">
                     <thead>
                         <tr className="bg-navy">
                             <td colSpan={9}><strong>{t('surety_details')}</strong></td>
@@ -75,10 +103,7 @@ const SuretyDetails = () => {
                             <th>{t('father_husband_guardian')}</th>
                             <th>{t('aadhar_number')}</th>
                             <th>{t('mobile_number')}</th>
-                            <th>{t('photo')}</th>
-                            <th>{t('signature')}</th>
-                            <th>{t('aadhar_card')}</th>
-                            <th>{t('identity_proof')}</th>
+                            <th>{t('action')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,55 +120,12 @@ const SuretyDetails = () => {
                                     <label htmlFor={`checkboxSuccess${s.surety_id}`}></label>
                                 </div>                                                                            
                             </td>
+                            <td>{s.surety_name}</td>
+                            <td>{s.relative_name}</td>
+                            <td>{s.aadhar_number}</td>
+                            <td>{s.mobile_number}</td>
                             <td>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    value={s.surety_name}
-                                    readOnly={true}
-                                />
-                            </td>
-                            <td>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    value={s.relative_name}
-                                    readOnly={true}
-                                />
-                            </td>
-                            <td>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    value={s.aadhar_number}
-                                    readOnly={true}
-                                />
-                            </td>
-                            <td>
-                                <input 
-                                    type="text" 
-                                    className="form-control" 
-                                    value={s.mobile_number}
-                                    readOnly={true}
-                                />
-                            </td>
-                            <td>
-                                <span className="badge badge-info badge-pill" onClick={handleShow}>View</span>
-                                <ViewDocument 
-                                    title="Photo"
-                                    url={`${config.docUrl}${s.photo}`}
-                                    show={show} 
-                                    handleClose={handleClose} 
-                                />
-                            </td>
-                            <td>
-                                <a href={`${config.docUrl}${s.signature}`}><span className="badge badge-info badge-pill">View</span></a>
-                            </td>
-                            <td>
-                                <a href={`${config.docUrl}${s.aadhar_card}`}><span className="badge badge-info badge-pill">View</span></a>
-                            </td>
-                            <td>
-                                <a href={`${config.docUrl}${s.identity_proof}`}><span className="badge badge-info badge-pill">View</span></a>
+                                <span className="badge badge-info badge-pill" onClick={() => handleShow(s)}>View</span>
                             </td>
                         </tr>
                         ))}

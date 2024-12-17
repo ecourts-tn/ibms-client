@@ -3,15 +3,16 @@ import { RequiredField } from 'utils'
 import api from 'api'
 import {toast,ToastContainer} from 'react-toastify'
 import Button from '@mui/material/Button'
+import Modal from 'react-bootstrap/Modal'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { TalukContext } from 'contexts/TalukContext'
 import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
-import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import ViewSurety from './ViewSurety'
 
 
 
@@ -80,6 +81,7 @@ const SuretyForm = () => {
     }
     const[surety, setSurety] = useState(initialState);
     const[sureties, setSureties] = useState([])
+    const [selectedSurety, setSelectedSurety] = useState(null);
     const initialAccount = {
         bank_name: '',
         branch_name: '',
@@ -89,6 +91,17 @@ const SuretyForm = () => {
     const[account, setAccount] = useState(initialAccount)
     const[bankAccounts, setBankAccounts] = useState([])
     const[errors, setErrors] = useState({})
+    const [showModal, setShowModal] = useState(false);
+
+    const handleShow = (surety) => {
+        setSelectedSurety(surety);  // Set selected surety details
+        setShowModal(true);         // Show the modal
+    };
+    
+    const handleClose = () => {
+        setShowModal(false);        // Close the modal
+    };
+
     const validationSchema = Yup.object({
         surety_name: Yup.string().required(),
         relation: Yup.string().required(),
@@ -129,44 +142,67 @@ const SuretyForm = () => {
         fecthSureties();
     }, [])
 
-    const deleteSurety = async(surety) => {
-        try{
-            const newSureties = sureties.filter((s) => {
-                return s.surety_id !== surety.surety_id
-            })
+    const deleteSurety = async (surety) => {
+        try {
+            // Show confirmation before deleting
+            const confirmDelete = window.confirm(`Are you sure you want to delete surety with ID: ${surety.surety_id}?`);
+            if (!confirmDelete) return; // If the user cancels, exit the function
+    
+            // Send delete request
             const response = await api.delete("case/surety/delete/", {
-                params:{id:surety.surety_id}
-            })
-            if(response.status === 204){
-                toast.error(`${surety.surety_id} - surety deleted successfully`, {
+                params: { id: surety.surety_id }
+            });
+    
+            // If the delete was successful
+            if (response.status === 204) {
+                // Remove the deleted surety from the list
+                const newSureties = sureties.filter((s) => s.surety_id !== surety.surety_id);
+    
+                // Show a success message
+                toast.success(`Surety with ID ${surety.surety_id} deleted successfully`, {
                     theme: "colored"
-                })
-                setSureties(newSureties)
+                });
+    
+                // Update the sureties state with the new list
+                setSureties(newSureties);
             }
-            
-        }catch(error){
-            console.log(error)
+        } catch (error) {
+            // Handle error during deletion
+            console.error(error);
+            toast.error("An error occurred while deleting the surety. Please try again.", {
+                theme: "colored"
+            });
         }
-    }
+    };
+    
 
 
     const handleSubmit = async(e) => {
         e.preventDefault()
-        const efile_no = sessionStorage.getItem("efile_no")
         try{
             await validationSchema.validate(surety, {abortEarly:false})
-            
-            const postData = {
-                ...surety,
-               bank_accounts: bankAccounts,
-            };
+            const formData = new FormData();
 
-            // console.log("PostData to send:", postData);
-           
-            const response = await api.post("case/surety/create/", postData, {
-                params: { efile_no },
+            // Add all non-file fields to FormData
+            for (const key in surety) {
+                if (surety[key] && typeof surety[key] !== "object") {
+                    formData.append(key, surety[key]);
+                }
+            }
+        
+            // Add file fields to FormData
+            if (surety.photo) formData.append("photo", surety.photo);
+            if (surety.signature) formData.append("signature", surety.signature);
+            if (surety.identity_proof) formData.append("identity_proof", surety.identity_proof);
+            if (surety.aadhar_card) formData.append("aadhar_card", surety.aadhar_card);
+        
+            // Add efile_no separately if it's in sessionStorage
+            const efile_no = sessionStorage.getItem("efile_no");
+            if (efile_no) formData.append("efile_no", efile_no);
+  
+            const response = await api.post("case/surety/create/", formData, {
                 headers: {
-                    'Content-Type': 'application/json' // Send as JSON
+                    "Content-Type": "multipart/form-data",
                 }
             });
             if(response.status === 201){
@@ -245,90 +281,88 @@ const SuretyForm = () => {
     
         let errorMessage = '';
     
-        // PDF Validation (for notary_order and reg_certificate)
-        // if (fileType === 'notary_order' || fileType === 'reg_certificate') {
-        //     // Validate file type (only PDF)
-        //     if (file.type !== 'application/pdf') {
-        //         errorMessage = 'Only PDF files are allowed for Notary Order and Bar Certificate.';
-        //     }
-    
-        //     // Validate file size (max 5MB for PDF)
-        //     if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
-        //         errorMessage = errorMessage || 'File size must be less than 5MB.';
-        //     }
-        // }
-    
-        // Image Validation (for profile_photo)
-        if (fileType === 'photo' || fileType === 'signature' ) {
-            // Validate file type (only images allowed)
+        // Validation for specific file types
+        if (fileType === 'photo' || fileType === 'signature') {
+            // Only image files are allowed
             const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
             if (!allowedImageTypes.includes(file.type)) {
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed for Profile Photo.';
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed.';
+            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB
+                errorMessage = 'Image size must be less than 3MB.';
             }
-    
-            // Validate file size (max 3MB for image)
-            if (file.size > 3 * 1024 * 1024) { // 3MB in bytes
-                errorMessage = errorMessage || 'Image size must be less than 3MB.';
-            }
-        }
-
-        else if (fileType === 'identity_proof' || fileType === 'aadhar_card' ) {
-            // Check for allowed file types (PDF or Image)
+        } else if (fileType === 'identity_proof' || fileType === 'aadhar_card') {
+            // PDF or image files are allowed
             const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
             if (file.type === 'application/pdf') {
-                // If it's a PDF, no need to check further for image types
-                if (file.size > 5 * 1024 * 1024) { // 5MB for PDF size limit
-                    errorMessage = errorMessage || 'File size must be less than 5MB.';
+                if (file.size > 5 * 1024 * 1024) { // Max 5MB for PDF
+                    errorMessage = 'PDF size must be less than 5MB.';
                 }
             } else if (!allowedImageTypes.includes(file.type)) {
-                // If it's not a valid image type
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed for Identity Proof.';
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed.';
             } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
-                // Validate file size (max 3MB for image)
-                errorMessage = errorMessage || 'Image size must be less than 3MB.';
+                errorMessage = 'Image size must be less than 3MB.';
             }
         }
     
-        // If there's an error, show it
+        // If there's an error, update the error state and return
         if (errorMessage) {
-            setErrors({
-                ...errors,
+            setErrors((prevErrors) => ({
+                ...prevErrors,
                 [fileType]: errorMessage,
-            });
-            return; // Stop further execution if file type or size is invalid
+            }));
+            return;
         }
     
-        // If validation passes, update the form with the file data
-        setSurety({
-            ...surety,
-            [fileType]: file.name,
-        });
+        // If validation passes, update the surety state with the actual File object
+        setSurety((prevSurety) => ({
+            ...prevSurety,
+            [fileType]: file, // Save the actual File object for uploading
+        }));
     
-        // Clear any previous errors for this file type
-        setErrors({
-            ...errors,
+        // Clear any previous error for this file type
+        setErrors((prevErrors) => ({
+            ...prevErrors,
             [fileType]: '',
-        });
+        }));
     };
+    
 
 
     return (
         <div className="container">
-            {/* <form onSubmit={handleSubmit} encType='multipart/form-data' method='POST'> */}
+             <Modal 
+                show={showModal} 
+                onHide={handleClose} 
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title><strong>{t('surety_details')}</strong></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ViewSurety surety={selectedSurety}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="contained" color="primary" onClick={handleClose}>
+                    {t('close')}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <form onSubmit={handleSubmit} encType='multipart/form-data' method='POST'>
                 <ToastContainer />
-                <div className="row">
+                <div className="row mt-3">
                     <div className="col-md-12">
                         { Object.keys(sureties).length > 0 && (
-                        <table className="table table-striped table-bordered table-sm">
-                            <thead className="bg-secondary">
+                        <table className="table table-bordered">
+                            <thead className="bg-success">
                                 <tr>
                                     <th>#</th>
                                     <th>{t('surety_name')}</th>
                                     <th>{t('relationship_name')}</th>
                                     <th>{t('aadhaar_number')}</th>
-                                    <th>{t('photo')}</th>
-                                    <th>{t('aadhar_card')}</th>
-                                    <th>{t('signature')}</th>
+                                    <th>{t('mobile_number')}</th>
+                                    <th>{t('address')}</th>
                                     <th>{t('action')}</th>
                                 </tr>
                             </thead>
@@ -339,16 +373,16 @@ const SuretyForm = () => {
                                     <td>{ s.surety_name }</td>
                                     <td>{ s.relative_name }</td>
                                     <td>{ s.aadhar_number }</td>
+                                    <td>{ s.mobile_number }</td>
+                                    <td>{ s.address }</td>
                                     <td>
-                                        <a href={`${config.docUrl}${s.photo}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
-                                        <a href={`${config.docUrl}${s.aadhar_card}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
-                                        <a href={`${config.docUrl}${s.signature}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
+                                        <Button
+                                            variant='contained'
+                                            color='warning'
+                                            size='small'
+                                            className="mr-1"
+                                            onClick={() => handleShow(s)}
+                                        >View</Button>
                                         <Button
                                             variant='contained'
                                             color='info'
@@ -358,7 +392,7 @@ const SuretyForm = () => {
                                             variant='contained'
                                             color='error'
                                             size='small'
-                                            className='ml-2'
+                                            className='ml-1'
                                             onClick={(e) => deleteSurety(s)}
                                         >Delete</Button>
                                     </td>
@@ -1347,7 +1381,7 @@ const SuretyForm = () => {
                         endIcon={<ArrowForward />}
                     >{t('next')}</Button>
                 </div>
-            {/* </form> */}
+            </form>
         </div>
     )
 }
