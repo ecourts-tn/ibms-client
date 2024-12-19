@@ -1,18 +1,10 @@
 import api from 'api';
 import * as Yup from 'yup'
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button'
-import Payment from 'components/payment/Payment';
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import ArrowBack  from '@mui/icons-material/ArrowBack';
-import InitialInput from '../InitialInput';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
+import InitialInput from 'components/filing/InitialInput';
 import SearchIcon from '@mui/icons-material/Search'
-import Document from 'components/filing/Document';
-import GroundsContainer from 'components/filing/Ground';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
@@ -27,16 +19,13 @@ const ModificationNew = () => {
     const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
     const {seats} = useContext(SeatContext)
-    const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
     const[selectedRespondent, setSelectedRespondent] = useState([])
     const[respondents, setRespondents] = useState([])
-    const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
-    const [grounds, setGrounds] = useState('')
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
@@ -86,51 +75,7 @@ const ModificationNew = () => {
         }
     };
 
-    // const handlePetitionerCheckBoxChange = (petitioner) => {
-    //     if (selectedPetitioner.includes(petitioner)) {
-    //       // If already selected, remove the petitioner from the selected list
-    //       setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
-    //     } else {
-    //       // Otherwise, add the petitioner to the selected list
-    //       setSelectedPetitioner([...selectedPetitioner, {
-    //         litigant_name :petitioner.litigant_name,
-    //         litigant_type :1, 
-    //         rank: petitioner.rank,
-    //         gender: petitioner.gender,
-    //         act: petitioner.act,
-    //         section: petitioner.section,
-    //         relation: petitioner.relation,
-    //         relation_name: petitioner.relation_name,
-    //         age: petitioner.age,
-    //         address: petitioner.address,
-    //         mobile_number: petitioner.mobile_number,
-    //         email_address: petitioner.email_address,
-    //         nationality: petitioner.nationality,
-    //       }]);
-    //     }
-    // };
-
-    // const handleRespondentCheckBoxChange = (respondent) => {
-    //     if (selectedRespondent.includes(respondent)) {
-    //       // If already selected, remove the respondent from the selected list
-    //       setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
-    //     } else {
-    //       // Otherwise, add the respondent to the selected list
-    //       setSelectedRespondent([...selectedRespondent, {
-    //         litigant_name: respondent.litigant_name,
-    //         litigant_type: 2, 
-    //         designation: respondent.designation,
-    //         state: respondent.state.state_code,
-    //         district: respondent.district.district_code,
-    //         police_station: respondent.police_station.cctns_code,
-    //         address: respondent.address,
-    //       }]);
-    //     }
-    // };
-
-    // const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_name === petitioner.litigant_name);
-    // const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_name === respondent.litigant_name);
-    
+  
     useEffect(() => {
         async function fetchData(){
             try{
@@ -151,12 +96,10 @@ const ModificationNew = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigants, advocates} = response.data
+                    const {petition:pet, litigants } = response.data
                     setIsPetition(true)
-                    setBail(pet)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
                     setRespondents(litigants.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocates)
                     setPetition({...petition,
                         judiciary: pet.judiciary?.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -164,9 +107,7 @@ const ModificationNew = () => {
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
                         court: pet.court ? pet.court.court_code : null,
-                        case_type: 3,
-                        bail_type: pet.bail_type ? pet.bail_type.type_code: null,
-                        complaint_type: pet.complaint_type.id,
+                        case_type: 5,
                         crime_registered: pet.crime_registered,
                     })
                 }
@@ -181,12 +122,6 @@ const ModificationNew = () => {
         }
     },[eFileNumber])
 
-    const petitionDetails = () => {
-        return{
-            
-        }
-    }
-
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -199,7 +134,6 @@ const ModificationNew = () => {
                 setPetition(response.data.petition)
                 setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
                 setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
-                setAdvocates(response.data.advocate)
             }
 
         }catch(error){
@@ -562,7 +496,7 @@ const ModificationNew = () => {
                             <div className="container-fluid mt-5 px-5">
                                 { isPetition && (
                                     <>
-                                        <InitialInput petition={bail} />
+                                        <InitialInput petition={petition} />
                                         <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr className="bg-navy">

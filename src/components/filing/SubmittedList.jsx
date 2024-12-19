@@ -234,9 +234,9 @@ const SubmittedList = () => {
                                     <td>
                                         { item.document.map((d, index) => (
                                             <div>
-                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>
+                                                <a key={index} onClick={()=>handleShow(d)} className='mt-1'>
                                                     { language === 'ta' ?  d.title?.document_lname || null : d.title?.document_name || null}
-                                                </span>
+                                                </a>
                                             </div>
                                         ))}
                                         { selectedDocument && (

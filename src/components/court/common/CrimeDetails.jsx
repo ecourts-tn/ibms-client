@@ -40,7 +40,11 @@ const CrimeDetails = ({crime}) => {
     }
 
     if(!crime){
-        return <p className='text-danger px-3'><strong>Crime detail not found</strong></p>;
+        return (
+            <div className="alert alert-warning">
+                <strong>Crime details not found / not mapped</strong>
+            </div>
+        )
     }
 
 

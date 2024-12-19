@@ -115,7 +115,7 @@ const PPRemarks = ({ efile_no }) => {
     }
 
     return (
-        <>
+        <div className="p-3">
             { loading && <Loading />}
             <ToastContainer />
             <form method="POST" onSubmit={handleSubmit}>
@@ -219,7 +219,7 @@ const PPRemarks = ({ efile_no }) => {
                     </div>
                 </div>
             </form>
-        </>
+        </div>
     );
 };
 

@@ -34,7 +34,6 @@ const Extension = () => {
     const[respondents, setRespondents] = useState([])
     const[advocates, setAdvocates]     = useState([])
     const[errors, setErrors] = useState({})
-    const [grounds, setGrounds] = useState('')
     const[cases, setCases] = useState([])
     const[searchPetition, setSearchPetition] = useState(1)
     const[searchForm, setSearchForm] = useState({
