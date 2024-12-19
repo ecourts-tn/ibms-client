@@ -77,6 +77,8 @@ const Surety = () => {
         fetchDetails();
     },[eFileNumber])
 
+    console.log(petition)
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         
@@ -90,6 +92,9 @@ const Surety = () => {
                 }) 
             }
           }catch(error){
+            if(error.response?.status ===500){
+                toast.error("Internal Server Error, Please try later!!!", {theme:"colored"})
+            }
             if(error?.response){
                 toast.error(error.response?.data.message, {theme:"colored"})
             }

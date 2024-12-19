@@ -35,7 +35,7 @@ const PetitionSearch = ({cases,eFileNumber, seteFileNumber}) => {
         reg_year: ''
     })
     const [errors, setErrors] = useState({}) 
-    console.log(casetypes)
+
     const validationSchema = Yup.object({
         seat: Yup.string().when("judiciary",(judiciary, schema) => {
             if(parseInt(judiciary) === 1){
