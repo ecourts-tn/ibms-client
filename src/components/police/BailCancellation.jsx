@@ -12,7 +12,7 @@ import { RelationContext } from 'contexts/RelationContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { RequiredField } from 'utils';
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 
 

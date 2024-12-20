@@ -13,15 +13,16 @@ import RedirectForm from './RedirectForm';
 
 const Payment = () => {
     const location = useLocation()
+    const query = new URLSearchParams(useLocation().search);
+    const status = query.get("status");
+    const txnid = query.get("txnid");
+    const amt = query.get("amt");
     const {t} = useTranslation()
     const paymentId = uuidv4()
-    const subdirectory = "/ibms";
     const initialState = {
         txnid:paymentId,
         amount:"20",
         scamt:"0.00",
-        return_url: `${window.location.href}?status=success`,
-        // return_url:`${window.location.protocol}//${window.location.hostname}:${window.location.port}${subdirectory}${location.pathname}`,
         udf1:"",
         udf2:"deenadayalan17@gmail.com",
         udf3:"",
@@ -125,7 +126,6 @@ const Payment = () => {
                     </Modal.Footer>
             </Modal>
             <div className="container my-4">
-                {/* <form method="post"> */}
                     <div className="row">
                         <div className="col-md-10 offset-md-1">
                             <div className="row">
@@ -141,6 +141,19 @@ const Payment = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-6 offset-md-3">
+                                    {status && (
+                                        status === "success" ? (
+                                            <div className='alert alert-success'>
+                                                <p>Payment Successful!</p>
+                                                <p>Transaction ID: {txnid}</p>
+                                                <p>Amount: {amt}</p>
+                                            </div>
+                                        ) : (
+                                            status === "failed" && (
+                                                <div className='alert alert-danger'>Payment Failed. Please try again.</div>
+                                            )
+                                        )
+                                    )}
                                     <div className="form-group mb-3">
                                         <label htmlFor="">{t('payer_name')}</label>
                                         <input 

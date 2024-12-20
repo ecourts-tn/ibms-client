@@ -8,7 +8,7 @@ import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { submittedPetition } from 'services/petitionService'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 
 const SubmittedList = () => {
 

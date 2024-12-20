@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import api from '../../api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { getPetitionByeFileNo } from 'services/petitionService'
 import { truncateChars } from 'utils'
 

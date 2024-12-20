@@ -9,7 +9,7 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Stepper from "components/filing/surety/Stepper";
+import SuretyStepper from "components/filing/stepper/SuretyStepper";
 import Surety from "components/filing/surety/Surety";
 import SuretyForm from "components/filing/surety/SuretyForm";
 
@@ -42,7 +42,7 @@ const SuretyLayout = () => (
         <div className="container-fluid" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-                <Stepper />
+                <SuretyStepper />
                 <Outlet />
             </div>
         </div>

@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import api from '../../api'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { formatDate } from 'utils'
 
 

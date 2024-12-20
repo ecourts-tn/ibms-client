@@ -3,7 +3,7 @@ import api from 'api';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import 'components/court/style.css';
 import { toast, ToastContainer } from 'react-toastify';
 import flatpickr from 'flatpickr';

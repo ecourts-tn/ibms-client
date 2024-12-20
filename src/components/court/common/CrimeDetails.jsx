@@ -1,6 +1,6 @@
 import React, {useContext, useState} from 'react'
 import { CreateMarkup } from 'utils'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'

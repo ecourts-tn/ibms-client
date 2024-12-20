@@ -13,7 +13,7 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import FIRDetails from 'components/search/FIRDetails'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 
 const FIRSearch = ({petition}) => {
 

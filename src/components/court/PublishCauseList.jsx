@@ -5,7 +5,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import 'components/court/style.css'
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import flatpickr from 'flatpickr';

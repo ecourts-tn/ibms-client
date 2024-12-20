@@ -9,8 +9,8 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Extension from "components/filing/extension/Extension";
-import Stepper from "components/filing/extension/Stepper";
+import Extension from "components/filing/allied/Extension";
+import Stepper from "components/filing/stepper/ExtensionStepper";
 
 
 const extensionRoutes = [

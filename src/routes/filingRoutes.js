@@ -10,17 +10,7 @@ import Dashboard from "components/filing/Dashboard"
 import DraftList from "components/filing/DraftList"
 import SubmittedList from "components/filing/SubmittedList"
 import PetitionDetail from "components/filing/PetitionDetail"
-import BailFiling from "components/filing/bail/BailFiling"
-import Relaxation from 'components/filing/relaxation/RelaxationOld'
-import IntervenePetition from "components/filing/intervene/NewPetitionCopy"
-import Surety from 'components/filing/surety/Surety'
-import DischargeSurety from 'components/filing/surety/DischargeSurety'
-import Extension from 'components/filing/extension/Extension'
-import ReturnPassport from 'components/filing/return/ReturnPassport'
 import PdfGenerator from "components/filing/PdfGenerator"
-import ModificationNew from 'components/filing/modification/ModificationNew'
-import ABail from 'components/filing/antibail/ABail';
-import ReturnProperty from 'components/filing/return/ReturnProperty';
 import InitialInput from "components/InitialInput";
 import PetitionerContainer from "components/petitioner/PetitionerContainer";
 import RespondentContainer from "components/respondent/RespondentContainer";
@@ -30,9 +20,9 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import BailStepper from "components/filing/bail/BailStepper";
-import ABailStepper from "components/filing/antibail/ABailStepper"
-import StepperButton from "components/filing/bail/StepperButton";
+import BailStepper from "components/filing/stepper/BailStepper";
+import ABailStepper from "components/filing/stepper/ABailStepper"
+import StepperButton from "components/filing/StepperButton";
 import Pleadings from "components/filing/Pleadings";
 import ApprovedList from "components/filing/ApprovedList";
 import ReturnedList from "components/filing/ReturnedList";
@@ -209,11 +199,7 @@ export const filingRoutes = [
     },
     {
         path:"auth/reset-password",
-        element:(
-            <PrivateRoute>
-                <ResetPassword />
-            </PrivateRoute>
-        )
+        element: <ResetPassword />
     }
 
 ]

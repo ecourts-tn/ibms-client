@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import EFileDetails from 'components/filing/efile/EFileDetails';
 import { ModelClose } from 'utils';
-import 'components/layout/public/header.css'
 import { LanguageContext } from 'contexts/LanguageContex';
 
 

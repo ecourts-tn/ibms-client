@@ -9,7 +9,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import {toast, ToastContainer} from 'react-toastify'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 
 const JudgePeriodForm = () => {
 

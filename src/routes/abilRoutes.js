@@ -11,7 +11,7 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import ABailStepper from "components/filing/antibail/ABailStepper"
+import ABailStepper from "components/filing/stepper/ABailStepper"
 
 const Litigant = () => {
     return(

@@ -1,5 +1,4 @@
 import api from 'api';
-import './auth.css';
 import * as Yup from 'yup';
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
@@ -12,7 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import LoginIcon from '@mui/icons-material/LockOpen';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import { useTranslation } from 'react-i18next';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
@@ -287,14 +286,8 @@ const Login = () => {
               </Button>
             </FormControl>
             <div className="mt-1">
-              <p>
-                <a href="#">{t('forgot_password')}</a>
-              </p>
-              <p className="d-flex justify-content-end">
-                {t('register_txt')}
-                &nbsp;
-                <Link to="auth/registration">{t('register')}</Link>
-              </p>
+              <p><Link to="auth/reset-password">{t('forgot_password')}</Link></p>
+              <p className="d-flex justify-content-end">{t('register_txt')}&nbsp;<Link to="auth/registration">{t('register')}</Link></p>
             </div>
           </div>
         </div>

@@ -6,12 +6,9 @@ import { useTranslation } from 'react-i18next'
 
 const ResetPassword = () => {
 
-    const initialState = {
-        old_password    : '',
-        new_password    : '',
-        confirm_password: ''
-    }
-    const[form, setForm] = useState(initialState)
+    const[form, setForm] = useState({})
+    const[otp, setOtp] = useState(null)
+    const[otpVerified, setOtpVerified] = useState(false)
     const[errors, setErrors] = useState({})
     const {t} = useTranslation()
 
@@ -20,6 +17,14 @@ const ResetPassword = () => {
         new_password: Yup.string().required(t('errors.password_required')),
         confirm_password: Yup.string().required(t('errors.cpassword_required')).oneOf([Yup.ref('new_password'), null], 'Passwords must match')
     })
+
+    const sendOTP = async(form) => {
+        if(form.mobile !== ''){
+            setOtpVerified(true)
+        }else{
+            // email otp
+        }
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -32,7 +37,7 @@ const ResetPassword = () => {
                     break;
                 case 200:
                     toast.success(response.response.data.message, {theme:"colored"})
-                    setForm(initialState)
+                    // setForm(initialState)
                     break;
                 case 404:
                     toast.error(response.response.data.message, {theme:"colored"})
@@ -63,49 +68,81 @@ const ResetPassword = () => {
                             </ol>
                         </nav>
                     </div>
-                    <div className="col-md-4">
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="old-password">{t('current_password')}</label>
-                                <input 
-                                    type="password" 
-                                    className={`form-control ${errors.old_password ? 'is-invalid' : null}`}
-                                    name="old_password"
-                                    value={form.old_password}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                />
-                                <div className="invalid-feedback">
-                                    { errors.old_password }
+                    <div className="col-md-5">
+                        <div>
+                            <div className="row">
+                                <div className="col-md-4">
+                                    <label htmlFor="mobile">{t('mobile')}</label>
+                                    <input 
+                                        type="mobile" 
+                                        className={`form-control ${errors.mobile ? 'is-invalid' : null}`}
+                                        name="mobile"
+                                        value={form.mobile}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.mobile }
+                                    </div>
+                                </div>
+                                <div className="col-md-1 mt-md-4 pt-md-2 d-flex justify-content-center">
+                                    <span className='text-muted'>(OR)</span>
+                                </div>
+                                <div className="col-md-7">
+                                    <div className="form-group">
+                                        <label htmlFor="email">{t('email')}</label>
+                                        <input 
+                                            type="email" 
+                                            className={`form-control ${errors.email ? 'is-invalid' : null}`}
+                                            name="email"
+                                            value={form.email}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.email }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="new-password">{t('new_password')}</label>
-                                <input 
-                                    type="password" 
-                                    className={`form-control ${errors.new_password ? 'is-invalid' : null}`}
-                                    name="new_password"
-                                    value={form.new_password}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                />
-                                <div className="invalid-feedback">
-                                    { errors.new_password }
+                            <div className="row">
+                                <div className="col-md-3 offset-md-4">
+                                    <button 
+                                        className="btn btn-primary"
+                                        onClick={sendOTP}
+                                    >{t('send_otp')}</button>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label htmlFor="confirm-password">{t('confirm_password')}</label>
-                                <input 
-                                    type="password" 
-                                    className={`form-control ${errors.confirm_password ? 'is-invalid' : null}`}
-                                    name="confirm_password"
-                                    value={form.confirm_password}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                />
-                                <div className="invalid-feedback">
-                                    { errors.confirm_password }
+                        </div>
+                        { otpVerified && (
+                            <div className='mt-3'>
+                                <div className="form-group">
+                                    <label htmlFor="new-password">{t('new_password')}</label>
+                                    <input 
+                                        type="password" 
+                                        className={`form-control ${errors.new_password ? 'is-invalid' : null}`}
+                                        name="new_password"
+                                        value={form.new_password}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.new_password }
+                                    </div>
                                 </div>
+                                <div className="form-group">
+                                    <label htmlFor="confirm-password">{t('confirm_password')}</label>
+                                    <input 
+                                        type="password" 
+                                        className={`form-control ${errors.confirm_password ? 'is-invalid' : null}`}
+                                        name="confirm_password"
+                                        value={form.confirm_password}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.confirm_password }
+                                    </div>
+                                </div>
+                                <button type="submit" className="btn btn-success">{t('change_password')}</button>
                             </div>
-                            <button type="submit" className="btn btn-success">{t('change_password')}</button>
-                        </form>
+                        )}
                     </div>
                 </div>
             </div>

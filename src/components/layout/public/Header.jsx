@@ -7,7 +7,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-import './header.css';
 import api from 'api';
 
 const Header = () => {

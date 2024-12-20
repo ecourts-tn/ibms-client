@@ -9,8 +9,8 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Stepper from "components/filing/modification/Stepper";
-import Modification from "components/filing/modification/ModificationNew";
+import Stepper from "components/filing/stepper/ModificationStepper";
+import Modification from "components/filing/allied/Modification";
 
 const Litigant = () => {
     

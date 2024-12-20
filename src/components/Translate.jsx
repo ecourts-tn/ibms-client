@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
 import api from 'api';
-import Loading from './Loading';
+import Loading from './common/Loading';
 
 const Translate = () => {
     const[text, setText] = useState('')

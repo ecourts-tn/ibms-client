@@ -9,8 +9,8 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Stepper from "components/filing/return/PropertyStepper";
-import ReturnProperty from "components/filing/return/ReturnProperty";
+import PropertyStepper from "components/filing/stepper/PropertyStepper";
+import ReturnProperty from "components/filing/allied/ReturnProperty";
 import { useTranslation } from "react-i18next";
 
 const Litigant = () => {
@@ -48,7 +48,7 @@ const ReturnPropertyLayout = () => (
             </nav> */}
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-                <Stepper />
+                <PropertyStepper />
                 <Outlet />
             </div>
         </div>

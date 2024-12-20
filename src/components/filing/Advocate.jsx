@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import api from 'api'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 
 
 const Advocate = () => {

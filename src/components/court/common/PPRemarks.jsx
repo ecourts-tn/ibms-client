@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Document from 'components/court/common/Document';
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import api from 'api';
 import { toast, ToastContainer } from 'react-toastify';
 

@@ -3,8 +3,8 @@ import { useLocation, Link } from 'react-router-dom'
 import api from 'api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/Loading'
-import 'components/filing/style.css'
+import Loading from 'components/common/Loading'
+
 
 const ProceedingDetail = () => {
 

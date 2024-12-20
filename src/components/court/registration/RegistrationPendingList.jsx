@@ -2,7 +2,7 @@ import api from 'api'
 import React, {useState, useEffect, useContext} from 'react'
 import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next'; 
 

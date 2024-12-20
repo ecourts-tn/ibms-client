@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { formatDate } from 'utils'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import api from 'api'
 
 const ConditionList = () => {

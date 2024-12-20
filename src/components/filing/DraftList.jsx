@@ -9,7 +9,7 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { pendingPetition } from 'services/petitionService'
 
 
@@ -222,10 +222,6 @@ const DraftList = () => {
                                             to="/filing/detail" 
                                             state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
                                         >
-                                            {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
-                                                <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
-                                            ) : null}
-                                            <br />
                                             {item.petition?.efile_number ? (
                                                 <strong>{item.petition.efile_number}</strong>
                                             ) : null}
@@ -236,11 +232,17 @@ const DraftList = () => {
                                             </span>
                                         ) : null}
                                     </td>
-                                    <td>
-                                        <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
-                                        <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
-                                        <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
-                                    </td>
+                                    { item.petition?.judiciary.id === 1 ? (
+                                        <td>
+                                            <span>{ language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name }</span><br />
+                                        </td>
+                                    ) : (
+                                        <td>
+                                            <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
+                                            <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
+                                            <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
+                                        </td>
+                                    )}
                                     <td className="text-center">
                                         { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
