@@ -148,7 +148,9 @@ function MaskedParagraph({mask, language, text}) {
     }else if(language === 'tamil'){
         if(mask){
             return(
-                <span dangerouslySetInnerHTML={CreateMarkup(text.replace(/[\u0B80-\u0BFF]/g,'*').replace(/[a-zA-Z]/g,'*').replace(/[0-9]/g,'*'))}></span>
+                <p dangerouslySetInnerHTML={CreateMarkup(text.replace(/[\u0B80-\u0BFF()<>&.,;-_\/a-zA-Z0-9]/g, '*'))}>
+
+                </p>
             )
         }else{
             return (

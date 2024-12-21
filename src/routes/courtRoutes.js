@@ -8,11 +8,9 @@ import DailyProceedings from "components/court/proceeding/DailyProceedings"
 import CaseRegistration from "components/court/registration/CaseRegistration"
 import PendingList from 'components/court/scrutiny/PendingList'
 import DailyProceedingsList from 'components/court/proceeding/DailyProceedingsList'
-import BailOrder from 'components/court/BailOrder'
 import RegistrationPendingList from 'components/court/registration/RegistrationPendingList'
 import SuretyPendingList from 'components/court/surety/SuretyPendingList'
 import SuretyVerify from 'components/court/surety/SuretyVerify'
-import OrderPendingList from 'components/court/orders/OrderPendingList'
 import JudgeForm from 'components/court/admin/judge/JudgeForm';
 import JudgePeriodForm from 'components/court/admin/judge/JudgePeriodForm';
 import JudgeList from 'components/court/admin/judge/JudgeList';
@@ -22,9 +20,7 @@ import CaseTransferRequest from "components/court/admin/CaseTransferRequest";
 import CaseTransferReceive from "components/court/admin/CaseTransferReceive";
 import GenerateOrder from "components/court/orders/GenerateOrder";
 import UploadOrder from "components/court/orders/UploadOrder";
-import GenerateODT from "components/court/orders/GenreateODT";
 import BailBond from "components/court/orders/BailBond";
-import GenerateStyledDocx from "components/court/orders/HtmlToDocx";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },

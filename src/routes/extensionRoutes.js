@@ -1,9 +1,7 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
@@ -15,7 +13,6 @@ import Stepper from "components/filing/stepper/ExtensionStepper";
 
 const extensionRoutes = [
     { path: "initial-input", component: <Extension /> },
-    // { path: "litigant", component: <PetitionerContainer /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },

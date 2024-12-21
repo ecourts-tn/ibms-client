@@ -1,10 +1,8 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
 import Relaxation from 'components/filing/allied/Relaxation'
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
@@ -12,16 +10,6 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import RelaxationStepper from "components/filing/stepper/RelaxationStepper";
 
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
 
 const conditionRoutes = [
     { path: "initial-input", component: <Relaxation /> },

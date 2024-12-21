@@ -1,9 +1,7 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
@@ -12,18 +10,6 @@ import EFile from "components/filing/efile/EFile";
 import SuretyStepper from "components/filing/stepper/SuretyStepper";
 import Surety from "components/filing/surety/Surety";
 import SuretyForm from "components/filing/surety/SuretyForm";
-
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
 
 
 const suretyRoutes = [

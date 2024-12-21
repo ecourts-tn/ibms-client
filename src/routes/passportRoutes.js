@@ -1,9 +1,7 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet,Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/filing/Ground";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
@@ -11,23 +9,10 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import PassportStepper from "components/filing/stepper/PassportStepper";
 import ReturnPassport from "components/filing/allied/ReturnPassport";
-import { useTranslation } from "react-i18next";
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
 
 
 const passportRoutes = [
     { path: "initial-input", component: <ReturnPassport /> },
-    // { path: "litigant", component: <Litigant /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },
@@ -39,13 +24,6 @@ const ReturnPassportLayout = () => (
     
     <PrivateRoute>
         <div className="container" style={{ minHeight:'500px'}}>
-            {/* <nav aria-label="breadcrumb" className="mt-2 mb-1">
-                <ol className="breadcrumb">
-                    <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
-                    <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                    <li className="breadcrumb-item active" aria-current="page">{t('condition')}</li>
-                </ol>
-            </nav> */}
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <PassportStepper />

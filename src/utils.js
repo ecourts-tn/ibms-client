@@ -1,6 +1,3 @@
-import { Dangerous } from '@mui/icons-material';
-
-
 export const CreateMarkup = (content) => {
     return {__html: content}
 }

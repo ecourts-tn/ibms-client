@@ -43,6 +43,7 @@ const DraftList = () => {
     useEffect(() => {
         const fetchPetition = async() => {
             try{
+                setLoading(true)
                 const response = await pendingPetition()
                 // if (response.status === 200) {
                     setCases(response)

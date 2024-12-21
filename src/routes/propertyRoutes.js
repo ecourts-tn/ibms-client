@@ -1,9 +1,7 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/filing/Ground";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
@@ -11,23 +9,10 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import PropertyStepper from "components/filing/stepper/PropertyStepper";
 import ReturnProperty from "components/filing/allied/ReturnProperty";
-import { useTranslation } from "react-i18next";
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
 
 
 const propertyRoutes = [
     { path: "initial-input", component: <ReturnProperty /> },
-    // { path: "litigant", component: <Litigant /> },
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },
