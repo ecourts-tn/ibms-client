@@ -22,7 +22,7 @@ import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const InitialInput = () => {
-    const {fir} = useContext(BaseContext)
+    const {fir}             = useContext(BaseContext)
     const {states}          = useContext(StateContext)
     const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
@@ -129,34 +129,24 @@ const InitialInput = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            // setPetition({...petition, adv_code:user.user.userlogin})
-            const response = await api.post("case/filing/create/", petition)
+            const response = await api.post("case/filing/create/", {petition, fir})
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                sessionStorage.setItem("efile_no", efile_no)
-                const requests = []
-                if(Object.keys(fir).length > 0){
-                    fir.efile_no = efile_no
-                    const crime_reqeust = await api.post(`case/crime/details/create/`, fir);
-                    requests.push(crime_reqeust)
-                }
-                if(parseInt(user.group) === 1){
-                    const advocate = {
-                        petition: efile_no,
-                        advocate: user.userlogin,
-                        is_primary: true
-                    }
-                    const advocate_request = await api.post(`case/advocate/`, advocate);
-                    requests.push(advocate_request)
-                }        
-                if(requests.length > 0){
-                    const responses = await Promise.all(requests);
-                    responses.forEach((res, index) => {
-                        if (res.status === 201 || res.status === 200) {
-                            console.log(`Response ${index + 1} success:`, res.data.message);
-                          }
-                    })
-                }
+                // sessionStorage.setItem("efile_no", efile_no)
+                // const requests = []
+                // if(Object.keys(fir).length > 0){
+                //     fir.efile_no = efile_no
+                //     const crime_reqeust = await api.post(`case/crime/details/create/`, fir);
+                //     requests.push(crime_reqeust)
+                // }
+                // if(requests.length > 0){
+                //     const responses = await Promise.all(requests);
+                //     responses.forEach((res, index) => {
+                //         if (res.status === 201 || res.status === 200) {
+                //             console.log(`Response ${index + 1} success:`, res.data.message);
+                //           }
+                //     })
+                // }
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })

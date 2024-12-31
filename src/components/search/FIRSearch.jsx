@@ -14,10 +14,11 @@ import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import FIRDetails from 'components/search/FIRDetails'
 import Loading from 'components/common/Loading'
+import { toast, ToastContainer } from 'react-toastify'
 
 const FIRSearch = ({petition}) => {
 
-    const {fir, setFir, setAccused} = useContext(BaseContext)
+    const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
     const {policeDistricts} = useContext(PoliceDistrictContext)
@@ -54,9 +55,6 @@ const FIRSearch = ({petition}) => {
         })
     },[])
 
-    console.log(petition)
-    console.log(form)
-
     const handleSearch = async (e) => {
         e.preventDefault()
         try{
@@ -65,8 +63,8 @@ const FIRSearch = ({petition}) => {
             setShowAdditionalFields(false)
             const response = await api.post("external/police/tamilnadu/fir-details/", form);
             if (response.status === 200) {
-                setLoading(false);
-                const data = typeof response.data === 'string' ? JSON.parse(JSON.stringify(response.data)) : response.data;
+                const data = typeof response.data.fir === 'string' ? JSON.parse(JSON.stringify(response.data.fir)) : response.data.fir;
+                setFirId(response.data.id)
                 setFir({
                     ...fir,
                     state: form.state,
@@ -101,7 +99,13 @@ const FIRSearch = ({petition}) => {
             }
 
         }catch(error){
-            console.error(error)
+            if(error.response){
+                if(error.response.status === 500){
+                    toast.error("Internal server error", {
+                        theme : "colored"
+                    })
+                }
+            }
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -109,10 +113,13 @@ const FIRSearch = ({petition}) => {
                 })
                 setErrors(newErrors)
             }
+        }finally{
+            setLoading(false)
         }
     }
     return (
         <>
+            <ToastContainer />
             <div className="row">
                 {/* <div className="col-md-12 p-0">
                     <p className="bg-warning py-1 px-3"><strong>FIR Search</strong></p>

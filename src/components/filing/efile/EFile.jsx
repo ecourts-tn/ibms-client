@@ -8,10 +8,12 @@ import { useTranslation } from 'react-i18next';
 import EFileDetails from 'components/filing/efile/EFileDetails';
 import { ModelClose } from 'utils';
 import { LanguageContext } from 'contexts/LanguageContex';
+import Loading from 'components/common/Loading';
 
 
 const EFile = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false)
   const[errors, setErrors] = useState([])
   const[show, setShow] = useState(false);
   const[showError, setShowError] = useState(false)
@@ -74,6 +76,7 @@ const handleSubmit = async () => {
       return;
     }
     try {
+      setLoading(true)
       const response = await api.post("case/filing/final-submit/", { efile_no });
       if (response.status === 200) {
         try {
@@ -97,11 +100,15 @@ const handleSubmit = async () => {
         setShowError(true)
         setErrors(error.response?.data.messages)
       }
+    }finally{
+      setLoading(false)
     }
+
   };
   
   return (
     <>
+      { loading && <Loading />}
       <ToastContainer />
         <Modal 
           show={showError} 

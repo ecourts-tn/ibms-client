@@ -187,21 +187,7 @@ const Relaxation = () => {
                 // Reset the form and selected data on successful submission
                 resetPage();
                 setSelectedPetitioner([]);
-                setSelectedRespondent([]);
-                
-                // Store efile number in sessionStorage
-                sessionStorage.setItem("efile_no", response.data.efile_number);
-                if(parseInt(user.group) === 1){
-                    const advocate = {
-                        petition: sessionStorage.getItem("efile_no"),
-                        advocate: user.userlogin,
-                        is_primary: true
-                    }
-                    const advocate_request = await api.post(`case/advocate/`, advocate);
-                    if(advocate_request.status === 201){
-                        console.log("adovcate created successfully")
-                    }
-                }        
+                setSelectedRespondent([]);      
                 
                 // Show success message
                 toast.success(`${response.data.efile_number} details submitted successfully`, {

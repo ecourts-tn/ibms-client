@@ -368,6 +368,7 @@
     "efile_number": "eFiling Number",
     "court_detail": "Court Detail",
     "payment": "Payment",
+    "efile": "E-File",
     "efile_date": "eFile Date",
     "download": "Download",
     "alerts": {
@@ -439,7 +440,7 @@
         "rank_required": "Please enter the Rank",
         "gender_required": "Please select the gender",
         "relation_required": "Please select the parantage",
-        "relation_name": "Please enter parantage name",
+        "relation_name_required": "Please enter parantage name",
         "age_required":"Please enter the age",
         "act_required": "Please enter the Act",
         "section_required": "Please enter the Section(s)",

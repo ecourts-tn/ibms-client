@@ -160,28 +160,6 @@ const Modification = () => {
         }
     }
 
-    // const handleInitialSubmit = async() => {
-    //     const post_data = {
-    //         petition: petition,
-    //         petitioner:selectedPetitioner,
-    //         respondent: selectedRespondent,
-    //     }
-    //     if (Object.keys(selectedPetitioner).length === 0){
-    //         alert("Please select atleast one petitioner")
-    //         return
-    //     }
-    //     const response = await api.post("case/filing/relaxation/", post_data)
-    //     if(response.status === 201){
-    //         resetPage()
-    //         setSelectedPetitioner([])
-    //         setSelectedRespondent([])
-    //         sessionStorage.setItem("efile_no", response.data.efile_number)
-    //         toast.success(`${response.data.efile_number} details submitted successfully`,{
-    //             theme: "colored"
-    //         })
-    //     }
-    // }
-
     const handleInitialSubmit = async () => {
         // Ensure that at least one petitioner is selected
         if (selectedPetitioner.length === 0) {
@@ -223,16 +201,6 @@ const Modification = () => {
             console.error(error);
         }
     };
-
-    // const resetPage = () => {
-    //     setSearchForm({...searchForm, reg_number: '', reg_year: ''})
-    //     seteFileNumber('')
-    //     setIsPetition(false)
-    //     setPetition({})
-    //     setPetitioners([])
-    //     setRespondents([])
-    //     setAdvocates([])
-    // }
 
     const resetPage = () => {
         setSelectedPetitioner([]);

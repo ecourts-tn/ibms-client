@@ -60,9 +60,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     }, [selectedRespondent])
 
     useEffect(() => {
+        const efile_no = sessionStorage.getItem("efile_no")
         async function getCrimeDetail()  {
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get(`case/crime/detail/`, {
                     params:{efile_no}
                 })
@@ -75,10 +75,12 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     })
                 }
             }catch(error){
-                console.log(error)
+                console.error(error)
             }
         }
-        getCrimeDetail()
+        if(efile_no){
+            getCrimeDetail();
+        }
     },[])
 
 

@@ -220,3 +220,7 @@ legend > span {
     width: 150px; /* Adjust size as needed */
     height: 150px;
   }
+
+  .sensitive-case{
+    font-weight: bold;
+  }

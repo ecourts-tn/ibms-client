@@ -369,6 +369,7 @@ const AdvocateRegistration = () => {
 
     const verifyEmail = async (otp) => {
         try{
+            setLoading(true)
             const response = await api.post("external/email/verify-otp/", {
                 email_address: form.email,
                 otp: parseInt(otp)
@@ -379,13 +380,17 @@ const AdvocateRegistration = () => {
                 })
                 setEmailVerified(true)
             }
-        }catch(err)
-        {
-            toast.error(t('alerts.invalid_otp'),{
-                theme:"colored"
-            })
+        }catch(error){
+            if(error.response){
+                toast.error(error.response.data.message, {
+                    theme:"colored"
+                })
+            }
+
             setEmailVerified(false)
             setEmailOtp(true)
+        }finally{
+            setLoading(false)
         }
     }
 

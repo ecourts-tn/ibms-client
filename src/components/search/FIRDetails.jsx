@@ -1,17 +1,35 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import {CreateMarkup} from '../../utils'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
 import { BaseContext } from '../../contexts/BaseContext'
 import { useTranslation } from 'react-i18next'
+import api from 'api'
 
 
 const FIRDetails = () => {
-    const {fir, accused} = useContext(BaseContext)
+    const {fir, accused, firId} = useContext(BaseContext)
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {t} = useTranslation()
+
+    useEffect(() => {
+        if (firId) {
+            const fetchFIR = async () => {
+                try {
+                    const response = await api.post("external/police/api/detail/", { id: firId });
+                    if (response.status === 200) {
+                        console.log(response.data);
+                    }
+                } catch (error) {
+                    console.error("Error fetching FIR details:", error);
+                }
+            };
+    
+            fetchFIR();
+        }
+    }, [firId]);
 
     return (
         <>
@@ -45,6 +63,13 @@ const FIRDetails = () => {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <table className="table table-bordered table-striped table-sm">
+                                            { fir.sencitive_case && (
+                                               <tr>
+                                                    <td colSpan={4} className='text-center bg-danger'>
+                                                        <span className='sensitive-case'>Sensitive Case</span>
+                                                    </td>
+                                               </tr> 
+                                            )}
                                             <tr>
                                                 <td>{t('date_of_occurence')}</td>
                                                 <td>{ fir.date_of_occurrence }</td>
@@ -75,20 +100,14 @@ const FIRDetails = () => {
                                             </tr>
                                             <tr>
                                                 <td colSpan={4}>
-                                                <p><strong>{t('gist_of_fir')}<span className="text-danger ml-2">{fir.sencitive_case ? 'Sencitive case' : ''}</span></strong> </p>
-                                                    { fir.sencitive_case ? 
-                                                        <MaskedParagraph mask={true} language={'tamil'} text={fir.gist_of_fir}/> : 
-                                                        <MaskedParagraph mask={false} language={'tamil'} text={fir.gist_of_fir}/> 
-                                                    }
+                                                    <p><strong>{t('gist_of_fir')}</strong></p>
+                                                    { fir.gist_of_fir }
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colSpan={4} width="500">
-                                                    <p><strong>{t('gist_in_local')}<span className="text-danger ml-2">{fir.sencitive_case ? 'Sencitive case' : ''}</span></strong> </p>
-                                                    { fir.sencitive_case ? 
-                                                        <MaskedParagraph mask={true} language={'tamil'} text={fir.gist_in_local}/> : 
-                                                        <MaskedParagraph mask={false} language={'tamil'} text={fir.gist_in_local}/> 
-                                                    }
+                                                <td colSpan={4}>
+                                                    <p><strong>{t('gist_in_local')}</strong></p>
+                                                    { fir.gist_in_local }
                                                 </td>
                                             </tr>
                                         </table>
@@ -131,34 +150,6 @@ const FIRDetails = () => {
             </div>    
         </>
     )
-}
-
-
-function MaskedParagraph({mask, language, text}) {
-    if(language === 'english'){
-        if(mask){
-            return(
-                <span dangerouslySetInnerHTML={CreateMarkup(text.replace(/[a-zA-Z]/g,'*').replace(/[0-9]/g,'*'))}></span>
-            )
-        }else{
-            return (
-                <span dangerouslySetInnerHTML={CreateMarkup(text)}></span>
-            )
-        }
-    }else if(language === 'tamil'){
-        if(mask){
-            return(
-                <p dangerouslySetInnerHTML={CreateMarkup(text.replace(/[\u0B80-\u0BFF()<>&.,;-_\/a-zA-Z0-9]/g, '*'))}>
-
-                </p>
-            )
-        }else{
-            return (
-                <span dangerouslySetInnerHTML={CreateMarkup(text)}></span>
-            )
-        }
-    }
-    return null;
 }
 
 
