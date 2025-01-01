@@ -21,6 +21,8 @@ const Home = () => {
         }
     },[isAuth])
 
+    console.log(document.cookie)
+
     return (
         <>
             <Container fluid className="px-5" style={{minHeight:'600px'}}>

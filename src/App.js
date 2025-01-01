@@ -6,6 +6,7 @@ import PublicLayout from 'components/layout/public/PublicLayout'
 import AdminLayout from 'components/layout/admin/AdminLayout';
 import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
+import { UserTypeProvider } from 'contexts/UserTypeContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
 import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
