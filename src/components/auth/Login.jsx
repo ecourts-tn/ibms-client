@@ -24,7 +24,6 @@ const Login = () => {
   const [isDepartment, setIsDepartment] = useState(false);
   const { language } = useContext(LanguageContext);
   const [captchaValid, setCaptchaValid] = useState(null);
-  const [captchaImageUrl, setCaptchaImageUrl] = useState('');
   const { t } = useTranslation();
   const { login } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
@@ -34,52 +33,49 @@ const Login = () => {
     password: '',
     captcha: ''
   });
+  const [captchaText, setCaptchaText] = useState("");
+  const [userInput, setUserInput] = useState("");
 
   const validationSchema = Yup.object({
     usertype: Yup.string().required(t('errors.usertype_required')),
     username: Yup.string().required(t('errors.username_required')),
     password: Yup.string().required(t('errors.password_required')),
+    captcha: Yup.string().required(t('errors.captcha_required')),
   });
 
-  const fetchCaptcha = async () => {
-    try {
-      const response = await api.get('auth/captcha/generate/', {
-        responseType: 'blob',
-        withCredentials: true,
-      });
-      const imageBlob = URL.createObjectURL(response.data);
-      setCaptchaImageUrl(imageBlob);
-    } catch (error) {
-      console.error('Error fetching CAPTCHA:', error);
+  const generateCaptcha = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let captcha = '';
+    for (let i = 0; i < 6; i++) {
+      captcha += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-  };
-
-  const verifyCaptcha = async (captchaValue) => {
-    try {
-      const response = await api.post(
-        'auth/captcha/verify/',
-        { captcha: captchaValue },
-        { withCredentials: true }
-      );
-
-      if (response.data.success) {
-        setCaptchaValid(true);
-        return true;
-      } else {
-        setCaptchaValid(false);
-        await fetchCaptcha();
-        return false;
-      }
-    } catch (error) {
-      console.error('Error verifying CAPTCHA:', error);
-      setCaptchaValid(false);
-      return false;
-    }
+    return captcha;
   };
 
   useEffect(() => {
-    fetchCaptcha();
+    setCaptchaText(generateCaptcha());
   }, []);
+
+  // Function to refresh the CAPTCHA
+  const refreshCaptcha = () => {
+    setCaptchaText(generateCaptcha());
+    setForm({ ...form, captcha: '' });
+    setCaptchaValid(null);
+  };
+
+  // Function to verify the CAPTCHA
+  const verifyCaptcha = () => {
+    if (userInput === captchaText) {
+      setCaptchaValid(true);
+      alert("CAPTCHA Verified Successfully!");
+    } else {
+      setCaptchaValid(false);
+      alert("Incorrect CAPTCHA. Please try again.");
+      refreshCaptcha();
+    }
+  };
+
+
 
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -89,24 +85,32 @@ const Login = () => {
       await validationSchema.validate(form, { abortEarly: false });
 
       // Hash the password using bcryptjs before sending it to the server
-    //   const hashedPassword = bcrypt.hashSync(form.password, 10);
+      //   const hashedPassword = bcrypt.hashSync(form.password, 10);
 
-    //   const isCaptchaValid = await verifyCaptcha(form.captcha);
-    //   if (isCaptchaValid) {
-        const { username, usertype, password } = form;
-        const response = await api.post(
-          'auth/login/',
+       // Check if CAPTCHA is valid
+      if (form.captcha !== captchaText) {
+        setCaptchaValid(false);
+        toast.error(t('alerts.captcha_failed'), { theme: 'colored' });
+        refreshCaptcha();
+        setLoading(false);
+        return;
+      }
+
+      setCaptchaValid(true);
+      const { username, usertype, password } = form;
+      const response = await api.post(
+        'auth/login/',
         //   { usertype, username, password: hashedPassword }, // Sending hashed password
-          { usertype, username, password},
-          {
-            skipInterceptor: true,
-          }
-        );
-        await login(response.data);
-        toast.success('Logged in successfully', {
-          theme: 'colored',
-        });
-    //   }
+        { usertype, username, password },
+        {
+          skipInterceptor: true,
+        }
+      );
+      await login(response.data);
+      toast.success('Logged in successfully', {
+        theme: 'colored',
+      });
+  
     } catch (error) {
       if (error.inner) {
         setLoading(false);
@@ -250,12 +254,17 @@ const Login = () => {
             </div>
           </div>
           <div className="col-md-7 d-flex">
-            {captchaImageUrl ? (
-              <img src={captchaImageUrl} alt="CAPTCHA" className="img-captcha" />
-            ) : (
-              <span className="img-captcha px-2 pt-1">captcha loading...</span>
-            )}
-            <button className="btn bg-olive btn-captcha" onClick={fetchCaptcha} type="button">
+
+            <span className="img-captcha" style={{
+              fontSize: "25px",
+              fontWeight: "bold",
+              background: "#ffffff",
+              color: "#3498db",
+              paddingLeft: '10px',
+
+            }}>{captchaText}</span>
+
+            <button className="btn bg-olive btn-captcha" onClick={refreshCaptcha} type="button">
               <RefreshIcon />
             </button>
           </div>
@@ -266,9 +275,11 @@ const Login = () => {
               value={form.captcha}
               onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
               placeholder="Enter CAPTCHA"
-              className={`form-control ${errors.captcha ? 'is-invalid' : ''}`}
+              className={`form-control ${captchaValid === false ? 'is-invalid' : ''}`}
             />
-            <div className="invalid-feedback">{errors.captcha}</div>
+             {captchaValid === false && (
+              <div className="invalid-feedback">{t('alerts.captcha_failed')}</div>
+            )}
           </div>
           <div className="col-md-12">
             {captchaValid === false && (

@@ -26,9 +26,15 @@ import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 
 function App() {
+
+  const handleRightClick = (event) => {
+    event.preventDefault();  // Prevent the context menu from appearing
+    alert('Right-click is disabled on this page!');
+  };
   
   return (
-    <>
+    <>  
+    {/* <div onContextMenu={handleRightClick}> */}
       <BrowserRouter basename="/ibms">
         <AuthProvider>
           <AppProvider>
@@ -77,6 +83,7 @@ function App() {
           </AppProvider>
         </AuthProvider>
       </BrowserRouter> 
+      {/* </div> */}
 
     </>
     
