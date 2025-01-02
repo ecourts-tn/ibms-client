@@ -5,6 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from 'utils';
 import * as Yup from 'yup'
+import api from 'api';
 import { BaseContext } from 'contexts/BaseContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { StateContext } from 'contexts/StateContext';
@@ -29,7 +30,7 @@ const AccusedDetails = ({addPetitioner}) => {
   const initialState = {
       litigant: 'o',
       litigant_name: '',
-      litigant_type: 1, 
+      litigant_type: '', 
       relation: '',
       relation_name: '',
       age:'',
@@ -44,7 +45,7 @@ const AccusedDetails = ({addPetitioner}) => {
       pincode:'',
       nationality: 1,
       mobile_number:'',
-      identify_proof:'',
+      // identify_proof:'',
       proof_number:'',
       email_address:'',
       act: '',
@@ -68,10 +69,10 @@ const AccusedDetails = ({addPetitioner}) => {
     gender: Yup.string().required(),
     address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
-    proof_number: Yup.string().required("Identify proof number is required"),
+    // proof_number: Yup.string().required("Identify proof number is required"),
     act: Yup.string().required(),
     section: Yup.string().required(),
-    address: Yup.string().required(),
+    // address: Yup.string().required(),
     // prison: Yup.string().when("is_custody", (is_custody, schema) => {
     //   if(is_custody){
     //       return schema.required("Please select the prison")
@@ -130,10 +131,21 @@ const AccusedDetails = ({addPetitioner}) => {
 
   const handleSubmit = async() => {
     try{
-      await validationSchema.validate(litigant, { abortEarly:false})
-      addPetitioner(litigant)
+      // await validationSchema.validate(litigant, { abortEarly:false})
+      await validationSchema.validate(litigant, { abortEarly: false });
+
+      // Add litigant_type to the payload
+      const postData = {
+        ...litigant,
+        litigant_type: 3, // Add litigant_type=3
+      };
+      const response = await api.post("litigant/create/", postData);
+      if(response.status === 201) {
+        toast.success("Accused Details Added Successfully",{theme:"colored"})
+        setErrors({});
+      }
     }catch(error){
-      console.log(error.inner)
+      // console.log(error.inner)
       if(error.inner){
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -141,8 +153,13 @@ const AccusedDetails = ({addPetitioner}) => {
         });
         setErrors(newErrors);
       }
-      if(error){
-        toast.error(error.response, {theme:"colored"})
+      if (error.response) {
+        toast.error(error.response.data?.message || "An error occurred", {
+          theme: "colored",
+        });
+      } else {
+        console.error("Error:", error);
+        toast.error("An unexpected error occurred", { theme: "colored" });
       }
     }
   }
@@ -451,7 +468,7 @@ const AccusedDetails = ({addPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}

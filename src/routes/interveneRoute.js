@@ -1,8 +1,8 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import NewPetition from "components/filing/intervene/NewPetition";
+import Petition from "components/filing/intervene/Petition";
 import PetitionerContainer from "components/petitioner/PetitionerContainer";
 import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
@@ -10,7 +10,7 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Stepper from "components/filing/intervene/Stepper";
+import InterveneStepper from "components/filing/stepper/InterveneStepper";
 import Petitioner from "components/filing/intervene/Petitioner";
 import AccusedDetails from "components/filing/intervene/AccusedDetails";
 
@@ -27,7 +27,7 @@ const Litigant = () => {
 
 
 const interveneRoutes = [
-    { path: "initial-input", component: <NewPetition /> },
+    { path: "initial-input", component: <Petition /> },
     { path: "petitioner", component: <Petitioner />},
     { path: "accused-detail", component: <AccusedDetails />},
     { path: "litigant", component: <Litigant /> },
@@ -51,7 +51,7 @@ const InterveneLayout = () => (
             </nav> */}
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-                <Stepper />
+                <InterveneStepper />
                 <Outlet />
             </div>
         </div>

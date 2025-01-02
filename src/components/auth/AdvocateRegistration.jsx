@@ -17,12 +17,13 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
-import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggl
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
+
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -368,6 +369,7 @@ const AdvocateRegistration = () => {
 
     const verifyEmail = async (otp) => {
         try{
+            setLoading(true)
             const response = await api.post("external/email/verify-otp/", {
                 email_address: form.email,
                 otp: parseInt(otp)
@@ -378,13 +380,17 @@ const AdvocateRegistration = () => {
                 })
                 setEmailVerified(true)
             }
-        }catch(err)
-        {
-            toast.error(t('alerts.invalid_otp'),{
-                theme:"colored"
-            })
+        }catch(error){
+            if(error.response){
+                toast.error(error.response.data.message, {
+                    theme:"colored"
+                })
+            }
+
             setEmailVerified(false)
             setEmailOtp(true)
+        }finally{
+            setLoading(false)
         }
     }
 

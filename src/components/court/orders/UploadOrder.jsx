@@ -1,5 +1,9 @@
 import api from 'api'
+<<<<<<< HEAD
 import Loading from 'components/Loading'
+=======
+import Loading from 'components/common/Loading'
+>>>>>>> deena
 import { CaseTypeContext } from 'contexts/CaseTypeContext'
 import { LanguageContext } from 'contexts/LanguageContex'
 import React, { useContext, useState } from 'react'

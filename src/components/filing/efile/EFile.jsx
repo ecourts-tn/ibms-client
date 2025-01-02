@@ -1,5 +1,5 @@
 import api from 'api';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from '@mui/material/Button';
 import { toast, ToastContainer } from 'react-toastify';
@@ -7,15 +7,25 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import EFileDetails from 'components/filing/efile/EFileDetails';
 import { ModelClose } from 'utils';
+<<<<<<< HEAD
 import 'components/layout/public/header.css'
+=======
+import { LanguageContext } from 'contexts/LanguageContex';
+import Loading from 'components/common/Loading';
+>>>>>>> deena
 
 
 const EFile = () => {
   const navigate = useNavigate();
+<<<<<<< HEAD
+=======
+  const [loading, setLoading] = useState(false)
+>>>>>>> deena
   const[errors, setErrors] = useState([])
   const[show, setShow] = useState(false);
   const[showError, setShowError] = useState(false)
   const handleErrorClose = () => setShowError(false);
+<<<<<<< HEAD
   const { t } = useTranslation();
   const [checkboxStates, setCheckboxStates] = useState([
     { id: 1, checked: false, label: 'I solemnly state that the contents provided by me are true to the best of my knowledge and belief. And that conceals nothing and that no part of it is false.' },
@@ -29,6 +39,42 @@ const EFile = () => {
   //   const handleClose = () => setShow(false);
   const handleClose = () => {
       console.log("Modal is being closed");
+=======
+  const[declarations, setDeclarations] = useState([])
+  const { t } = useTranslation();
+  const {language} = useContext(LanguageContext)
+  const [checkboxStates, setCheckboxStates] = useState([]);
+
+  useEffect(() => {
+    const fetchDeclarations = async() => {
+      try{
+        const response = await api.get(`base/declaration/`)
+        if(response.status === 200){
+          setDeclarations(response.data)
+        }
+      }catch(error){
+        console.error(error)
+      }
+    }
+    fetchDeclarations()
+  },[])
+
+  useEffect(() => {
+    if (declarations.length > 0) {
+      const initialCheckboxStates = declarations.map((item) => ({
+        id: item.id,
+        checked: false,
+        label: item.declaration,
+        tlabel: item.ldeclaration,
+      }));
+      setCheckboxStates(initialCheckboxStates);
+    }
+  }, [declarations]);
+
+
+  //   const handleClose = () => setShow(false);
+  const handleClose = () => {
+>>>>>>> deena
       setShow(false);
   };
   const handleShow = () => setShow(true);
@@ -44,6 +90,7 @@ const EFile = () => {
     );
   };
 
+<<<<<<< HEAD
 const handleSubmit = async () => {
     const efile_no = sessionStorage.getItem("efile_no");
     if (efile_no) {
@@ -68,12 +115,50 @@ const handleSubmit = async () => {
           setShowError(true)
           setErrors(error.response?.data.messages)
         }
-      }
+=======
+
+
+const handleSubmit = async () => {
+    const efile_no = sessionStorage.getItem("efile_no");
+    if (!efile_no) {
+      toast.error("Something went wrong! Please verify your data", {theme:"colored"})
+      return;
     }
+    try {
+      setLoading(true)
+      const response = await api.post("case/filing/final-submit/", { efile_no });
+      if (response.status === 200) {
+        try {
+          const result = await api.put(`case/filing/final-submit/`, {efile_no});
+          if (result.status === 200) {
+            toast.success("Petition filed successfully", { theme: "colored" });
+          }
+          sessionStorage.removeItem("efile_no");
+          setTimeout(() => {
+            navigate("/filing/dashboard");
+          }, 500)
+        } catch (error) {
+          console.log(error)
+          if(error.response?.status === 400){
+            toast.error("unable to submit", {theme:"colored"})
+          }
+        }
+>>>>>>> deena
+      }
+    }catch (error) {
+      if(error.response?.status === 400){
+        setShowError(true)
+        setErrors(error.response?.data.messages)
+      }
+    }finally{
+      setLoading(false)
+    }
+
   };
   
   return (
     <>
+      { loading && <Loading />}
       <ToastContainer />
         <Modal 
           show={showError} 
@@ -110,7 +195,7 @@ const handleSubmit = async () => {
                 checked={checkbox.checked}
                 onChange={() => handleCheckboxChange(checkbox.id)}
               />{' '}
-              {t(checkbox.label)}
+              {language === 'ta' ? checkbox.tlabel : checkbox.label }
             </div>
           ))}
         </div>

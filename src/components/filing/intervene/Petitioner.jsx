@@ -68,14 +68,14 @@ const Petitioner = ({addPetitioner}) => {
     relation: Yup.string().required(),
     relation_name: Yup.string().required(),
     age: Yup.number().required(),
-    rank: Yup.string().required(),
+    // rank: Yup.string().required(),
     gender: Yup.string().required(),
-    address: Yup.string().required(),
+    // address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required"),
     proof_number: Yup.string().required("Identify proof number is required"),
-    act: Yup.string().required(),
-    section: Yup.string().required(),
-    address: Yup.string().required(),
+    // act: Yup.string().required(),
+    // section: Yup.string().required(),
+    // address: Yup.string().required(),
     // prison: Yup.string().when("is_custody", (is_custody, schema) => {
     //   if(is_custody){
     //       return schema.required("Please select the prison")
@@ -181,12 +181,22 @@ const Petitioner = ({addPetitioner}) => {
     }
   },[litigant.litigant, accused])
 
-  const handleSubmit = async() => {
-    try{
+  const handleSubmit = async(e) => {
+    // e.preventDefault();
+    // setErrors({});
+    try{ 
+     
       await validationSchema.validate(litigant, { abortEarly:false})
-      addPetitioner(litigant)
+      const postData = {
+        ...litigant,
+        litigant_type: 1, // Add litigant_type=1
+      };
+      const response = await api.post("litigant/create/", postData);
+      if(response.status === 201) {
+        toast.success("Pettitionar Added Successfully",{theme:"colored"})
+      }
     }catch(error){
-      console.log(error.inner)
+      // console.log(error.inner)
       if(error.inner){
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -435,7 +445,7 @@ const Petitioner = ({addPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
+                  onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}

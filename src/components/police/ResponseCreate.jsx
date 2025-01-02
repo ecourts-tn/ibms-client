@@ -11,9 +11,12 @@ import FormLabel from 'react-bootstrap/FormLabel'
 import Button from '@mui/material/Button'
 import Document from 'components/police/Document';
 import FIRDetails from 'components/police/FIRDetails';
-import Loading from 'components/Loading';
+import Loading from 'components/common/Loading';
 import MaterialDetails from 'components/police/MaterialDetails';
 import VehicleDetails from 'components/police/VehicleDetails';
+import { handleMobileChange, handleNumberChange, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const ResponseCreate = () => {
@@ -52,8 +55,8 @@ const ResponseCreate = () => {
         cnr_number          : '',
         court               : '',
         case_stage          : '',
-        next_hearing        : undefined,
-        no_of_witness       : undefined,
+        next_hearing        : '',
+        no_of_witness       : '',
         previous_case       : '',
         previous_bail       : '',
         other_accused_status: '',
@@ -62,6 +65,8 @@ const ResponseCreate = () => {
         court_details       : '',
         is_material_seized  : '',
         is_vehicle_seized   : '',
+        limitation_date     : '',
+        csr_number          : '',
     }
     const[materials, setMaterials] = useState([])
     const[vehicles, setVehicles] = useState([])
@@ -94,8 +99,9 @@ const ResponseCreate = () => {
     })
 
     const validationSchema = Yup.object({
+        csr_number: Yup.string(),
         offences: Yup.string().required(),
-        date_of_arrest: Yup.date().required().typeError('Invalid date format. Please use YYYY-MM-DD.'),
+        date_of_arrest: Yup.date().required(),
         accused_name: Yup.string().required(),
         specific_allegations: Yup.string().required(),
         materials_used: Yup.string().required(),
@@ -116,26 +122,101 @@ const ResponseCreate = () => {
         //         return schema.required('Court required')
         //     }
         // }),
-        case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
-            if(parseInt(investigation_stage) === 2){
-                return schema.required('CNR Number required')
-            }
-        }),
-        next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
-            if(parseInt(investigation_stage) === 2){
-                return schema.required('Next hearing required').typeError('Invalid date format. Please use YYYY-MM-DD.')
-            }
-        }),
-        no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
-            if(parseInt(investigation_stage) === 2){
-                return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
-                .integer('Number of witnesses must be an integer')
-            }
-        }),
+        // case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+        //     if(parseInt(investigation_stage) === 2){
+        //         return schema.required('CNR Number required')
+        //     }
+        // }),
+        // next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
+        //     if(parseInt(investigation_stage) === 2){
+        //         return schema.required('Next hearing required')
+        //     }
+        // }),
+        // no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
+        //     if(parseInt(investigation_stage) === 2){
+        //         return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
+        //         .integer('Number of witnesses must be an integer')
+        //     }
+        // }),
     })
     
     const[form, setForm] = useState(initialState)
-    const[errors, setErrors] = useState({})
+    const[errors, setErrors] = useState(initialState)
+
+    const formatDate = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    const formatDate1 = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    const formatDate2 = (date) => {
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    useEffect(() => {
+        const date_of_arrest = flatpickr(".date_of_arrest-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable past dates for appointment date
+            defaultDate: form.date_of_arrest,
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                setForm({ ...form, date_of_arrest: formattedDate });
+            },
+        });
+
+        return () => {
+            if (date_of_arrest && typeof date_of_arrest.destroy === "function") {
+                date_of_arrest.destroy();
+            }
+        };
+    }, [form]);
+
+    useEffect(() => {
+        const limitation_date = flatpickr(".limitation_date-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today", // Disable past dates for appointment date
+            defaultDate: form.limitation_date,
+            onChange: (selectedDates1) => {
+                const formattedDate1 = selectedDates1[0] ? formatDate1(selectedDates1[0]) : "";
+                setForm({ ...form, limitation_date: formattedDate1 });
+            },
+        });
+
+        return () => {
+            if (limitation_date && typeof limitation_date.destroy === "function") {
+                limitation_date.destroy();
+            }
+        };
+    }, [form]);
+
+    useEffect(() => {
+        const next_hearing = flatpickr(".next_hearing-date-picker", {
+            dateFormat: "d/m/Y",
+            minDate: "today", // Disable past dates for appointment date
+            defaultDate: form.next_hearing,
+            onChange: (selectedDates2) => {
+                const formattedDate2 = selectedDates2[0] ? formatDate2(selectedDates2[0]) : "";
+                setForm({ ...form, next_hearing: formattedDate2 });
+            },
+        });
+
+        return () => {
+            if (next_hearing && typeof next_hearing.destroy === "function") {
+                next_hearing.destroy();
+            }
+        };
+    }, [form]);
 
     useEffect(() => {
         async function fetchData(){
@@ -205,8 +286,9 @@ const ResponseCreate = () => {
             form.efile_no = state.efile_no
             const post_data = {
                 response: form,
-                materials,
-                vehicles
+                material_details: materials,
+                vehicle_details: vehicles,
+                documents
             }
             const response = await api.post("police/response/create/", post_data)
             if(response.status === 201){
@@ -352,7 +434,17 @@ const ResponseCreate = () => {
                                             <div className="col-md-2">
                                                 <div className="form-group">
                                                     <label htmlFor="csr_number">CSR Number</label>
-                                                    <input type="text" className="form-control" />
+                                                    <input 
+                                                        type="text" 
+                                                        className="form-control"
+                                                        name="csr_number"
+                                                        value={form.csr_number}
+                                                        onChange={(e) => handleNumberChange(e, setForm, form, 'csr_number')}    
+                                                        // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    />
+                                                    <div className="invalid-feedback">
+                                                        { errors.csr_number }
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="col-md-2">
@@ -386,21 +478,27 @@ const ResponseCreate = () => {
                                                 <div className="input-group mb-3">
                                                     <input 
                                                         type="date" 
-                                                        className={`form-control ${errors.date_of_arrest ? 'is-invalid' : ''}`} 
+                                                        className={`form-control date_of_arrest-date-picker ${errors.date_of_arrest ? 'is-invalid' : ''}`} 
                                                         name="date_of_arrest"
                                                         value={form.date_of_arrest}
+                                                        placeholder="DD/MM/YYYY"
                                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', // Optional: Adjust border
+                                                            padding: '8px',            // Optional: Adjust padding
+                                                        }}
                                                     />
                                                     <div className="invalid-feedback">
                                                         { errors.date_of_arrest }
                                                     </div>
-                                                    <div className="input-group-append">
+                                                    {/* <div className="input-group-append">
                                                         <button 
                                                             className="btn btn-outline-primary" 
                                                             type="button"
                                                             onClick={(e) => setArrestModify(!arrestModify)}
                                                         >Modify</button>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
                                             <div className="col-md-6">
@@ -641,8 +739,23 @@ const ResponseCreate = () => {
                                             </div>
                                             <div className="col-md-3">
                                                 <div className="form-group">
-                                                    <label htmlFor="">Limitation date for filing Charge Sheet(As per Act)</label>
-                                                    <input type="date" className="form-control" />
+                                                    <label htmlFor="" style={{ width: '380px', }} >Limitation date for filing Charge Sheet(As per Act)</label>
+                                                    <input type="date" className={`form-control limitation_date-date-picker ${errors.limitation_date ? 'is-invalid' : ''}`} 
+                                                        name="limitation_date"
+                                                        value={form.limitation_date}
+                                                        // readOnly={form.is_produced === true ? false : true }
+                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        placeholder="DD/MM/YYYY"
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', // Optional: Adjust border
+                                                            padding: '8px',            // Optional: Adjust padding
+                                                        }} 
+                                                    
+                                                    />
+                                                    <div className="invalid-feedback">
+                                                        { errors.limitation_date }
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -697,10 +810,16 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">Next Hearing Date</label>
                                                     <FormControl 
                                                         type="date"
-                                                        className={`form-control ${errors.next_hearing ? 'is-invalid' : ''}`}
+                                                        className={`form-control next_hearing-date-picker `}
                                                         name="next_hearing"
                                                         value={form.next_hearing}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        placeholder="DD/MM/YYYY"
+                                                        onChange={(e) => setForm({ ...form, next_hearing: e.target.value })}
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', // Optional: Adjust border
+                                                            padding: '8px',            // Optional: Adjust padding
+                                                        }}
                                                     ></FormControl>
                                                     <div className="invalid-feedback">
                                                         { errors.next_hearing }

@@ -1,16 +1,16 @@
-import './app.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import React, { useEffect } from 'react';
-import { Routes, Route, HashRouter, BrowserRouter } from "react-router-dom"
+import React from 'react';
+import { Routes, Route, BrowserRouter } from "react-router-dom"
 /* -------Layout & Providers ----------*/
 import PublicLayout from 'components/layout/public/PublicLayout'
 import AdminLayout from 'components/layout/admin/AdminLayout';
 import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
+import { UserTypeProvider } from 'contexts/UserTypeContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
 import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
-import { CourtRoutes, courtRoutes } from 'routes/courtRoutes';
+import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
@@ -21,17 +21,21 @@ import { ModificationFilingRoutes } from 'routes/modificationRoutes';
 import { SuretyRoutes } from 'routes/suretyRoutes';
 import { DischargeRoutes } from 'routes/dischargeRoutes';
 import { ExtensionRoutes } from 'routes/extensionRoutes';
-import NotFound from 'components/layout/public/NotFound';
-import VerifyOrder from 'components/VerifyOrder';
 import { ReturnPassportRoutes } from 'routes/passportRoutes';
 import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 
 function App() {
+
+  const handleRightClick = (event) => {
+    event.preventDefault();  // Prevent the context menu from appearing
+    alert('Right-click is disabled on this page!');
+  };
   
   return (
-    <>
-      <BrowserRouter>
+    <>  
+    {/* <div onContextMenu={handleRightClick}> */}
+      <BrowserRouter basename="/ibms">
         <AuthProvider>
           <AppProvider>
             <Routes>
@@ -79,6 +83,7 @@ function App() {
           </AppProvider>
         </AuthProvider>
       </BrowserRouter> 
+      {/* </div> */}
 
     </>
     

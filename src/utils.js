@@ -1,6 +1,3 @@
-import { Dangerous } from '@mui/icons-material';
-import './components/home.css'
-
 export const CreateMarkup = (content) => {
     return {__html: content}
 }
@@ -50,3 +47,13 @@ export const ModelClose = (props) => {
     )
 }
 
+<<<<<<< HEAD
+=======
+export const truncateChars = (text, maxLength) => {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength) + "...";
+    }
+    return text;
+  };
+
+>>>>>>> deena

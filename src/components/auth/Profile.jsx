@@ -1,8 +1,6 @@
 import React, {useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { useAuth } from '../../hooks/useAuth'
-
-import './auth.css'
 import { useTranslation } from 'react-i18next'
 
 const Profile = () => {

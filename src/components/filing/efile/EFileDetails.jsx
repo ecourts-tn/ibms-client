@@ -64,13 +64,21 @@ const EFileDetails = () => {
                                 <td>{t('case_type')}</td>
                                 <td>{ petition.case_type.type_name }</td>
                                 <td>{t('bail_type')}</td>
-                                <td>{ petition.bail_type.type_name }</td>
+                                <td>{ petition.bail_type?.type_name }</td>
                             </tr>
                             <tr>
                                 <td>{t('crime_registered')}</td>
-                                <td>{ petition.crime_registered === 1 ? 'Yes' : 'No' }</td>
+                                <td>
+                                    {(() => {
+                                        const crimeStatus = parseInt(petition.crime_registered);
+                                        if (crimeStatus === 1) return 'Yes';
+                                        if (crimeStatus === 2) return 'No';
+                                        if (crimeStatus === 3) return 'Not Known';
+                                        return ''; // Return empty if none of the conditions are met
+                                    })()}
+                                </td>
                                 <td>{t('complaint_type')}</td>
-                                <td>{ petition.complaint_type.type_name }</td>
+                                <td>{ petition.complaint_type?.type_name }</td>
                             </tr>
                         </>
                         )}

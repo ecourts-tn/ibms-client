@@ -1,107 +1,27 @@
 import api from 'api';
 import * as Yup from 'yup'
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect,} from 'react';
 import Button from '@mui/material/Button'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import ArrowBack  from '@mui/icons-material/ArrowBack';
 import SearchIcon from '@mui/icons-material/Search'
 import { toast, ToastContainer } from 'react-toastify';
-import { RequiredField } from 'utils';
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
-import GroundsContainer from 'components/filing/Ground';
-import Document from 'components/filing/Document';
-import SuretyForm from 'components/filing/surety/SuretyForm';
 import InitialInput from 'components/filing/InitialInput';
-import Payment from 'components/payment/Payment';
+import PetitionSearch from 'components/common/PetitionSearch';
 
 
 const Surety = () => {
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {taluks}  = useContext(TalukContext)
-    const {benchtypes} = useContext(SeatContext)
-    const {establishments} = useContext(EstablishmentContext)
-    const[searchForm, setSearchForm] = useState({
-        court_type:1,
-        bench_type:'',
-        state:'',
-        district:'',
-        establishment:'',
-        case_type: '',
-        reg_number: '',
-        reg_year: ''
-    })
-    const initialState = {
-        cino: '',
-        surety_name: '',
-        relation: '',
-        relative_name:'',
-        aadhar_number: '',
-        address: '',
-        state: '',
-        district: '',
-        taluk: '',
-        pincode: '',
-        phone_number: '',
-        email_address: '',
-        residing_years: '',
-        property_type: '',
-        survey_number: '',
-        site_location:'',
-        site_area:'',
-        site_valuation:'',
-        rent_bill_surety_name: false,
-        property_document:'',
-        employment_type: '',
-        business_address: '',
-        business_state: '',
-        business_district: '',
-        business_taluk: '',
-        business_nature: '',
-        business_rent_paid: '',
-        is_rent_bill_name: false,
-        business_document:'',
-        employer_name: '',
-        designation: '',
-        employer_address: '',
-        employer_state: '',
-        employer_district: '',
-        employer_taluk: '',
-        service_length: '',
-        pf_amount: '',
-        property_details: '',
-        income_tax_paid: '',
-        employment_document: '',
-        bank_accounts: [],
-        accused_duration_year: '',
-        accused_duration_month: '',
-        is_related: false,
-        relation_details: '',
-        others_surety:'',
-        litigation_details: '',
-        other_particulars: '',
-        surety_amount: '',
-        photo: '',
-        signature:'',
-        identity_proof:''
-    }
+
     const {t} = useTranslation()
-    const[form, setForm] = useState(initialState);
-    const[errors, setErrors] = useState({})
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
-    const[searchPetition, setSearchPetition] = useState(1)
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petition, setPetition] = useState({
-        court_type: '',
-        bench_type: '',
+        judiciary: '',
+        seat: '',
         state: '',
         district:'',
         establishment: '',
@@ -111,40 +31,8 @@ const Surety = () => {
         complaint_type: 2,
         crime_registered: 2,
     })
-    const searchSchema = Yup.object({
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
-                return schema.required(t('errors.bench_required'))
-            }
-        }),
-        state: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.state_required'))
-            }
-        }),
-        district: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.district_required'))
-            }
-        }),
-        establishment: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
-                return schema.required(t('errors.est_required'))
-            }
-        }),
-        case_type: Yup.string().required(t('errors.case_type_required')),
-        reg_number: Yup.number().typeError(t('errors.numeric')).required(),
-        reg_year: Yup.number().typeError(t('errors.numeric')).required()
-    })
 
-    const[searchErrors, setSearchErrors]            = useState({})
     const [user, setUser] = useLocalStorage("user", null)
-
-    const addBankAccount = () => {}
-
-    const handleBankAccountChange = () =>{}
-
-    const removeBankAccount = () => {}
 
     useEffect(() => {
         async function fetchData(){
@@ -169,8 +57,8 @@ const Surety = () => {
                     setIsPetition(true)
                     setBail(pet)
                     setPetition({...petition,
-                        court_type: pet.court_type.id,
-                        bench_type: pet.bench_type ? pet.bench_type.bench_code : null,
+                        judiciary: pet.judiciary?.id,
+                        seat: pet.seat ? pet.seat?.seat_code : null,
                         state: pet.state ? pet.state.state_code : null,
                         district:pet.district ? pet.district.district_code : null,
                         establishment: pet.establishment ? pet.establishment.establishment_code : null,
@@ -189,38 +77,11 @@ const Surety = () => {
         fetchDetails();
     },[eFileNumber])
 
-
-    const handleSearch = async(e) => {
-        e.preventDefault()
-        try{
-            // await searchSchema.validate(searchForm, { abortEarly:false})
-            const response = await api.get("bail/petition/detail/", { params: searchForm})
-            if(response.status === 200){
-                setForm({...form, cino:response.data.petition.cino})
-            }
-            if(response.status === 404){
-                toast.error("Petition details not found",{
-                    theme:"colored"
-                })
-            }
-        }catch(error){
-            const newError = {}
-            if(error.inner){
-                error.inner.forEach((err) => {
-                    newError[err.path] = err.message
-                });
-                setSearchErrors(newError)
-            }
-            if(error){
-                toast.error(error.response.message,{
-                    theme:"colored"
-                })
-            }
-        }
-    }
+    console.log(petition)
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        
         try{
             // await validationSchema.validate(petition, { abortEarly:false})
             const response = await api.post("case/filing/surety/create/", petition)
@@ -230,14 +91,12 @@ const Surety = () => {
                     theme:"colored"
                 }) 
             }
-            console.log(response.data)
           }catch(error){
-            if (error.inner){
-                const newErrors = {};
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message;
-                });
-                setErrors(newErrors);
+            if(error.response?.status ===500){
+                toast.error("Internal Server Error, Please try later!!!", {theme:"colored"})
+            }
+            if(error?.response){
+                toast.error(error.response?.data.message, {theme:"colored"})
             }
         }
     }
@@ -246,7 +105,13 @@ const Surety = () => {
         <>
             <ToastContainer />
             <div className="container px-md-5">
+                <PetitionSearch 
+                    cases={cases}
+                    eFileNumber={eFileNumber}
+                    seteFileNumber={seteFileNumber}
+                />
                 <div className="row">
+<<<<<<< HEAD
                     <div className="col-md-12 text-center">
                         <div className="form-group">
                             <div>
@@ -481,8 +346,10 @@ const Surety = () => {
                         </form>
                         )}
                     </div>
+=======
+>>>>>>> deena
                     <div className="col-md-12">
-                    { isPetition && (
+                        { isPetition && (
                         <>
                             <InitialInput petition={bail} />
                             <div className="d-flex justify-content-center">
@@ -495,7 +362,7 @@ const Surety = () => {
                                 </Button>
                             </div>
                         </>
-                    )}
+                        )}
                     </div>
                 </div>
             </div>

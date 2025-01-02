@@ -3,14 +3,17 @@ import { RequiredField } from 'utils'
 import api from 'api'
 import {toast,ToastContainer} from 'react-toastify'
 import Button from '@mui/material/Button'
+import Modal from 'react-bootstrap/Modal'
 import ArrowForward from '@mui/icons-material/ArrowForward'
 import { StateContext } from 'contexts/StateContext'
 import { DistrictContext } from 'contexts/DistrictContext'
 import { TalukContext } from 'contexts/TalukContext'
 import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
-import config from 'config'
 import { useTranslation } from 'react-i18next'
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import ViewSurety from './ViewSurety'
+
 
 
 const SuretyForm = () => {
@@ -78,6 +81,7 @@ const SuretyForm = () => {
     }
     const[surety, setSurety] = useState(initialState);
     const[sureties, setSureties] = useState([])
+    const [selectedSurety, setSelectedSurety] = useState(null);
     const initialAccount = {
         bank_name: '',
         branch_name: '',
@@ -87,6 +91,17 @@ const SuretyForm = () => {
     const[account, setAccount] = useState(initialAccount)
     const[bankAccounts, setBankAccounts] = useState([])
     const[errors, setErrors] = useState({})
+    const [showModal, setShowModal] = useState(false);
+
+    const handleShow = (surety) => {
+        setSelectedSurety(surety);  // Set selected surety details
+        setShowModal(true);         // Show the modal
+    };
+    
+    const handleClose = () => {
+        setShowModal(false);        // Close the modal
+    };
+
     const validationSchema = Yup.object({
         surety_name: Yup.string().required(),
         relation: Yup.string().required(),
@@ -127,43 +142,75 @@ const SuretyForm = () => {
         fecthSureties();
     }, [])
 
-    const deleteSurety = async(surety) => {
-        try{
-            const newSureties = sureties.filter((s) => {
-                return s.surety_id !== surety.surety_id
-            })
+    const deleteSurety = async (surety) => {
+        try {
+            // Show confirmation before deleting
+            const confirmDelete = window.confirm(`Are you sure you want to delete surety with ID: ${surety.surety_id}?`);
+            if (!confirmDelete) return; // If the user cancels, exit the function
+    
+            // Send delete request
             const response = await api.delete("case/surety/delete/", {
-                params:{id:surety.surety_id}
-            })
-            if(response.status === 204){
-                toast.error(`${surety.surety_id} - surety deleted successfully`, {
+                params: { id: surety.surety_id }
+            });
+    
+            // If the delete was successful
+            if (response.status === 204) {
+                // Remove the deleted surety from the list
+                const newSureties = sureties.filter((s) => s.surety_id !== surety.surety_id);
+    
+                // Show a success message
+                toast.success(`Surety with ID ${surety.surety_id} deleted successfully`, {
                     theme: "colored"
-                })
-                setSureties(newSureties)
+                });
+    
+                // Update the sureties state with the new list
+                setSureties(newSureties);
             }
-            
-        }catch(error){
-            console.log(error)
+        } catch (error) {
+            // Handle error during deletion
+            console.error(error);
+            toast.error("An error occurred while deleting the surety. Please try again.", {
+                theme: "colored"
+            });
         }
-    }
+    };
+    
 
 
     const handleSubmit = async(e) => {
         e.preventDefault()
-        const efile_no = sessionStorage.getItem("efile_no")
         try{
             await validationSchema.validate(surety, {abortEarly:false})
-            const response = await api.post("case/surety/create/", surety, {
-                params: { efile_no}, 
-                headers: {
-                    'content-type': 'multipart/form-data',
+            const formData = new FormData();
+
+            // Add all non-file fields to FormData
+            for (const key in surety) {
+                if (surety[key] && typeof surety[key] !== "object") {
+                    formData.append(key, surety[key]);
                 }
-            })
+            }
+        
+            // Add file fields to FormData
+            if (surety.photo) formData.append("photo", surety.photo);
+            if (surety.signature) formData.append("signature", surety.signature);
+            if (surety.identity_proof) formData.append("identity_proof", surety.identity_proof);
+            if (surety.aadhar_card) formData.append("aadhar_card", surety.aadhar_card);
+        
+            // Add efile_no separately if it's in sessionStorage
+            const efile_no = sessionStorage.getItem("efile_no");
+            if (efile_no) formData.append("efile_no", efile_no);
+  
+            const response = await api.post("case/surety/create/", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                }
+            });
             if(response.status === 201){
                 toast.success("Surety Details added successfully", {
                     theme:"colored"
                 })
-                setSurety(initialState)
+                setSurety(initialState);
+                setBankAccounts([]);
             }
         }catch(error){
             if(error.inner){
@@ -177,32 +224,145 @@ const SuretyForm = () => {
         }
     }
 
+   
+
+    // const addBankAccount = () => {
+    //     setBankAccounts([...bankAccounts, account])
+    //     toast.success("Bank details added successfully", {
+    //         theme : "colored"
+    //     })
+    //     setAccount(initialAccount)
+    // }
+
     const addBankAccount = () => {
-        setBankAccounts([...bankAccounts, account])
-        toast.success("Bank details added successfully", {
-            theme : "colored"
-        })
-        setAccount(initialAccount)
-    }
+        if (
+            account.bank_name && 
+            account.branch_name && 
+            account.account_number && 
+            account.ifsc_code
+        ) {
+            setBankAccounts([...bankAccounts, account]);
+            setAccount(initialAccount); // Reset account fields
+        } else {
+            // Show error or message to user that all fields are required
+            toast.error("All fields are required for the bank account.", {
+                theme: "colored",
+            });
+        }
+    };
+
+    const handleNameChange = (e, setState, state, field) => {
+        setState({
+            ...state,
+            [field]: e.target.value,
+        });
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+  
+        // Update form state
+        setSurety((prevForm) => ({
+            ...prevForm,
+            [name]: value,  // Dynamically update the field
+        }));
+  
+        // Validate the field and update errors
+        const errorMessage = validateEmail(name, value);  // Validate the email field
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: errorMessage,  // Set the error message for the specific field
+        }));
+    };
+
+    const handleFileChange = (e, fileType) => {
+        const file = e.target.files[0]; // Get the first file
+        if (!file) return; // If no file is selected, return early
+    
+        let errorMessage = '';
+    
+        // Validation for specific file types
+        if (fileType === 'photo' || fileType === 'signature') {
+            // Only image files are allowed
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!allowedImageTypes.includes(file.type)) {
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed.';
+            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB
+                errorMessage = 'Image size must be less than 3MB.';
+            }
+        } else if (fileType === 'identity_proof' || fileType === 'aadhar_card') {
+            // PDF or image files are allowed
+            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (file.type === 'application/pdf') {
+                if (file.size > 5 * 1024 * 1024) { // Max 5MB for PDF
+                    errorMessage = 'PDF size must be less than 5MB.';
+                }
+            } else if (!allowedImageTypes.includes(file.type)) {
+                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed.';
+            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
+                errorMessage = 'Image size must be less than 3MB.';
+            }
+        }
+    
+        // If there's an error, update the error state and return
+        if (errorMessage) {
+            setErrors((prevErrors) => ({
+                ...prevErrors,
+                [fileType]: errorMessage,
+            }));
+            return;
+        }
+    
+        // If validation passes, update the surety state with the actual File object
+        setSurety((prevSurety) => ({
+            ...prevSurety,
+            [fileType]: file, // Save the actual File object for uploading
+        }));
+    
+        // Clear any previous error for this file type
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [fileType]: '',
+        }));
+    };
+    
 
 
     return (
         <div className="container">
+             <Modal 
+                show={showModal} 
+                onHide={handleClose} 
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title><strong>{t('surety_details')}</strong></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ViewSurety surety={selectedSurety}/>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="contained" color="primary" onClick={handleClose}>
+                    {t('close')}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <form onSubmit={handleSubmit} encType='multipart/form-data' method='POST'>
                 <ToastContainer />
-                <div className="row">
+                <div className="row mt-3">
                     <div className="col-md-12">
                         { Object.keys(sureties).length > 0 && (
-                        <table className="table table-striped table-bordered table-sm">
-                            <thead className="bg-secondary">
+                        <table className="table table-bordered">
+                            <thead className="bg-success">
                                 <tr>
                                     <th>#</th>
                                     <th>{t('surety_name')}</th>
                                     <th>{t('relationship_name')}</th>
                                     <th>{t('aadhaar_number')}</th>
-                                    <th>{t('photo')}</th>
-                                    <th>{t('aadhar_card')}</th>
-                                    <th>{t('signature')}</th>
+                                    <th>{t('mobile_number')}</th>
+                                    <th>{t('address')}</th>
                                     <th>{t('action')}</th>
                                 </tr>
                             </thead>
@@ -213,16 +373,16 @@ const SuretyForm = () => {
                                     <td>{ s.surety_name }</td>
                                     <td>{ s.relative_name }</td>
                                     <td>{ s.aadhar_number }</td>
+                                    <td>{ s.mobile_number }</td>
+                                    <td>{ s.address }</td>
                                     <td>
-                                        <a href={`${config.docUrl}${s.photo}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
-                                        <a href={`${config.docUrl}${s.aadhar_card}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
-                                        <a href={`${config.docUrl}${s.signature}`} target="_blank">View</a>
-                                    </td>
-                                    <td>
+                                        <Button
+                                            variant='contained'
+                                            color='warning'
+                                            size='small'
+                                            className="mr-1"
+                                            onClick={() => handleShow(s)}
+                                        >View</Button>
                                         <Button
                                             variant='contained'
                                             color='info'
@@ -232,7 +392,7 @@ const SuretyForm = () => {
                                             variant='contained'
                                             color='error'
                                             size='small'
-                                            className='ml-2'
+                                            className='ml-1'
                                             onClick={(e) => deleteSurety(s)}
                                         >Delete</Button>
                                     </td>
@@ -249,7 +409,8 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="surety_name" 
                                 value={surety.surety_name} 
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                onChange={(e) => handleNameChange(e, setSurety, surety, 'surety_name')}
                                 className={`form-control ${errors.surety_name ? 'is-invalid' : null }`}
                             />
                             <div className="invalid-feedback">
@@ -283,7 +444,8 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="relative_name" 
                                 value={surety.relative_name} 
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                onChange={(e) => handleNameChange(e, setSurety, surety, 'relative_name')}
                                 className={`form-control ${errors.relative_name ? 'is-invalid' : null }`}
                             />
                             <div className="invalid-feedback">
@@ -298,7 +460,8 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="aadhar_number" 
                                 value={surety.aadhar_number} 
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                onChange={(e) => handleAadharChange(e, setSurety, surety, 'aadhar_number')}
                                 className={`form-control ${errors.aadhar_number ? 'is-invalid' : null}`}
                             />
                             <div className="invalid-feedback">
@@ -386,7 +549,8 @@ const SuretyForm = () => {
                                 name="pincode"
                                 className={`form-control ${errors.pincode ? 'is-invalid' :  null}`}
                                 value={surety.pincode}
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                onChange={(e) => handlePincodeChange(e, setSurety, surety, 'pincode')}
                             />
                             <div className="invalid-feedback">
                                 { errors.pincode }
@@ -399,9 +563,9 @@ const SuretyForm = () => {
                             <input 
                                 type="text"
                                 name="mobile_number"
-                                className={`form-control ${errors.mobile_number ? 'is-invalid' : null}`}
+                                className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}`}
                                 value={surety.mobile_number}
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                onChange={(e) => handleMobileChange(e, setSurety, surety, 'mobile_number')}
                             />
                             <div className="invalid-feedback">
                                 { errors.mobile_number }
@@ -414,11 +578,14 @@ const SuretyForm = () => {
                             <input 
                                 type="text"
                                 name="email_address"
-                                className="form-control"
+                                className={`form-control ${errors.email_address ? 'is-invalid' : ''}`}
                                 value={surety.email_address}
-                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
+                                onChange={handleChange}
                             />
+                            {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
                         </div>
+                        
                     </div>
                     <div className="col-md-2">
                         <div className="form-group">
@@ -584,8 +751,9 @@ const SuretyForm = () => {
                                     <input type="text" 
                                         name="employer_name" 
                                         value={surety.employer_name} 
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                        onChange={(e) => handleNameChange(e, setSurety, surety, 'employer_name')}
+                                        className={`form-control ${errors.employer_name ? 'is-invalid' : null }`}
                                     />
                                 </div>
                             </div>
@@ -595,7 +763,8 @@ const SuretyForm = () => {
                                     <input type="text" 
                                         name="designation" 
                                         value={surety.designation} 
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                        onChange={(e) => handleNameChange(e, setSurety, surety, 'designation')}
                                         className="form-control"
                                     />
                                 </div>
@@ -906,7 +1075,8 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="bank_name"
                                                 value={account.bank_name}
-                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                onChange={(e) => handleNameChange(e, setAccount, account, 'bank_name')}
                                                 className="form-control"
                                             />
                                         </div>
@@ -918,7 +1088,8 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="branch_name"
                                                 value={account.branch_name}
-                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                onChange={(e) => handleNameChange(e, setAccount, account, 'branch_name')}
                                                 className="form-control"
                                             />
                                         </div>
@@ -930,7 +1101,8 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="account_number"
                                                 value={account.account_number}
-                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                onChange={(e) => handleNameChange(e, setAccount, account, 'account_number')}
                                                 className="form-control"
                                             />
                                         </div>
@@ -942,7 +1114,8 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="ifsc_code"
                                                 value={account.ifsc_code}
-                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
+                                                onChange={(e) => handleNameChange(e, setAccount, account, 'ifsc_code')}
                                                 className="form-control"
                                             />
                                         </div>
@@ -1106,7 +1279,8 @@ const SuretyForm = () => {
                                         type="file" 
                                         name="photo"
                                         className={`form-control ${errors.photo ? 'is-invalid' : null }`}
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => handleFileChange(e, 'photo')}
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.photo }
@@ -1122,7 +1296,8 @@ const SuretyForm = () => {
                                         type="file" 
                                         name="signature"
                                         className={`form-control ${errors.signature ? 'is-invalid' : null }`}
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => handleFileChange(e, 'signature')}
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.signature }
@@ -1138,7 +1313,8 @@ const SuretyForm = () => {
                                         type="file" 
                                         name="aadhar_card"
                                         className={`form-control ${errors.aadhar_card ? 'is-invalid' : null }`}
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => handleFileChange(e, 'aadhar_card')}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.aadhar_card }
@@ -1154,7 +1330,8 @@ const SuretyForm = () => {
                                         type="file" 
                                         name="identity_proof"
                                         className={`form-control ${errors.identity_proof ? 'is-invalid' : null }`}
-                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => handleFileChange(e, 'identity_proof')}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.identity_proof }
@@ -1185,6 +1362,7 @@ const SuretyForm = () => {
                                     variant="contained"
                                     color="success"
                                     type='submit'
+                                    onClick={handleSubmit}
                                 >{t('save')}</Button>
                                 <Button
                                     variant="contained"

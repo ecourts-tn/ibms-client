@@ -9,13 +9,15 @@ export const DistrictProvider = ({children}) => {
     useEffect(() => {
         const controller = new AbortController()
         const fetchDistricts = async() => {
-            try{
-                const response = await api.get("base/district/")
-                if(response.status === 200){
-                    setDistricts(response.data)
+            if(districts.length === 0){
+                try{
+                    const response = await api.get("base/district/")
+                    if(response.status === 200){
+                        setDistricts(response.data)
+                    }
+                }catch(error){
+                    console.error(error)
                 }
-            }catch(error){
-                console.error(error)
             }
         }
         fetchDistricts();

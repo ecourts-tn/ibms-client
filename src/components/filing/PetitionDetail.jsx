@@ -1,10 +1,11 @@
 import React, {useState,useEffect, useContext} from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import api from '../../api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { getPetitionByeFileNo } from 'services/petitionService'
+import { truncateChars } from 'utils'
 
 const PetitionDetail = () => {
 
@@ -14,6 +15,7 @@ const PetitionDetail = () => {
     const[petition, setPetition] = useState({})
     const[petitioner, setPetitioner] = useState([])
     const[respondent, setRespondent] = useState([])
+    const[proceedings, setProceedings] = useState([])
     const[crime, setCrime] = useState({})
     const[objection, setObjection] = useState([])
     const {language} = useContext(LanguageContext)
@@ -36,6 +38,7 @@ const PetitionDetail = () => {
                 setPetitioner(petitioners);
                 setRespondent(respondents);
                 setObjection(response.objections)
+                setProceedings(response.proceedings)
             }catch(error){
                 console.error(error)
             }finally{
@@ -45,9 +48,9 @@ const PetitionDetail = () => {
         fetchData()
     }, [])
 
-    if(loading) return <Loading />
     return (
         <>
+            { loading && <Loading />}
             { Object.keys(petition).length > 0 && (
                 <div className="container my-4">
                     <div className="row">
@@ -165,6 +168,36 @@ const PetitionDetail = () => {
                                         <td>{o.complaince_date}</td>
                                     </tr> 
                                     ))}
+<<<<<<< HEAD
+=======
+                                </tbody>
+                            </table>
+                            </>
+                            )}
+                             { Object.keys(proceedings).length > 0 && (
+                            <>
+                            <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
+                            <table className="table table-bordered table-striped">
+                                <thead className='bg-secondary'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Business Date</th>
+                                        <th>Business</th>
+                                        <th>Next Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { proceedings.map((p, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>
+                                            <Link to={`/proceeding/detail/`} state={{efile_no:p.efile_no, id:p.id}}>{p.order_date}</Link>
+                                        </td>
+                                        <td>{ truncateChars(p.order_remarks, 100)}</td>
+                                        <td>{p.next_date}</td>
+                                    </tr> 
+                                    ))}
+>>>>>>> deena
                                 </tbody>
                             </table>
                             </>

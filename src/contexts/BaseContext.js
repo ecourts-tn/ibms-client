@@ -7,6 +7,7 @@ const BaseProvider = ({children}) => {
 
     const[efile_no, setEfileNo] = useState(null)
     const[fir, setFir] = useState({})
+    const[firId, setFirId] = useState(null)
     const[accused, setAccused] = useState([])
     const[groundCount, setGroundCount] = useState(0)
 
@@ -20,7 +21,9 @@ const BaseProvider = ({children}) => {
                 accused,
                 setAccused,
                 groundCount, 
-                setGroundCount
+                setGroundCount,
+                firId,
+                setFirId
             }}
         >
             {children}

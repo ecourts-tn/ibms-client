@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import RespondentDetails from './RespondentDetails';
 import { nanoid } from '@reduxjs/toolkit';
 import api from '../../api';
@@ -112,10 +112,10 @@ const RequestCustody = () => {
             }
             const merged = {...form,...grounds}
             await validationSchema.validate(form, {abortEarly:false})
-            // const response = await api.post("api/police/filing/cancellation/bail/", post_data)
-            // if(response.status === 201){
-            //     toast.success("Bail cancellation petition submitted successfully", {theme:"colored"})
-            // }
+            const response = await api.post("api/police/filing/cancellation/bail/", post_data)
+            if(response.status === 201){
+                toast.success("Bail cancellation petition submitted successfully", {theme:"colored"})
+            }
         }catch(error){
             if(error.inner){
                 const newErrors = {}
@@ -654,11 +654,11 @@ const RequestCustody = () => {
                                                     name="description" 
                                                     cols="30" 
                                                     rows="10" 
-                                                    className={`form-control ${errors.description ? 'is-invalid' : null }`}
+                                                    className={`form-control `}
                                                     value={grounds.description}
                                                     onChange={(e) => setGrounds({...grounds, [e.target.name]: e.target.value})}
                                                 ></textarea>
-                                                <div className="invalid-feedback">{ errors.description }</div>
+                                                {/* <div className="invalid-feedback">{ errors.description }</div> */}
                                             </div>
                                         </div>
                                     </div>

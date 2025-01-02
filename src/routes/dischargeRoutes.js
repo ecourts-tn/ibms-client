@@ -1,16 +1,18 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
+<<<<<<< HEAD
 import DischargeStepper from "components/filing/surety/DischargeStepper";
 import Surety from "components/filing/surety/Surety";
+=======
+import DischargeStepper from "components/filing/stepper/DischargeStepper";
+>>>>>>> deena
 import DischargeSurety from "components/filing/surety/DischargeSurety";
 import SuretyDetails from "components/filing/surety/SuretyDetails";
 

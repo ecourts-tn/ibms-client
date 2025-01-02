@@ -5,17 +5,55 @@ import React, { useState, useEffect, useContext } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import 'components/court/style.css'
+<<<<<<< HEAD
 import Loading from 'components/Loading';
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
+=======
+import Loading from 'components/common/Loading';
+import Button from '@mui/material/Button'
+import { toast, ToastContainer } from 'react-toastify';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
+import { FaCalendarAlt } from 'react-icons/fa';
+>>>>>>> deena
 
 const PublishCasueList = () => {
     const { t } = useTranslation();
     const {language} = useContext(LanguageContext)
     const [loading, setLoading] = useState(false)
     const [cases, setCases] = useState([]);
+<<<<<<< HEAD
     const [hearingDate, setHearingDate] = useState('')
 
+=======
+    const [dates, setDates] = useState({});
+    const [hearingDate, setHearingDate] = useState('')
+
+    const formatDate = (date) => {
+        if (!(date instanceof Date)) {
+            date = new Date(date); // Convert to Date if it's not already
+        }
+        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
+        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
+        const year = date.getFullYear(); // Get the full year
+        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    };
+
+    useEffect(() => {
+        // Initialize flatpickr for each row input after the data is loaded
+        flatpickr(".publish-date-picker", {
+            dateFormat: "d/m/Y",
+            minDate: "today", // Disable past dates for appointment date
+            onChange: (selectedDates, dateStr, instance) => {
+                const index = instance.element.dataset.index; // Get index from data-index
+                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                setDates((prevDates) => ({ ...prevDates, [index]: formattedDate }));
+            },
+        });
+    }, [cases]); // Runs every time the cases data changes
+
+>>>>>>> deena
     const handleSearch = async() => {
         try {
             setLoading(true)
@@ -71,6 +109,7 @@ const PublishCasueList = () => {
                         <div className="row">
                             <div className="col-md-4 offset-md-4">
                                 <div className="form-group row">
+<<<<<<< HEAD
                                     <div className="col-md-8">
                                         <input 
                                             type="date"
@@ -78,6 +117,26 @@ const PublishCasueList = () => {
                                             className="form-control" 
                                             onChange={(e) => setHearingDate(e.target.value)}
                                         />
+=======
+                                    <div className="col-md-8 input-group date-input">
+                                        <input 
+                                            type="date"
+                                            name={hearingDate}
+                                            className="form-control publish-date-picker" 
+                                            onChange={(e) => setHearingDate(e.target.value)}
+                                            placeholder={t('Select Date')}
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #ccc', // Optional: Adjust border
+                                                padding: '8px',            // Optional: Adjust padding
+                                            }}
+                                        />
+                                        <div className="input-group-append">
+                                            <span className="input-group-text">
+                                                <FaCalendarAlt /> {/* Calendar icon inside input */}
+                                            </span>
+                                        </div>
+>>>>>>> deena
                                     </div>
                                     <div className="cos-md-2">
                                         <Button

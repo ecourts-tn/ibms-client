@@ -6,7 +6,7 @@ import Button from '@mui/material/Button'
 import api from '../../api'
 import { toast, ToastContainer } from 'react-toastify';
 import Document from './Document';
-import BasicDetails from 'components/court/scrutiny/BasicDetails';
+import BasicDetails from 'components/court/common/BasicDetails';
 
 const ResponseCreate = () => {
     const {state} = useLocation()

@@ -9,7 +9,7 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/Loading'
+import Loading from 'components/common/Loading'
 import { pendingPetition } from 'services/petitionService'
 
 
@@ -25,6 +25,12 @@ const DraftList = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const[loading, setLoading] = useState(false)
+    const [searchTerm, setSearchTerm] = useState('')
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1)
+    const [itemsPerPage, setItemsPerPage] = useState(10) // Default items per page
+    const [totalItems, setTotalItems] = useState(0)
     
     const handleShow = (document) => {
         setSelectedDocument(document)
@@ -37,8 +43,12 @@ const DraftList = () => {
     useEffect(() => {
         const fetchPetition = async() => {
             try{
+                setLoading(true)
                 const response = await pendingPetition()
-                setCases(response)
+                // if (response.status === 200) {
+                    setCases(response)
+                    setTotalItems(response.length) 
+                // }
             }catch(error){
                 console.log(error)
             }finally{
@@ -47,6 +57,40 @@ const DraftList = () => {
         }
         fetchPetition();
     }, [])
+
+    // Filter petitions based on search term (efile_number or crime_number/year)
+    const filteredPetitions = cases.filter(item => {
+        const efileMatch = item.petition.efile_number.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        // Concatenate crime number and year into a single string for search
+        const crimeNumberYear = `${item.crime?.fir_number}/${item.crime?.fir_year}`;
+        const crimeMatch = crimeNumberYear.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const caseNumber = `${item.petition.reg_type?.type_name}/${item.petition.reg_number}/${item.petition.reg_year}` ;
+        const caseMatch = caseNumber.toLowerCase().includes(searchTerm.toLowerCase());
+
+        return efileMatch || crimeMatch || caseMatch;
+    })
+
+    // Pagination logic
+    const indexOfLastItem = currentPage * itemsPerPage
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage
+    const currentPetitions = filteredPetitions.slice(indexOfFirstItem, indexOfLastItem)
+
+    // Handle page change
+    const paginate = (pageNumber) => setCurrentPage(pageNumber)
+
+    // Handle items per page change
+    const handleItemsPerPageChange = (event) => {
+        setItemsPerPage(Number(event.target.value)) // Update items per page
+        setCurrentPage(1) // Reset to the first page whenever the items per page change
+    }
+
+    // Calculate total number of pages
+    const pageNumbers = []
+    for (let i = 1; i <= Math.ceil(filteredPetitions.length / itemsPerPage); i++) {
+        pageNumbers.push(i)
+    }
 
     const handleEdit = (efile_no) => {
         if (window.confirm("Are you sure you want to edit the petition?")) {
@@ -121,6 +165,37 @@ const DraftList = () => {
                             </ol>
                         </nav>
                         <h3 className='pb-2'><strong>{t('draft_petition')}</strong></h3>
+                        <div className="row mb-3">
+                            <label className="mr-2">{t('Search')}:</label>
+                            <div className="col-md-3">
+                                {/* Search Box */}
+                                <div className="d-flex align-items-center">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder={t('Search Case or Efile or Crime number')}
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)} // Handle search input change
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="col-md-1">
+                                <div className="d-flex align-items-center">
+                                    <label className="mr-2">{t('Filter')}:</label>
+                                    <select 
+                                        className="form-control" 
+                                        value={itemsPerPage} 
+                                        onChange={handleItemsPerPageChange}
+                                    >
+                                        <option value={10}>10</option>
+                                        <option value={15}>15</option>
+                                        <option value={25}>25</option>
+                                        <option value={50}>50</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
                                 <tr className='text-center'>
@@ -134,20 +209,41 @@ const DraftList = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                { cases.map((item, index) => (
+                                { currentPetitions.map((item, index) => (
                                 <tr key={index}>
-                                    <td>{ index+1 }</td>
-                                    <td>
+                                    <td>{ index + 1 + indexOfFirstItem }</td>
+                                    {/* <td>
                                         <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
                                             <strong>{ item.petition.efile_number }</strong>
                                         </Link>
                                         <span style={{display:"block"}}>{t('efile_date')}: {formatDate(item.petition.efile_date)}</span>
-                                    </td>
+                                    </td> */}
                                     <td>
-                                        <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
-                                        <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
-                                        <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
+                                        <Link 
+                                            to="/filing/detail" 
+                                            state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
+                                        >
+                                            {item.petition?.efile_number ? (
+                                                <strong>{item.petition.efile_number}</strong>
+                                            ) : null}
+                                        </Link>
+                                        {item.petition?.efile_date ? (
+                                            <span style={{ display: "block" }}>
+                                                {t('efile_date')}: {formatDate(item.petition.efile_date)}
+                                            </span>
+                                        ) : null}
                                     </td>
+                                    { item.petition?.judiciary.id === 1 ? (
+                                        <td>
+                                            <span>{ language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name }</span><br />
+                                        </td>
+                                    ) : (
+                                        <td>
+                                            <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
+                                            <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
+                                            <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
+                                        </td>
+                                    )}
                                     <td className="text-center">
                                         { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
@@ -182,14 +278,14 @@ const DraftList = () => {
                                     </td>
                                     <td>
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             color="primary"
                                             onClick={() => handleEdit(item.petition.efile_number)}
                                         >
                                             <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
                                         </Button>
                                         <Button
-                                            variant="contained"
+                                            variant="outlined"
                                             color="success"
                                             className="ml-1"
                                             onClick = {(e) => handleSubmit(item.petition.efile_number) }
@@ -199,13 +295,34 @@ const DraftList = () => {
                                     </td>
                                 </tr>
                                 ))}
-                                { cases.length <= 0 && (
+                                {/* { currentPetitions.length <= 0 && (
                                 <tr>
                                     <td colSpan={6} className="text-danger text-center">***** No petitions found *****</td>
                                 </tr>
-                                )}
+                                )} */}
                             </tbody>
                         </table>
+                        {/* Pagination Controls */}
+                        <div className="d-flex justify-content-between mt-3">
+                            <div className="pagination">
+                                <ul className="pagination">
+                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                        <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
+                                    </li>
+                                    {pageNumbers.map(number => (
+                                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+                                            <button className="page-link" onClick={() => paginate(number)}>{number}</button>
+                                        </li>
+                                    ))}
+                                    <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
+                                        <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div className="page-info">
+                                <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredPetitions.length} {t('entries')}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

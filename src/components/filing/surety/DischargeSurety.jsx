@@ -15,6 +15,7 @@ import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
 import InitialInput from 'components/filing/InitialInput';
+<<<<<<< HEAD
 
 
 const DischargeSurety = () => {
@@ -90,9 +91,16 @@ const DischargeSurety = () => {
     const {t} = useTranslation()
     const[form, setForm] = useState(initialState);
     const[errors, setErrors] = useState({})
+=======
+import PetitionSearch from 'components/common/PetitionSearch';
+
+
+const DischargeSurety = () => {
+    
+    const {t} = useTranslation()
+>>>>>>> deena
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
-    const[searchPetition, setSearchPetition] = useState(1)
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petition, setPetition] = useState({
@@ -107,6 +115,7 @@ const DischargeSurety = () => {
         complaint_type: 2,
         crime_registered: 2,
     })
+<<<<<<< HEAD
     const searchSchema = Yup.object({
         bench_type: Yup.string().when("court_type",(court_type, schema) => {
             if(parseInt(court_type) === 1){
@@ -141,6 +150,9 @@ const DischargeSurety = () => {
     const handleBankAccountChange = () =>{}
 
     const removeBankAccount = () => {}
+=======
+    const[errors, setErrors] = useState({})
+>>>>>>> deena
 
     useEffect(() => {
         async function fetchData(){
@@ -186,6 +198,7 @@ const DischargeSurety = () => {
     },[eFileNumber])
 
 
+<<<<<<< HEAD
     const handleSearch = async(e) => {
         e.preventDefault()
         try{
@@ -215,6 +228,8 @@ const DischargeSurety = () => {
         }
     }
 
+=======
+>>>>>>> deena
     const handleSubmit = async (e) => {
         e.preventDefault()
         try{
@@ -242,6 +257,7 @@ const DischargeSurety = () => {
         <>
             <ToastContainer />
             <div className="container px-md-5">
+<<<<<<< HEAD
                 <div className="row">
                     <div className="col-md-12 text-center">
                         <div className="form-group">
@@ -490,6 +506,27 @@ const DischargeSurety = () => {
                                     Submit
                                 </Button>
                             </div>
+=======
+                <PetitionSearch 
+                    cases={cases}
+                    eFileNumber={eFileNumber}
+                    seteFileNumber={seteFileNumber}
+                />
+                <div className="row">
+                    <div className="col-md-12">
+                    { isPetition && (
+                        <>
+                            <InitialInput petition={bail} />
+                            <div className="d-flex justify-content-center">
+                                <Button
+                                    variant='contained'
+                                    color="success"
+                                    onClick={handleSubmit}
+                                >
+                                    Submit
+                                </Button>
+                            </div>
+>>>>>>> deena
                         </>
                     )}
                     </div>

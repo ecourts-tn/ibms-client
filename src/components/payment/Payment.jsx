@@ -1,64 +1,36 @@
 import React, {useState, useEffect} from 'react'
-import CryptoJS from 'crypto-js';
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import Modal from 'react-bootstrap/Modal'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import api from '../../api'
+import api from 'api'
 import PaymentHistory from './PaymentHistory';
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
+import RedirectForm from './RedirectForm';
 
 const Payment = () => {
-    const [hmac, setHmac] = useState('');
+    const location = useLocation()
+    const query = new URLSearchParams(useLocation().search);
+    const status = query.get("status");
+    const txnid = query.get("txnid");
+    const amt = query.get("amt");
     const {t} = useTranslation()
-    const generateHmac = () => {
-        const login = "tnhgcourt";
-        const pass = "ourttnh";
-        const ttype = "NBFundTransfer";
-        const prodid = "EPS-TN-102";
-        const txnid = "PAY202409260000001";
-        const amt = "30.00";
-        const scamt = "0.00";
-        const txnDate ="2024-09-26"
-        const reqHashKey = "653861302req996313560";
-    // Concatenating the required strings
-    const sampleStr = login + pass + ttype + prodid + txnid + amt + scamt + txnDate;
-
-    // Generating the HMAC using SHA-512
-    const hmacGenerated = CryptoJS.HmacSHA512(sampleStr, reqHashKey).toString(CryptoJS.enc.Hex);
-    return hmacGenerated
-    // Setting the generated HMAC
-    // setHmac(hmacGenerated);
-    };
-
-    //   https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?
-    //   login=phhgcourt&pass=Test@123&txnType=NA&
-    //   prodid=PHCFEE&
-    //   txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&
-    //   ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&
-    //   udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
-
+    const paymentId = uuidv4()
     const initialState = {
-        login: "tnhgcourt",
-        pass: "ourttnh",
-        txnType: "NA",
-        prodid:"EPS-TN-102",
-        txnid:"PAY202409260000001",
-        amt:"20",
+        txnid:paymentId,
+        amount:"20",
         scamt:"0.00",
-        txndate:"2024-09-26",
-        ru:"https://ecourts-tn.github.io/ibms-client/",
-        signature:generateHmac(), 
         udf1:"",
         udf2:"deenadayalan17@gmail.com",
         udf3:"",
     }
-
     const validationSchema = Yup.object({
         udf1: Yup.string().required("Please selete the payer"),
         udf3: Yup.number("Enter valid number").required("Please enter the mobile number"),
-        amt: Yup.number("Enter amount").required("Please enter amount")
+        amount: Yup.number("Enter amount").required("Please enter amount")
     })
 
     const[payment, setPayment] = useState(initialState)
@@ -111,49 +83,23 @@ const Payment = () => {
         }
     }
 
-    // useEffect(() => {
-    //     async function fetchData(){
-    //         try{
-    //             const efile_no = localStorage.getItem("efile_no")
-    //             const response = await api.get(`api/case/filing/detail/`, {params:{efile_no}})
-    //             const { petitioner} = response.data
-    //             setPetitioner(petitioner)
-    //         }catch(err){
-    //             console.log(err)
-    //         }
-    //     }
-    //     if(payment.cino !== ''){
-    //         fetchData();
-    //     }
-    // }, [payment.cino])
 
     const handleSubmit = async () => {
-        try{
-            const data = {
-                efile_no:sessionStorage.getItem("efile_no"),
-                payer_name:payment.udf1,
-                mobile_number: payment.udf3,
-                amount:payment.amt
+        try {
+            await validationSchema.validate(payment, { abortEarly: false });
+            const response = await api.post('external/epayment/court-fee/', payment);
+    
+            if (response.status === 200) {
+                toast.success("Redirecting to payment gateway...", { theme: "colored" });
+                setTimeout(() => {
+                    window.location.href = response.data.epay_url;
+                }, 2000);
             }
-            const response = await api.post(`payment/court-fee/`, data)
-            if(response.status === 201){
-                toast.success("Payment completed successfully", {
-                    theme: "colored"
-                })
-                setPayment(initialState)
-                setMobileOtp(false)
-                setMobileVerified(false)
-            }
-            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?", payment)
-            // const response = await api.post("https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=tnhgcourt&pass=ourttnh&txnType=NA&prodid=EPS-TN-102&txnid=TS201822061010540&amt=505&scamt=0&txndate=26-Sep-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c8d835547dab1d015560c40fa2be193737cfece204428e8f08e312f298af260121d5b943c6695ed1cd2ba8936612d095f7c518ce8cf5355956a24ec3ef4a44b7&udf1=deena&udf2=deenadayalan17@gmail.com&udf3=8344381139&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=1")
-            // if(response.status === 200){
-            //     console.log("success")
-            // }
-            // https://dr.shcileservices.com/OnlineE-Payment/sEpsePmtTrans?login=phhgcourt&pass=Test@123&txnType=NA&prodid=PHCFEE&txnid=TS201822061010540&amt=505&scamt=0&txndate=22-JUN-2018%2014:25:56&ru=https://phhc.gov.in/payment_status/&signature=c9edd10e4675ccd2e4c377aa012b17301913ddf57ae6a5159f27ecfbc49dc27d09809d0a5f5f4ec7fa5b934f7417ef0295bb091905efdf5d9c6b8f64b22a27de&udf1=mohit&udf2=mohitattarde@gma.com&udf3=98215201250&udf4=DC&udf5=netbanking_payment&udf6=epayment_application&udf7=user_id
-        }catch(error){
-            console.log(error)
+        } catch (error) {
+            console.error("Payment submission error:", error);
+            toast.error("Payment failed. Please try again.", { theme: "colored" });
         }
-    }
+    };
 
     return (
         <>
@@ -180,7 +126,6 @@ const Payment = () => {
                     </Modal.Footer>
             </Modal>
             <div className="container my-4">
-                {/* <form method="post"> */}
                     <div className="row">
                         <div className="col-md-10 offset-md-1">
                             <div className="row">
@@ -196,6 +141,19 @@ const Payment = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-6 offset-md-3">
+                                    {status && (
+                                        status === "success" ? (
+                                            <div className='alert alert-success'>
+                                                <p>Payment Successful!</p>
+                                                <p>Transaction ID: {txnid}</p>
+                                                <p>Amount: {amt}</p>
+                                            </div>
+                                        ) : (
+                                            status === "failed" && (
+                                                <div className='alert alert-danger'>Payment Failed. Please try again.</div>
+                                            )
+                                        )
+                                    )}
                                     <div className="form-group mb-3">
                                         <label htmlFor="">{t('payer_name')}</label>
                                         <input 
@@ -235,13 +193,13 @@ const Payment = () => {
                                                 <label htmlFor="">{t('amount')}</label>
                                                 <input 
                                                     type="text" 
-                                                    className={`form-control ${error.amt ? 'is-invalid' : null}`}
-                                                    name="amt"
-                                                    value={payment.amt}
+                                                    className={`form-control ${error.amount ? 'is-invalid' : null}`}
+                                                    name="amount"
+                                                    value={payment.amount}
                                                     onChange={(e) => setPayment({...payment, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
-                                                    { error.amt }
+                                                    { error.amount }
                                                 </div>
                                             </div>
                                         </div>
@@ -296,7 +254,7 @@ const Payment = () => {
                                                     variant="contained"
                                                     color="success"
                                                     onClick={handleSubmit}
-                                                >{t('submit')}</Button>
+                                                >Continue Payment</Button>
                                             </div>
                                         </>
                                         

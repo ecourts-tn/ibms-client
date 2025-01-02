@@ -1,29 +1,15 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Routes, Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-import Stepper from "components/filing/surety/Stepper";
+import SuretyStepper from "components/filing/stepper/SuretyStepper";
 import Surety from "components/filing/surety/Surety";
 import SuretyForm from "components/filing/surety/SuretyForm";
-
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
 
 
 const suretyRoutes = [
@@ -42,7 +28,7 @@ const SuretyLayout = () => (
         <div className="container-fluid" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-                <Stepper />
+                <SuretyStepper />
                 <Outlet />
             </div>
         </div>

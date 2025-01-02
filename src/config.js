@@ -1,7 +1,7 @@
 const config = {
   development: {
-    apiUrl: "http://192.168.100.135:8000/api/",
-    docUrl: "http://192.168.100.135:8000/",
+    apiUrl: process.env.REACT_APP_API_URL,
+    docUrl: process.env.REACT_APP_DOC_URL,
     featureFlag: true,
   },
   staging: {
