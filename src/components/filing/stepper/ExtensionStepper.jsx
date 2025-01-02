@@ -9,10 +9,6 @@ const ExtensionStepper = () => {
     const location = useLocation()
     const steps = [
         { path: 'initial-input', label: t('basic_details') },
-<<<<<<< HEAD:src/components/filing/extension/Stepper.jsx
-        // { path: 'litigant', label: t('litigants') },
-=======
->>>>>>> deena:src/components/filing/stepper/ExtensionStepper.jsx
         { path: 'ground', label: t('ground') },
         { path: 'advocate', label: t('advocate_details') },
         { path: 'document', label: t('upload_documents') },

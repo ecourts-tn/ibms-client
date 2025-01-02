@@ -80,56 +80,7 @@ const Relaxation = () => {
         }
     };
 
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-
-    // const handlePetitionerCheckBoxChange = (petitioner) => {
-    //     if (selectedPetitioner.includes(petitioner)) {
-    //       // If already selected, remove the petitioner from the selected list
-    //       setSelectedPetitioner(selectedPetitioner.filter(selected => selected.litigant_id !== petitioner.litigant_id));
-    //     } else {
-    //       // Otherwise, add the petitioner to the selected list
-    //       setSelectedPetitioner([...selectedPetitioner, {
-    //         litigant_id :petitioner.litigant_id,
-    //         // litigant_type :1, 
-    //         // rank: petitioner.rank,
-    //         // gender: petitioner.gender,
-    //         // act: petitioner.act,
-    //         // section: petitioner.section,
-    //         // relation: petitioner.relation,
-    //         // relation_name: petitioner.relation_name,
-    //         // age: petitioner.age,
-    //         // address: petitioner.address,
-    //         // mobile_number: petitioner.mobile_number,
-    //         // email_address: petitioner.email_address,
-    //         // nationality: petitioner.nationality,
-    //       }]);
-    //     }
-    // };
-
-    // const handleRespondentCheckBoxChange = (respondent) => {
-    //     if (selectedRespondent.includes(respondent)) {
-    //       // If already selected, remove the respondent from the selected list
-    //       setSelectedRespondent(selectedRespondent.filter(selected => selected.litigant_id !== respondent.litigant_id));
-    //     } else {
-    //       // Otherwise, add the respondent to the selected list
-    //       setSelectedRespondent([...selectedRespondent, {
-    //         litigant_id: respondent.litigant_id,
-    //         // litigant_type: 2, 
-    //         // designation: respondent.designation?.designation_name,
-    //         // state: respondent.state.state_code,
-    //         // district: respondent.district.district_code,
-    //         // police_station: respondent.police_station.cctns_code,
-    //         // address: respondent.address,
-    //       }]);
-    //     }
-    // };
-
-    // const isPetitionerSelected = (petitioner) => selectedPetitioner.some(selected => selected.litigant_id === petitioner.litigant_id);
-    // const isRespondentSelected = (respondent) => selectedRespondent.some(selected => selected.litigant_id === respondent.litigant_id);
-    
-=======
    
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
     useEffect(() => {
         async function fetchData(){
             try{
@@ -150,19 +101,11 @@ const Relaxation = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                    const {petition:pet, litigants, advocates} = response.data
-=======
                     const {petition:pet, litigants } = response.data
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
                     setIsPetition(true)
                     setBail(pet)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
                     setRespondents(litigants.filter(l=>l.litigant_type===2))
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                    setAdvocates(advocates)
-=======
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
                     setPetition({...petition,
                         judiciary: pet.judiciary.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -197,10 +140,6 @@ const Relaxation = () => {
                 setPetition(response.data.petition)
                 setPetitioners(response.data.litigants.filter(l=>l.litigant_type===1))
                 setRespondents(response.data.litigants.filter(l=>l.litigant_type===2))
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                setAdvocates(response.data.advocate)
-=======
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
             }
 
         }catch(error){
@@ -227,51 +166,6 @@ const Relaxation = () => {
         }
     }
 
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-    // const handleInitialSubmit = async() => {
-
-    //     if (selectedPetitioner.length === 0) {
-    //         alert("Please select at least one petitioner");
-    //         return;
-    //     }
-
-    //     const post_data = {
-    //         petition: petition,
-    //         petitioner:selectedPetitioner,
-    //         respondent: selectedRespondent,
-    //     }
-    //     // if (Object.keys(selectedPetitioner).length === 0){
-    //     //     alert("Please select atleast one petitioner")
-    //     //     return
-    //     // }
-    //     const response = await api.post("case/filing/relaxation/", post_data)
-    //     if(response.status === 201){
-    //         resetPage()
-    //         setSelectedPetitioner([])
-    //         setSelectedRespondent([])
-    //         sessionStorage.setItem("efile_no", response.data.efile_number)
-    //         toast.success(`${response.data.efile_number} details submitted successfully`,{
-    //             theme: "colored"
-    //         })
-    //     }
-    // }
-
-    const handleInitialSubmit = async () => {
-        // Ensure that at least one petitioner is selected
-        if (selectedPetitioner.length === 0) {
-            alert("Please select at least one petitioner");
-            return;
-        }
-        
-        // Prepare the data to be sent to the backend
-        const post_data = {
-            petition: petition, // Petition data (you already set this state)
-            // petitioner: selectedPetitioner, // Only the selected petitioners
-            // respondent: selectedRespondent, // Only the selected respondents
-            litigants: selectedPetitioner.concat(selectedRespondent)
-        };
-
-=======
     const handleInitialSubmit = async () => {
         // Ensure that at least one petitioner is selected
         if (selectedPetitioner.length === 0) {
@@ -285,7 +179,6 @@ const Relaxation = () => {
             litigants: selectedPetitioner.concat(selectedRespondent)
         };
 
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
         try {
             // Make the API request to submit the data
             const response = await api.post("case/filing/allied/create/", post_data);
@@ -294,25 +187,15 @@ const Relaxation = () => {
                 // Reset the form and selected data on successful submission
                 resetPage();
                 setSelectedPetitioner([]);
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                setSelectedRespondent([]);
-                
-                // Store efile number in sessionStorage
-                sessionStorage.setItem("efile_no", response.data.efile_number);
-=======
                 setSelectedRespondent([]);      
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
                 
                 // Show success message
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
                     theme: "colored",
                 });
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-=======
                 setTimeout(() => {
                     navigate('/filing/condition-relaxation/ground')
                 }, 1000)
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
             }
         } catch (error) {
             // Handle any errors during submission
@@ -323,18 +206,6 @@ const Relaxation = () => {
         }
     };
  
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-    // const resetPage = () => {
-    //     setSearchForm({...searchForm, reg_number: '', reg_year: ''})
-    //     seteFileNumber('')
-    //     setIsPetition(false)
-    //     setPetition({})
-    //     setPetitioners([])
-    //     setRespondents([])
-    //     setAdvocates([])
-    // }
-=======
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
     const resetPage = () => {
         setSelectedPetitioner([]);
         setSelectedRespondent([]);
@@ -595,11 +466,7 @@ const Relaxation = () => {
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                                <table className="table table-bordered table-striped">
-=======
                                 <table className="table table-bordered">
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
@@ -700,11 +567,7 @@ const Relaxation = () => {
                                         </tr>
                                     </tbody>
                                 </table>
-<<<<<<< HEAD:src/components/filing/relaxation/Relaxation.jsx
-                                <table className="table table-bordered table-striped">
-=======
                                 <table className="table table-bordered">
->>>>>>> deena:src/components/filing/allied/Relaxation.jsx
                                     <thead>
                                         <tr className="bg-navy">
                                             <td colSpan={6}><strong>{t('respondent_details')}</strong></td>

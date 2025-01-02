@@ -2,43 +2,17 @@ import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
 import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
-<<<<<<< HEAD
-import Relaxation from 'components/filing/relaxation/Relaxation'
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
-=======
 import Relaxation from 'components/filing/allied/Relaxation'
->>>>>>> deena
 import GroundsContainer from "components/grounds/GroundsContainer";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-<<<<<<< HEAD
-import Stepper from "components/filing/relaxation/Stepper";
-import { useTranslation } from "react-i18next";
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
-=======
 import RelaxationStepper from "components/filing/stepper/RelaxationStepper";
->>>>>>> deena
 
 
 const conditionRoutes = [
     { path: "initial-input", component: <Relaxation /> },
-<<<<<<< HEAD
-    // { path: "litigant", component: <Litigant /> },
-=======
->>>>>>> deena
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },

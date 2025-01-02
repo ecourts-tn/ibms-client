@@ -1,46 +1,18 @@
 import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-<<<<<<< HEAD
-import { Outlet, Routes, Route } from "react-router-dom";
-/* -------- Components ----------- */
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
-=======
 import { Outlet, Route } from "react-router-dom";
 /* -------- Components ----------- */
->>>>>>> deena
 import GroundsContainer from "components/filing/Ground";
 import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-<<<<<<< HEAD
-import Stepper from "components/filing/return/PropertyStepper";
-import ReturnProperty from "components/filing/return/ReturnProperty";
-import { useTranslation } from "react-i18next";
-
-const Litigant = () => {
-    
-    return(
-        <>
-            <PetitionerContainer />
-            <RespondentContainer />
-        </>
-    )
-}
-
-=======
 import PropertyStepper from "components/filing/stepper/PropertyStepper";
 import ReturnProperty from "components/filing/allied/ReturnProperty";
->>>>>>> deena
 
 
 const propertyRoutes = [
     { path: "initial-input", component: <ReturnProperty /> },
-<<<<<<< HEAD
-    // { path: "litigant", component: <Litigant /> },
-=======
->>>>>>> deena
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },
@@ -61,11 +33,7 @@ const ReturnPropertyLayout = () => (
             </nav> */}
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-<<<<<<< HEAD
-                <Stepper />
-=======
                 <PropertyStepper />
->>>>>>> deena
                 <Outlet />
             </div>
         </div>

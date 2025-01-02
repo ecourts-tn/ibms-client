@@ -60,15 +60,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     }, [selectedRespondent])
 
     useEffect(() => {
-<<<<<<< HEAD
-        async function getCrimeDetail()  {
-            try{
-                const efile_no = sessionStorage.getItem("efile_no")
-=======
         const efile_no = sessionStorage.getItem("efile_no")
         async function getCrimeDetail()  {
             try{
->>>>>>> deena
                 const response = await api.get(`case/crime/detail/`, {
                     params:{efile_no}
                 })
@@ -81,19 +75,12 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     })
                 }
             }catch(error){
-<<<<<<< HEAD
-                console.log(error)
-            }
-        }
-        getCrimeDetail()
-=======
                 console.error(error)
             }
         }
         if(efile_no){
             getCrimeDetail();
         }
->>>>>>> deena
     },[])
 
 

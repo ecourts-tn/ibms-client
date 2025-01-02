@@ -96,19 +96,10 @@ const Modification = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-<<<<<<< HEAD:src/components/filing/modification/ModificationNew.jsx
-                    const {petition:pet, litigants, advocates} = response.data
-                    setIsPetition(true)
-                    setBail(pet)
-                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
-                    setRespondents(litigants.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocates)
-=======
                     const {petition:pet, litigants } = response.data
                     setIsPetition(true)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
                     setRespondents(litigants.filter(l=>l.litigant_type===2))
->>>>>>> deena:src/components/filing/allied/Modification.jsx
                     setPetition({...petition,
                         judiciary: pet.judiciary?.id,
                         seat: pet.seat ? pet.seat.seat_code : null,
@@ -473,11 +464,7 @@ const Modification = () => {
                             <div className="container-fluid mt-5 px-5">
                                 { isPetition && (
                                     <>
-<<<<<<< HEAD:src/components/filing/modification/ModificationNew.jsx
-                                        <InitialInput petition={bail} />
-=======
                                         <InitialInput petition={petition} />
->>>>>>> deena:src/components/filing/allied/Modification.jsx
                                         <table className="table table-bordered table-striped">
                                             <thead>
                                                 <tr className="bg-navy">
@@ -620,8 +607,6 @@ const Modification = () => {
                                                                 type="text" 
                                                                 className="form-control" 
                                                                 value={res.designation?.designation_name}
-<<<<<<< HEAD:src/components/filing/modification/ModificationNew.jsx
-=======
                                                                 readOnly={true}
                                                             />
                                                         </td>
@@ -630,7 +615,6 @@ const Modification = () => {
                                                                 type="text" 
                                                                 className="form-control" 
                                                                 value={res.police_station?.station_name}
->>>>>>> deena:src/components/filing/allied/Modification.jsx
                                                                 readOnly={true}
                                                             />
                                                         </td>

@@ -1,6 +1,6 @@
 import React, {useState,useEffect, useContext} from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import api from '../../api'
+import api from 'api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
 import Loading from 'components/common/Loading'
@@ -168,8 +168,6 @@ const PetitionDetail = () => {
                                         <td>{o.complaince_date}</td>
                                     </tr> 
                                     ))}
-<<<<<<< HEAD
-=======
                                 </tbody>
                             </table>
                             </>
@@ -197,7 +195,6 @@ const PetitionDetail = () => {
                                         <td>{p.next_date}</td>
                                     </tr> 
                                     ))}
->>>>>>> deena
                                 </tbody>
                             </table>
                             </>

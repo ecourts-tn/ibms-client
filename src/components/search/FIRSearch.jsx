@@ -55,12 +55,6 @@ const FIRSearch = ({petition}) => {
         })
     },[])
 
-<<<<<<< HEAD
-    console.log(petition)
-    console.log(form)
-
-=======
->>>>>>> deena
     const handleSearch = async (e) => {
         e.preventDefault()
         try{

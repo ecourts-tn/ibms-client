@@ -13,10 +13,6 @@ import Stepper from "components/filing/stepper/ExtensionStepper";
 
 const extensionRoutes = [
     { path: "initial-input", component: <Extension /> },
-<<<<<<< HEAD
-    // { path: "litigant", component: <PetitionerContainer /> },
-=======
->>>>>>> deena
     { path: "ground", component: <GroundsContainer /> },
     { path: "advocate", component: <Advocate /> },
     { path: "document", component: <Document /> },

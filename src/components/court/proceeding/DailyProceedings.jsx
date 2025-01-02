@@ -5,15 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { CreateMarkup } from 'utils'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-<<<<<<< HEAD
-import PPRemarks from 'components/court/PPRemarks'
-import Proceeding from 'components/court/proceeding/Proceeding'
-import BasicDetails from 'components/court/scrutiny/BasicDetails'
-import CrimeDetails from 'components/court/scrutiny/CrimeDetails'
-import AdvocateDetails from 'components/court/scrutiny/AdvocateDetails'
-import Petitioner from 'components/court/scrutiny/Petitioner'
-import Respondent from 'components/court/scrutiny/Respondent'
-=======
 import Proceeding from 'components/court/proceeding/Proceeding'
 import PPRemarks from 'components/court/common/PPRemarks'
 import BasicDetails from 'components/court/common/BasicDetails'
@@ -22,7 +13,6 @@ import AdvocateDetails from 'components/court/common/AdvocateDetails'
 import Petitioner from 'components/court/common/Petitioner'
 import Respondent from 'components/court/common/Respondent'
 import PoliceResponse from 'components/court/common/PoliceResponse'
->>>>>>> deena
 
 
 const DailyProceedings = () => {

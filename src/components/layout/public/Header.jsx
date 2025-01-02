@@ -1,22 +1,12 @@
-<<<<<<< HEAD
 import api from 'api';
-import './header.css';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState, useEffect, useContext } from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-=======
-import React, { useState, useEffect, useContext } from "react";
->>>>>>> deena
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { REFRESH_TOKEN } from "constants";
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-<<<<<<< HEAD
-=======
-import api from 'api';
->>>>>>> deena
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);

@@ -7,12 +7,7 @@ import Advocate from "components/filing/Advocate";
 import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
-<<<<<<< HEAD
-import DischargeStepper from "components/filing/surety/DischargeStepper";
-import Surety from "components/filing/surety/Surety";
-=======
 import DischargeStepper from "components/filing/stepper/DischargeStepper";
->>>>>>> deena
 import DischargeSurety from "components/filing/surety/DischargeSurety";
 import SuretyDetails from "components/filing/surety/SuretyDetails";
 

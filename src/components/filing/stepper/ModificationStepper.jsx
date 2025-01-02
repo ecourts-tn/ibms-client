@@ -9,10 +9,6 @@ const ModificationStepper = () => {
     const location = useLocation()
     const steps = [
         { path: 'initial-input', label: t('basic_details') },
-<<<<<<< HEAD:src/components/filing/modification/Stepper.jsx
-        // { path: 'litigant', label: t('litigants') },
-=======
->>>>>>> deena:src/components/filing/stepper/ModificationStepper.jsx
         { path: 'ground', label: t('ground') },
         { path: 'advocate', label: t('advocate_details') },
         { path: 'document', label: t('upload_documents') },

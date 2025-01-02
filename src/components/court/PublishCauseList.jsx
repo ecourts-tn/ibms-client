@@ -5,28 +5,18 @@ import React, { useState, useEffect, useContext } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import 'components/court/style.css'
-<<<<<<< HEAD
-import Loading from 'components/Loading';
-import Button from '@mui/material/Button'
-import { toast, ToastContainer } from 'react-toastify';
-=======
 import Loading from 'components/common/Loading';
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { FaCalendarAlt } from 'react-icons/fa';
->>>>>>> deena
 
 const PublishCasueList = () => {
     const { t } = useTranslation();
     const {language} = useContext(LanguageContext)
     const [loading, setLoading] = useState(false)
     const [cases, setCases] = useState([]);
-<<<<<<< HEAD
-    const [hearingDate, setHearingDate] = useState('')
-
-=======
     const [dates, setDates] = useState({});
     const [hearingDate, setHearingDate] = useState('')
 
@@ -53,7 +43,6 @@ const PublishCasueList = () => {
         });
     }, [cases]); // Runs every time the cases data changes
 
->>>>>>> deena
     const handleSearch = async() => {
         try {
             setLoading(true)
@@ -109,15 +98,6 @@ const PublishCasueList = () => {
                         <div className="row">
                             <div className="col-md-4 offset-md-4">
                                 <div className="form-group row">
-<<<<<<< HEAD
-                                    <div className="col-md-8">
-                                        <input 
-                                            type="date"
-                                            name={hearingDate}
-                                            className="form-control" 
-                                            onChange={(e) => setHearingDate(e.target.value)}
-                                        />
-=======
                                     <div className="col-md-8 input-group date-input">
                                         <input 
                                             type="date"
@@ -136,7 +116,6 @@ const PublishCasueList = () => {
                                                 <FaCalendarAlt /> {/* Calendar icon inside input */}
                                             </span>
                                         </div>
->>>>>>> deena
                                     </div>
                                     <div className="cos-md-2">
                                         <Button

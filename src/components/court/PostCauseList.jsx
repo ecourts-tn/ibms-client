@@ -3,18 +3,12 @@ import api from 'api';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-<<<<<<< HEAD
-import Loading from 'components/Loading';
-import 'components/court/style.css';
-import { toast, ToastContainer } from 'react-toastify';
-=======
 import Loading from 'components/common/Loading';
 import 'components/court/style.css';
 import { toast, ToastContainer } from 'react-toastify';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css"; // Import flatpickr styles
 import { FaCalendarAlt } from 'react-icons/fa'; // Import a calendar icon (FontAwesome)
->>>>>>> deena
 
 const PostCauseList = () => {
     const { t } = useTranslation();
@@ -22,33 +16,24 @@ const PostCauseList = () => {
     const [loading, setLoading] = useState(false);
     const [cases, setCases] = useState([]);
     const [dates, setDates] = useState({}); // State to track individual dates
-<<<<<<< HEAD
-=======
     const [searchTerm, setSearchTerm] = useState('');
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
     const [totalItems, setTotalItems] = useState(0);
->>>>>>> deena
 
     useEffect(() => {
         async function fetchData() {
             try {
                 setLoading(true);
                 const response = await api.get("court/cause-list/pending/");
-<<<<<<< HEAD
-                setCases(response.data);
-            } catch (err) {
-                console.log(err);
-=======
                 if (response.status === 200) {
                     setCases(response.data);
                     setTotalItems(response.data.length);
                 }
             } catch (err) {
                 console.error(err);
->>>>>>> deena
             } finally {
                 setLoading(false);
             }
@@ -56,12 +41,6 @@ const PostCauseList = () => {
         fetchData();
     }, []);
 
-<<<<<<< HEAD
-    const handleDateChange = (index, date) => {
-        setDates((prevDates) => ({ ...prevDates, [index]: date }));
-    };
-
-=======
     const formatDate = (date) => {
         if (!(date instanceof Date)) {
             date = new Date(date); // Convert to Date if it's not already
@@ -117,7 +96,6 @@ const PostCauseList = () => {
         pageNumbers.push(i);
     }
 
->>>>>>> deena
     const handleSubmit = async (caseData, index) => {
         const hearingDate = dates[index];
         if (!hearingDate) {
@@ -132,19 +110,6 @@ const PostCauseList = () => {
 
         try {
             const response = await api.post(`court/cause-list/`, payload);
-<<<<<<< HEAD
-            if(response.status === 201){
-                toast.success("Case posted successfully", {theme:"colored"})
-                const newCases = cases.filter(
-                    (c) => c.petition.efile_number !== caseData.petition.efile_number
-                );
-                setCases(newCases); 
-            }
-        } catch (err) {
-            toast.error("Something went wrong!", {theme:"colored"})
-        } finally {
-
-=======
             if (response.status === 201) {
                 toast.success("Case posted successfully", { theme: "colored" });
                 const newCases = cases.filter((c) => c.petition.efile_number !== caseData.petition.efile_number);
@@ -152,7 +117,6 @@ const PostCauseList = () => {
             }
         } catch (err) {
             toast.error("Something went wrong!", { theme: "colored" });
->>>>>>> deena
         }
     };
 
@@ -164,12 +128,6 @@ const PostCauseList = () => {
                 <div className="card card-outline card-primary">
                     <div className="card-header">
                         <h3 className="card-title">
-<<<<<<< HEAD
-                            <i className="fas fa-edit mr-2"></i><strong>Cause List</strong>
-                        </h3>
-                    </div>
-                    <div className="card-body admin-card">
-=======
                             <i className="fas fa-edit mr-2"></i><strong>{t('Cause List')}</strong>
                         </h3>
                     </div>
@@ -204,7 +162,6 @@ const PostCauseList = () => {
                         </div>
                         
                         {/* Table with data */}
->>>>>>> deena
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="table-responsive">
@@ -212,48 +169,6 @@ const PostCauseList = () => {
                                         <thead className="bg-secondary">
                                             <tr>
                                                 <th>S. NO</th>
-<<<<<<< HEAD
-                                                <th>eFile Number</th>
-                                                <th>Crime Number/Year</th>
-                                                <th>Petitioners</th>
-                                                <th>Hearing Date</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {cases && cases.map((c, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        <Link to="/court/case/scrutiny/detail" state={{ efile_no: c.petition.efile_number }}>
-                                                            {c.petition.efile_number}
-                                                        </Link>
-                                                        <span style={{ display: "block" }}>
-                                                            {`${c.petition.filing_type?.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        {c.crime?.fir_number} / {c.crime?.fir_year}<br />
-                                                        {c.crime?.police_station && (
-                                                            <span>{c.crime.police_station?.station_name}, {c.crime.district?.district_name}</span>
-                                                        )}
-                                                    </td>
-                                                    <td className="text-center">
-                                                        {c.litigants.filter((l) => l.litigant_type === 1).map((l, idx) => (
-                                                            <span className="text ml-2" key={idx}>{idx + 1}. {l.litigant_name}</span>
-                                                        ))}<br />
-                                                        <span className="text text-danger">Vs</span><br />
-                                                        {c.litigants.filter((l) => l.litigant_type === 2).map((l, idx) => (
-                                                            <span className="text ml-2" key={idx}>{idx + 1}. {l.litigant_name} {l.designation?.designation_name}</span>
-                                                        ))}
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="date"
-                                                            value={dates[index] || ""}
-                                                            onChange={(e) => handleDateChange(index, e.target.value)}
-                                                        />
-=======
                                                 <th>{t('Case Number or efile_number')}</th>
                                                 <th>{t('Crime Number/Year')}</th>
                                                 <th>{t('Petitioners')}</th>
@@ -321,7 +236,6 @@ const PostCauseList = () => {
                                                                 </span>
                                                             </div>
                                                         </div>
->>>>>>> deena
                                                     </td>
                                                     <td>
                                                         <button
@@ -336,8 +250,6 @@ const PostCauseList = () => {
                                         </tbody>
                                     </table>
                                 </div>
-<<<<<<< HEAD
-=======
                                 
                                 {/* Pagination Controls */}
                                 <div className="d-flex justify-content-between mt-3">
@@ -360,7 +272,6 @@ const PostCauseList = () => {
                                         <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredCases.length} {t('entries')}</span>
                                     </div>
                                 </div>
->>>>>>> deena
                             </div>
                         </div>
                     </div>

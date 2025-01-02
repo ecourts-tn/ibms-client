@@ -8,11 +8,7 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import {toast, ToastContainer} from 'react-toastify'
-<<<<<<< HEAD
-import Loading from 'components/Loading'
-=======
 import Loading from 'components/common/Loading'
->>>>>>> deena
 
 const JudgePeriodList = () => {
 

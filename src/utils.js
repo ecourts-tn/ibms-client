@@ -47,8 +47,6 @@ export const ModelClose = (props) => {
     )
 }
 
-<<<<<<< HEAD
-=======
 export const truncateChars = (text, maxLength) => {
     if (text.length > maxLength) {
       return text.substring(0, maxLength) + "...";
@@ -56,4 +54,3 @@ export const truncateChars = (text, maxLength) => {
     return text;
   };
 
->>>>>>> deena
