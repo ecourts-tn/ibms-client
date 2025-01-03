@@ -9,7 +9,7 @@ import ResponseSubmitted from "components/police/ResponseSubmitted"
 import ResponseDetails from 'components/police/ResponseDetails'
 import ConditionList from 'components/police/ConditionList'
 import ConditionForm from 'components/police/ConditionForm'
-import BailCancellation from 'components/police/BailCancellation'
+import PetitionFiling from 'components/police/PetitionFiling'
 import RequestCustody from 'components/police/RequestCustody'
 import PoliceProfile from 'components/police/Profile'
 
@@ -64,10 +64,10 @@ export const policeRoutes = [
             </PrivateRoute>
         )
     },
-    {   path:"bail/cancellation",
+    {   path:"filing/petition",
         element:(
             <PrivateRoute>
-                <BailCancellation />
+                <PetitionFiling />
             </PrivateRoute>
         )
     },
