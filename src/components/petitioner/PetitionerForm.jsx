@@ -175,7 +175,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       await validationSchema.validate(litigant, { abortEarly: false });
       addPetitioner(litigant);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {

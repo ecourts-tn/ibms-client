@@ -144,6 +144,7 @@ export default Advocate
 const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const[search, setSearch] = useState('')
     const[loading, setLoading] = useState(false)
+    const [isSearchComplete, setIsSearchComplete] = useState(false);
     const initialAdvocate = {
         adv_id:'',
         adv_name: '',
@@ -273,6 +274,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                     adv_mobile: response.data.mobile,
                     adv_reg: response.data.adv_reg
                 })
+                setIsSearchComplete(true);
             }
         }catch(error){
             setAdvocate(initialAdvocate)
@@ -281,6 +283,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
             } else {
                 toast.error("An unexpected error occurred", { theme: "colored" });
             }
+            setIsSearchComplete(false);
         }finally{
             setLoading(false)
         }
@@ -376,6 +379,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                         variant="contained"
                         color="success"
                         onClick={handleSubmit}
+                        disabled={!isSearchComplete || !advocate.adv_name || !advocate.adv_email || !advocate.adv_mobile || !advocate.adv_reg}
                     ><i className="fa fa-plus mr-2"></i>{t('add_advocate')}</Button>
                 </div>
             </div>

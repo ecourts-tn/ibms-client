@@ -14,9 +14,11 @@ import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { RequiredField } from 'utils';
 import Loading from 'components/common/Loading';
 import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { DesignationContext } from 'contexts/DesignationContext'
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
-
-const BailCancellation = () => {
+const PetitionFiling = () => {
 
     const {states} = useContext(StateContext)
     const {districts} = useContext(DistrictContext)
@@ -24,6 +26,9 @@ const BailCancellation = () => {
     const {relations} = useContext(RelationContext)
     const {policeStations} = useContext(PoliceStationContext)
     const {establishments} = useContext(EstablishmentContext)
+    const {designations} = useContext(DesignationContext)
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
 
     const[searchForm, setSearchForm] = useState({
         search: "1",
@@ -37,6 +42,9 @@ const BailCancellation = () => {
         case_number:'',
         case_year:''
     })
+    const[selectFiling, setSelectFiling] = useState({
+        searchfiling: "9",
+    })
     const[searchErrors, setSearchErrors] = useState([])
     const searchValidationSchema = Yup.object({
         search: Yup.string().required(),
@@ -46,7 +54,6 @@ const BailCancellation = () => {
     const[caseFound, setCaseFound] = useState(false)
     const[loading, setLoading] = useState(false)
     const[form, setForm] = useState({
-        efile_no:'',
         litigant_name:'',
         litigant_type:1,
         litigant_number:1,
@@ -66,7 +73,12 @@ const BailCancellation = () => {
         grounds:'',
     })
 
-    const [petition,setPetition] = useState({})
+    const [petition,setPetition] = useState({
+        court_code: '',
+        establishment_code: '',
+        efile_number: '',
+        crime_registered: '',	
+    })
 
     const validationSchema = Yup.object({
         // efile_no: Yup.string().required(),
@@ -163,7 +175,7 @@ const BailCancellation = () => {
         }
     };
 
-    const handleSubmit = async(e) => {
+    const handleSubmit1 = async(e) => {
         e.preventDefault()
         try{
             const post_data = {
@@ -189,6 +201,71 @@ const BailCancellation = () => {
             }
         }
     }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const bail_type = petition.bail_type.id ? petition.bail_type.id : null;
+            const seat = petition.seat ? petition.seat: null;
+            const case_type = selectFiling.searchfiling === "9" ? 9 : 10;
+            const post_data = {
+                accused: selectedRespondent,  
+                petition: {
+                    bail_type: bail_type,             
+                    case_type: case_type,  
+                    complaint_type: petition.id,          
+                    court: petition.court.court_code || null,     
+                    establishment: petition.establishment.establishment_code || null,	    
+                    crime_registered: petition.crime_registered, 
+                    district: petition.district.district_code,    
+                    judiciary: petition.judiciary.id,               
+                    seat: seat,                 
+                    state: petition.state.state_code,
+                    main_efile_number: petition.efile_number,             
+                },
+                petitioner: {
+                    address: form.address,
+                    age: form.age,
+                    designation: form.designation,
+                    district: form.district,
+                    email_address: form.email_address,
+                    gender: form.gender,
+                    litigant_name: form.litigant_name,
+                    litigant_number: form.litigant_number,
+                    litigant_type: form.litigant_type,
+                    mobile_number: form.mobile_number,
+                    pincode: form.pincode,
+                    post_office: form.post_office,
+                    relation: form.relation,
+                    relation_name: form.relation_name,
+                    state: form.state,
+                    taluk: form.taluk,
+                },
+                grounds:{ 
+                    description: form.grounds,  // If grounds are dynamic, ensure it's set correctly
+                },    
+            };
+    
+            // Validate form using Yup schema
+            await validationSchema.validate(form, { abortEarly: false });
+    
+            // Send the request with the structured data
+            const response = await api.post("police/filing/petition/", post_data);
+            
+            if (response.status === 201) {
+                toast.success("Bail cancellation petition submitted successfully", { theme: "colored" });
+            }
+        } catch (error) {
+            // console.log(error.inner);
+            if (error.inner) {
+                const newErrors = {};
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message;
+                });
+                setErrors(newErrors);
+            }
+        }
+    };
+    
 
     return (
         <>
@@ -213,6 +290,34 @@ const BailCancellation = () => {
                                     <div className="row">
                                         <div className="col-md-10 offset-md-1">
                                             <div className="row">
+                                                <div className="col-md-12 text-center">
+                                                    <div className="form-group">
+                                                        <div>
+                                                            <div className="icheck-success d-inline mx-2">
+                                                            <input 
+                                                                type="radio" 
+                                                                name="searchfiling" 
+                                                                id="searchfilingYes" 
+                                                                value="9"
+                                                                checked={selectFiling.searchfiling === "9"}
+                                                                onChange={(e) => setSelectFiling({...selectFiling, [e.target.name] : e.target.value})} 
+                                                            />
+                                                            <label htmlFor="searchfilingYes">Bail Cancellation</label>
+                                                            </div>
+                                                            <div className="icheck-success d-inline mx-2">
+                                                            <input 
+                                                                type="radio" 
+                                                                id="searchfilingNo" 
+                                                                name="searchfiling" 
+                                                                value="10"
+                                                                checked={ selectFiling.searchfiling === "10" } 
+                                                                onChange={(e) => setSelectFiling({...selectFiling, [e.target.name] : e.target.value})}
+                                                            />
+                                                            <label htmlFor="searchfilingNo">Request Custody</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div className="col-md-12 text-center">
                                                     <div className="form-group">
                                                         <div>
@@ -456,9 +561,9 @@ const BailCancellation = () => {
                                                                 >Search</Button>
                                                             </div>
                                                         </div>
-                                                        { loading && (
+                                                        {/* { loading && (
                                                             <Loading />
-                                                        )}
+                                                        )} */}
                                                     </form>
                                                 </div>
                                             </div>
@@ -483,16 +588,21 @@ const BailCancellation = () => {
                                                 </Form.Group>
                                             </div>
                                             <div className="col-md-3">
-                                                <Form.Group>
-                                                    <Form.Label>Designation<RequiredField /></Form.Label>
-                                                    <Form.Control
-                                                        name="designation"
-                                                        value={form.designation}
-                                                        className={`${errors.designation ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => handleNameChange(e, setForm, form, 'designation')}
-                                                    ></Form.Control>
-                                                    <div className="invalid-feedback">{ errors.designation }</div>
-                                                </Form.Group>
+                                            <Form.Group>
+                                                <Form.Label>{t('designation')}</Form.Label>
+                                                <select 
+                                                    name="designation" 
+                                                    className={`form-control ${errors.designation ? 'is-invalid' : ''}` }
+                                                    value={form.designation}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                >
+                                                    <option value="">{t('alerts.select_designation')}</option>
+                                                    { designations.map((d, index) => (
+                                                        <option key={index} value={d.id}>{language === 'ta' ? d.designation_lname : d.designation_name }</option>
+                                                    ))}
+                                                </select>
+                                                <div className="invalid-feedback">{ errors.designation }</div>
+                                            </Form.Group>
                                             </div>
                                             <div className="col-md-2">
                                                 <Form.Group className="mb-3">
@@ -518,7 +628,8 @@ const BailCancellation = () => {
                                                         name="age"
                                                         value={form.age}
                                                         className={`${errors.age ? 'is-invalid' : ''}`}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        onChange={(e) => handleAgeChange(e, setForm, form)}
+                                                        //onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                     ></Form.Control>
                                                     <div className="invalid-feedback">{ errors.age }</div>
                                                 </Form.Group>
@@ -680,6 +791,9 @@ const BailCancellation = () => {
                                                                 <tr>
                                                                     <th>Select</th>
                                                                     <th>Accused Name</th>
+                                                                    <th>Gender</th>
+                                                                    <th>Act</th>
+                                                                    <th>Section</th>
                                                                     <th>Age</th>
                                                                     <th>Address</th>
                                                                 </tr>
@@ -696,6 +810,9 @@ const BailCancellation = () => {
                                                                             />
                                                                         </td>
                                                                         <td>{a.litigant_name}</td>
+                                                                        <td>{a.gender}</td>
+                                                                        <td>{a.act}</td>
+                                                                        <td>{a.section}</td>
                                                                         <td>{a.age}</td>
                                                                         <td>{a.address}</td>
                                                                     </tr>
@@ -744,4 +861,4 @@ const BailCancellation = () => {
     )
 }
 
-export default BailCancellation
+export default PetitionFiling
