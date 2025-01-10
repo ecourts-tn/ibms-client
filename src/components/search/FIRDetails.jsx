@@ -33,16 +33,17 @@ const FIRDetails = () => {
 
     return (
         <>
-            <div className="row mb-5">
+            <Button
+                variant="contained"
+                color="warning"
+                onClick={handleShow}
+                className="ml-2"
+            >   
+                <i className="fa fa-paper-plane mr-2"></i>
+                {t('view_fir')}
+            </Button>
+            <div className="row">
                 <div className="col-md-12 d-flex justify-content-center">
-                    <Button
-                        variant="contained"
-                        color="warning"
-                        onClick={handleShow}
-                    >   
-                        <i className="fa fa-paper-plane mr-2"></i>
-                        {t('view_fir')}
-                    </Button>
                     <Modal 
                             show={show} 
                             onHide={handleClose} 

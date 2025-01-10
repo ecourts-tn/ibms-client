@@ -9,12 +9,13 @@ import { AppProvider } from 'contexts/AppContext';
 import { UserTypeProvider } from 'contexts/UserTypeContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
-import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
+import { filingRoutes } from 'routes/filingRoutes';
 import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
-import { BailFilingRoutes } from 'routes/filingRoutes';
+import { BailFilingRoutes } from 'routes/bailRoutes';
+import { ABailFilingRoutes } from 'routes/abilRoutes';
 import { ConditionFilingRoutes } from 'routes/conditionRoutes';
 import { InterveneRoutes } from 'routes/interveneRoute';
 import { ModificationFilingRoutes } from 'routes/modificationRoutes';

@@ -273,8 +273,8 @@ const CaseSearch = () => {
                     { loading && (
                         <Loading />
                     )}
-                </div>           
-            </>
+            </div>           
+        </>
   )
 }
 
