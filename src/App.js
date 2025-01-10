@@ -59,6 +59,7 @@ function App() {
                 { ReturnPropertyRoutes() }
               </Route> 
               <Route element={<AdminLayout />}>
+              <Route path='/auth/user/registration' element={<DepartmentRegistration/>} />
                   { CourtRoutes() }
                 <Route path="police">
                   { policeRoutes.map((route, index) => (

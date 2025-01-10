@@ -11,7 +11,7 @@ import DraftList from "components/filing/DraftList"
 import SubmittedList from "components/filing/SubmittedList"
 import PetitionDetail from "components/filing/PetitionDetail"
 import PdfGenerator from "components/filing/PdfGenerator"
-import InitialInput from "components/InitialInput";
+import InitialInput from "components/InitialInput1";
 import PetitionerContainer from "components/petitioner/PetitionerContainer";
 import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/grounds/GroundsContainer";

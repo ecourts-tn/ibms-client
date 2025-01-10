@@ -2,7 +2,7 @@ import React from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
 import { Outlet, Routes, Route } from "react-router-dom";
 /* -------- Components ----------- */
-import InitialInput from "components/InitialInput";
+import InitialInput from "components/InitialInput1";
 import PetitionerContainer from "components/petitioner/PetitionerContainer";
 import RespondentContainer from "components/respondent/RespondentContainer";
 import GroundsContainer from "components/filing/Ground";

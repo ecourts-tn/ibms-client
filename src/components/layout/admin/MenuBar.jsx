@@ -149,7 +149,7 @@ export default function MenuBar() {
                     </Link>
                   </li>  
                   <li className="nav-item">
-                    <Link to="surety/pending/list/" className="nav-link">
+                    <Link to="/court/case/surety/pendinglist/" className="nav-link">
                       <i className="nav-icon far fa-circle text-info" />
                       <p>Surety</p>
                     </Link>
@@ -166,6 +166,12 @@ export default function MenuBar() {
                       <p>Reports</p>
                     </Link>
                   </li>   
+                  {/* <li className="nav-item">
+                  <Link to="/auth/user/registration/" className="nav-link">
+                    <i className="nav-icon far fa-circle text-info" />
+                    <p>User Registration</p>
+                  </Link>
+                </li>  */}
                 </>
                 )}
                 { /* End - Court user menu */} 
