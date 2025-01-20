@@ -8,28 +8,49 @@ import api from 'api'
 
 
 const FIRDetails = () => {
-    const {fir, accused, firId} = useContext(BaseContext)
+    const {firId, accused, setAccused, fir, setFir} = useContext(BaseContext)
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {t} = useTranslation()
 
     useEffect(() => {
-        if (firId) {
-            const fetchFIR = async () => {
-                try {
-                    const response = await api.post("external/police/api/detail/", { id: firId });
-                    if (response.status === 200) {
-                        console.log(response.data);
-                    }
-                } catch (error) {
-                    console.error("Error fetching FIR details:", error);
-                }
-            };
+        if (!firId) return; // Skip if firId is not available
     
-            fetchFIR();
-        }
+        const fetchFIR = async () => {
+            try {
+                const response = await api.post("external/police/api/detail/", { id: firId });
+                if (response.status === 200) {
+                    const data = response.data.fir
+                    setFir({
+                    ...fir,
+                    act: data?.act || "",
+                    section: data?.section || [],
+                    date_of_occurrence: data?.date_of_occurrence || "",
+                    investigation_officer: data?.investigation_officer_name || "",
+                    fir_date_time: data?.FIR_date_time || "",
+                    place_of_occurrence: data?.place_of_occurence || "",
+                    gist_of_fir: data?.gist_of_FIR || "",
+                    gist_in_local: data?.gist_of_FIR_local_language || "",
+                    complainant_age: data?.complainant_age || "",
+                    complainant_guardian: data?.complainant_guardian || "",
+                    complainant_guardian_name: data?.complainant_guardian_name || "",
+                    complainant_name: data?.complaintant_name || "",
+                    investigation_officer_rank: data?.investigation_officer_rank || "",
+                    no_of_accused: data?.no_of_accused || 0,
+                    sencitive_case: data?.sencitive_case || false
+                });
+                setAccused(response.data?.fir.accused_details || []);
+                }
+            } catch (error) {
+                console.error("Error fetching FIR details:", error);
+            }
+        };
+    
+        fetchFIR();
     }, [firId]);
+
+
 
     return (
         <>
@@ -108,7 +129,7 @@ const FIRDetails = () => {
                                             <tr>
                                                 <td colSpan={4}>
                                                     <p><strong>{t('gist_in_local')}</strong></p>
-                                                    { fir.gist_in_local }
+                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
                                                 </td>
                                             </tr>
                                         </table>
