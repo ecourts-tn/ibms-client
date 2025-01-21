@@ -11,24 +11,15 @@ import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import Loading from 'components/common/Loading';
+import { Link } from 'react-router-dom';
+import { truncateChars } from 'utils';
 
 const RegistrationSearch = () => {
-
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {establishments} = useContext(EstablishmentContext)
-    const {seats} = useContext(SeatContext)
-    const {language} = useContext(LanguageContext)
-    // const {casetypes}   = useContext(CaseTypeContext)
-    const {t} = useTranslation()
-
-    const[petition, setPetition] = useState({})
-    const[litigant, setLitigant] = useState([])
-    const[proceeding, setProceeding] = useState([])
-    const[caseDetails, setCaseDetails] = useState(false)
+    
     const[form, setForm] = useState({
-        court_type:1,
-        bench_type:'',
+        judiciary:1,
+        seat:'',
         state:'',
         district:'',
         establishment:'',
@@ -36,25 +27,36 @@ const RegistrationSearch = () => {
         reg_number: '',
         reg_year: ''
     })
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {seats} = useContext(SeatContext)
+    const {language} = useContext(LanguageContext)
+    const {casetypes}   = useContext(CaseTypeContext)
+    const {t} = useTranslation()
+    const[petition, setPetition] = useState({})
     const[errors, setErrors] = useState({})
+    const[loading, setLoading] = useState(false)
+    const[isExist, setIsExist] = useState(false)
+
     const validationSchema = Yup.object({
-        bench_type: Yup.string().when("court_type",(court_type, schema) => {
-            if(parseInt(court_type) === 1){
+        seat: Yup.string().when("judiciary",(judiciary, schema) => {
+            if(parseInt(judiciary) === 1){
                 return schema.required(t('errors.bench_required'))
             }
         }),
-        state: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        state: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.state_required'))
             }
         }),
-        district: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        district: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.district_required'))
             }
         }),
-        establishment: Yup.string().when("court_type", (court_type, schema) => {
-            if(parseInt(court_type) === 2){
+        establishment: Yup.string().when("judiciary", (judiciary, schema) => {
+            if(parseInt(judiciary) === 2){
                 return schema.required(t('errors.est_required'))
             }
         }),
@@ -66,13 +68,12 @@ const RegistrationSearch = () => {
 
     const handleSubmit = async () => {
         try{
+            setLoading(true)
             await validationSchema.validate(form, {abortEarly:false})
-            const {response} = await api.post("case/search/registration-number/", form)
+            const response = await api.post("case/search/registration-number/", form)
             if(response.status === 200){
-                setCaseDetails(true)
-                setPetition(response.data.petition)
-                setLitigant(response.data.litigant)
-                setProceeding(response.data.proceeding)
+                setIsExist(true)
+                setPetition(response.data)
             }
         }catch(error){
             if(error.inner){
@@ -83,13 +84,18 @@ const RegistrationSearch = () => {
                 setErrors(newErrors)
             }
             if(error.response){
-                toast.error(error.response.message, {theme:"colored"})
+                toast.error(error.response.data.message, {theme:"colored"})
             }
+        }finally{
+            setLoading(false)
         }
     }
 
+    { console.log(isExist)}
+
     return (
         <>
+            {loading && <Loading />}
             <ToastContainer />
             <div className="container" style={{ minHeight:"500px"}}>
                 <div className="row">
@@ -109,31 +115,31 @@ const RegistrationSearch = () => {
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
                                     type="radio" 
-                                    name="court_type" 
-                                    id="court_type_hc" 
-                                    value={ form.court_type }
-                                    checked={parseInt(form.court_type) === 1 ? true : false }
+                                    name="judiciary" 
+                                    id="judiciary_hc" 
+                                    value={ form.judiciary }
+                                    checked={parseInt(form.judiciary) === 1 ? true : false }
                                     onChange={(e) => setForm({...form, [e.target.name]: 1, state:'', district:'', establishment:''})} 
                                 />
-                                <label htmlFor="court_type_hc">{t('high_court')}</label>
+                                <label htmlFor="judiciary_hc">{t('high_court')}</label>
                             </div>
                             <div className="icheck-primary d-inline mx-2">
                                 <input 
                                     type="radio" 
-                                    id="court_type_dc" 
-                                    name="court_type" 
-                                    value={form.court_type}
-                                    checked={parseInt(form.court_type) === 2 ? true : false } 
-                                    onChange={(e) => setForm({...form, [e.target.name]: 2, bench_type:''})}
+                                    id="judiciary_dc" 
+                                    name="judiciary" 
+                                    value={form.judiciary}
+                                    checked={parseInt(form.judiciary) === 2 ? true : false } 
+                                    onChange={(e) => setForm({...form, [e.target.name]: 2, seat:''})}
                                 />
-                                <label htmlFor="court_type_dc">{t('district_court')}</label>
+                                <label htmlFor="judiciary_dc">{t('district_court')}</label>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div className="row">
                     <div className="col-md-6 offset-md-3">
-                        { parseInt(form.court_type) === 2 && (
+                        { parseInt(form.judiciary) === 2 && (
                             <div className="row">
                                 <div className="col-md-6">
                                     <div className="form-group">
@@ -174,7 +180,7 @@ const RegistrationSearch = () => {
                             </div>
                         )}
                         <div className="row">
-                            { parseInt(form.court_type) === 2 && (
+                            { parseInt(form.judiciary) === 2 && (
                             <div className="col-md-8">
                                 <div className="form-group">
                                     <label htmlFor="">{t('est_name')}</label>
@@ -194,7 +200,7 @@ const RegistrationSearch = () => {
                                 </div>
                             </div>
                             )}
-                            { parseInt(form.court_type) === 1 && (
+                            { parseInt(form.judiciary) === 1 && (
                             <div className="col-md-8">
                                 <div className="form-group">
                                     <label htmlFor="">{t('hc_bench')}</label>
@@ -209,7 +215,7 @@ const RegistrationSearch = () => {
                                         ))}
                                     </select>
                                     <div className="invalid-feedback">
-                                        { errors.bench_type }
+                                        { errors.seat }
                                     </div>
                                 </div>
                             </div>
@@ -223,9 +229,9 @@ const RegistrationSearch = () => {
                                     onChange={(e)=> setForm({...form, [e.target.name]: e.target.value})}
                                 >
                                     <option value="">{t('alerts.select_case_type')}</option>
-                                    {/* { casetypes.map((type, index) => (
-                                    <option value={type.type_code} key={index}>{type.type_full_form}</option>
-                                    ))} */}
+                                    { casetypes.map((type, index) => (
+                                    <option value={type.id} key={index}>{type.type_full_form}</option>
+                                    ))}
                                 </select>
                                 <div className="invalid-feedback">
                                     { errors.case_type }
@@ -280,6 +286,147 @@ const RegistrationSearch = () => {
                         </div>
                     </div>
                 </div>
+
+
+                { isExist && (
+                    <React.Fragment>
+                        <h1>welcome</h1>
+                        <table className="table table-bordered table-striped table-sm">
+                            <tbody>
+                                <tr>
+                                    <td>{t('efile_number')}</td>
+                                    <td>{petition.petition.efile_number}</td>
+                                    <td>{t('efile_date')}</td>
+                                    <td>{petition.petition.efile_date}</td>
+                                </tr>
+                                { petition.petition.judiciary.id== 2 && (
+                                <>
+                                <tr>
+                                    <td>{t('state')}</td>
+                                    <td>{ language === 'ta' ? petition.petition.state.state_lname : petition.petition.state.state_name }</td>
+                                    <td>{t('district')}</td>
+                                    <td>{ language === 'ta' ? petition.petition.district.district_lname : petition.petition.district.district_name }</td>
+                                </tr>
+                                <tr>
+                                    <td>{t('establishment')}</td>
+                                    <td>{ language === 'ta' ? petition.petition.establishment.establishment_lname : petition.petition.establishment.establishment_name }</td>
+                                    <td>{t('court')}</td>
+                                    <td>{ language === 'ta' ? petition.petition.court.court_lname : petition.petition.court.court_name }</td>
+                                </tr>
+                                </>
+                                )}
+                                {  petition.petition.judiciary.id === 1 && (
+                                <>
+                                    <tr>
+                                        <td>Court Type</td>
+                                        <td>{ language === 'ta' ? petition.petition.judiciary.judiciary_lname : petition.petition.judiciary.judiciary_name}</td>
+                                        <td>High Court Bench</td>
+                                        <td>{ language === 'ta' ? petition.petition.seat?.seat_lname : petition.petition.seat?.seat_name}</td>
+                                    </tr>
+                                </>
+                                )}
+                                <tr>
+                                    <td>{t('filing_number')}</td>
+                                    <td>{ petition.petition.filing_type ? `${petition.petition.filing_type.type_name}/${petition.petition.filing_number}/${petition.petition.filing_year}` : null}</td>
+                                    <td>{t('filing_date')}</td>
+                                    <td>{ petition.petition.filing_date }</td>
+                                </tr>
+                                <tr>
+                                    <td>{t('case_number')}</td>
+                                    <td>{ petition.petition.reg_type ? `${petition.petition.reg_type.type_name}/${ petition.petition.reg_number}/${ petition.petition.reg_year}` : null }</td>
+                                    <td>{t('registration_date')}</td>
+                                    <td>{  petition.petition.registration_date }</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h6 className="text-center text-danger"><strong>{t('petitioner_details')}</strong></h6>
+                        <table className="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        { petition.litigant.map((p, index) => (
+                                            <p key={index}>
+                                                <strong>{index+1}. {p.litigant_name}</strong><br/>
+                                                { p.address }
+                                            </p>
+                                        ))}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h6 className="text-center text-danger"><strong>{t('respondent_details')}</strong></h6>
+                        <table className="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                    { petition.litigant.map((res, index) => (
+                                        <React.Fragment>
+                                            <p key={index}>
+                                                <strong>{index+1}. {res.litigant_name} { language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</strong><br/>
+                                                { ` ${res.address}, ${ language === 'ta' ? res.police_station?.station_lname : res.police_station?.station_name}, 
+                                                    ${ language === 'ta' ? res.district?.district_lname : res.district?.district_name}, 
+                                                `}
+                                            </p>
+                                        </React.Fragment>
+                                    ))}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        { Object.keys(petition.objection).length > 0 && (
+                        <>
+                        <h6 className="text-center text-danger"><strong>Objections</strong></h6>
+                        <table className="table table-bordered table-striped">
+                            <thead className='bg-secondary'>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Objection Date</th>
+                                    <th>Remarks</th>
+                                    <th>Complaince Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { petition.objection.map((o, index) => (
+                                <tr>
+                                    <td>{index+1}</td>
+                                    <td>{o.objection_date}</td>
+                                    <td>{o.remarks}</td>
+                                    <td>{o.complaince_date}</td>
+                                </tr> 
+                                ))}
+                            </tbody>
+                        </table>
+                        </>
+                        )}
+                        { Object.keys(petition.proceedings).length > 0 && (
+                        <>
+                        <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
+                        <table className="table table-bordered table-striped">
+                            <thead className='bg-secondary'>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Business Date</th>
+                                    <th>Business</th>
+                                    <th>Next Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { petition.proceedings.map((p, index) => (
+                                <tr>
+                                    <td>{index+1}</td>
+                                    <td>
+                                        <Link to={`/proceeding/detail/`} state={{efile_no:p.efile_no, id:p.id}}>{p.order_date}</Link>
+                                    </td>
+                                    <td>{ truncateChars(p.order_remarks, 100)}</td>
+                                    <td>{p.next_date}</td>
+                                </tr> 
+                                ))}
+                            </tbody>
+                        </table>
+                        </>
+                        )}
+                    </React.Fragment>
+                    )}
             </div>    
         </>
   )

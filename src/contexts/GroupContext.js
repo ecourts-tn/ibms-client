@@ -9,7 +9,7 @@ export const GroupProvider = ({children}) => {
     useEffect(() => {
         const fetchGroups = async() => {
             try{
-                const response = await api.get("base/user-type/")
+                const response = await api.get("auth/group/")
                 if(response.status === 200){
                     setGroups(response.data)
                 }

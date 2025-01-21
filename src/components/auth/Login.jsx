@@ -16,11 +16,12 @@ import { useTranslation } from 'react-i18next';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
+import { GroupContext } from 'contexts/GroupContext';
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  const { userTypes } = useContext(UserTypeContext);
+  const { groups} = useContext(GroupContext)
   const [isDepartment, setIsDepartment] = useState(false);
   const { language } = useContext(LanguageContext);
   const [captchaValid, setCaptchaValid] = useState(null);
@@ -209,11 +210,11 @@ const Login = () => {
                   onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                 >
                   <option value="">{t('alerts.select_usertype')}</option>
-                  {userTypes
-                    .filter((u) => u.id !== 1 && u.id !== 2)
-                    .map((u, index) => (
-                      <option key={index} value={u.id}>
-                        {language === 'ta' ? u.name : u.name}
+                  {groups
+                    .filter((g) => g.id !== 1 && g.id !== 2)
+                    .map((g, index) => (
+                      <option key={index} value={g.id}>
+                        {language === 'ta' ? g.name : g.name}
                       </option>
                     ))}
                 </select>

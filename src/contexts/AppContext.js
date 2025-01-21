@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useEffect, useState, useMemo } from "react";
 import { StateProvider } from "contexts/StateContext";
 import { DistrictProvider } from "contexts/DistrictContext";
 import { TalukProvider } from "contexts/TalukContext";
@@ -23,57 +23,84 @@ import { UserTypeProvider } from "contexts/UserTypeContext";
 import { DocumentProvider } from "contexts/DocumentContext";
 import { CaseTypeProvider } from "contexts/CaseTypeContext";
 import { JudgeProvider } from "contexts/JudgeContext";
+import { GroupProvider } from "contexts/GroupContext";
+import api from "api";
+
+export const AppContext = createContext()
 
 export const AppProvider = ({children}) => {
+
+    const [efileNo, seteFileNo] = useState(null)
+    
+    useEffect(() => {
+        const fetchEFileNumber = async () => {
+        try {
+            const response = await api.get("base/session/efile-number/");
+            if (response.status === 200) {
+                seteFileNo(response.data.efile_number || null);
+            }
+        }catch (error) {
+        console.error("Error fetching efile number:", error);
+        } 
+    };
+        fetchEFileNumber();
+      }, []);
+
+    const contextValue = useMemo(()=>({efileNo}), [efileNo])
+    
     return(
-        <UserTypeProvider>
-            <LanguageProvider>
-                <BaseProvider>
-                    <StateProvider>
-                        <DistrictProvider>
-                            <TalukProvider>
-                                <EstablishmentProvider>
-                                    <CourtProvider>
-                                        <JudiciaryProvider>
-                                            <SeatProvider>
-                                                <CaseTypeProvider>
-                                                    <BailTypeProvider>
-                                                        <ComplaintTypeProvider>
-                                                            <PoliceDistrictProvider>
-                                                                <PoliceStationProvider>
-                                                                    <PrisonProvider>
-                                                                        <ProofProvider>
-                                                                            <RelationProvider>
-                                                                                <CountryProvider>
-                                                                                    <GenderProvider>
-                                                                                        <NationalityProvider>
-                                                                                            <DesignationProvider>
-                                                                                                <DocumentProvider>
-                                                                                                    <JudgeProvider>
-                                                                                                        {children}
-                                                                                                    </JudgeProvider>
-                                                                                                </DocumentProvider>
-                                                                                            </DesignationProvider>
-                                                                                        </NationalityProvider>
-                                                                                    </GenderProvider>
-                                                                                </CountryProvider>
-                                                                            </RelationProvider>
-                                                                        </ProofProvider>
-                                                                    </PrisonProvider>
-                                                                </PoliceStationProvider>
-                                                            </PoliceDistrictProvider>
-                                                        </ComplaintTypeProvider>
-                                                    </BailTypeProvider>
-                                                </CaseTypeProvider>
-                                            </SeatProvider>
-                                        </JudiciaryProvider>
-                                    </CourtProvider>
-                                </EstablishmentProvider>
-                            </TalukProvider>
-                        </DistrictProvider>
-                    </StateProvider>
-                </BaseProvider>
-            </LanguageProvider>
-        </UserTypeProvider>
+        <AppContext.Provider value={contextValue}>
+            <UserTypeProvider>
+                <LanguageProvider>
+                    <BaseProvider>
+                        <StateProvider>
+                            <DistrictProvider>
+                                <TalukProvider>
+                                    <EstablishmentProvider>
+                                        <CourtProvider>
+                                            <JudiciaryProvider>
+                                                <SeatProvider>
+                                                    <CaseTypeProvider>
+                                                        <BailTypeProvider>
+                                                            <ComplaintTypeProvider>
+                                                                <PoliceDistrictProvider>
+                                                                    <PoliceStationProvider>
+                                                                        <PrisonProvider>
+                                                                            <ProofProvider>
+                                                                                <RelationProvider>
+                                                                                    <CountryProvider>
+                                                                                        <GenderProvider>
+                                                                                            <NationalityProvider>
+                                                                                                <DesignationProvider>
+                                                                                                    <DocumentProvider>
+                                                                                                        <JudgeProvider>
+                                                                                                            <GroupProvider>
+                                                                                                                {children}
+                                                                                                            </GroupProvider>
+                                                                                                        </JudgeProvider>
+                                                                                                    </DocumentProvider>
+                                                                                                </DesignationProvider>
+                                                                                            </NationalityProvider>
+                                                                                        </GenderProvider>
+                                                                                    </CountryProvider>
+                                                                                </RelationProvider>
+                                                                            </ProofProvider>
+                                                                        </PrisonProvider>
+                                                                    </PoliceStationProvider>
+                                                                </PoliceDistrictProvider>
+                                                            </ComplaintTypeProvider>
+                                                        </BailTypeProvider>
+                                                    </CaseTypeProvider>
+                                                </SeatProvider>
+                                            </JudiciaryProvider>
+                                        </CourtProvider>
+                                    </EstablishmentProvider>
+                                </TalukProvider>
+                            </DistrictProvider>
+                        </StateProvider>
+                    </BaseProvider>
+                </LanguageProvider>
+            </UserTypeProvider>
+        </AppContext.Provider>
     )
 }
