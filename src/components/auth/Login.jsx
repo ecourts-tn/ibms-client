@@ -13,15 +13,11 @@ import LoginIcon from '@mui/icons-material/LockOpen';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Loading from 'components/common/Loading';
 import { useTranslation } from 'react-i18next';
-import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
-<<<<<<< HEAD
 import { IconButton } from '@mui/material'; 
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
-=======
 import { GroupContext } from 'contexts/GroupContext';
->>>>>>> c978c7ed4b47e6ab70c2c25e24a525bdf3c861e7
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
