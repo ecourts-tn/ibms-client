@@ -19,10 +19,10 @@ const RespondentContainer = () => {
     const[selectedRespondent, setSelectedRespondent] = useState(null)
     const[cirme, setCrime] = useState({})
     const {t} = useTranslation()
+    const efile_no = sessionStorage.getItem("efile_no")
     useEffect(() => {
         const fetchLitigants =  async() => {
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get(`litigant/list/`, {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((respondent)=> {
@@ -34,7 +34,9 @@ const RespondentContainer = () => {
                 console.error(error)
             }
         }
-        fetchLitigants();
+        if(efile_no){
+            fetchLitigants();
+        }
     },[])
 
     const addRespondent = async(litigant) => {

@@ -11,15 +11,11 @@ import './style.css'
 import { SeatContext } from 'contexts/SeatContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import Loading from 'components/common/Loading'
+import { Link } from 'react-router-dom'
 
 const FilingSearch = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {seats} = useContext(SeatContext)
-    const {establishments} = useContext(EstablishmentContext)
-    const {language} = useContext(LanguageContext)
-    const {t} = useTranslation()
     const[form, setForm] = useState({
         judiciary:1,
         seat:'',
@@ -29,11 +25,16 @@ const FilingSearch = () => {
         filing_number:'',
         filing_year:'',
     })
-    const[errors, setErrors] = useState({})
-    const[petition, setPetition] = useState({})
-    const[litigant, setLitigant] = useState([])
-    const[objection, setObjection] = useState([])
-    const[caseDetails, setCaseDetails] = useState(false)
+    const {t} = useTranslation()
+    const {states} = useContext(StateContext)
+    const {districts} = useContext(DistrictContext)
+    const {seats} = useContext(SeatContext)
+    const {establishments} = useContext(EstablishmentContext)
+    const {language} = useContext(LanguageContext)
+    const [loading, setLoading] = useState(false)
+    const [errors, setErrors] = useState({})
+    const [petitions, setPetitions] = useState([])
+
     const validationSchema = Yup.object({
         seat: Yup.string().when("judiciary",(judiciary, schema) => {
             if(parseInt(judiciary) === 1){
@@ -58,15 +59,14 @@ const FilingSearch = () => {
         filing_number: Yup.number().typeError(t('errors.numeric')).required(),
         filing_year: Yup.number().typeError(t('errors.numeric')).required()
     })
+
     const handleSubmit = async() => {
         try{
+            setLoading(true)
             await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("case/search/filing-number/", form)
             if(response.status === 200){
-                setCaseDetails(true)
-                setPetition(response.data.petition)
-                setLitigant(response.data.litigant)
-                setObjection(response.data.objection)
+                setPetitions(response.data)
             }
         }catch(error){
             if(error.inner){
@@ -77,15 +77,17 @@ const FilingSearch = () => {
                 setErrors(newErrors)
             }
             if(error.response){
-                toast.error(error.response.message, {theme:"colored"})
+                toast.error(error.response.data.message, {theme:"colored"})
             }
+        }finally{
+            setLoading(false)
         }
     }
 
-    console.log(petition)
 
     return (
         <>
+            { loading && <Loading />}
             <ToastContainer />
             <div className="container" style={{ minHeight:"500px"}}>
                 <div className="row">
@@ -259,117 +261,156 @@ const FilingSearch = () => {
                         </div>
                     </div>
                 </div>
-                { caseDetails && (
-                <div className="row">
-                    <div className="col-md-12 mt-5">
-                        <h6 className="text-center text-danger"><strong>CASE DETAILS</strong></h6>
-                        <table className="table table-bordered table-striped table-sm details-table">
-                            <tbody>
-                                { petition.court_type.id === 2 && (
-                                <>
-                                <tr>
-                                    <td>State</td>
-                                    <td>{ petition.state.state_name }</td>
-                                    <td>District</td>
-                                    <td>{ petition.district.district_name }</td>
-                                </tr>
-                                <tr>
-                                    <td>Establishment Name</td>
-                                    <td>{ petition.establishment.establishment_name }</td>
-                                    <td>Court Name</td>
-                                    <td>{ petition.court.court_name }</td>
-                                </tr>
-                                </>
-                                )}
-                                <tr>
-                                    <td>Filing Number</td>
-                                    <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
-                                    <td>Filing Date</td>
-                                    <td>{ petition.filing_date }</td>
-                                </tr>
-                                <tr>
-                                    <td>Registration Number</td>
-                                    <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
-                                    <td>Registration Date</td>
-                                    <td>{  petition.date_of_registration }</td>
-                                </tr>
-                                {  petition.court_type.code === 2 && (
-                                <>
-                                    <tr>
-                                        <td>State</td>
-                                        <td>{ petition.state.state_name}</td>
-                                        <td>District</td>
-                                        <td>{ petition.district.district_name}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Establishment</td>
-                                        <td>{ petition.establishment.establishment_name}</td>
-                                        <td>Court</td>
-                                        <td>{ petition.court.court_name}</td>
-                                    </tr>
-                                </>
-                                )}
-                                {  petition.court_type.code === 1 && (
-                                <>
-                                    <tr>
-                                        <td>Court Type</td>
-                                        <td>{ petition.court_type.name}</td>
-                                        <td>Bench Type</td>
-                                        <td>{ petition.bench_type.name}</td>
-                                    </tr>
-                                </>
-                                )}
-                            </tbody>
-                        </table>
-                        <h6 className="text-center text-danger"><strong>PETITIONER DETAILS</strong></h6>
-                        <table className="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                    { litigant.filter(l=>l.litigant_type ===1).map((p, index) => (
-                                        <>
-                                            <p>
-                                                <strong>{index+1}. {p.litigant_name}</strong><br/>
-                                                { p.address }
-                                            </p>
-                                        </>
+                { Object.keys(petitions).length > 0 && (
+                // <div className="row">
+                //     <div className="col-md-12 mt-5">
+                //         <h6 className="text-center text-danger"><strong>CASE DETAILS</strong></h6>
+                //         <table className="table table-bordered table-striped table-sm details-table">
+                //             <tbody>
+                //                 { petition.court_type.id === 2 && (
+                //                 <>
+                //                 <tr>
+                //                     <td>State</td>
+                //                     <td>{ petition.state.state_name }</td>
+                //                     <td>District</td>
+                //                     <td>{ petition.district.district_name }</td>
+                //                 </tr>
+                //                 <tr>
+                //                     <td>Establishment Name</td>
+                //                     <td>{ petition.establishment.establishment_name }</td>
+                //                     <td>Court Name</td>
+                //                     <td>{ petition.court.court_name }</td>
+                //                 </tr>
+                //                 </>
+                //                 )}
+                //                 <tr>
+                //                     <td>Filing Number</td>
+                //                     <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
+                //                     <td>Filing Date</td>
+                //                     <td>{ petition.filing_date }</td>
+                //                 </tr>
+                //                 <tr>
+                //                     <td>Registration Number</td>
+                //                     <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
+                //                     <td>Registration Date</td>
+                //                     <td>{  petition.date_of_registration }</td>
+                //                 </tr>
+                //                 {  petition.court_type.code === 2 && (
+                //                 <>
+                //                     <tr>
+                //                         <td>State</td>
+                //                         <td>{ petition.state.state_name}</td>
+                //                         <td>District</td>
+                //                         <td>{ petition.district.district_name}</td>
+                //                     </tr>
+                //                     <tr>
+                //                         <td>Establishment</td>
+                //                         <td>{ petition.establishment.establishment_name}</td>
+                //                         <td>Court</td>
+                //                         <td>{ petition.court.court_name}</td>
+                //                     </tr>
+                //                 </>
+                //                 )}
+                //                 {  petition.court_type.code === 1 && (
+                //                 <>
+                //                     <tr>
+                //                         <td>Court Type</td>
+                //                         <td>{ petition.court_type.name}</td>
+                //                         <td>Bench Type</td>
+                //                         <td>{ petition.bench_type.name}</td>
+                //                     </tr>
+                //                 </>
+                //                 )}
+                //             </tbody>
+                //         </table>
+                //         <h6 className="text-center text-danger"><strong>PETITIONER DETAILS</strong></h6>
+                //         <table className="table table-bordered">
+                //             <tbody>
+                //                 <tr>
+                //                     <td>
+                //                     { litigant.filter(l=>l.litigant_type ===1).map((p, index) => (
+                //                         <>
+                //                             <p>
+                //                                 <strong>{index+1}. {p.litigant_name}</strong><br/>
+                //                                 { p.address }
+                //                             </p>
+                //                         </>
 
-                                    ))}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <h6 className="text-center text-danger"><strong>RESPONDENT DETAILS</strong></h6>
-                        <table className="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                    { litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-                                        <>
-                                            <p><strong>{index+1}. {res.litigant_name} {res.designation}</strong><br/>
-                                                { `${res.police_station.station_name}, ${res.district.district_name}, ${res.address}`}
-                                            </p>
-                                        </>
-                                    ))}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        { Object.keys(objection).length > 0 && (
-                        <>
-                        <h6 className="text-center text-danger"><strong>OBJECTIONS</strong></h6>
-                        <table className="table table-bordered">
-                            <tbody>
-                                <tr>
-                                    <td>
+                //                     ))}
+                //                     </td>
+                //                 </tr>
+                //             </tbody>
+                //         </table>
+                //         <h6 className="text-center text-danger"><strong>RESPONDENT DETAILS</strong></h6>
+                //         <table className="table table-bordered">
+                //             <tbody>
+                //                 <tr>
+                //                     <td>
+                //                     { litigant.filter(l=>l.litigant_type===2).map((res, index) => (
+                //                         <>
+                //                             <p><strong>{index+1}. {res.litigant_name} {res.designation}</strong><br/>
+                //                                 { `${res.police_station.station_name}, ${res.district.district_name}, ${res.address}`}
+                //                             </p>
+                //                         </>
+                //                     ))}
+                //                     </td>
+                //                 </tr>
+                //             </tbody>
+                //         </table>
+                //         { Object.keys(objection).length > 0 && (
+                //         <>
+                //         <h6 className="text-center text-danger"><strong>OBJECTIONS</strong></h6>
+                //         <table className="table table-bordered">
+                //             <tbody>
+                //                 <tr>
+                //                     <td>
                                     
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        </>)}
-                    </div>
-                </div>
+                //                     </td>
+                //                 </tr>
+                //             </tbody>
+                //         </table>
+                //         </>)}
+                //     </div>
+                // </div>
+                <table className="table table-bordered table-striped mt-5">
+                    <thead>
+                        <tr>
+                            <th>Filing Number</th>
+                            <th>Litigants</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { petitions.map((p, index) => (
+                            <tr key={index}>
+                                <td>{`${p.petition.filing_type?.type_name}/${p.petition.filing_number}/${p.petition.filing_year}`}</td>
+                                <td>
+                                    {p.litigants
+                                        .filter((l) => parseInt(l.litigant_type) === 1)
+                                        .map((l, index) => (
+                                            <span key={index}>
+                                                {index + 1}. {l.litigant_name}
+                                            </span>
+                                        ))}
+                                    <span className="text-danger mx-2">Vs</span>
+                                    {p.litigants
+                                        .filter((l) => parseInt(l.litigant_type) === 2)
+                                        .map((l, index) => (
+                                            <span key={index}>
+                                                {index + 1}. {l.litigant_name}{' '}
+                                                {language === 'ta'
+                                                    ? l.designation?.designation_lname
+                                                    : l.designation?.designation_name}
+                                            </span>
+                                    ))}
+                                </td>
+                                <td>
+                                    <Link to={`/filing/detail/`} state={{ efile_no: p.petition.efile_number }}>View</Link>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
                 )}
             </div>  
         </>

@@ -172,7 +172,7 @@ const PetitionDetail = () => {
                             </table>
                             </>
                             )}
-                             { Object.keys(proceedings).length > 0 && (
+                            { Object.keys(proceedings).length > 0 && (
                             <>
                             <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
                             <table className="table table-bordered table-striped">

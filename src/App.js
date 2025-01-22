@@ -6,15 +6,22 @@ import PublicLayout from 'components/layout/public/PublicLayout'
 import AdminLayout from 'components/layout/admin/AdminLayout';
 import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
-import { UserTypeProvider } from 'contexts/UserTypeContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
+<<<<<<< HEAD
 import { ABailFilingRoutes } from 'routes/abilRoutes';
+=======
+import { filingRoutes } from 'routes/filingRoutes';
+>>>>>>> c978c7ed4b47e6ab70c2c25e24a525bdf3c861e7
 import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
 import { BailFilingRoutes } from 'routes/bailRoutes';
+<<<<<<< HEAD
+=======
+import { ABailFilingRoutes } from 'routes/abilRoutes';
+>>>>>>> c978c7ed4b47e6ab70c2c25e24a525bdf3c861e7
 import { ConditionFilingRoutes } from 'routes/conditionRoutes';
 import { InterveneRoutes } from 'routes/interveneRoute';
 import { ModificationFilingRoutes } from 'routes/modificationRoutes';

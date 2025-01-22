@@ -22,9 +22,6 @@ const PetitionerContainer = () => {
     useEffect(() => {
         const fetchPetitioners = async() => {
             try{
-                if(!efile_no){
-                    return;
-                }
                 const response = await api.get("litigant/list/", {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((petitioner)=> {
@@ -36,7 +33,9 @@ const PetitionerContainer = () => {
                 console.error(error)
             }
         }
-        fetchPetitioners()
+        if(efile_no){
+            fetchPetitioners()
+        }
     },[])
 
     const addPetitioner = async(litigant) => {
