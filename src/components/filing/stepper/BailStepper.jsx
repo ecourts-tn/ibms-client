@@ -15,7 +15,7 @@ const Stepper = () => {
         { path: 'payment', label: t('payment_details') },
         { path: 'efile', label: t('efile') },
       ];
-
+ 
       
     return (
         <div>

@@ -9,12 +9,12 @@ import { AppProvider } from 'contexts/AppContext';
 import { UserTypeProvider } from 'contexts/UserTypeContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
-import { ABailFilingRoutes, filingRoutes } from 'routes/filingRoutes';
+import { ABailFilingRoutes } from 'routes/abilRoutes';
 import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
-import { BailFilingRoutes } from 'routes/filingRoutes';
+import { BailFilingRoutes } from 'routes/bailRoutes';
 import { ConditionFilingRoutes } from 'routes/conditionRoutes';
 import { InterveneRoutes } from 'routes/interveneRoute';
 import { ModificationFilingRoutes } from 'routes/modificationRoutes';
@@ -24,6 +24,7 @@ import { ExtensionRoutes } from 'routes/extensionRoutes';
 import { ReturnPassportRoutes } from 'routes/passportRoutes';
 import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
+import { filingRoutes } from 'routes/filingRoutes';
 
 function App() {
 

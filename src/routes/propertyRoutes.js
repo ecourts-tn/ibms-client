@@ -9,6 +9,7 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import PropertyStepper from "components/filing/stepper/PropertyStepper";
 import ReturnProperty from "components/filing/allied/ReturnProperty";
+import StepperButton from "components/filing/StepperButton";
 
 
 const propertyRoutes = [
@@ -35,6 +36,7 @@ const ReturnPropertyLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <PropertyStepper />
                 <Outlet />
+                <StepperButton steps={propertyRoutes}/>
             </div>
         </div>
     </PrivateRoute>

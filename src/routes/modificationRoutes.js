@@ -9,6 +9,7 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import Stepper from "components/filing/stepper/ModificationStepper";
 import Modification from "components/filing/allied/Modification";
+import StepperButton from "components/filing/StepperButton";
 
 const modificationRoutes = [
     { path: "initial-input", component: <Modification /> },
@@ -27,6 +28,7 @@ const ModificationLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <Stepper />
                 <Outlet />
+                <StepperButton steps={modificationRoutes}/>
             </div>
         </div>
     </PrivateRoute>

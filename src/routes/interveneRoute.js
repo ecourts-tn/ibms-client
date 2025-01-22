@@ -13,6 +13,7 @@ import EFile from "components/filing/efile/EFile";
 import InterveneStepper from "components/filing/stepper/InterveneStepper";
 import Petitioner from "components/filing/intervene/Petitioner";
 import AccusedDetails from "components/filing/intervene/AccusedDetails";
+import StepperButton from "components/filing/StepperButton";
 
 const Litigant = () => {
     
@@ -53,6 +54,7 @@ const InterveneLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <InterveneStepper />
                 <Outlet />
+                <StepperButton steps={interveneRoutes}/>
             </div>
         </div>
     </PrivateRoute>

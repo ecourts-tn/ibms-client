@@ -40,8 +40,8 @@ const BailFilingLayout = () => (
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <BailStepper />
-                <StepperButton />
                 <Outlet />
+                <StepperButton steps={bailRoutes}/>
             </div>
         </div>
     </PrivateRoute>

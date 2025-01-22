@@ -21,7 +21,7 @@ import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import BailStepper from "components/filing/stepper/BailStepper";
-import ABailStepper from "components/filing/stepper/ABailStepper"
+// import ABailStepper from "components/filing/stepper/ABailStepper"
 import StepperButton from "components/filing/StepperButton";
 import Pleadings from "components/filing/Pleadings";
 import ApprovedList from "components/filing/ApprovedList";
@@ -37,70 +37,317 @@ const Litigant = () => {
     )
 }
 
-export const bailRoutes = [
-    { path: "initial-input", component: <InitialInput /> },
-    { path: "litigant", component: <Litigant /> },
-    { path: "ground", component: <GroundsContainer /> },
-    { path: "previous-history", component: <PreviousCaseContainer /> },
-    { path: "advocate", component: <Advocate /> },
-    { path: "document", component: <Document /> },
-    { path: "payment", component: <Payment /> },
-    { path: "efile", component: <EFile /> },
-];
+// export const bailRoutes = [
+//     { path: "initial-input", component: <InitialInput /> },
+//     { path: "litigant", component: <Litigant /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "previous-history", component: <PreviousCaseContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
 
-const BailFilingLayout = () => (
-    <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
-            <div className="card" style={{ boxShadow:'none', border:'none'}}>
-                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}>
-                    <BailStepper />
-                    <Outlet />
-                    <StepperButton steps={bailRoutes} />
-                </div>
-            </div>
-        </div>
-    </PrivateRoute>
-);
+// const BailFilingLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}>
+//                     <BailStepper />
+//                     <Outlet />
+//                     <StepperButton steps={bailRoutes} />
+//                 </div>
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
 
-export const BailFilingRoutes = () => (
-    <Route path="filing/bail" element={<BailFilingLayout />}>
-        {bailRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.component} />
-        ))}
-    </Route>
-);
+// export const BailFilingRoutes = () => (
+//     <Route path="filing/bail" element={<BailFilingLayout />}>
+//         {bailRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
 
-const abailRoutes = [
-    { path: "initial-input", component: <InitialInput /> },
-    { path: "litigant", component: <Litigant /> },
-    { path: "ground", component: <GroundsContainer /> },
-    { path: "previous-history", component: <PreviousCaseContainer /> },
-    { path: "advocate", component: <Advocate /> },
-    { path: "document", component: <Document /> },
-    { path: "payment", component: <Payment /> },
-    { path: "efile", component: <EFile /> },
-];
+// const abailRoutes = [
+//     { path: "initial-input", component: <InitialInput /> },
+//     { path: "litigant", component: <Litigant /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "previous-history", component: <PreviousCaseContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
 
-const ABailFilingLayout = () => (
-    <PrivateRoute>
-        <div className="container-fluid" style={{ minHeight:'500px'}}>
-            <div className="card" style={{ boxShadow:'none', border:'none'}}>
-                <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
-                <ABailStepper />
-                <Outlet />
-            </div>
-        </div>
-    </PrivateRoute>
-);
+// const ABailFilingLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <ABailStepper />
+//                 <Outlet />
+//                 <StepperButton steps={abailRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
 
-export const ABailFilingRoutes = () => (
-    <Route path="filing/anticipatory-bail" element={<ABailFilingLayout />}>
-        {abailRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.component} />
-        ))}
-    </Route>
-);
+// export const ABailFilingRoutes = () => (
+//     <Route path="filing/anticipatory-bail" element={<ABailFilingLayout />}>
+//         {abailRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
 
+// const conditionRoutes = [
+//     { path: "initial-input", component: <Relaxation /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const ConditionFilingLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <RelaxationStepper />
+//                 <Outlet />
+//                 <StepperButton steps={conditionRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const ConditionFilingRoutes = () => (
+//     <Route path="filing/condition-relaxation" element={<ConditionFilingLayout />}>
+//         {conditionRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const interveneRoutes = [
+//     { path: "initial-input", component: <Petition /> },
+//     { path: "petitioner", component: <Petitioner />},
+//     { path: "accused-detail", component: <AccusedDetails />},
+//     { path: "litigant", component: <Litigant /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const InterveneLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <InterveneStepper />
+//                 <Outlet />
+//                 <StepperButton steps={interveneRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const InterveneRoutes = () => (
+//     <Route path="filing/intervene-petition" element={<InterveneLayout />}>
+//         {interveneRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const modificationRoutes = [
+//     { path: "initial-input", component: <Modification /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const ModificationLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <ModificationStepper />
+//                 <Outlet />
+//                 <StepperButton steps={modificationRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const ModificationFilingRoutes = () => (
+//     <Route path="filing/modification-petition" element={<ModificationLayout />}>
+//         {modificationRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const suretyRoutes = [
+//     { path: "initial-input", component: <Surety /> },
+//     { path: "surety-detail", component: <SuretyForm /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const SuretyLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <SuretyStepper />
+//                 <Outlet />
+//                 <StepperButton steps={suretyRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const SuretyRoutes = () => (
+//     <Route path="filing/surety-petition" element={<SuretyLayout />}>
+//         {suretyRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const dischargeRoutes = [
+//     { path: "initial-input", component: <DischargeSurety /> },
+//     { path: "surety-detail", component: <SuretyDetails /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const DischargeLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <DischargeStepper />
+//                 <Outlet />
+//                 <StepperButton steps={dischargeRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const DischargeRoutes = () => (
+//     <Route path="filing/surety-discharge" element={<DischargeLayout />}>
+//         {dischargeRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const extensionRoutes = [
+//     { path: "initial-input", component: <Extension /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const ExtensionLayout = () => (
+//     <PrivateRoute>
+//         <div className="container-fluid" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <ExtensionStepper />
+//                 <Outlet />
+//                 <StepperButton steps={extensionRoutes} />
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const ExtensionRoutes = () => (
+//     <Route path="filing/time-extension" element={<ExtensionLayout />}>
+//         {extensionRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const passportRoutes = [
+//     { path: "initial-input", component: <ReturnPassport /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const ReturnPassportLayout = () => (
+    
+//     <PrivateRoute>
+//         <div className="container" style={{ minHeight:'500px'}}>
+//             <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <PassportStepper />
+//                 <Outlet />
+//                 <StepperButton steps={passportRoutes}/>
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const ReturnPassportRoutes = () => (
+//     <Route path="filing/return-passport/" element={<ReturnPassportLayout />}>
+//         {passportRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
+
+// const propertyRoutes = [
+//     { path: "initial-input", component: <ReturnProperty /> },
+//     { path: "ground", component: <GroundsContainer /> },
+//     { path: "advocate", component: <Advocate /> },
+//     { path: "document", component: <Document /> },
+//     { path: "payment", component: <Payment /> },
+//     { path: "efile", component: <EFile /> },
+// ];
+
+// const ReturnPropertyLayout = () => (
+    
+//     <PrivateRoute>
+//         <div className="container" style={{ minHeight:'500px'}}>
+//            <div className="card" style={{ boxShadow:'none', border:'none'}}>
+//                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
+//                 <PropertyStepper />
+//                 <Outlet />
+//                 <StepperButton steps={propertyRoutes.map(route => ({ path: route.path }))}/>
+//             </div>
+//         </div>
+//     </PrivateRoute>
+// );
+
+// export const ReturnPropertyRoutes = () => (
+//     <Route path="filing/return-property/" element={<ReturnPropertyLayout />}>
+//         {propertyRoutes.map((route, index) => (
+//             <Route key={index} path={route.path} element={route.component} />
+//         ))}
+//     </Route>
+// );
 export const filingRoutes = [
     {   path: "filing/dashboard", 
         element: (

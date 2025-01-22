@@ -12,6 +12,7 @@ import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import ABailStepper from "components/filing/stepper/ABailStepper"
+import StepperButton from "components/filing/StepperButton";
 
 const Litigant = () => {
     return(
@@ -41,6 +42,7 @@ const ABailFilingLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <ABailStepper />
                 <Outlet />
+                <StepperButton steps={abailRoutes} />
             </div>
         </div>
     </PrivateRoute>

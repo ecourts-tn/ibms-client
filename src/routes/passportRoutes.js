@@ -9,6 +9,7 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import PassportStepper from "components/filing/stepper/PassportStepper";
 import ReturnPassport from "components/filing/allied/ReturnPassport";
+import StepperButton from "components/filing/StepperButton";
 
 
 const passportRoutes = [
@@ -28,6 +29,7 @@ const ReturnPassportLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <PassportStepper />
                 <Outlet />
+                <StepperButton steps={passportRoutes}/>
             </div>
         </div>
     </PrivateRoute>

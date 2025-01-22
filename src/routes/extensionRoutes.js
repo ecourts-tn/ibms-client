@@ -9,6 +9,7 @@ import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import Extension from "components/filing/allied/Extension";
 import Stepper from "components/filing/stepper/ExtensionStepper";
+import StepperButton from "components/filing/StepperButton";
 
 
 const extensionRoutes = [
@@ -28,6 +29,7 @@ const ExtensionLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <Stepper />
                 <Outlet />
+                <StepperButton steps={extensionRoutes}/>
             </div>
         </div>
     </PrivateRoute>

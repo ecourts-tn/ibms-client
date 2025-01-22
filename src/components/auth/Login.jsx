@@ -16,6 +16,8 @@ import { useTranslation } from 'react-i18next';
 import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
+import { IconButton } from '@mui/material'; 
+import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
@@ -24,6 +26,7 @@ const Login = () => {
   const [isDepartment, setIsDepartment] = useState(false);
   const { language } = useContext(LanguageContext);
   const [captchaValid, setCaptchaValid] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const { t } = useTranslation();
   const { login } = useContext(AuthContext);
   const [errors, setErrors] = useState({});
@@ -240,17 +243,39 @@ const Login = () => {
           <div className="col-md-12">
             <div className="form-group mb-3">
               <FormControl fullWidth>
-                <TextField
+              <div className="input-group" style={{ position: 'relative' }}>
+                <input
+                  className={`form-control ${errors.password ? 'is-invalid' : null }`}
                   error={errors.password ? true : false}
                   helperText={errors.password}
                   label={t('password')}
                   size="small"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={form.password}
-                  onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                  onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value.trim() })}
+                  style={{
+                    paddingRight: '35px', // Make room for the icon inside the input
+                  }}
                 />
-              </FormControl>
+                <IconButton
+                        onClick={() => setShowPassword(!showPassword)} // Toggle the visibility
+                        edge="end"
+                        style={{
+                            position: 'absolute',
+                            right: '10px', // Positioned on the right side inside the input field
+                            top: '50%',
+                            transform: 'translateY(-50%)', // Centered vertically
+                            color: '#6c757d', // Icon color (you can adjust this)
+                        }}
+                    >
+                        {showPassword ? <VisibilityOff /> : <Visibility />} {/* Eye icons */}
+                    </IconButton>
+                    </div>
+                    <div className="invalid-feedback">
+                        { errors.password }
+                    </div>
+                </FormControl>
             </div>
           </div>
           <div className="col-md-7 d-flex">

@@ -10,6 +10,7 @@ import EFile from "components/filing/efile/EFile";
 import SuretyStepper from "components/filing/stepper/SuretyStepper";
 import Surety from "components/filing/surety/Surety";
 import SuretyForm from "components/filing/surety/SuretyForm";
+import StepperButton from "components/filing/StepperButton";
 
 
 const suretyRoutes = [
@@ -30,6 +31,7 @@ const SuretyLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <SuretyStepper />
                 <Outlet />
+                <StepperButton steps={suretyRoutes}/>
             </div>
         </div>
     </PrivateRoute>

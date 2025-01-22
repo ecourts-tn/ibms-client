@@ -10,6 +10,7 @@ import EFile from "components/filing/efile/EFile";
 import DischargeStepper from "components/filing/stepper/DischargeStepper";
 import DischargeSurety from "components/filing/surety/DischargeSurety";
 import SuretyDetails from "components/filing/surety/SuretyDetails";
+import StepperButton from "components/filing/StepperButton";
 
 
 const dischargeRoutes = [
@@ -30,6 +31,7 @@ const DischargeLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <DischargeStepper />
                 <Outlet />
+                <StepperButton steps={dischargeRoutes}/>
             </div>
         </div>
     </PrivateRoute>

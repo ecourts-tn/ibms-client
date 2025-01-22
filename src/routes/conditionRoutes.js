@@ -9,6 +9,7 @@ import Document from "components/filing/Document";
 import Payment from "components/payment/Payment";
 import EFile from "components/filing/efile/EFile";
 import RelaxationStepper from "components/filing/stepper/RelaxationStepper";
+import StepperButton from "components/filing/StepperButton";
 
 
 const conditionRoutes = [
@@ -28,6 +29,7 @@ const ConditionLayout = () => (
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div>
                 <RelaxationStepper />
                 <Outlet />
+                <StepperButton steps={conditionRoutes} />
             </div>
         </div>
     </PrivateRoute>
