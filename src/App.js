@@ -22,8 +22,8 @@ import { DischargeRoutes } from 'routes/dischargeRoutes';
 import { ExtensionRoutes } from 'routes/extensionRoutes';
 import { ReturnPassportRoutes } from 'routes/passportRoutes';
 import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
-import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 import { filingRoutes } from 'routes/filingRoutes';
+import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 
 function App() {
 

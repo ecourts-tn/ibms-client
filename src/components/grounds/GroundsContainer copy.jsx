@@ -104,28 +104,35 @@ const GroundsContainer = () => {
     }
 
     return (
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-md-12">
-                    <GroundsList 
-                        grounds={grounds} 
-                        deleteGround={deleteGround} 
-                        count={count}
-                        decrementCount={decrementCount}
-                        editGround={editGround}
-                    />
-                </div>   
-                <div className="col-md-12"> 
-                    <GroundsForm 
-                        addGround={addGround} 
-                        count={count}
-                        incrementCount={incrementCount}
-                        selectedGround={selectedGround}
-                    />
+        <div className="container">
+            <div className="card">
+                <div className="card-header">
+                    <h3 className="card-title"><i className="fas fa-file mr-2"></i><strong>{t('ground')}</strong></h3>
+                </div>
+                <div className="card-body p-1">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <GroundsList 
+                                grounds={grounds} 
+                                deleteGround={deleteGround} 
+                                count={count}
+                                decrementCount={decrementCount}
+                                editGround={editGround}
+                            />
+                        </div>   
+                        <div className="col-md-12"> 
+                            <GroundsForm 
+                                addGround={addGround} 
+                                count={count}
+                                incrementCount={incrementCount}
+                                selectedGround={selectedGround}
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    )
+     )
 }
 
 export default GroundsContainer

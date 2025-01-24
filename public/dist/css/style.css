@@ -224,6 +224,9 @@ legend > span {
   .sensitive-case{
     font-weight: bold;
   }
-  /* form#initial-input{
-    text-align:right;
-  } */
+.list-group-menu > .list-group-item{
+    background-color:#0e6655;
+    color:#FAFAFA!important;
+    border-top:1px solid #FAFAFA!important;
+}
+  

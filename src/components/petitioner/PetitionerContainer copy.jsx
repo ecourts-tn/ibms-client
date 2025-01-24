@@ -91,27 +91,41 @@ const PetitionerContainer = () => {
     }
      
     return (
-        <div className="container-fluid mt-4">
-            <Modal 
-                show={show} 
-                onHide={handleClose} 
-                backdrop="static"
-                keyboard={false}
-                size="xl"
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title><strong>{t('petitioners')}</strong></Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <PetitionerList petitioners={petitioners} deletePetitioner={deletePetitioner} editPetitioner={editPetitioner}/>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                    {t('close')}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <PetitionerForm addPetitioner={addPetitioner} petitioners={petitioners} selectedPetitioner={selectedPetitioner}/>
+        <div className="container mt-4">
+            <div className="card card-outline card-danger">
+                <div className="card-header">
+                    <div className="d-flex justify-content-between">
+                        <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('petitioner_details')}</strong></h3>
+                        { petitioners.length > 0 && (
+                            <Button variant="warning" onClick={handleShow}>
+                                <i className="fas fa-users mr-2"></i>{t('petitioners')} <Badge bg="success" className="ml-2">{ petitioners.length }</Badge>
+                            </Button>
+                        )}
+                    </div>
+                    <Modal 
+                        show={show} 
+                        onHide={handleClose} 
+                        backdrop="static"
+                        keyboard={false}
+                        size="xl"
+                    >
+                        <Modal.Header closeButton>
+                            <Modal.Title><strong>{t('petitioners')}</strong></Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <PetitionerList petitioners={petitioners} deletePetitioner={deletePetitioner} editPetitioner={editPetitioner}/>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose}>
+                            {t('close')}
+                            </Button>
+                        </Modal.Footer>
+                    </Modal>
+                </div>
+                <div className="card-body">
+                    <PetitionerForm addPetitioner={addPetitioner} petitioners={petitioners} selectedPetitioner={selectedPetitioner}/>
+                </div>
+            </div>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Button from 'react-bootstrap/Button';
+import Button from '@mui/material/Button';
 import { ToastContainer } from 'react-toastify';
 import * as Yup from 'yup';
 import Editor from 'react-simple-wysiwyg';
@@ -114,7 +114,7 @@ const GroundsForm = ({ addGround, count, selectedGround }) => {
                         )}
                     </div>
                     <div className="form-group">
-                        <Button variant="success" onClick={saveGround}>
+                        <Button variant="contained" color="success" onClick={saveGround}>
                             <i className="fa fa-plus mr-2"></i>
                             {t('add_ground')}
                         </Button>

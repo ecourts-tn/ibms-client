@@ -84,7 +84,20 @@ const RespondentContainer = () => {
     }
      
     return (
-        <div className='container-fluid'>
+        <div className='container'>
+        <div className="card card-outline card-info">
+            <div className="card-header">
+                <div className="d-flex justify-content-between">
+                    <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('respondent_details')}</strong></h3>
+                    { respondents.length > 0 && (
+                        <Button variant="warning" onClick={handleShow}>
+                            <i className="fas fa-users mr-2"></i>
+                                {t('respondents')}
+                                <Badge bg="success" className="ml-2">{ respondents.length }</Badge>
+                        </Button>
+                    )}
+                </div>
+            </div>
             <Modal 
                     show={show} 
                     onHide={handleClose} 
@@ -108,12 +121,26 @@ const RespondentContainer = () => {
                         </Button>
                     </Modal.Footer>
                 </Modal>
-                <RespondentForm 
-                    addRespondent={addRespondent}
-                    selectedRespondent={selectedRespondent}
-                />
+            <div className="card-body">
+                <div className="row">
+                    <div className="col-md-12">
+                    </div>   
+                    <div className="col-md-12"> 
+                        <RespondentForm 
+                            addRespondent={addRespondent}
+                            selectedRespondent={selectedRespondent}
+                        />
+                    </div>
+                </div>
+            </div>
+            {/* <div className="card-footer">
+                <Button
+                    className="float-right"
+                ><i className="fa fa-plus mr-2"></i>Add Respondent</Button>
+            </div> */}
         </div>
-    )
+    </div>
+  )
 }
 
 export default RespondentContainer

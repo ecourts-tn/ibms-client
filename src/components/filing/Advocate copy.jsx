@@ -111,22 +111,29 @@ const Advocate = () => {
 
     
     return (
-        <div className="container-fluid">
-            <div className="row">
-                <div className="col-md-12">
-                    <AdvocateList 
+        <div className="container">
+            <div className="card card-outline card-info">
+                <div className="card-header">
+                    <h3 className="card-title"><i className="fas fa-graduation-cap mr-2"></i><strong>Advocate Details</strong></h3>
+                </div>
+                <div className="card-body p-2">
+                    <div className="row">
+                        <div className="col-md-12">
+                            <AdvocateList 
+                                advocates={advocates}
+                                deleteAdvocate={deleteAdvocate}
+                                editAdvocate={editAdvocate}
+                            />
+                        </div>
+                    </div>
+                    <AdvocateForm 
+                        addAdvocate={addAdvocate}
+                        setAdvocates={setAdvocates}
+                        selectedAdvocate={selectedAdvocate}
                         advocates={advocates}
-                        deleteAdvocate={deleteAdvocate}
-                        editAdvocate={editAdvocate}
                     />
                 </div>
             </div>
-            <AdvocateForm 
-                addAdvocate={addAdvocate}
-                setAdvocates={setAdvocates}
-                selectedAdvocate={selectedAdvocate}
-                advocates={advocates}
-            />
         </div>
     )
 }

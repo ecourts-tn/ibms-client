@@ -280,6 +280,7 @@ const Initial = () => {
                     theme:"colored"
                 })
                 setIsSubmitted(true); 
+                const stepResponse = await api.post(`case/step-status/`, {efile_no:efile_no, step:2})
             }
           }catch(error){
             if (error.inner){
@@ -294,7 +295,7 @@ const Initial = () => {
 
  
     return (
-        <div className="container mt-5">
+        <div className="container-fluid mt-5">
             { loading && <Loading />}
             <ToastContainer />
             <form method='post' id="initial-input">
@@ -318,7 +319,7 @@ const Initial = () => {
                         </div>    
                     </div>
                     <label htmlFor="" className="col-sm-2">{t('crime_registered')}<RequiredField /></label>
-                    <div className="col-sm-3">
+                    <div className="col-sm-4">
                         <div className="icheck-success d-inline mx-2">
                             <input 
                                 type="radio" 
