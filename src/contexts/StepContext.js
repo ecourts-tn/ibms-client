@@ -24,7 +24,18 @@ export const StepProvider = ({children}) => {
         }
     },[])
 
-    const contextValue = useMemo(()=>({currentStep,setCurrentStep}), [currentStep])
+    const updateStep = async(efile_no, step) => {
+        try{
+            const response = await api.post(`case/step-status/`, {efile_no, step})
+            if(response.status === 200){
+                setCurrentStep(response.data.step)
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    const contextValue = useMemo(()=>({currentStep,setCurrentStep, updateStep}), [currentStep])
 
     return (
         <StepContext.Provider value={contextValue}>

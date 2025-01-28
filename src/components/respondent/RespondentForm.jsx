@@ -172,7 +172,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             id="state" 
                             className="form-control"
                             value={litigant.state}
-                            disabled={ litigant.state !== '' }
+                            // disabled={ litigant.state !== '' }
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_state')}</option>
@@ -189,7 +189,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="district" 
                             id="district" 
                             className="form-control"
-                            disabled={ litigant.district !== ''}
+                            // disabled={ litigant.district !== ''}
                             value={litigant.district}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
@@ -208,7 +208,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <select 
                             name="police_station" 
                             id="police_station" 
-                            disabled={litigant.police_station !== ''}
+                            // disabled={litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}

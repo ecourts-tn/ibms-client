@@ -21,7 +21,7 @@ import { StepContext } from "contexts/StepContext";
 
 
 
-const bailRoutes = [
+const abailRoutes = [
     { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
     { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
@@ -34,7 +34,7 @@ const bailRoutes = [
 ];
 
 
-const BailFilingLayout = () => {
+const ABailFilingLayout = () => {
     const [headerTitle, setHeaderTitle] = useState(""); 
     const [activeStep, setActiveStep] = useState(1)
     const { currentStep } = useContext(StepContext);
@@ -48,7 +48,7 @@ const BailFilingLayout = () => {
     const basePath = pathSegments[2] || 'bail';
 
     // Find the current step index
-    const currentIndex = bailRoutes.findIndex((step) =>
+    const currentIndex = abailRoutes.findIndex((step) =>
         location.pathname.endsWith(step.path)
     );
 
@@ -56,12 +56,12 @@ const BailFilingLayout = () => {
 
     // Update the disabled state of the "Next" button
     useEffect(() => {
-        setNextDisabled(currentIndex >= bailRoutes.length - 1);
-    }, [currentIndex, bailRoutes.length]);
+        setNextDisabled(currentIndex >= abailRoutes.length - 1);
+    }, [currentIndex, abailRoutes.length]);
 
     // Update the title on URL change
     useEffect(() => {
-        const activeStep = bailRoutes.find((step) =>
+        const activeStep = abailRoutes.find((step) =>
             location.pathname.includes(step.path)
         );
         if (activeStep) {
@@ -71,14 +71,14 @@ const BailFilingLayout = () => {
     }, [location.pathname]);
 
     const handleNext = () => {
-        if (!nextDisabled && currentIndex < bailRoutes.length - 1) {
-            navigate(`/filing/${basePath}/${bailRoutes[currentIndex + 1].path}`);
+        if (!nextDisabled && currentIndex < abailRoutes.length - 1) {
+            navigate(`/filing/${basePath}/${abailRoutes[currentIndex + 1].path}`);
         }
     };
 
     const handlePrevious = () => {
         if (!previousDisabled) {
-            navigate(`/filing/${basePath}/${bailRoutes[currentIndex - 1].path}`);
+            navigate(`/filing/${basePath}/${abailRoutes[currentIndex - 1].path}`);
         }
     };
 
@@ -90,7 +90,7 @@ const BailFilingLayout = () => {
                     <ol className="breadcrumb mt-2 mx-2">
                         <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                         <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                        <li className="breadcrumb-item active" aria-current="page">{t('bail')}</li>
+                        <li className="breadcrumb-item active" aria-current="page">{t('abail')}</li>
                     </ol>
                 </nav>
                 <div className="row no-gutters">
@@ -99,7 +99,7 @@ const BailFilingLayout = () => {
                         <div className="card card-outline card-primary m-2" style={{ borderColor: '#076280', minHeight: '600px' }}>
                             <div className="card-body p-0">
                                 <div className="list-group list-group-menu">
-                                    {bailRoutes.map((route, index) => (
+                                    {abailRoutes.map((route, index) => (
                                         <Link
                                             key={route.id}
                                             to={currentStep.current_step >= route.id ? route.path : route.path}
@@ -167,9 +167,9 @@ const BailFilingLayout = () => {
 };
 
 
-export const BailFilingRoutes = () => (
-    <Route path="filing/bail" element={<BailFilingLayout />}>
-        {bailRoutes.map((route, index) => (
+export const ABailFilingRoutes = () => (
+    <Route path="filing/anticipatory-bail" element={<ABailFilingLayout />}>
+        {abailRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={route.component} />
         ))}
     </Route>

@@ -102,6 +102,7 @@ const DraftList = () => {
     const handleSubmit = async(efile_no) => {
         if(window.confirm("Are you sure you want to submit the petition")){
             try{
+                setLoading(true)
                 const response = await api.post("case/filing/final-submit/", { efile_no})
                 if(response.status === 200){
                     try{
@@ -123,7 +124,9 @@ const DraftList = () => {
                     setShowError(true)
                     setErrors(error.response?.data.messages)
                 }
-            }  
+            }finally{
+                setLoading(false)
+            }
         }
     }
 

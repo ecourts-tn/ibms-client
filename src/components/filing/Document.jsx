@@ -161,8 +161,8 @@ const Document = ({swornRequired}) => {
                     <ToastContainer />
                     { Object.keys(documentList).length > 0 && (
                         <table className='table table-bordered table-striped table-sm'>
-                            <thead className="bg-info">
-                                <tr>
+                            <thead>
+                                <tr className="bg-info">
                                     <th>S.No</th>
                                     <th>Document No.</th>
                                     <th>{t('document_title')}</th>

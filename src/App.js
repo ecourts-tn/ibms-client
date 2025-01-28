@@ -8,7 +8,7 @@ import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
 /* -------Authentication -----------*/
 import { publicRoutes } from 'routes/publicRoutes';
-import { ABailFilingRoutes } from 'routes/abilRoutes';
+import { ABailFilingRoutes } from 'routes/abailRoutes';
 import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';

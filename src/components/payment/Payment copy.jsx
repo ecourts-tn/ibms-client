@@ -170,9 +170,6 @@ const Payment = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="form-group row mb-4">
-                                
-                            </div>
                             <div className="row">
                                 <div className="col-md-6 offset-md-3">
                                     <div className="row">

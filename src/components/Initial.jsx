@@ -25,6 +25,7 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import Loading from 'components/common/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/search/FIRDetails'
+import { StepContext } from 'contexts/StepContext';
 
 
 const Initial = () => {
@@ -40,6 +41,7 @@ const Initial = () => {
     const {policeStations}  = useContext(PoliceStationContext)
     const {language}        = useContext(LanguageContext)
     const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
+    const {updateStep} = useContext(StepContext)
 
     const { t } = useTranslation()
 
@@ -94,6 +96,8 @@ const Initial = () => {
                         seat: petition.seat?.seat_code,
                         state: petition.state?.state_code,
                         district: petition.district?.district_code,
+                        pdistrict: petition.district?.district_code,
+                        police_station: petition.police_station?.cctns_code,
                         establishment: petition.establishment?.establishment_code,
                         court: petition.court?.court_code,
                         case_type:petition.case_type?.id,
@@ -276,11 +280,12 @@ const Initial = () => {
             const response = await api.post("case/filing/create/", {petition, fir})
             if(response.status === 201){
                 const efile_no = response.data.efile_number
+                sessionStorage.setItem("efile_no", efile_no)
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
                 setIsSubmitted(true); 
-                const stepResponse = await api.post(`case/step-status/`, {efile_no:efile_no, step:2})
+                updateStep(efile_no, 2)
             }
           }catch(error){
             if (error.inner){
@@ -293,6 +298,7 @@ const Initial = () => {
         }
     }
 
+ 
  
     return (
         <div className="container-fluid mt-5">

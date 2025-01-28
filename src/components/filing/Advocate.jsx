@@ -386,9 +386,9 @@ const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
     return (
     <>
       <div className="table-responsive">
-      <table className="table table-striped table-bordered">
-            <thead className="bg-secondary">
-              <tr>
+      <table className="table table-striped table-bordered table-sm">
+            <thead>
+              <tr className="bg-info">
                 <td>{t('sl_no')}</td>
                 <th>{t('adv_name')}</th>
                 <th>{t('enrollment_number')}</th>
