@@ -200,7 +200,7 @@ const DraftList = () => {
                             </div>
                         </div>
                         <table className="table table-striped table-bordered">
-                            <thead className="bg-secondary">
+                            <thead className="bg-info">
                                 <tr className='text-center'>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>

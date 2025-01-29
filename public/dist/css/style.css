@@ -239,3 +239,8 @@ table.table td, table.table th {
 tr.bg-info, .bg-info{
     background-color:  #2471a3;
 }
+.profile img{
+    height:180px;
+    width: 180px;
+    margin-top:20px;
+}

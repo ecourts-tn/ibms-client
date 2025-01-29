@@ -1,34 +1,39 @@
-import React, {useState} from 'react'
-import { toast, ToastContainer } from 'react-toastify'
-import * as Yup from 'yup'
-import api from 'api'
-import { useTranslation } from 'react-i18next'
-import Loading from 'components/common/Loading'
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import api from "api";
+import { useTranslation } from "react-i18next";
+import { toast, ToastContainer} from 'react-toastify'
+import Loading from "components/common/Loading";
 
-const ResetPassword = () => {
-
-    const[email, setEmail] = useState('')
-    const[loading, setLoading] = useState(false)
+const ResetPasswordConfirm = () => {
+    const { uid, token } = useParams();
+    const [password, setPassword] = useState("");
     const {t} = useTranslation()
-
+    const[loading, setLoading] = useState(false)
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
-        try{
+        e.preventDefault();
+        try {
             setLoading(true)
-            const response = await api.post("auth/reset-password/send-link/", {email:email})
+            const response = await api.post("auth/reset-password/confirmation/", {
+                uid,
+                token,
+                new_password: password,
+            });
             if(response.status === 200){
-                toast.success("Password reset link has been sent your email address", {
-                    theme:"colored"
-                })
-                setEmail('')
+                setPassword('')
+                toast.success("Password reset successful!", {theme:"colored"});
+                setTimeout(()=>{
+                    navigate('/')
+                }, 2000)
             }
-        }catch(error){
-            console.error(error)
+        } catch (error) {
+            toast.error("Reset failed, try again!", {theme:"colored"});
         }finally{
             setLoading(false)
         }
-    }
+    };
 
     return (
         <>
@@ -49,13 +54,13 @@ const ResetPassword = () => {
                 <div className="row">
                     <div className="col-md-4">
                         <div className="form-group">
-                            <label htmlFor="email">{t('email')}</label>
+                            <label htmlFor="password">{t('password')}</label>
                             <input 
-                                type="email" 
+                                type="password" 
                                 className="form-control"
-                                name="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                name="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
                             />
                             <div className="invalid-feedback">
 
@@ -68,12 +73,12 @@ const ResetPassword = () => {
                         <button 
                             className="btn btn-primary"
                             onClick={handleSubmit}
-                        >Send Reset Link</button>
+                        >{t('reset')}</button>
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default ResetPassword
+export default ResetPasswordConfirm;

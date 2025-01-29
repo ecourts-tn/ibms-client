@@ -308,7 +308,7 @@ const Extension = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
+            <div className="container mt-3">
                 <div className="row">
                     <div className="col-md-12 text-center">
                         <div className="form-group">

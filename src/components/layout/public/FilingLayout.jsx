@@ -1,40 +1,12 @@
 import React, {useState, useEffect, useContext} from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
-import { Outlet, Route, useLocation, useNavigate } from "react-router-dom";
-/* -------- Components ----------- */
-import Initial from "components/Initial";
-import PetitionerContainer from "components/petitioner/PetitionerContainer";
-import RespondentContainer from "components/respondent/RespondentContainer";
-import GroundsContainer from "components/grounds/GroundsContainer";
-import PreviousCaseContainer from "components/history/PreviousCaseContainer";
-import Advocate from "components/filing/Advocate";
-import Document from "components/filing/Document";
-import Payment from "components/payment/Payment";
-import EFile from "components/filing/efile/EFile";
-import BailStepper from "components/filing/stepper/BailStepper";
-import StepperButton from "components/filing/StepperButton";
-import { Link } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import api from "api";
 import Button from "react-bootstrap/Button";
 import { StepContext } from "contexts/StepContext";
 
 
-
-const bailRoutes = [
-    { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
-    { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
-    { id: 4, path: "ground", component: <GroundsContainer />, name:"ground" },
-    { id: 5, path: "previous-history", component: <PreviousCaseContainer />, name:"previous_case_details" },
-    { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 7, path: "document", component: <Document />, name:"upload_document" },
-    { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <EFile />, name:"efile" },
-];
-
-
-const BailFilingLayout = () => {
+const FilingLayout = ({routes, title}) => {
     const [headerTitle, setHeaderTitle] = useState(""); 
     const [activeStep, setActiveStep] = useState(1)
     const { currentStep } = useContext(StepContext);
@@ -48,7 +20,7 @@ const BailFilingLayout = () => {
     const basePath = pathSegments[2] || 'bail';
 
     // Find the current step index
-    const currentIndex = bailRoutes.findIndex((step) =>
+    const currentIndex = routes.findIndex((step) =>
         location.pathname.endsWith(step.path)
     );
 
@@ -56,12 +28,12 @@ const BailFilingLayout = () => {
 
     // Update the disabled state of the "Next" button
     useEffect(() => {
-        setNextDisabled(currentIndex >= bailRoutes.length - 1);
-    }, [currentIndex, bailRoutes.length]);
+        setNextDisabled(currentIndex >= routes.length - 1);
+    }, [currentIndex, routes.length]);
 
     // Update the title on URL change
     useEffect(() => {
-        const activeStep = bailRoutes.find((step) =>
+        const activeStep = routes.find((step) =>
             location.pathname.includes(step.path)
         );
         if (activeStep) {
@@ -71,14 +43,14 @@ const BailFilingLayout = () => {
     }, [location.pathname]);
 
     const handleNext = () => {
-        if (!nextDisabled && currentIndex < bailRoutes.length - 1) {
-            navigate(`/filing/${basePath}/${bailRoutes[currentIndex + 1].path}`);
+        if (!nextDisabled && currentIndex < routes.length - 1) {
+            navigate(`/filing/${basePath}/${routes[currentIndex + 1].path}`);
         }
     };
 
     const handlePrevious = () => {
         if (!previousDisabled) {
-            navigate(`/filing/${basePath}/${bailRoutes[currentIndex - 1].path}`);
+            navigate(`/filing/${basePath}/${routes[currentIndex - 1].path}`);
         }
     };
 
@@ -90,7 +62,7 @@ const BailFilingLayout = () => {
                     <ol className="breadcrumb mt-2 mx-2">
                         <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                         <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                        <li className="breadcrumb-item active" aria-current="page">{t('bail')}</li>
+                        <li className="breadcrumb-item active" aria-current="page">{t(title)}</li>
                     </ol>
                 </nav>
                 <div className="row no-gutters">
@@ -99,9 +71,9 @@ const BailFilingLayout = () => {
                         <div className="card card-outline card-primary m-2" style={{ borderColor: '#076280', minHeight: '600px' }}>
                             <div className="card-body p-0">
                                 <div className="list-group list-group-menu">
-                                    {bailRoutes.map((route, index) => (
+                                    {routes.map((route, index) => (
                                         <Link
-                                            key={route.id}
+                                            key={index}
                                             to={currentStep.current_step >= route.id ? route.path : route.path}
                                             className={`list-group-item py-2 ${currentStep < route.id ? "" : ""}`}
                                             onClick={(e) => {
@@ -166,12 +138,4 @@ const BailFilingLayout = () => {
     );
 };
 
-
-export const BailFilingRoutes = () => (
-    <Route path="filing/bail" element={<BailFilingLayout />}>
-        {bailRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.component} />
-        ))}
-    </Route>
-);
-
+export default FilingLayout

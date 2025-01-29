@@ -1,16 +1,17 @@
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
-import { useAuth } from '../../hooks/useAuth'
+import { useAuth } from 'hooks/useAuth'
 import { useTranslation } from 'react-i18next'
+import { AuthContext } from 'contexts/AuthContext'
 
 const Profile = () => {
 
-    const{user} = useAuth()
+    const {user} = useContext(AuthContext)
 
     const initialState = {
-        mobile_number    : user.user.mobile,
-        email_address    : user.user.email,
-        username         : user.user.username
+        mobile_number    : user?.mobile,
+        email_address    : user?.email,
+        username         : user?.username
     }
     const {t} = useTranslation()
     const[form, setForm] = useState(initialState)
@@ -67,10 +68,10 @@ const Profile = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-4 d-flex justify-content-center profile">
-                        <div className="card" style={{width: '18rem'}}>
-                            <img src="/images/profile.jpg" alt="" />
-                            <div className="card-body text-center">
-                                <p className="card-text"><strong>{user.user.username}<br/>{user.user.mobile}<br/>{user.user.email}</strong></p>
+                        <div className="card">
+                            <div className="card-body">
+                                <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" />
+                                <p className='text-center mt-3'><strong>{user?.username.toUpperCase()}<br/>{user?.mobile}<br/>{user?.email}</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>
                             </div>
                         </div>

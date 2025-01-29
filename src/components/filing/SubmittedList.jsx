@@ -33,20 +33,6 @@ const SubmittedList = () => {
         setSelectedDocument(null)
     }
 
-    // useEffect(() => {
-    //     async function fetchData(){
-    //         try{
-    //             const response = await api.get(`case/filing/submitted-list/`)
-    //             if(response.status === 200){
-    //                 setCases(response.data)
-    //             }
-    //         }catch(error){
-    //             console.log(error)
-    //         }
-    //     }
-    //     fetchData();
-    // }, [])
-
     useEffect(() => {
         const fetchPetition = async() => {
             try{
@@ -161,7 +147,7 @@ const SubmittedList = () => {
                         </div>
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
-                                <tr>
+                                <tr className='bg-info'>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>
                                     <th>{t('case_number')}</th>

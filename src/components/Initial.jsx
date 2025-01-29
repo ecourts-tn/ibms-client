@@ -651,7 +651,7 @@ const Initial = () => {
                 </React.Fragment> 
                 )}
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Select Jurisdiction</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}</label>
                     <div className="col-md-4">
                         <select 
                             name="judiciary" 
@@ -689,7 +689,7 @@ const Initial = () => {
                 </div>
                 { parseInt(petition.judiciary) === 3 && (
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Select Magistrate Court</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('alerts.select_magistrate_court')}</label>
                     <div className="col-md-4">
                         <select 
                             name="jurisdiction_court" 
