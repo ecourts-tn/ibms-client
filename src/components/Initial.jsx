@@ -119,6 +119,26 @@ const Initial = () => {
         }
     },[])
 
+    useEffect(() => {
+        const fetchCourtDetail = async() => {
+            try{
+                const response = await api.get(`base/court/detail/`, {params:{id:magistrateCourt}})
+                if(response.status === 200){
+                    console.log(response.data)
+                    setPetition({
+                        ...petition,
+                        court: response.data.court_code,
+                        establishment: response.data.establishment,
+                    })
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        if(magistrateCourt)
+        fetchCourtDetail();
+    }, [magistrateCourt])
+
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
 

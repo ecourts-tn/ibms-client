@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search'
 import Document from 'components/filing/Document';
-import GroundsContainer from 'components/filing/Ground';
+import Grounds from 'components/filing/Grounds';
 import { toast, ToastContainer } from 'react-toastify';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';

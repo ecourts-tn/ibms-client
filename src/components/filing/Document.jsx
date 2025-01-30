@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { DocumentContext } from 'contexts/DocumentContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import ViewDocument from 'components/common/ViewDocument';
+import Loading from 'components/common/Loading';
 
 const Document = ({swornRequired}) => {
     swornRequired = true
@@ -20,7 +21,7 @@ const Document = ({swornRequired}) => {
     }
     const[form, setForm] = useState(initialState)
     const[documentList, setDocumentList] = useState([])
-
+    const[loading, setLoading] = useState(false)
     const[otp, setOtp] = useState('')
     const {t} = useTranslation()
     const[mobileOtp, setMobileOtp] = useState(false)
@@ -118,7 +119,7 @@ const Document = ({swornRequired}) => {
         formData.append("efile_no", sessionStorage.getItem("efile_no"));
         formData.append("title", form.title);
         formData.append("document", form.document);
-
+        setLoading(true)
         const response = await api.post(`case/document/`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -133,7 +134,7 @@ const Document = ({swornRequired}) => {
                 title: "",
                 document: null,
             });
-            toast.success(`Document ${response.data.id} uploaded successfully`, {
+            toast.success(`Document ${response.data.efile_no}${response.data.document_id} uploaded successfully`, {
                 theme: "colored",
             });
         }
@@ -150,12 +151,15 @@ const Document = ({swornRequired}) => {
                 theme: "colored",
             });
         }
+    }finally{
+        setLoading(false)
     }
 };
 
 
     return (
         <div className="container">
+            { loading && <Loading />}
             <div className="row">
                 <div className="col-md-12">
                     <ToastContainer />
@@ -174,7 +178,7 @@ const Document = ({swornRequired}) => {
                                 {documentList.map((d, index) => (
                                 <tr>
                                     <td>{ index+1}</td>
-                                    <td>{`${d.efile_no}${d.id}`}</td>
+                                    <td>{`${d.efile_no}${d.document_id}`}</td>
                                     <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
                                     <td>{ d.hash }</td>
                                     <td>
@@ -188,7 +192,7 @@ const Document = ({swornRequired}) => {
                                 {selectedDocument && (
                                     <ViewDocument
                                         url={`${config.docUrl}${selectedDocument.document}`}
-                                        title={language === 'ta' ? selectedDocument?.document_lname : selectedDocument?.document_name}
+                                        title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
                                         show={!!selectedDocument}
                                         handleClose={handleClose}
                                     />

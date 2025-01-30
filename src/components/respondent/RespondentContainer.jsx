@@ -85,33 +85,17 @@ const RespondentContainer = () => {
      
     return (
         <div className='container-fluid'>
-            <Modal 
-                    show={show} 
-                    onHide={handleClose} 
-                    backdrop="static"
-                    keyboard={false}
-                    size="xl"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title><strong>{t('respondents')}</strong></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <RespondentList 
-                            respondents={respondents}
-                            deleteRespondent={deleteRespondent}
-                            editRespondent={editRespondent}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                        {t('close')}
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-                <RespondentForm 
-                    addRespondent={addRespondent}
-                    selectedRespondent={selectedRespondent}
+            {respondents.length > 0 && (
+                <RespondentList 
+                    respondents={respondents}
+                    deleteRespondent={deleteRespondent}
+                    editRespondent={editRespondent}
                 />
+            )}
+            <RespondentForm 
+                addRespondent={addRespondent}
+                selectedRespondent={selectedRespondent}
+            />
         </div>
     )
 }

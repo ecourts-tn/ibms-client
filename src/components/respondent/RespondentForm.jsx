@@ -138,7 +138,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     return (
         <>
             <ToastContainer />
-            <div className="row">
+            <div className="row mt-3">
                 <div className="col-md-12">
                     <div className="form-group">
                         <input type="checkbox" name={respondentPolice} onChange={handleRespondentChange} className="mr-2"/><span className="text-primary"><strong>{t('respondent_police')}</strong></span>

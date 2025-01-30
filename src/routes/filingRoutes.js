@@ -5,9 +5,9 @@ import { PrivateRoute } from "hooks/PrivateRoute";
 import FilingLayout from "components/layout/public/FilingLayout";
 import { Logout, Profile, ChangePassword, ResetPassword } from "components/auth";
 import { Dashboard, DraftList, SubmittedList, PetitionDetail, PdfGenerator, 
-    Pleadings, ApprovedList, ReturnedList, ProceedingDetail, Advocate, 
+    Pleadings, ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds,
     Document } from "components/filing";
-import { Initial, PetitionerContainer, RespondentContainer, GroundsContainer, 
+import { Initial, PetitionerContainer, RespondentContainer, 
     PreviousCaseContainer, EFile } from "components";
 import { Relaxation, Modification, Extension, ReturnPassport, ReturnProperty } from "components/filing/allied";
 import { Petition, AccusedDetails } from "components/filing/intervene";
@@ -19,7 +19,7 @@ const bailRoutes = [
     { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
     { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
-    { id: 4, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 4, path: "ground", component: <Grounds />, name:"ground" },
     { id: 5, path: "previous-history", component: <PreviousCaseContainer />, name:"previous_case_details" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
@@ -31,7 +31,7 @@ const abailRoutes = [
     { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
     { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
-    { id: 4, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 4, path: "ground", component: <Grounds />, name:"ground" },
     { id: 5, path: "previous-history", component: <PreviousCaseContainer />, name:"previous_case_details" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
@@ -41,7 +41,7 @@ const abailRoutes = [
 
 const conditionRoutes = [
     { id: 1, path: "main-case-detail", component: <Relaxation />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -53,7 +53,7 @@ const interveneRoutes = [
     { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
     { id: 3, path: "accused", component: <AccusedDetails />, name:"accused_details" },
     { id: 4, path: "respondent", component: <RespondentContainer />, name:"respondents" },
-    { id: 5, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 5, path: "ground", component: <Grounds />, name:"ground" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
@@ -62,7 +62,7 @@ const interveneRoutes = [
 
 const modificationRoutes = [
     { id: 1, path: "main-case-detail", component: <Modification />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -72,7 +72,7 @@ const modificationRoutes = [
 const suretyRoutes = [
     { id: 1, path: "main-case-detail", component: <Surety />, name:"basic_details"},
     { id: 2, path: "surety-detail", component: <SuretyForm />, name:"surety_details" },
-    { id: 3, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 3, path: "ground", component: <Grounds />, name:"ground" },
     { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 5, path: "document", component: <Document />, name:"upload_document" },
     { id: 6, path: "payment", component: <Payment />, name:"payment" },
@@ -82,7 +82,7 @@ const suretyRoutes = [
 const dischargeRoutes = [
     { id: 1, path: "main-case-detail", component: <DischargeSurety />, name:"basic_details"},
     { id: 2, path: "surety-detail", component: <SuretyDetails />, name:"surety_details" },
-    { id: 3, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 3, path: "ground", component: <Grounds />, name:"ground" },
     { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 5, path: "document", component: <Document />, name:"upload_document" },
     { id: 6, path: "payment", component: <Payment />, name:"payment" },
@@ -91,7 +91,7 @@ const dischargeRoutes = [
 
 const extensionRoutes = [
     { id: 1, path: "main-case-detail", component: <Extension />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -100,7 +100,7 @@ const extensionRoutes = [
 
 const passportRoutes = [
     { id: 1, path: "main-case-detail", component: <ReturnPassport />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -109,7 +109,7 @@ const passportRoutes = [
 
 const propertyRoutes = [
     { id: 1, path: "main-case-detail", component: <ReturnProperty />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <GroundsContainer />, name:"ground" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -145,7 +145,7 @@ export const FilingRoutes = () => {
 
     return (
         <>
-            {routesConfig.map(({ path, routes, basePath, title }, index) => {
+            {routesConfig.map(({ path, routes, title }, index) => {
                 const routeList = routeMappings[routes]; // Get the actual array
                 return (
                     <Route key={index} path={path} element={<FilingLayout routes={routeList} title={title} />}>

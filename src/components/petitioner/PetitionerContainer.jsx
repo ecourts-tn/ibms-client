@@ -92,26 +92,16 @@ const PetitionerContainer = () => {
      
     return (
         <div className="container-fluid mt-4">
-            <Modal 
-                show={show} 
-                onHide={handleClose} 
-                backdrop="static"
-                keyboard={false}
-                size="xl"
-            >
-                <Modal.Header closeButton>
-                    <Modal.Title><strong>{t('petitioners')}</strong></Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <PetitionerList petitioners={petitioners} deletePetitioner={deletePetitioner} editPetitioner={editPetitioner}/>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                    {t('close')}
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <PetitionerForm addPetitioner={addPetitioner} petitioners={petitioners} selectedPetitioner={selectedPetitioner}/>
+            <PetitionerList 
+                petitioners={petitioners} 
+                deletePetitioner={deletePetitioner} 
+                editPetitioner={editPetitioner}
+            />
+            <PetitionerForm 
+                addPetitioner={addPetitioner} 
+                petitioners={petitioners} 
+                selectedPetitioner={selectedPetitioner}
+            />
         </div>
     )
 }

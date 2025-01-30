@@ -54,6 +54,8 @@ const FilingLayout = ({routes, title}) => {
         }
     };
 
+    const efile_no = sessionStorage.getItem("efile_no" || null)
+
 
     return (
         <PrivateRoute>
@@ -100,7 +102,10 @@ const FilingLayout = ({routes, title}) => {
                         <div className="card card-outline card-primary m-2 " style={{ borderColor: '#076280', minHeight: '600px' }}>
                             {/* Dynamic Card Header */}
                             <div className="card-header" style={{ backgroundColor: "#076280", color: "#FAFAFA", borderRadius: 0 }}>
-                                <strong>{t(headerTitle)}</strong>
+                                <div className="d-flex justify-content-between font-weight-bold">
+                                    <span>{t(headerTitle)}</span>
+                                    <span>{efile_no}</span>
+                                </div>
                             </div>
                             <div className="card-body p-2">
                                 <Outlet />
