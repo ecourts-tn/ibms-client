@@ -36,7 +36,7 @@ const EFileDetails = () => {
                 </div>
                 <div className="card-body p-2">
                     { Object.keys(petition).length > 0 && (
-                    <table className="custom-table table-sm">
+                    <table className="table table-bordered table-striped table-sm">
                         { petition && (
                         <>
                             <tr>
@@ -92,7 +92,7 @@ const EFileDetails = () => {
                 </div>
                 <div className="card-body p-2">
                     <table className="table table-bordered table-striped table-sm">
-                        <thead className="bg-dark">
+                        <thead className="bg-info">
                             <tr>
                                 <th>{t('sl_no')}</th>
                                 <th>{t('petitioner_name')}</th>
@@ -125,7 +125,7 @@ const EFileDetails = () => {
                 </div>
                 <div className="card-body p-2">
                     <table className="table table-bordered table-striped table-sm">
-                        <thead className="bg-dark">
+                        <thead className="bg-info">
                             <tr>
                                 <th>{t('sl_no')}</th>
                                 <th>{t('respondent_name')}</th>

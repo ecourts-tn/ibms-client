@@ -10,7 +10,7 @@ export const PrivateRoute = ({ children }) => {
   useEffect(() => {
     if (!user) {
       toast.error("Please login to access the page", {theme:"colored"});
-      setTimeout(() => navigate("/"), 1000); // Redirect after showing toast
+      // setTimeout(() => navigate("/"), 1000); // Redirect after showing toast
     }
   }, [user, navigate]);
 
