@@ -9,6 +9,7 @@ import AdvocateRegistration from "components/auth/AdvocateRegistration";
 import VerifyOrder from "components/VerifyOrder";
 import NotFound from "components/layout/public/NotFound";
 import ResetPassword from "components/auth/ResetPassword";
+import InitialInput from "components/InitialInput";
 
 
 export const publicRoutes = [
@@ -20,6 +21,7 @@ export const publicRoutes = [
     { path: "status/fir-number", element:<FIRSearch />},
     { path: "user-guide", element:<Home />},
     { path: "verify-order", element:<VerifyOrder />},
+    { path: "initial", element:<InitialInput/>},
     { path: "*", element:<NotFound />}
 ]
 
