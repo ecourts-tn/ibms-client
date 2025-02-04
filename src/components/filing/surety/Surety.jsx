@@ -104,7 +104,7 @@ const Surety = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
+            <div className="container mt-3">
                 <PetitionSearch 
                     cases={cases}
                     eFileNumber={eFileNumber}

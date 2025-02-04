@@ -114,66 +114,66 @@ const AdvocateRegistration = () => {
         }));
     };
 
-    const formatDate = (date) => {
-        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
-        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
-        const year = date.getFullYear(); // Get the full year
-        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    const appointment_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
     };
 
-    const formatDate1 = (date) => {
-        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
-        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
-        const year = date.getFullYear(); // Get the full year
-        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    const appointment_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
     };
-
+    
     useEffect(() => {
-        const fecthDistricts = async() => {
-            try{
-                const response = await api.get("base/district/")
-                if(response.status === 200){
-                    setDistricts(response.data)
-                }
-            }catch(error){
-                console.error(error)
-            }
-        }
-        fecthDistricts();
-
-        const dateOfBirthPicker = flatpickr(".date-of-birth-picker", {
+        const appointment_date = flatpickr(".appointment_date-date-picker", {
             dateFormat: "d/m/Y",
-            maxDate: "today", // Disable future dates for date of birth
-            defaultDate: form.date_of_birth,
+            maxDate: "today",
+            defaultDate: form.appointment_date ? appointment_date_Display(new Date(form.appointment_date)) : '',
             onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                const formattedDate = selectedDates[0] ? appointment_date_Backend(selectedDates[0]) : "";
+                setForm({ ...form, appointment_date: formattedDate });
+            },
+        });
+
+        return () => {
+            if (appointment_date && typeof appointment_date.destroy === "function") {
+                appointment_date.destroy();
+            }
+        };
+    }, [form]);
+
+    const date_of_birth_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const date_of_birth_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+    
+    useEffect(() => {
+        const date_of_birth = flatpickr(".date_of_birth-date-picker", {
+            dateFormat: "d/m/Y",
+            maxDate: "today",
+            defaultDate: form.date_of_birth ? date_of_birth_Display(new Date(form.date_of_birth)) : '',
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? date_of_birth_Backend(selectedDates[0]) : "";
                 setForm({ ...form, date_of_birth: formattedDate });
             },
         });
 
         return () => {
-            if (dateOfBirthPicker && typeof dateOfBirthPicker.destroy === "function") {
-                dateOfBirthPicker.destroy();
-            }
-        };
-    }, [form]);
-
-    
-
-    useEffect(() => {
-        const appointmentDatePicker = flatpickr(".appointment-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today", // Disable past dates for appointment date
-            defaultDate: form.appointment_date,
-            onChange: (selectedDates1) => {
-                const formattedDate1 = selectedDates1[0] ? formatDate1(selectedDates1[0]) : "";
-                setForm({ ...form, appointment_date: formattedDate1 });
-            },
-        });
-
-        return () => {
-            if (appointmentDatePicker && typeof appointmentDatePicker.destroy === "function") {
-                appointmentDatePicker.destroy();
+            if (date_of_birth && typeof date_of_birth.destroy === "function") {
+                date_of_birth.destroy();
             }
         };
     }, [form]);
@@ -451,7 +451,11 @@ const AdvocateRegistration = () => {
                 toast.error("Please verify your email address", {theme:"colored"})
                 return
             }
-            const response = await api.post("auth/user/register/", form)
+            const response = await api.post("auth/user/register/", form, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             if(response.status === 201){
                 setUser(response.data)
                 setShow(true)
@@ -621,9 +625,9 @@ const AdvocateRegistration = () => {
                                             <div className="col-sm-3">
                                                 <input 
                                                     type="text" 
-                                                    className="form-control date-of-birth-picker"
+                                                    className={`form-control date_of_birth-date-picker ${errors.date_of_birth ? 'is-invalid' : ''}`}
                                                     name="date_of_birth"
-                                                    value={form.date_of_birth}
+                                                    value={form.date_of_birth ? form.date_of_birth : ''}
                                                     placeholder="DD/MM/YYYY"
                                                     onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
                                                     style={{
@@ -717,8 +721,8 @@ const AdvocateRegistration = () => {
                                                     <input 
                                                         type="date"     
                                                         name="appointment_date" 
-                                                        className="form-control appointment-date-picker" 
-                                                        value={form.appointment_date || ''}
+                                                        className={`form-control appointment_date-date-picker ${errors.appointment_date ? 'is-invalid' : ''}`}
+                                                        value={form.appointment_date ? form.appointment_date : ''}
                                                         placeholder="DD/MM/YYYY"
                                                         onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
                                                         style={{
@@ -1051,7 +1055,7 @@ const AdvocateRegistration = () => {
                                                 </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}</label>
+                                            <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <Button
                                                     component="label"
@@ -1082,7 +1086,7 @@ const AdvocateRegistration = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="address_proof" className='col-form-label col-sm-3'>{t('identity_proof')}</label>
+                                            <label htmlFor="address_proof" className='col-form-label col-sm-3'>{t('identity_proof')}<RequiredField/></label>
                                             <div className="col-sm-9">
                                                 <Button
                                                     component="label"

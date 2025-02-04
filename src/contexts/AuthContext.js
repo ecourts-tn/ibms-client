@@ -38,26 +38,9 @@ export const AuthProvider = ({ children }) => {
         const response = await api.post(`auth/user/info/`);
         if (response.status === 200) {
             setUser(response.data);
-            const userTypeRoutes = {
-                1: "/filing/dashboard",
-                2: "/filing/dashboard",
-                3: "court/dashboard",
-                4: "/court/dashboard",
-                7: "/police/dashboard",
-                8: "/prison/dashboard",
-                9: "/prosecution/dashboard",
-            };
-
-            const usertype = parseInt(response.data.group, 10);
-            const route = userTypeRoutes[usertype];
-
-            if (route) {
-                setTimeout(() => {
-                    navigate(route);
-                }, 1000);
-            } else {
-                console.warn("Unknown user type:", usertype);
-            }
+            setTimeout(() => {
+                navigate(response.data.redirect_url);
+            }, 1000);
         }
     } catch (error) {
         console.error("Failed to fetch user info:", error);

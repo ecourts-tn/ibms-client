@@ -9,9 +9,10 @@ import { useTranslation } from 'react-i18next';
 import { DocumentContext } from 'contexts/DocumentContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import ViewDocument from 'components/common/ViewDocument';
+import Loading from 'components/common/Loading';
 
 const Document = ({swornRequired}) => {
-
+    swornRequired = true
     const {documents} = useContext(DocumentContext)
     const {language}  = useContext(LanguageContext)
     const initialState = {
@@ -20,7 +21,7 @@ const Document = ({swornRequired}) => {
     }
     const[form, setForm] = useState(initialState)
     const[documentList, setDocumentList] = useState([])
-
+    const[loading, setLoading] = useState(false)
     const[otp, setOtp] = useState('')
     const {t} = useTranslation()
     const[mobileOtp, setMobileOtp] = useState(false)
@@ -118,7 +119,7 @@ const Document = ({swornRequired}) => {
         formData.append("efile_no", sessionStorage.getItem("efile_no"));
         formData.append("title", form.title);
         formData.append("document", form.document);
-
+        setLoading(true)
         const response = await api.post(`case/document/`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -133,7 +134,7 @@ const Document = ({swornRequired}) => {
                 title: "",
                 document: null,
             });
-            toast.success(`Document ${response.data.id} uploaded successfully`, {
+            toast.success(`Document ${response.data.efile_no}${response.data.document_id} uploaded successfully`, {
                 theme: "colored",
             });
         }
@@ -150,167 +151,160 @@ const Document = ({swornRequired}) => {
                 theme: "colored",
             });
         }
+    }finally{
+        setLoading(false)
     }
 };
 
 
     return (
         <div className="container">
+            { loading && <Loading />}
             <div className="row">
                 <div className="col-md-12">
                     <ToastContainer />
-                    <div className="card card-outline card-success">
-                        <div className="card-body">
-                            { documents.length > 0 && (
-                                <table className='table table-bordered table-striped table-sm'>
-                                    <thead className="bg-info">
-                                        <tr>
-                                            <th>S.No</th>
-                                            <th>Document No.</th>
-                                            <th>{t('document_title')}</th>
-                                            <th>Key</th>
-                                            <th>{t('action')}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {documentList.map((d, index) => (
-                                        <tr>
-                                            <td>{ index+1}</td>
-                                            <td>{`${d.efile_no}${d.id}`}</td>
-                                            <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
-                                            <td>{ d.hash }</td>
-                                            <td>
-                                                <button onClick={() => handleShow(d)} className="btn btn-info btn-sm">{t('view')}</button>
-                                                <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(d)}>{t('delete')}</button>
-                                            </td>
-                                        </tr>    
-                                        ))}
+                    { Object.keys(documentList).length > 0 && (
+                        <table className='table table-bordered table-striped table-sm'>
+                            <thead>
+                                <tr className="bg-info">
+                                    <th>S.No</th>
+                                    <th>Document No.</th>
+                                    <th>{t('document_title')}</th>
+                                    <th>Key</th>
+                                    <th>{t('action')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {documentList.map((d, index) => (
+                                <tr>
+                                    <td>{ index+1}</td>
+                                    <td>{`${d.efile_no}${d.document_id}`}</td>
+                                    <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
+                                    <td>{ d.hash }</td>
+                                    <td>
+                                        <button onClick={() => handleShow(d)} className="btn btn-info btn-sm">{t('view')}</button>
+                                        <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(d)}>{t('delete')}</button>
+                                    </td>
+                                </tr>    
+                                ))}
 
-                                        {/* ViewDocument Modal, only shown if selectedDocument is not null */}
-                                        {selectedDocument && (
-                                            <ViewDocument
-                                                url={`${config.docUrl}${selectedDocument.document}`}
-                                                title={language === 'ta' ? selectedDocument?.document_lname : selectedDocument?.document_name}
-                                                show={!!selectedDocument}
-                                                handleClose={handleClose}
-                                            />
-                                        )}
-                                    </tbody>
-                                </table>
-                            )}
-                            <form encType='multipart/form-data'>
-                                <div className="row">
-                                    <div className="col-md-5 mt-4"> 
-                                        <div className="form-group">
-                                        <label htmlFor="title">{t('document_title')}</label>
-                                        <select 
-                                            name="title" 
-                                            className="form-control"
-                                            onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
-                                        >
-                                            <option value="">{t('alerts.select_document')}</option>
-                                            { documents.map((d, index) => (
-                                            <option key={index} value={d.id}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
-                                            ))}
-                                        </select>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-5 mt-4"> 
-                                        <div className="form-group">
-                                        <label htmlFor="document">{t('document')}</label>
-                                        <input 
-                                            type="file" 
-                                            name="document" 
-                                            className="form-control"
-                                            onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
-                                        />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-1 mt-5 pt-2">
-                                            <div className="">
-                                                <Button
-                                                    variant="contained"
-                                                    color="success"
-                                                    onClick={handleSubmit}
-                                                >
-                                                    {t('upload')}
-                                                </Button>
-                                            </div>
-                                        </div>
-                                </div>
-                                { swornRequired && (
-                                <div className="row">
-                                    <div className="col-md-4">
-                                        <div className="form-group">
-                                            <label htmlFor="">{t('enrollment_number')}</label>
-                                            <div className="row">
-                                                <div className="col-md-4">
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        placeholder='MS'
-                                                    />
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        placeholder='Reg. No.'
-                                                    />
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <input 
-                                                        type="text" 
-                                                        className="form-control" 
-                                                        placeholder='Reg. Year'
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-2 mt-4 pt-2">
-                                        <Button 
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={sendMobileOTP}
-                                            endIcon={<SendIcon />}
-                                        >{t('sworn_affidavit')}</Button>
-                                    </div>
-
-                                    { mobileOtp && !mobileVerified && (
-                                    <>
-                                        <div className="col-md-1 mt-3 pt-2">
-                                            <input 
-                                                type="password" 
-                                                className="form-control mt-2" 
-                                                placeholder="OTP" 
-                                                value={otp}
-                                                onChange={(e) => setOtp(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="col-md-2 mt-3 pt-2">
-                                            <button 
-                                                type="button" 
-                                                className="btn btn-success px-5 mt-2"
-                                                onClick={() => verifyMobile(otp)}
-                                            >Verify</button>
-                                        </div>
-                                    </>
-                                    )}
-                                    { mobileVerified && (
-                                        <p className="mt-4 pt-3">
-                                            <CheckCircleRoundedIcon color="success"/>
-                                            <span className="text-success ml-1"><strong>Verified</strong></span>
-                                        </p>
-                                    )}
-                                </div>
+                                {/* ViewDocument Modal, only shown if selectedDocument is not null */}
+                                {selectedDocument && (
+                                    <ViewDocument
+                                        url={`${config.docUrl}${selectedDocument.document}`}
+                                        title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
+                                        show={!!selectedDocument}
+                                        handleClose={handleClose}
+                                    />
                                 )}
-                            </form>
-                        </div>    
-                    </div>  
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
-        </div>
+            <form encType='multipart/form-data'>
+                <div className="form-group row my-4">
+                    <label htmlFor="title" className='col-sm-3 col-form-label'>{t('document_title')}</label>
+                    <div className="col-md-5"> 
+                        <select 
+                            name="title" 
+                            className="form-control"
+                            onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                        >
+                            <option value="">{t('alerts.select_document')}</option>
+                            { documents.map((d, index) => (
+                            <option key={index} value={d.id}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className="form-group row mb-4">
+                    <label htmlFor="document" className="col-sm-3 col-form-label">{t('document')}</label>
+                    <div className="col-md-5"> 
+                        <input 
+                            type="file" 
+                            name="document" 
+                            className="form-control"
+                            onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
+                        />
+                    </div>
+                </div>
+                { swornRequired && (
+                <div className="form-group row mb-4 no-gutters">
+                    <label htmlFor="" className="col-sm-3 col-form-label">{t('enrollment_number')}</label>
+                    <div className="col-md-1 ml-2">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder='MS'
+                        />
+                    </div>
+                    <div className="col-md-1">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder='Reg. No.'
+                        />
+                    </div>
+                    <div className="col-md-1">
+                        <input 
+                            type="text" 
+                            className="form-control" 
+                            placeholder='Reg. Year'
+                        />
+                    </div>
+                    <div className="col-md-2 ml-2">
+                        <Button 
+                            variant="contained"
+                            color="primary"
+                            onClick={sendMobileOTP}
+                            endIcon={<SendIcon />}
+                        >{t('sworn_affidavit')}</Button>
+                    </div>
+                </div>   
+                )}
+                { mobileOtp && (
+                <div className='form-group row mb-4'>
+                    <label htmlFor="" className='col-sm-3 col-form-group'>Verify OTP</label>
+                    <div className="col-md-1">
+                        <input 
+                            type="password" 
+                            className="form-control" 
+                            placeholder="OTP" 
+                            value={otp}
+                            disabled={mobileVerified}
+                            onChange={(e) => setOtp(e.target.value)}
+                        />
+                    </div>
+                    <div className="col-md-1">
+                        <button 
+                            type="button" 
+                            className="btn btn-success px-4"
+                            onClick={() => verifyMobile(otp)}
+                            disabled={mobileVerified}
+                        >Verify</button>
+                    </div>
+                    { mobileVerified && (
+                        <div className="col-md-2">
+                            <CheckCircleRoundedIcon color="success"/>
+                            <span className="text-success ml-1"><strong>Verified</strong></span>
+                        </div>
+                    )}
+                </div>
+                )}
+                <div className="col-md-12 d-flex justify-content-center">
+                    <div className="">
+                        <Button
+                            variant="contained"
+                            color="success"
+                            onClick={handleSubmit}
+                        >
+                            {t('upload')}
+                        </Button>
+                    </div>
+                </div>
+            </form>
+        </div>    
     )
 }
 

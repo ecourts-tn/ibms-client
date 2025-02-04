@@ -197,6 +197,7 @@ legend > span {
     width:100%;
     border: 1px solid grey;
 }
+
 .btn-captcha{
     height:40px;
     border-radius:0px;
@@ -214,13 +215,32 @@ legend > span {
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Keeps it above other elements */
-  }
+}
   
-  .loading-spinner {
+.loading-spinner {
     width: 150px; /* Adjust size as needed */
     height: 150px;
-  }
+}
 
-  .sensitive-case{
+.sensitive-case{
     font-weight: bold;
-  }
+}
+
+.list-group-menu > .list-group-item{
+    background-color:#076280;
+    color:#FAFAFA!important;
+    border-top:1px solid #FAFAFA!important;
+}
+
+table.table td, table.table th {
+    border: 1px solid  #2471a3!important;
+  
+}
+tr.bg-info, .bg-info{
+    background-color:  #2471a3;
+}
+.profile img{
+    height:180px;
+    width: 180px;
+    margin-top:20px;
+}

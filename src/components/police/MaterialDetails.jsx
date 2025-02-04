@@ -25,20 +25,27 @@ const MaterialDetails = ({materials, setMaterials}) => {
     const[form, setForm] = useState(initialState)
     const[errors, setErrors] = useState({})
 
-    const formatDate = (date) => {
-        const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
-        const day = ("0" + date.getDate()).slice(-2); // Get day and format to 2 digits
-        const year = date.getFullYear(); // Get the full year
-        return `${day}/${month}/${year}`; // Return in dd/mm/yyyy format
+    const produced_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const produced_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
     };
 
     useEffect(() => {
         const produced_date = flatpickr(".produced_date-date-picker", {
             dateFormat: "d/m/Y",
-            maxDate: "today", // Disable past dates for appointment date
-            defaultDate: form.produced_date,
+            maxDate: "today",
+            defaultDate: form.produced_date ? produced_date_Display(new Date(form.produced_date)) : '',
             onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? formatDate(selectedDates[0]) : "";
+                const formattedDate = selectedDates[0] ? produced_date_Backend(selectedDates[0]) : "";
                 setForm({ ...form, produced_date: formattedDate });
             },
         });

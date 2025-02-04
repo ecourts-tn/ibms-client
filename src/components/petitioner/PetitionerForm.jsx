@@ -175,7 +175,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       await validationSchema.validate(litigant, { abortEarly: false });
       addPetitioner(litigant);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -237,7 +237,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       <ToastContainer />
       <form encType='multipart/form-data'>
         { accused.length > 0 && (
-          <div className="row">
+          <div className="row mt-5">
             <div className="col-md-4 mb-3">
                 <div className="form-group">
                     <label htmlFor="litigant">Select petitioner</label><br />
@@ -257,7 +257,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>{t('name_of_litigant')}<RequiredField /></Form.Label>
+                <Form.Label>{t('petitioner_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -704,7 +704,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   ></Form.Control>
                 </Form.Group>
               </div> */}
-              <div className="col-md-3 mt-4 pt-2">
+              <div className="col-md-3 my-2">
                 <Button 
                   variant="secondary"
                   onClick={handleSubmit}

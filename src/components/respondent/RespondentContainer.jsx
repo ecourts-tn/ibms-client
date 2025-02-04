@@ -19,10 +19,10 @@ const RespondentContainer = () => {
     const[selectedRespondent, setSelectedRespondent] = useState(null)
     const[cirme, setCrime] = useState({})
     const {t} = useTranslation()
+    const efile_no = sessionStorage.getItem("efile_no")
     useEffect(() => {
         const fetchLitigants =  async() => {
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get(`litigant/list/`, {params:{efile_no}})
                 if(response.status === 200){
                     const filtered_data = response.data.filter((respondent)=> {
@@ -34,7 +34,9 @@ const RespondentContainer = () => {
                 console.error(error)
             }
         }
-        fetchLitigants();
+        if(efile_no){
+            fetchLitigants();
+        }
     },[])
 
     const addRespondent = async(litigant) => {
@@ -82,63 +84,20 @@ const RespondentContainer = () => {
     }
      
     return (
-        <div className='container'>
-        <div className="card card-outline card-info">
-            <div className="card-header">
-                <div className="d-flex justify-content-between">
-                    <h3 className="card-title"><i className="fas fa-users mr-2"></i><strong>{t('respondent_details')}</strong></h3>
-                    { respondents.length > 0 && (
-                        <Button variant="warning" onClick={handleShow}>
-                            <i className="fas fa-users mr-2"></i>
-                                {t('respondents')}
-                                <Badge bg="success" className="ml-2">{ respondents.length }</Badge>
-                        </Button>
-                    )}
-                </div>
-            </div>
-            <Modal 
-                    show={show} 
-                    onHide={handleClose} 
-                    backdrop="static"
-                    keyboard={false}
-                    size="xl"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title><strong>{t('respondents')}</strong></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <RespondentList 
-                            respondents={respondents}
-                            deleteRespondent={deleteRespondent}
-                            editRespondent={editRespondent}
-                        />
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>
-                        {t('close')}
-                        </Button>
-                    </Modal.Footer>
-                </Modal>
-            <div className="card-body">
-                <div className="row">
-                    <div className="col-md-12">
-                    </div>   
-                    <div className="col-md-12"> 
-                        <RespondentForm 
-                            addRespondent={addRespondent}
-                            selectedRespondent={selectedRespondent}
-                        />
-                    </div>
-                </div>
-            </div>
-            {/* <div className="card-footer">
-                <Button
-                    className="float-right"
-                ><i className="fa fa-plus mr-2"></i>Add Respondent</Button>
-            </div> */}
+        <div className='container-fluid'>
+            {respondents.length > 0 && (
+                <RespondentList 
+                    respondents={respondents}
+                    deleteRespondent={deleteRespondent}
+                    editRespondent={editRespondent}
+                />
+            )}
+            <RespondentForm 
+                addRespondent={addRespondent}
+                selectedRespondent={selectedRespondent}
+            />
         </div>
-    </div>
-  )
+    )
 }
 
 export default RespondentContainer

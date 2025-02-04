@@ -371,6 +371,9 @@
     "efile": "E-File",
     "efile_date": "eFile Date",
     "download": "Download",
+    "main_case_detail": "Main Case Details",
+    "jurisdiction": "Jurisdiction",
+    "magistrate_court": "Magistrate Court",
     "alerts": {
         "select_state": "Select state",
         "select_district": "Select district",
@@ -388,6 +391,8 @@
         "select_complaint_type": "Select complaint type",
         "select_gender": "Select gender",
         "select_parantage": "Select parantage",
+        "select_jurisdiction": "Select Jurisdiction",
+        "select_magistrate_court": "Select Magistrate Court",
         "submit_success": "{efile_no} details submitted successfully",
         "logged_out": "You are logged out successfully",
         "mobile_required": "Please enter valid mobile number",

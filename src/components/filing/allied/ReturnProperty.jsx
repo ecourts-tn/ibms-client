@@ -12,7 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search'
 import Document from 'components/filing/Document';
-import GroundsContainer from 'components/filing/Ground';
+import Grounds from 'components/filing/Grounds';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
@@ -353,7 +353,7 @@ const RetrunProperty = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
+            <div className="container mt-3">
                 <div className="row">
                     <div className="col-md-12 text-center">
                         <div className="form-group">

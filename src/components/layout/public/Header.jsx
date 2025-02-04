@@ -7,6 +7,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+// import './header.css';
 import api from 'api';
 
 const Header = () => {
@@ -68,14 +69,14 @@ const Header = () => {
   const filingLinks = [
     { path: "/filing/bail/initial-input", label: t('bail') },
     { path: "/filing/anticipatory-bail/initial-input", label: t('abail') },
-    { path: "/filing/condition-relaxation/initial-input", label: t('condition_relaxation') },
-    { path: "/filing/intervene-petition/initial-input", label: t('intervene') },
-    { path: "/filing/modification-petition/initial-input", label: t('modification') },
-    { path: "/filing/surety-petition/initial-input", label: t('surety') },
-    { path: "/filing/surety-discharge/initial-input", label: t('discharge_surety') },
-    { path: "/filing/time-extension/initial-input", label: t('extension') },
-    { path: "/filing/return-passport/initial-input", label: t('return_passport') },
-    { path: "/filing/return-property/initial-input", label: t('return_property') },
+    { path: "/filing/relaxation/main-case-detail", label: t('condition_relaxation') },
+    { path: "/filing/intervene/initial-input", label: t('intervene') },
+    { path: "/filing/modification/main-case-detail", label: t('modification') },
+    { path: "/filing/surety/main-case-detail", label: t('surety') },
+    { path: "/filing/surety-discharge/main-case-detail", label: t('discharge_surety') },
+    { path: "/filing/extension/main-case-detail", label: t('extension') },
+    { path: "/filing/return-passport/main-case-detail", label: t('return_passport') },
+    { path: "/filing/return-property/main-case-detail", label: t('return_property') },
   ];
 
   const caseStatusLinks = [
@@ -146,24 +147,20 @@ const Header = () => {
                   aria-disabled={isHomeDisabled}
                 >{t('home')}</Link>
               </li>
-              {isAuth && (
-                <>
-                  <li className="nav-item">
-                    <Link to="/filing/dashboard" className="nav-link">{t('dashboard')}</Link>
-                  </li>
-                  <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
-                      {t('filing')}
-                    </a>
-                    <div className="dropdown-menu">
-                      {renderDropdownLinks(filingLinks)}
-                    </div>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
-                  </li>
-                </>
-              )}
+              <li className="nav-item">
+                <Link to="/filing/dashboard" className="nav-link">{t('dashboard')}</Link>
+              </li>
+              <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
+                  {t('filing')}
+                </a>
+                <div className="dropdown-menu">
+                  {renderDropdownLinks(filingLinks)}
+                </div>
+              </li>
+              <li className="nav-item">
+                <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
+              </li>
               <li className="nav-item dropdown">
                 <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown">
                   {t('case_status')}
