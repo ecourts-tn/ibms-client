@@ -51,7 +51,9 @@ const Grounds = () => {
                 }
             }
         }catch(error){
-            console.error(error)
+            if(error.response?.status === 400){
+                toast.error(t('errors.something_wrong'), {theme:"colored"});
+            }
         }finally{
             setIsUpdate(false)
             setLoading(false)

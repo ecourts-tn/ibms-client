@@ -23,7 +23,6 @@ export const publicRoutes = [
     { path: "status/fir-number", element:<FIRSearch />},
     { path: "user-guide", element:<Home />},
     { path: "verify-order", element:<VerifyOrder />},
-    { path: "initial", element:<InitialInput/>},
     { path: "*", element:<NotFound />}
 ]
 

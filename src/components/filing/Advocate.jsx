@@ -290,7 +290,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
             <div className="row">
                 <div className="col-md-6 offset-md-3">
                     <div className="row my-5">
-                        <div className="col-md-10">
+                        <div className="col-md-9">
                             <input 
                                 name="search"
                                 type="text" 
@@ -299,7 +299,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                                 placeholder={`${t('mobile_number')}/${t('email_address')}/${t('enrollment_number')}`}
                             />
                         </div>
-                        <div className="col-md-2">
+                        <div className="col-md-3">
                             <button 
                                 className="btn btn-primary btn-block"
                                 onClick={searchAdvocate}

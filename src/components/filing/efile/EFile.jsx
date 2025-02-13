@@ -72,7 +72,7 @@ const EFile = () => {
 const handleSubmit = async () => {
     const efile_no = sessionStorage.getItem("efile_no");
     if (!efile_no) {
-      toast.error("Something went wrong! Please verify your data", {theme:"colored"})
+      toast.error(t('errors.something_wrong'), {theme:"colored"})
       return;
     }
     try {

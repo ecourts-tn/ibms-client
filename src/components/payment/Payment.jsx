@@ -168,7 +168,7 @@ const Payment = () => {
             if (error.name === "ValidationError") {
                 toast.error("Please check your form inputs.", { theme: "colored" });
             } else {
-                toast.error("Payment failed. Please try again.", { theme: "colored" });
+                toast.error(t('errors.something_wrong'), { theme: "colored" });
             }
         }
     };
