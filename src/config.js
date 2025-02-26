@@ -5,11 +5,11 @@ const config = {
     featureFlag: true,
   },
   staging: {
-    apiUrl: "http://192.168.100.135:8000/api/",
+    apiUrl: "http://192.168.100.155:81/api/v1/",
     featureFlag: false,
   },
   production: {
-    apiUrl: "http://192.168.100.135:8000/api/",
+    apiUrl: "http://192.168.100.155:81/api/v1/",
     featureFlag: false,
   },
 };

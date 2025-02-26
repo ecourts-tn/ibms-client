@@ -61,7 +61,7 @@ const FIRSearch = ({petition}) => {
             await validationSchema.validate(form, { abortEarly:false})
             setLoading(true)
             setShowAdditionalFields(false)
-            const response = await api.post("external/police/tamilnadu/fir-details/", form);
+            const response = await api.post("external/police/tamilnadu/search-fir/", form);
             if (response.status === 200) {
                 const data = typeof response.data.fir === 'string' ? JSON.parse(JSON.stringify(response.data.fir)) : response.data.fir;
                 setFirId(response.data.id)
