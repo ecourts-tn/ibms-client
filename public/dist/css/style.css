@@ -202,6 +202,15 @@ legend > span {
     height:40px;
     border-radius:0px;
 }
+.captcha-text{
+    font-size: 25px!important;
+    font-weight: bold!important;
+    background: #ffffff;
+    color: #922b21!important;
+    height:40px!important;
+    letter-spacing: 2px;
+    text-shadow: 3px 4px 3px #aaa
+}
 
 /* Loader */
 .loading-overlay {

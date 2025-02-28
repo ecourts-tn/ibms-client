@@ -88,7 +88,7 @@ const PetitionSearch = ({cases,eFileNumber, seteFileNumber}) => {
     }
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <ToastContainer />
             { loading && <Loading />}
             <div className="row">
