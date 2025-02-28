@@ -13,19 +13,22 @@ import LoginIcon from '@mui/icons-material/LockOpen';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import Loading from 'components/common/Loading';
 import { useTranslation } from 'react-i18next';
-import { UserTypeContext } from 'contexts/UserTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
+import { IconButton } from '@mui/material'; 
+import { Visibility, VisibilityOff } from '@mui/icons-material'; 
+import { GroupContext } from 'contexts/GroupContext';
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
+  const { groups}     = useContext(GroupContext)
+  const { language }  = useContext(LanguageContext);
+  const { t }         = useTranslation();
+  const { login }     = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
-  const { userTypes } = useContext(UserTypeContext);
   const [isDepartment, setIsDepartment] = useState(false);
-  const { language } = useContext(LanguageContext);
-  const [captchaValid, setCaptchaValid] = useState(null);
-  const { t } = useTranslation();
-  const { login } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaText, setCaptchaText] = useState("");
   const [errors, setErrors] = useState({});
   const [form, setForm] = useState({
     usertype: '',
@@ -33,8 +36,6 @@ const Login = () => {
     password: '',
     captcha: ''
   });
-  const [captchaText, setCaptchaText] = useState("");
-  const [userInput, setUserInput] = useState("");
 
   const validationSchema = Yup.object({
     usertype: Yup.string().required(t('errors.usertype_required')),
@@ -43,38 +44,27 @@ const Login = () => {
     captcha: Yup.string().required(t('errors.captcha_required')),
   });
 
-  const generateCaptcha = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let captcha = '';
-    for (let i = 0; i < 6; i++) {
-      captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+  const fetchCaptcha = async() => {
+    try{
+      const response = await api.get(`auth/captcha/generate/`)
+      if(response.status === 200){
+        setCaptchaText(response.data)
+      }
+    }catch(error){
+      console.error(error)
     }
-    return captcha;
-  };
+  }
 
   useEffect(() => {
-    setCaptchaText(generateCaptcha());
-  }, []);
+    fetchCaptcha()
+  },[])
+
 
   // Function to refresh the CAPTCHA
   const refreshCaptcha = () => {
-    setCaptchaText(generateCaptcha());
+    fetchCaptcha();
     setForm({ ...form, captcha: '' });
-    setCaptchaValid(null);
   };
-
-  // Function to verify the CAPTCHA
-  const verifyCaptcha = () => {
-    if (userInput === captchaText) {
-      setCaptchaValid(true);
-      alert("CAPTCHA Verified Successfully!");
-    } else {
-      setCaptchaValid(false);
-      alert("Incorrect CAPTCHA. Please try again.");
-      refreshCaptcha();
-    }
-  };
-
 
 
   const handleSubmit = async (e) => {
@@ -83,25 +73,8 @@ const Login = () => {
 
     try {
       await validationSchema.validate(form, { abortEarly: false });
-
-      // Hash the password using bcryptjs before sending it to the server
-      //   const hashedPassword = bcrypt.hashSync(form.password, 10);
-
-       // Check if CAPTCHA is valid
-      if (form.captcha !== captchaText) {
-        setCaptchaValid(false);
-        toast.error(t('alerts.captcha_failed'), { theme: 'colored' });
-        refreshCaptcha();
-        setLoading(false);
-        return;
-      }
-
-      setCaptchaValid(true);
-      const { username, usertype, password } = form;
       const response = await api.post(
-        'auth/login/',
-        //   { usertype, username, password: hashedPassword }, // Sending hashed password
-        { usertype, username, password },
+        'auth/login/', form,
         {
           skipInterceptor: true,
         }
@@ -125,7 +98,7 @@ const Login = () => {
         const { status, data } = error.response;
         switch (status) {
           case 400:
-            toast.error(t('alerts.invalid_credentials'), { theme: 'colored' });
+            toast.error(data.message, { theme: 'colored' });
             break;
           case 401:
             toast.error(t('alerts.not_authorized'), { theme: 'colored' });
@@ -209,11 +182,11 @@ const Login = () => {
                   onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                 >
                   <option value="">{t('alerts.select_usertype')}</option>
-                  {userTypes
-                    .filter((u) => u.id !== 1 && u.id !== 2)
-                    .map((u, index) => (
-                      <option key={index} value={u.id}>
-                        {language === 'ta' ? u.name : u.name}
+                  {groups
+                    .filter((g) => g.id !== 1 && g.id !== 2)
+                    .map((g, index) => (
+                      <option key={index} value={g.id}>
+                        {language === 'ta' ? g.name : g.name}
                       </option>
                     ))}
                 </select>
@@ -240,53 +213,89 @@ const Login = () => {
           <div className="col-md-12">
             <div className="form-group mb-3">
               <FormControl fullWidth>
-                <TextField
-                  error={errors.password ? true : false}
-                  helperText={errors.password}
-                  label={t('password')}
-                  size="small"
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                />
+                <div className="input-group" style={{ position: 'relative' }}>
+                  <input
+                    className={`form-control ${errors.password ? 'is-invalid' : null }`}
+                    error={errors.password ? true : false}
+                    helperText={errors.password}
+                    label={t('password')}
+                    size="small"
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={form.password}
+                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value.trim() })}
+                    style={{
+                      paddingRight: '35px', // Make room for the icon inside the input
+                    }}
+                  />
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)} // Toggle the visibility
+                    edge="end"
+                    style={{
+                        position: 'absolute',
+                        right: '10px', // Positioned on the right side inside the input field
+                        top: '50%',
+                        transform: 'translateY(-50%)', // Centered vertically
+                        color: '#6c757d', // Icon color (you can adjust this)
+                    }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />} {/* Eye icons */}
+                  </IconButton>
+                </div>
+                <div className="invalid-feedback">
+                    { errors.password }
+                </div>
               </FormControl>
             </div>
           </div>
-          <div className="col-md-7 d-flex">
-
-            <span className="img-captcha" style={{
-              fontSize: "25px",
-              fontWeight: "bold",
-              background: "#ffffff",
-              color: "#3498db",
-              paddingLeft: '10px',
-
-            }}>{captchaText}</span>
-
-            <button className="btn bg-olive btn-captcha" onClick={refreshCaptcha} type="button">
-              <RefreshIcon />
-            </button>
+          <div className="col-md-7">
+            <div class="input-group mb-3">
+              <input 
+                type="text" 
+                className="form-control captcha-text"
+                value={captchaText}
+                onClick={refreshCaptcha}
+                disabled={true}
+                style={{
+                  cursor:"not-allowed",
+                  backgroundColor:"#FAFAFA"
+                }}
+              />
+              <div class="input-group-append">
+                <span 
+                  class="input-group-text bg-info"
+                  onClick={refreshCaptcha}
+                ><RefreshIcon /></span>
+              </div>
+            </div>
           </div>
           <div className="col-md-5">
-            <input
+            {/* <input
               type="text"
               name="captcha"
               value={form.captcha}
               onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
               placeholder="Enter CAPTCHA"
-              className={`form-control ${captchaValid === false ? 'is-invalid' : ''}`}
-            />
-             {captchaValid === false && (
-              <div className="invalid-feedback">{t('alerts.captcha_failed')}</div>
-            )}
+              className={`form-control ${errors.captcha ? 'is-invalid' : null }`}
+            /> */}
+            <FormControl fullWidth>
+              <TextField
+                error={errors.captcha ? true : false}
+                helperText={errors.captcha}
+                label={`${t('Captcha')}`}
+                size="small"
+                name="captcha"
+                value={form.captcha}
+                onChange={(e) =>
+                  setForm({ ...form, [e.target.name]: e.target.value.trim() })
+                }
+              />
+            </FormControl>
+            <div className="invalid-feedback">
+              {errors.captcha}
+            </div>
           </div>
           <div className="col-md-12">
-            {captchaValid === false && (
-              <span className="text-danger pt-1" style={{ fontSize: '12px' }}>
-                <strong>{t('alerts.captcha_failed')}</strong>
-              </span>
-            )}
             <div className="form-group my-2">
               <input type="checkbox" defaultValue="remember-me" style={{ width: 20 }} />
               {t('remember_me')}
