@@ -13,7 +13,7 @@ import api from 'api'
 import { ToastContainer, toast } from 'react-toastify'
 import { CaseTypeContext } from 'contexts/CaseTypeContext'
 
-const PetitionSearch = ({cases,eFileNumber, seteFileNumber}) => {
+const PetitionSearch = ({cases, eFileNumber, seteFileNumber}) => {
 
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)

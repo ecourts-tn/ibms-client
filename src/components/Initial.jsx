@@ -4,8 +4,6 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import React, { useEffect, useState, useContext } from 'react'
-import FIRSearch from 'components/search/FIRSearch';
-import CaseSearch from 'components/search/CaseSearch';
 import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { RequiredField } from 'utils';
@@ -26,6 +24,7 @@ import Loading from 'components/common/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/search/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
+import { AgencyContext } from 'contexts/AgencyContext';
 
 
 const Initial = () => {
@@ -41,6 +40,7 @@ const Initial = () => {
     const {policeStations}  = useContext(PoliceStationContext)
     const {language}        = useContext(LanguageContext)
     const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
+    const { agencies } = useContext(AgencyContext)
     const {updateStep} = useContext(StepContext)
 
     const { t } = useTranslation()
@@ -83,6 +83,8 @@ const Initial = () => {
     const handleSearch = () =>{
 
     }
+
+    
     
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -491,7 +493,7 @@ const Initial = () => {
                 { parseInt(petition.complaint_type) === 3 && (
                 <div className="form-group row mb-4">
                     <label htmlFor="" className="col-sm-2 col-form-label">Search Type</label>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <div className="icheck-success d-inline mx-2">
                             <input 
                                 type="radio" 
@@ -537,33 +539,77 @@ const Initial = () => {
                 </div>
                 )}
                 { parseInt(petition.complaint_type) === 2 && (
-                <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Investigation Agency</label>
-                    <div className="col-md-6">
-                        <input 
-                            type="text" 
-                            name="" 
-                            className="form-control" 
-                            placeholder='Investigation Agency Name'
-                        />
+                <React.Fragment>
+                    <div className="form-group row mb-4">
+                        <label htmlFor="state" className='col-sm-2 col-form-label'>{t('state')}<RequiredField/></label>
+                        <div className="col-md-4">
+                            <select 
+                                name="state" 
+                                id="state" 
+                                className={ `form-control ${errors.state ? 'is-invalid': ''}`}
+                                value={petition.state}
+                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}    
+                            >
+                                <option value="">{t('alerts.select_state')}</option>
+                                { states.map((item, index) => (
+                                    <option key={index} value={item.state_code }>{ language === 'ta' ? item.state_lname : item.state_name }</option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">
+                                { errors.state }
+                            </div>
+                        </div>
+                        <label htmlFor="district" className="col-sm-2 col-form-label">{t('district')}<RequiredField/></label>
+                        <div className="col-md-4">
+                            <select 
+                                name="district" 
+                                className={`form-control ${errors.district ? 'is-invalid' : ''}`}
+                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                value={petition.district}
+                            >
+                                <option value="">Select district</option>
+                                { districts.filter(d=>parseInt(d.state) === parseInt(petition.state)).map((district, index) => (
+                                    <option key={index} value={district.district_code}>{language === 'ta' ? district.district_lname : district.district_name}</option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">
+                                { errors.district }
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-md-2">
+                    { console.log(agencies)}
+                    <div className="form-group row mb-4">
+                        <label htmlFor="" className="col-sm-2 col-form-label">{t('investigation_agency')}</label>
+                        <div className="col-md-6">
+                            <Select 
+                                name="agency"
+                                // placeholder={t('alerts.select_agency')}
+                                options={agencies.filter(a=>parseInt(a.district)===parseInt(petition.district)).map((a) => { return { 
+                                    value:a.id, label:language === 'ta' ? a.agency_name.toUpperCase() : a.agency_name.toUpperCase()
+                                }})} 
+                                className={`${errors.agency ? 'is-invalid' : null}`}
+                                onChange={(e) => setPetition({...petition, agency:e.value})}
+                            />
+                        </div>
+                        <div className="invalid-feedback">{ errors.agency }</div>
+                        <div className="col-md-2">
                             <input 
-                            type="text" 
-                            name="" 
-                            className="form-control" 
-                            placeholder='Crime Number'
-                        />
+                                type="text" 
+                                name="" 
+                                className="form-control" 
+                                placeholder='Crime Number'
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <input 
+                                type="text" 
+                                name=""
+                                className="form-control" 
+                                placeholder='Crime year'
+                            />
+                        </div>
                     </div>
-                    <div className="col-md-2">
-                        <input 
-                            type="text" 
-                            name=""
-                            className="form-control" 
-                            placeholder='Crime year'
-                        />
-                    </div>
-                </div>
+                </React.Fragment>
                 )}
                 { parseInt(petition.search_type) === 2 && (
                 <React.Fragment>    

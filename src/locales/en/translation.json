@@ -49,6 +49,7 @@
     "bail_type": "Bail Type",
     "complaint_type": "Complaint Type",
     "crime_registered": "Crime Registered",
+    "investigation_agency": "Investigation Agency",
     "yes": "Yes",
     "no": "No",
     "not_known": "Not Known",

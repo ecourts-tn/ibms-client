@@ -26,6 +26,7 @@ import { JudgeProvider } from "contexts/JudgeContext";
 import { GroupProvider } from "contexts/GroupContext";
 import api from "api";
 import { StepProvider } from "contexts/StepContext";
+import { AgencyProvider } from "./AgencyContext";
 
 export const AppContext = createContext()
 
@@ -76,7 +77,9 @@ export const AppProvider = ({children}) => {
                                                                                                     <DocumentProvider>
                                                                                                         <JudgeProvider>
                                                                                                             <GroupProvider>
-                                                                                                                {children}
+                                                                                                                <AgencyProvider>
+                                                                                                                    {children}
+                                                                                                                </AgencyProvider>
                                                                                                             </GroupProvider>
                                                                                                         </JudgeProvider>
                                                                                                     </DocumentProvider>

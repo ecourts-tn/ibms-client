@@ -360,6 +360,20 @@ const PaymentHistory = ({payments}) => {
         }
     }
 
+    const downloadReceipt = async(receipt_no) => {
+        try{
+            setLoading(true)
+            const response = await api.post(`external/epayment/court-fee/receipt/`, {receipt_no})
+            if(response.status===200){
+                console.log(response)
+            }
+        }catch(error){
+            console.log(error)
+        }finally{
+            setLoading(false)
+        }
+    }
+
     return (
         <React.Fragment>
 
@@ -388,7 +402,7 @@ const PaymentHistory = ({payments}) => {
                         <td>{ payment.amount }</td>
                         <td>{ formatDate(payment.transaction_date) }</td>
                         <td>{ payment.status }</td>
-                        <td><a href="#">{payment.shc_transaction_id}</a></td>
+                        <td><a href="#" onClick={()=> downloadReceipt(payment.shc_transaction_id)}>{payment.shc_transaction_id}</a></td>
                         <td>
                             <button 
                                 className="btn btn-success btn-sm"

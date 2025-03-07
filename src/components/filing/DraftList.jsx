@@ -92,10 +92,22 @@ const DraftList = () => {
         pageNumbers.push(i)
     }
 
-    const handleEdit = (efile_no) => {
+    const handleEdit = (petition) => {
         if (window.confirm("Are you sure you want to edit the petition?")) {
-            sessionStorage.setItem('efile_no', efile_no);
-            navigate("/filing/bail/initial-input");
+            sessionStorage.setItem('efile_no', petition.efile_no);
+            switch(petition.case_type){
+                case 1:
+                    navigate("/filing/bail/initial-input");
+                    break;
+                case 2:
+                    navigate("/filing/anticipatory-bail/initial-input");
+                    break;
+                case 3:
+                    navigate("/filing/relaxation/main-case-detail");
+                    break;
+                default:
+                    break;
+            }
         }
     };
 
@@ -215,12 +227,6 @@ const DraftList = () => {
                                 { currentPetitions.map((item, index) => (
                                 <tr key={index}>
                                     <td>{ index + 1 + indexOfFirstItem }</td>
-                                    {/* <td>
-                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
-                                            <strong>{ item.petition.efile_number }</strong>
-                                        </Link>
-                                        <span style={{display:"block"}}>{t('efile_date')}: {formatDate(item.petition.efile_date)}</span>
-                                    </td> */}
                                     <td>
                                         <Link 
                                             to="/filing/detail" 
@@ -283,7 +289,7 @@ const DraftList = () => {
                                         <Button
                                             variant="outlined"
                                             color="primary"
-                                            onClick={() => handleEdit(item.petition.efile_number)}
+                                            onClick={() => handleEdit(item.petition)}
                                         >
                                             <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
                                         </Button>
