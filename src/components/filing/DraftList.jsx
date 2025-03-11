@@ -93,21 +93,17 @@ const DraftList = () => {
     }
 
     const handleEdit = (petition) => {
-        if (window.confirm("Are you sure you want to edit the petition?")) {
-            sessionStorage.setItem('efile_no', petition.efile_no);
-            switch(petition.case_type){
-                case 1:
-                    navigate("/filing/bail/initial-input");
-                    break;
-                case 2:
-                    navigate("/filing/anticipatory-bail/initial-input");
-                    break;
-                case 3:
-                    navigate("/filing/relaxation/main-case-detail");
-                    break;
-                default:
-                    break;
-            }
+        if (!window.confirm("Are you sure you want to edit the petition?")) {
+            return; // Exit the function if the user cancels
+        }
+        sessionStorage.setItem('efile_no', petition.efile_no);
+        console.log(petition)
+        const route = petition.case_type.url;
+        if (route) {
+            navigate(route);
+        } else {
+            console.error("Invalid case type:", petition.case_type);
+            alert("Invalid case type. Please contact support.");
         }
     };
 

@@ -68,6 +68,7 @@ const Initial = () => {
         bail_type: '',
         complaint_type:'',
         crime_registered: 3,
+        fir: ''
     }
     const[petition, setPetition] = useState(initialState)
     const[jurisdicationCourts, setJurisdictionCourts] = useState([])
@@ -84,7 +85,6 @@ const Initial = () => {
 
     }
 
-    
     
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -226,10 +226,13 @@ const Initial = () => {
             }
             setLoading(true)
             setViewFIR(false)
-            const response = await api.post("external/police/tamilnadu/search-fir/", crime);
+            const response = await api.post("external/police/fir-search/", crime);
             if (response.status === 200) {
-                const data = typeof response.data.fir === 'string' ? JSON.parse(JSON.stringify(response.data.fir)) : response.data.fir;
-                setFirId(response.data.id)
+                sessionStorage.setItem("api_id", response.data.api_id)
+                setPetition({
+                    ...petition,
+                    fir: response.data.api_id
+                })
                 setViewFIR(true);
                 setNotFound("");
                 const response2 = await api.post(`base/jurisdiction-courts/`, {station:petition.police_station})
@@ -237,7 +240,6 @@ const Initial = () => {
                    setJurisdictionCourts(response2.data)
                 }
             } else {
-                setNotFound(t('errors.fir_not_found'));
                 setViewFIR(false);
                 setPetition(initialState);
             }
@@ -247,6 +249,17 @@ const Initial = () => {
                 if(error.response.status === 500){
                     toast.error("Internal server error", {
                         theme : "colored"
+                    })
+                }
+                if(error.response.status === 404){
+                    setNotFound(t('errors.fir_not_found'));
+                    setPetition({
+                        ...petition,
+                        state: '',
+                        district: '',
+                        police_station: '',
+                        fir_number: '',
+                        fir_year:''
                     })
                 }
             }
@@ -299,7 +312,7 @@ const Initial = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", {petition, fir})
+            const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
                 sessionStorage.setItem("efile_no", efile_no)
@@ -488,6 +501,14 @@ const Initial = () => {
                         { viewFIR && (<FIRDetails/>)}
                     </div>
                 </div>
+                { notFound && (
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span><strong>{ notFound }</strong> </span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                )}
                 </React.Fragment>
                 )}
                 { parseInt(petition.complaint_type) === 3 && (

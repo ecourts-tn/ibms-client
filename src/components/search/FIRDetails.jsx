@@ -14,12 +14,11 @@ const FIRDetails = () => {
     const handleShow = () => setShow(true);
     const {t} = useTranslation()
 
-    useEffect(() => {
-        if (!firId) return; // Skip if firId is not available
-    
+    useEffect(() => { 
         const fetchFIR = async () => {
+            const api_id = sessionStorage.getItem("api_id")
             try {
-                const response = await api.post("external/police/api/detail/", { id: firId });
+                const response = await api.post("external/police/api/detail/", { id: api_id });
                 if (response.status === 200) {
                     const data = response.data.fir
                     setFir({
@@ -49,8 +48,6 @@ const FIRDetails = () => {
     
         fetchFIR();
     }, [firId]);
-
-
 
     return (
         <>

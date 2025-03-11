@@ -46,16 +46,19 @@ const Login = () => {
     captcha: Yup.string().required(t('errors.captcha_required')),
   });
 
-  const fetchCaptcha = async() => {
-    try{
-      const response = await api.get(`auth/captcha/generate/`)
-      if(response.status === 200){
-        setCaptchaText(response.data)
-      }
-    }catch(error){
-      console.error(error)
+  const fetchCaptcha = async () => {
+    try {
+        const response = await api.get("auth/captcha/generate/")
+
+        if (response.status === 200) {
+            setCaptchaText(response.data.captcha);
+        }
+    } catch (error) {
+        console.error("Error fetching captcha:", error);
     }
-  }
+};
+
+
 
   useEffect(() => {
     fetchCaptcha()

@@ -16,7 +16,7 @@ export const publicRoutes = [
     { path: "/", element: <Home /> },
     { path: "auth/registration", element:<AdvocateRegistration />},
     { path: "auth/reset-password", element: <ResetPassword /> },
-    { path: "auth/reset-password/confirmation/:uid/:token", element: <ResetPasswordConfirm /> },
+    { path: "auth/reset-password/confirm/:uid/:token", element: <ResetPasswordConfirm /> },
     { path: "status/filing-number", element:<FilingSearch/>},
     { path: "status/registration-number", element:<RegistrationSearch />},
     { path: "status/cnr-number", element:<CNRSearch />},

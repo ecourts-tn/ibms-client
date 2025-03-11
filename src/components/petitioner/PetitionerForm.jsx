@@ -1,4 +1,5 @@
 import React, {useContext} from 'react'
+import api from 'api';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify';
@@ -23,7 +24,7 @@ import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, han
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
-  const {fir, accused} = useContext(BaseContext)
+  // const {fir, accused} = useContext(BaseContext)
   const {states} = useContext(StateContext)
   const {districts} = useContext(DistrictContext)
   const {taluks} = useContext(TalukContext)
@@ -37,6 +38,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   const location = useLocation()
   const {t} = useTranslation()
   const[alternateAddress, setAlternateAddress] = useState(false)
+  const [fir, setFir] = useState({})
+  const[accused, setAccused] = useState([])
   
   const initialState = {
       litigant: 'o',
@@ -128,14 +131,27 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       }));
   };
 
-  // const handleBlur = (e) => {
-  //     const { name, value } = e.target;
-  //     const errorMessage = validateEmail(name, value);  // Validate the field on blur
-  //     setErrors((prevErrors) => ({
-  //         ...prevErrors,
-  //         [name]: errorMessage,  // Set the error message for the specific field
-  //     }));
-  // };
+  useEffect(() => { 
+      const fetchFIR = async () => {
+          const api_id = sessionStorage.getItem("api_id")
+          try {
+              const response = await api.post("external/police/fir-detail/", { api_id: api_id });
+              if (response.status === 200) {
+                  const data = response.data.fir
+                  setFir({
+                  ...fir,
+                  act: data?.act || "",
+                  section: data?.section || [],
+              });
+              setAccused(response.data?.fir.accused_details || []);
+              }
+          } catch (error) {
+              console.error("Error fetching FIR details:", error);
+          }
+      };
+      fetchFIR();
+  }, []);
+
 
   useEffect(() => {
     if(accused){
@@ -237,8 +253,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       <ToastContainer />
       <form encType='multipart/form-data'>
         { accused.length > 0 && (
-          <div className="row mt-5">
-            <div className="col-md-4 mb-3">
+          <div className="row">
+            <div className="col-md-4">
                 <div className="form-group">
                     <label htmlFor="litigant">Select petitioner</label><br />
                     <select name="litigant" value={litigant.litigant} className="form-control" onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})} >

@@ -24,7 +24,11 @@ const ResetPassword = () => {
                 setEmail('')
             }
         }catch(error){
-            console.error(error)
+            if(error.response){
+                toast.error(error.response.data.error, {
+                    theme:"colored"
+                })
+            }
         }finally{
             setLoading(false)
         }
