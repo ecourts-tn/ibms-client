@@ -4,17 +4,22 @@ import { AuthContext } from "contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 
 export const PrivateRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  const { isAuth, user } = useContext(AuthContext); // Use isAuth and user from AuthContext
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      toast.error("Please login to access the page", {theme:"colored"});
-      // setTimeout(() => navigate("/"), 1000); // Redirect after showing toast
+    // Redirect to the home page if the user is not authenticated
+    if (!isAuth || !user) {
+      toast.error("Please login to access the page", { theme: "colored" });
+      setTimeout(() => navigate("/"), 100); // Redirect after showing toast
     }
-  }, [user, navigate]);
+  }, [isAuth, user, navigate]);
 
-  if (!user) return <ToastContainer />; // Prevent rendering protected content
+  // If the user is not authenticated, show only the ToastContainer
+  if (!isAuth || !user) {
+    return <ToastContainer />;
+  }
 
+  // Render the protected content if the user is authenticated
   return children;
 };

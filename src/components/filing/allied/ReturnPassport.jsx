@@ -145,7 +145,7 @@ const ReturnPassport = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted/`)
+                const response = await api.get(`case/filing/pending/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -498,15 +498,6 @@ const ReturnPassport = () => {
                                             <th>Expiry Date</th>
                                         </tr>
                                     </thead>
-                                    {/* <tbody>
-                                        <tr>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                        </tr>
-                                    </tbody> */}
                                     <tbody>
                                         {passportDetails.map((passport, index) => (
                                         <tr key={index}>

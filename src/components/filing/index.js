@@ -10,4 +10,5 @@ export {default as ProceedingDetail} from "./ProceedingDetail"
 export {default as Advocate} from "./Advocate"
 export {default as Document} from "./Document"
 export { default as Grounds } from "./Grounds"
+export { default as Initial } from './Initial'
 

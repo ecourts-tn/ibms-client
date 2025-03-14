@@ -36,7 +36,8 @@ const Login = () => {
     usertype: '',
     username: '',
     password: '',
-    captcha: ''
+    captcha: '',
+    remember: false
   });
 
   const validationSchema = Yup.object({
@@ -75,35 +76,29 @@ const Login = () => {
     setForm({ ...form, captcha: '' });
   };
 
+  const handleCheckBox = () =>{
+    setForm({...form, remember: !form.remember})
+  }
+
 
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-
+  
     try {
       await validationSchema.validate(form, { abortEarly: false });
-      const response = await api.post(
-        'auth/login/', form,
-        {
-          skipInterceptor: true,
-        }
-      );
-      await login(response.data);
-      toast.success('Logged in successfully', {
-        theme: 'colored',
-      });
-  
+      const response = await api.post('auth/login/', form, { skipInterceptor: true });
+        // Call the login function from AuthContext
+      await login(response.data, form.remember);
+        toast.success('Logged in successfully', { theme: 'colored' });
     } catch (error) {
       if (error.inner) {
-        setLoading(false);
         const newErrors = {};
         error.inner.forEach((err) => {
           newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
-        return;
-      }
-      if (error.response) {
+      } else if (error.response) {
         const { status, data } = error.response;
         switch (status) {
           case 400:
@@ -302,7 +297,12 @@ const Login = () => {
               </div>
               <div className="col-md-12">
                 <div className="form-group my-2">
-                  <input type="checkbox" defaultValue="remember-me" style={{ width: 20 }} />
+                  <input 
+                    type="checkbox" 
+                    checked={form.remember} 
+                    style={{ width: 20 }} 
+                    onChange={handleCheckBox}
+                  />
                   {t('remember_me')}
                 </div>
                 <FormControl fullWidth>

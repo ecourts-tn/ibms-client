@@ -10,6 +10,7 @@ import { DocumentContext } from 'contexts/DocumentContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import ViewDocument from 'components/common/ViewDocument';
 import Loading from 'components/common/Loading';
+import { formatDate } from 'utils';
 
 const Document = ({swornRequired}) => {
     swornRequired = true
@@ -158,7 +159,7 @@ const Document = ({swornRequired}) => {
 
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             { loading && <Loading />}
             <div className="row">
                 <div className="col-md-12">
@@ -170,7 +171,7 @@ const Document = ({swornRequired}) => {
                                     <th>S.No</th>
                                     <th>Document No.</th>
                                     <th>{t('document_title')}</th>
-                                    <th>Key</th>
+                                    <th>{t('upload_date')}</th>
                                     <th>{t('action')}</th>
                                 </tr>
                             </thead>
@@ -180,7 +181,7 @@ const Document = ({swornRequired}) => {
                                     <td>{ index+1}</td>
                                     <td>{`${d.efile_no}${d.document_id}`}</td>
                                     <td>{ language === 'ta' ? d.title?.document_lname : d.title?.document_name }</td>
-                                    <td>{ d.hash }</td>
+                                    <td>{ formatDate(d.created_at) }</td>
                                     <td>
                                         <button onClick={() => handleShow(d)} className="btn btn-info btn-sm">{t('view')}</button>
                                         <button className="btn btn-danger btn-sm ml-2" onClick={() => deleteDocument(d)}>{t('delete')}</button>

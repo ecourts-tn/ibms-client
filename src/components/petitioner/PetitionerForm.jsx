@@ -24,7 +24,7 @@ import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, han
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
-  // const {fir, accused} = useContext(BaseContext)
+  const [petition, setPetition] = useState({})
   const {states} = useContext(StateContext)
   const {districts} = useContext(DistrictContext)
   const {taluks} = useContext(TalukContext)
@@ -79,6 +79,10 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   useEffect(() => {
     setLitigant(selectedPetitioner)
   }, [selectedPetitioner])
+
+  useEffect(() => {
+    setPetition(JSON.parse(sessionStorage.getItem("petition")))
+  },[])
   
   const validationSchema = Yup.object({
     litigant_name: Yup.string().required(t('errors.litigant_name_required')),
@@ -247,6 +251,8 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
    return formIsValid;
 
   };
+
+  console.log(sessionStorage.getItem('petitioner'))
 
   return (
     <>
@@ -611,7 +617,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                 {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
             </div>
-            { location.pathname !== "/filing/anticipatory-bail/litigant" && (
+            { parseInt(petition?.case_type?.id) === 1 && (
               <>
                 <div className="col-md-3">
                     <div className="form-group">

@@ -6,13 +6,14 @@ import FilingLayout from "components/layout/public/FilingLayout";
 import { Logout, Profile, ChangePassword, ResetPassword } from "components/auth";
 import { Dashboard, DraftList, SubmittedList, PetitionDetail, PdfGenerator, 
     Pleadings, ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds,
-    Document } from "components/filing";
-import { Initial, PetitionerContainer, RespondentContainer, 
+    Document,Initial } from "components/filing";
+import { PetitionerContainer, RespondentContainer, 
     PreviousCaseContainer, EFile } from "components";
 import { Relaxation, Modification, Extension, ReturnPassport, ReturnProperty } from "components/filing/allied";
 import { Petition, AccusedDetails } from "components/filing/intervene";
 import { Surety, SuretyForm, DischargeSurety, SuretyDetails } from "components/filing/surety";
 import { Payment } from "components/payment";
+import Allied from "components/filing/allied/Allied";
 
 
 const bailRoutes = [
@@ -48,6 +49,15 @@ const conditionRoutes = [
     { id: 6, path: "efile", component: <EFile />, name:"efile" },
 ];
 
+const alliedRoutes = [
+    { id: 1, path: "main-case-detail", component: <Allied />, name:"main_case_detail"},
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
+    { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
+    { id: 4, path: "document", component: <Document />, name:"upload_document" },
+    { id: 5, path: "payment", component: <Payment />, name:"payment" },
+    { id: 6, path: "efile", component: <EFile />, name:"efile" },
+];
+
 const interveneRoutes = [
     { id: 1, path: "initial-input", component: <Petition />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
@@ -62,6 +72,7 @@ const interveneRoutes = [
 
 const modificationRoutes = [
     { id: 1, path: "main-case-detail", component: <Modification />, name:"main_case_detail"},
+    { id: 1, path: "allied", component: <Allied />, name:"allied"},
     { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
@@ -126,7 +137,8 @@ const routesConfig = [
     { path: "filing/surety-discharge", routes: "dischargeRoutes", title: "discharge_surety" },
     { path: "filing/extension", routes: "extensionRoutes", title: "extension" },
     { path: "filing/return-passport", routes: "passportRoutes", title: "return_passport" },
-    { path: "filing/return-property", routes: "propertyRoutes", title: "return_property" }
+    { path: "filing/return-property", routes: "propertyRoutes", title: "return_property" },
+    { path: "filing/allied", routes: "alliedRoutes", title: "allied" }
 ];
 
 export const FilingRoutes = () => {
@@ -134,6 +146,7 @@ export const FilingRoutes = () => {
         bailRoutes,
         abailRoutes,
         conditionRoutes,
+        alliedRoutes,
         interveneRoutes,
         modificationRoutes,
         suretyRoutes,

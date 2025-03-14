@@ -167,7 +167,7 @@ const RetrunProperty = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted/`)
+                const response = await api.get(`case/filing/pending/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -517,51 +517,7 @@ const RetrunProperty = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <div className="card card-navy">
-                                    <div className="card-header">
-                                        <strong>{t('property_details')}</strong>
-                                    </div>
-                                    <div className="card-body">
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <div className="form-group row">
-                                                    <label htmlFor="" className='col-sm-2 form-label'>{t('property_type')}</label>
-                                                    <div className="col-sm-9">
-                                                        <div className="icheck-primary d-inline mx-2">
-                                                        <input 
-                                                            type="radio" 
-                                                            name="property_type" 
-                                                            id="propertyTypeYes" 
-                                                            value={propertyType}
-                                                            checked={ parseInt(propertyType) === 1 ? true : false}
-                                                            onChange={(e) => setPropertyType(1)} 
-                                                        />
-                                                        <label htmlFor="propertyTypeYes">{t('material')}</label>
-                                                        </div>
-                                                        <div className="icheck-primary d-inline mx-2">
-                                                        <input 
-                                                            type="radio" 
-                                                            id="propertyTypeNo" 
-                                                            name="property_type" 
-                                                            value={propertyType}
-                                                            checked={ parseInt(propertyType) === 2 ? true : false } 
-                                                            onChange={(e) => setPropertyType(2)}
-                                                        />
-                                                        <label htmlFor="propertyTypeNo">{t('vehicle')}</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                { parseInt(propertyType) === 1 && (
-                                                    <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
-                                                )}
-                                                { parseInt(propertyType) === 2 && (
-                                                    <VehicleDetails  vehicle={vehicle} setVehicle={setVehicle}/>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-    </>
+                            </>
                         )}
                         { isPetition && (
                             <div className="d-flex justify-content-center">

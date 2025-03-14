@@ -73,7 +73,7 @@ const PetitionDetail = () => {
                                         <td>{t('efile_date')}</td>
                                         <td>{petition.efile_date}</td>
                                     </tr>
-                                    { petition.judiciary.id== 2 && (
+                                    { (petition.judiciary.id== 2 || petition.judiciary.id== 3) && (
                                     <>
                                     <tr>
                                         <td>{t('state')}</td>

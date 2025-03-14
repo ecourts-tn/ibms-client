@@ -146,12 +146,12 @@ const Extension = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet, litigants, advocates} = response.data
+                    const {petition:pet, litigants} = response.data
                     setIsPetition(true)
                     setBail(pet)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
                     setRespondents(litigants.filter(l=>l.litigant_type===2))
-                    setAdvocates(advocates)
+                    // setAdvocates(advocates)
                     setPetition({...petition,
                         court_type: pet.court_type.id,
                         bench_type: pet.bench_type ? pet.bench_type.bench_code : null,

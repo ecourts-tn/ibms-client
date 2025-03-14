@@ -25,6 +25,7 @@ import Select from 'react-select'
 import FIRDetails from 'components/search/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
+import { CaseTypeContext } from 'contexts/CaseTypeContext';
 
 
 const Initial = () => {
@@ -34,6 +35,7 @@ const Initial = () => {
     const {courts}          = useContext(CourtContext)
     const {judiciaries}     = useContext(JudiciaryContext)
     const {seats}           = useContext(SeatContext)
+    const {casetypes}       = useContext(CaseTypeContext)
     const {bailtypes}       = useContext(BailTypeContext)
     const {complainttypes}  = useContext(ComplaintTypeContext)
     const {policeDistricts} = useContext(PoliceDistrictContext)
@@ -52,8 +54,8 @@ const Initial = () => {
         district:'',
         pdistrict:'',
         police_station:'',
-        fir_number:'',
-        fir_year:'',
+        fir_number:null,
+        fir_year:null,
         search_type: '',
         cnr_number:'',
         investigation_agency:'',
@@ -61,7 +63,7 @@ const Initial = () => {
         crime_year:'',
         establishment: '',
         court:'',
-        case_type: 1,
+        case_type: '',
         cis_case_type:'',
         case_number:'',
         case_year:'',
@@ -172,6 +174,7 @@ const Initial = () => {
                 return schema.required(t('errors.court_required'))
             }
         }),
+        case_type: Yup.string().required('errors.case_type_required'),
         bail_type: Yup.string().required(t('errors.bail_required')),
         complaint_type: Yup.string().required(t('errors.complaint_required')),
     })
@@ -316,6 +319,7 @@ const Initial = () => {
             if(response.status === 201){
                 const efile_no = response.data.efile_number
                 sessionStorage.setItem("efile_no", efile_no)
+                sessionStorage.setItem("petition", JSON.stringify(response.data))
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
@@ -598,7 +602,6 @@ const Initial = () => {
                             </div>
                         </div>
                     </div>
-                    { console.log(agencies)}
                     <div className="form-group row mb-4">
                         <label htmlFor="" className="col-sm-2 col-form-label">{t('investigation_agency')}</label>
                         <div className="col-md-6">
@@ -876,6 +879,24 @@ const Initial = () => {
                 </React.Fragment>    
                 )}
                 <div className="form-group row mb-4">
+                    <label htmlFor="case_type" className='col-sm-2 col-form-label'>{t('case_type')}<RequiredField /></label>
+                    <div className="col-md-4">
+                        <select 
+                            name="case_type" 
+                            id="case_type" 
+                            className={`form-control ${errors.case_type ? 'is-invalid' : null}`}
+                            value={petition.case_type }
+                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                        >
+                            <option value="">{t('alerts.select_case_type')}</option>
+                            { casetypes.filter((c) => c.id === 1 || c.id === 2).map((c, index) => (
+                            <option key={index} value={c.id}>{ language === 'ta' ? c.type_lfull_form : c.type_full_form }</option>
+                            ))}
+                        </select>
+                        <div className="invalid-feedback">
+                            { errors.bail_type}
+                        </div>
+                    </div>
                     <label htmlFor="bail_type" className='col-sm-2 col-form-label'>{t('bail_type')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
@@ -886,7 +907,7 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_bail_type')}</option>
-                            { bailtypes.map((b, index) => (
+                            { bailtypes.filter((b) => parseInt(b.case_type) == parseInt(petition.case_type)).map((b, index) => (
                             <option key={index} value={b.id}>{ language === 'ta' ? b.type_lname : b.type_name }</option>
                             ))}
                         </select>

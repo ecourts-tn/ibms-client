@@ -1,13 +1,12 @@
 import React, {useContext, useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
-import { useAuth } from 'hooks/useAuth'
+// import { useAuth } from 'hooks/useAuth'
 import { useTranslation } from 'react-i18next'
 import { AuthContext } from 'contexts/AuthContext'
 
 const Profile = () => {
 
     const {user} = useContext(AuthContext)
-
     const initialState = {
         mobile_number    : user?.mobile,
         email_address    : user?.email,
@@ -31,6 +30,7 @@ const Profile = () => {
             setErrors({...errors, mobile_number:"Please enter the mobile number"})
             return
         }
+        toast.success("OTP has sent to your mobile number", {theme:"colored"})
         setMobileOtp(true)
     }
 

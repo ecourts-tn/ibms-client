@@ -97,7 +97,6 @@ const DraftList = () => {
             return; // Exit the function if the user cancels
         }
         sessionStorage.setItem('efile_no', petition.efile_no);
-        console.log(petition)
         const route = petition.case_type.url;
         if (route) {
             navigate(route);
