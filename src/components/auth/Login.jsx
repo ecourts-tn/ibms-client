@@ -18,10 +18,12 @@ import { AuthContext } from 'contexts/AuthContext';
 import { IconButton } from '@mui/material'; 
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 import { GroupContext } from 'contexts/GroupContext';
+import { MasterContext } from 'contexts/MasterContext';
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
-  const { groups}     = useContext(GroupContext)
+  // const { groups}     = useContext(GroupContext)
+  const { masters: {groups}} = useContext(MasterContext)
   const { language }  = useContext(LanguageContext);
   const { t }         = useTranslation();
   const { login }     = useContext(AuthContext);

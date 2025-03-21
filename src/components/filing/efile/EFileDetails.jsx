@@ -1,7 +1,8 @@
 import api from 'api'
 import { CreateMarkup } from 'utils'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { useTranslation } from 'react-i18next'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 const EFileDetails = () => {
 
@@ -9,6 +10,7 @@ const EFileDetails = () => {
     const[litigants, setLitigants] = useState([])
     const[respondents, setRespondents] = useState([])
     const[grounds, setGrounds] = useState([])
+    const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
     useEffect(() => {
@@ -41,44 +43,44 @@ const EFileDetails = () => {
                         <>
                             <tr>
                                 <td>{t('court_type')}</td>
-                                <td>{ petition.judiciary.judiciary_name }</td>
+                                <td>{ language === 'ta' ? petition.judiciary?.judiciary_lname : petition.judiciary?.judiciary_name }</td>
                                 <td>{t('hc_bench')}</td>
-                                <td>{ petition.seat ?  petition.seat.seat_name : null}</td>
+                                <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
                             </tr>
                             { petition.judiciary.id === 2 && (
                             <>
                                 <tr>
                                     <td>{t('state')}</td>
-                                    <td>{ petition.state.state_name }</td>
+                                    <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
                                     <td>{t('district')}</td>
-                                    <td>{ petition.district.district_name }</td>
+                                    <td>{ language === 'ta' ? petition.district?.district_lname : petition.district?.district_name }</td>
                                 </tr>
                                 <tr>
                                     <td>{t('est_name')}</td>
-                                    <td>{ petition.establishment.establishment_name }</td>
+                                    <td>{ language === 'ta' ? petition.establishment?.establishment_lname : petition.establishment?.establishment_name }</td>
                                     <td>{t('court')}</td>
-                                    <td>{ petition.court.court_name }</td>
+                                    <td>{ language === 'ta' ? petition.court?.court_lname : petition.court?.court_name }</td>
                                 </tr>
                             </>)}
                             <tr>
                                 <td>{t('case_type')}</td>
-                                <td>{ petition.case_type.type_name }</td>
+                                <td>{ language === 'ta' ? petition.case_type?.type_lfull_form : petition.case_type?.type_full_form }</td>
                                 <td>{t('bail_type')}</td>
-                                <td>{ petition.bail_type?.type_name }</td>
+                                <td>{ language === 'ta' ? petition.bail_type?.type_lname : petition.bail_type?.type_name }</td>
                             </tr>
                             <tr>
                                 <td>{t('crime_registered')}</td>
                                 <td>
                                     {(() => {
                                         const crimeStatus = parseInt(petition.crime_registered);
-                                        if (crimeStatus === 1) return 'Yes';
-                                        if (crimeStatus === 2) return 'No';
-                                        if (crimeStatus === 3) return 'Not Known';
+                                        if (crimeStatus === 1) return language === 'ta' ? 'ஆம்' : 'Yes';
+                                        if (crimeStatus === 2) return language === 'ta' ? 'இல்லை' : 'No';
+                                        if (crimeStatus === 3) return language === 'ta' ? 'தெரியவில்லை' : 'Not Known';
                                         return ''; // Return empty if none of the conditions are met
                                     })()}
                                 </td>
                                 <td>{t('complaint_type')}</td>
-                                <td>{ petition.complaint_type?.type_name }</td>
+                                <td>{ language === 'ta' ? petition.complaint_type?.type_lname : petition.complaint_type?.type_name }</td>
                             </tr>
                         </>
                         )}

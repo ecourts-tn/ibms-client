@@ -13,15 +13,17 @@ import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
 import ViewSurety from './ViewSurety'
+import { MasterContext } from 'contexts/MasterContext'
 
 
 
 const SuretyForm = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {taluks}    = useContext(TalukContext)
-    const {relations} = useContext(RelationContext)  
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
+    // const {taluks}    = useContext(TalukContext)
+    // const {relations} = useContext(RelationContext)  
+    const { masters: {states, districts, taluks, relations}} = useContext(MasterContext)
     const {t} = useTranslation()
     
     const initialState = {
@@ -359,12 +361,12 @@ const SuretyForm = () => {
                     <div className="col-md-12">
                         { Object.keys(sureties).length > 0 && (
                         <table className="table table-bordered">
-                            <thead className="bg-success">
+                            <thead className="bg-info">
                                 <tr>
                                     <th>#</th>
                                     <th>{t('surety_name')}</th>
                                     <th>{t('relationship_name')}</th>
-                                    <th>{t('aadhaar_number')}</th>
+                                    <th>{t('aadhar_number')}</th>
                                     <th>{t('mobile_number')}</th>
                                     <th>{t('address')}</th>
                                     <th>{t('action')}</th>

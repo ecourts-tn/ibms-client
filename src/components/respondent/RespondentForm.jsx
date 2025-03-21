@@ -12,13 +12,15 @@ import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { DesignationContext } from 'contexts/DesignationContext'
 import { handleMobileChange, validateEmail, handleNameChange } from 'components/commonvalidation/validations';
+import { MasterContext } from 'contexts/MasterContext'
 
 
 const RespondentForm = ({addRespondent, selectedRespondent}) => {
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
-    const {designations} = useContext(DesignationContext)
+    // const {designations} = useContext(DesignationContext)
+    const { masters:{states, districts, designations}} = useContext(MasterContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
@@ -61,25 +63,28 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
 
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
-        async function getCrimeDetail()  {
+        const fetchData = async() => {
             try{
-                const response = await api.get(`case/crime/detail/`, {
-                    params:{efile_no}
-                })
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
-                    const {state, district, police_station} = response.data
+                    const petition = response.data.petition
                     setLitigant({...litigant, 
-                        state: state?.state_code,
-                        district: district?.district_code,
-                        police_station: police_station?.cctns_code
+                        state: petition.state?.state_code,
+                        district: petition.district?.district_code,
+                        // pdistrict: petition.pdistrict?.district_code,
+                        police_station: petition.police_station?.cctns_code,
                     })
+                }else{
+                    setLitigant(initialState)
                 }
             }catch(error){
-                console.error(error)
+                setLitigant(initialState)
             }
         }
         if(efile_no){
-            getCrimeDetail();
+            fetchData()
+        }else{
+            setLitigant(initialState)
         }
     },[])
 
@@ -172,7 +177,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             id="state" 
                             className="form-control"
                             value={litigant.state}
-                            // disabled={ litigant.state !== '' }
+                            disabled={ litigant.state !== '' }
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_state')}</option>
@@ -189,7 +194,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="district" 
                             id="district" 
                             className="form-control"
-                            // disabled={ litigant.district !== ''}
+                            disabled={ litigant.district !== ''}
                             value={litigant.district}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
@@ -208,7 +213,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <select 
                             name="police_station" 
                             id="police_station" 
-                            // disabled={litigant.police_station !== ''}
+                            disabled={litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}

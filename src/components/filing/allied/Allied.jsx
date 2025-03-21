@@ -12,12 +12,13 @@ import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/common/Loading';
+import { MasterContext } from 'contexts/MasterContext';
 
 
 const Allied = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-    const {casetypes} = useContext(CaseTypeContext)
+    const {masters:{casetypes}} = useContext(MasterContext)
     const[bail, setBail] = useState({})
     const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)

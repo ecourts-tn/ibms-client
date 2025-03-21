@@ -26,20 +26,30 @@ import FIRDetails from 'components/search/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
+import { CourtCaseTypeContext } from 'contexts/CourtCaseTypeContext';
+import { MasterContext } from 'contexts/MasterContext';
 
 
 const Initial = () => {
-    const {states}          = useContext(StateContext)
-    const {districts}       = useContext(DistrictContext)
+    // const {states}          = useContext(StateContext)
+    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {judiciaries}     = useContext(JudiciaryContext)
-    const {seats}           = useContext(SeatContext)
-    const {casetypes}       = useContext(CaseTypeContext)
-    const {bailtypes}       = useContext(BailTypeContext)
-    const {complainttypes}  = useContext(ComplaintTypeContext)
-    const {policeDistricts} = useContext(PoliceDistrictContext)
+    // const {judiciaries}     = useContext(JudiciaryContext)
+    // const {seats}           = useContext(SeatContext)
+    // const {casetypes}       = useContext(CaseTypeContext)
+    // const {ccasetypes}      = useContext(CourtCaseTypeContext)
+    // const {bailtypes}       = useContext(BailTypeContext)
+    // const {complainttypes}  = useContext(ComplaintTypeContext)
+    // const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
+    const { 
+        masters: { 
+            states, districts, judiciaries, seats, casetypes, ccasetypes, 
+            bailtypes, complainttypes, policeDistricts 
+        }
+    } = useContext(MasterContext);
+    
     const {language}        = useContext(LanguageContext)
     const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
@@ -100,7 +110,7 @@ const Initial = () => {
                         seat: petition.seat?.seat_code,
                         state: petition.state?.state_code,
                         district: petition.district?.district_code,
-                        pdistrict: petition.district?.district_code,
+                        pdistrict: petition.pdistrict?.district_code,
                         police_station: petition.police_station?.cctns_code,
                         establishment: petition.establishment?.establishment_code,
                         court: petition.court?.court_code,
@@ -262,8 +272,10 @@ const Initial = () => {
                         district: '',
                         police_station: '',
                         fir_number: '',
-                        fir_year:''
+                        fir_year:'',
+                        // crime_registered: 3
                     })
+                    setJurisdictionCourts([])
                 }
             }
             if(error.inner){
@@ -290,7 +302,6 @@ const Initial = () => {
                     case_year:petition.case_year
                 }
             });
-            console.log(response.data)
             if(response.status === 200){
                 const accused  = [
                     response.data.res_name, // Add res_name
@@ -336,8 +347,6 @@ const Initial = () => {
             }
         }
     }
-
- 
  
     return (
         <div className="container-fluid mt-5">
@@ -707,7 +716,9 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}    
                         >
                             <option value="">{t('alerts.select_case_type')}</option>
-                            <option value="321">SC</option>
+                            { ccasetypes.filter((c) => c.type_flag === 2).map((c, index) => (
+                                <option key={index} value={c.case_type}>{`${c.type_name} - ${c.type_full_form}`}</option>
+                            ))}
                         </select>
                         <div className="invalid-feedback">{t('errors.case_type_required')}</div>
                     </div>
@@ -750,9 +761,22 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">Select jurisdiction</option>
-                            { judiciaries.map((j, index) => (
+                            {/* { judiciaries.map((j, index) => (
                                 <option key={index} value={j.id}>{language === 'ta' ? j.judiciary_lname : j.judiciary_name}</option>
-                            ))}
+                            ))} */}
+                            { judiciaries
+                                .filter((j, index) => {
+                                    // Allow all values except the third unless the state condition is met
+                                    if (index === 2) {
+                                        return jurisdicationCourts.length > 0;
+                                    }
+                                    return true;
+                                })
+                                .map((j, index) => (
+                                    <option key={index} value={j.id}>
+                                        {language === 'ta' ? j.judiciary_lname : j.judiciary_name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                     { parseInt(petition.judiciary) === 1 && (

@@ -70,7 +70,7 @@ const InitialInput = ({petition:bail}) => {
         <table className="table table-bordered table-striped">
             <thead>
                 <tr className="bg-navy">
-                    <td colSpan={7}><strong>{t('main_case_details')}</strong></td>
+                    <td colSpan={7}><strong>{t('main_case_detail')}</strong></td>
                 </tr>
             </thead>
             <tbody>

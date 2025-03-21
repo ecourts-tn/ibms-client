@@ -18,28 +18,28 @@ const FIRDetails = () => {
         const fetchFIR = async () => {
             const api_id = sessionStorage.getItem("api_id")
             try {
-                const response = await api.post("external/police/api/detail/", { id: api_id });
+                const response = await api.post("external/police/fir-detail/", { id: api_id });
                 if (response.status === 200) {
-                    const data = response.data.fir
+                    const data = response.data
                     setFir({
                     ...fir,
                     act: data?.act || "",
                     section: data?.section || [],
                     date_of_occurrence: data?.date_of_occurrence || "",
                     investigation_officer: data?.investigation_officer_name || "",
-                    fir_date_time: data?.FIR_date_time || "",
-                    place_of_occurrence: data?.place_of_occurence || "",
-                    gist_of_fir: data?.gist_of_FIR || "",
-                    gist_in_local: data?.gist_of_FIR_local_language || "",
+                    fir_date_time: data?.fir_date_time || "",
+                    place_of_occurrence: data?.place_of_occurrence || "",
+                    gist_of_fir: data?.gist_of_fir || "",
+                    gist_in_local: data?.gist_of_fir_in_local || "",
                     complainant_age: data?.complainant_age || "",
                     complainant_guardian: data?.complainant_guardian || "",
                     complainant_guardian_name: data?.complainant_guardian_name || "",
-                    complainant_name: data?.complaintant_name || "",
+                    complainant_name: data?.complainant_name || "",
                     investigation_officer_rank: data?.investigation_officer_rank || "",
                     no_of_accused: data?.no_of_accused || 0,
-                    sencitive_case: data?.sencitive_case || false
+                    sencitive_case: data?.sensitive_case || false
                 });
-                setAccused(response.data?.fir.accused_details || []);
+                setAccused(response.data?.accused || []);
                 }
             } catch (error) {
                 console.error("Error fetching FIR details:", error);

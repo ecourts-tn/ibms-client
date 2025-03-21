@@ -92,16 +92,16 @@ const PetitionDetail = () => {
                                     {  petition.judiciary.id === 1 && (
                                     <>
                                         <tr>
-                                            <td>Court Type</td>
+                                            <td>{t('court_type')}</td>
                                             <td>{ language === 'ta' ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
-                                            <td>High Court Bench</td>
+                                            <td>{ t('hc_bench')}</td>
                                             <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
                                         </tr>
                                     </>
                                     )}
                                     <tr>
                                         <td>{t('filing_number')}</td>
-                                        <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
+                                        <td>{ `${petition.filing_number}/${petition.filing_year}`}</td>
                                         <td>{t('filing_date')}</td>
                                         <td>{ petition.filing_date }</td>
                                     </tr>

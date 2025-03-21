@@ -6,7 +6,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from '../../utils';
 import * as Yup from 'yup'
-import { BaseContext } from 'contexts/BaseContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
@@ -20,21 +19,28 @@ import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
 import { useLocation } from 'react-router-dom';
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { MasterContext } from 'contexts/MasterContext';
 
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   const [petition, setPetition] = useState({})
-  const {states} = useContext(StateContext)
-  const {districts} = useContext(DistrictContext)
-  const {taluks} = useContext(TalukContext)
-  const {relations} = useContext(RelationContext)
-  const {prisons} = useContext(PrisonContext)
-  const {proofs} = useContext(ProofContext)
-  const {countries} = useContext(CountryContext)
   const {language} = useContext(LanguageContext)
-  const {genders} = useContext(GenderContext)
-  const {nationalities} = useContext(NationalityContext)
+  // const {states} = useContext(StateContext)
+  // const {districts} = useContext(DistrictContext)
+  // const {taluks} = useContext(TalukContext)
+  // const {relations} = useContext(RelationContext)
+  // const {prisons} = useContext(PrisonContext)
+  // const {proofs} = useContext(ProofContext)
+  // const {countries} = useContext(CountryContext)
+  // const {genders} = useContext(GenderContext)
+  // const {nationalities} = useContext(NationalityContext)
+  const { 
+          masters: { 
+              states, districts, taluks, relations, prisons, proofs, 
+              countries, genders, nationalities
+          }
+      } = useContext(MasterContext);
   const location = useLocation()
   const {t} = useTranslation()
   const[alternateAddress, setAlternateAddress] = useState(false)
@@ -139,15 +145,15 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       const fetchFIR = async () => {
           const api_id = sessionStorage.getItem("api_id")
           try {
-              const response = await api.post("external/police/fir-detail/", { api_id: api_id });
+              const response = await api.post("external/police/fir-detail/", { id: api_id });
               if (response.status === 200) {
-                  const data = response.data.fir
+                  const data = response.data
                   setFir({
                   ...fir,
                   act: data?.act || "",
-                  section: data?.section || [],
+                  section: data?.section.toString() || [],
               });
-              setAccused(response.data?.fir.accused_details || []);
+              setAccused(response.data?.accused || []);
               }
           } catch (error) {
               console.error("Error fetching FIR details:", error);

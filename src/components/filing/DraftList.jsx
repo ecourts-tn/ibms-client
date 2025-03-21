@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from 'components/common/ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
-import { formatDate } from 'utils'
+import { formatDate, encode_efile_number } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
@@ -96,10 +96,10 @@ const DraftList = () => {
         if (!window.confirm("Are you sure you want to edit the petition?")) {
             return; // Exit the function if the user cancels
         }
-        sessionStorage.setItem('efile_no', petition.efile_no);
+        const encodedPk = encode_efile_number(petition.efile_number);
         const route = petition.case_type.url;
         if (route) {
-            navigate(route);
+            navigate(`${route}?q=${encodedPk}`);
         } else {
             console.error("Invalid case type:", petition.case_type);
             alert("Invalid case type. Please contact support.");
@@ -252,7 +252,7 @@ const DraftList = () => {
                                         { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))}
-                                            <br/>
+                                            {/* <br/> */}
                                             <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>

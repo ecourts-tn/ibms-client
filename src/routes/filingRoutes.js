@@ -41,8 +41,8 @@ const abailRoutes = [
 ];
 
 const conditionRoutes = [
-    { id: 1, path: "main-case-detail", component: <Relaxation />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
+    { id: 1, path: `main-case-detail`, component: <Relaxation />, name:"main_case_detail"},
+    { id: 2, path: `ground`, component: <Grounds />, name:"ground" },
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
@@ -142,6 +142,8 @@ const routesConfig = [
 ];
 
 export const FilingRoutes = () => {
+
+
     const routeMappings = {
         bailRoutes,
         abailRoutes,

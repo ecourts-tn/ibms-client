@@ -11,10 +11,11 @@ import { LanguageContext } from 'contexts/LanguageContex';
 import ViewDocument from 'components/common/ViewDocument';
 import Loading from 'components/common/Loading';
 import { formatDate } from 'utils';
+import { MasterContext } from 'contexts/MasterContext';
 
 const Document = ({swornRequired}) => {
     swornRequired = true
-    const {documents} = useContext(DocumentContext)
+    const { masters: {documents}} = useContext(MasterContext)
     const {language}  = useContext(LanguageContext)
     const initialState = {
         title: '',

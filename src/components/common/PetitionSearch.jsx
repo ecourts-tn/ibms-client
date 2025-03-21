@@ -12,16 +12,19 @@ import Loading from 'components/common/Loading'
 import api from 'api'
 import { ToastContainer, toast } from 'react-toastify'
 import { CaseTypeContext } from 'contexts/CaseTypeContext'
+import { MasterContext } from 'contexts/MasterContext'
 
 const PetitionSearch = ({cases, eFileNumber, seteFileNumber}) => {
 
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {seats} = useContext(SeatContext)
-    const {casetypes} = useContext(CaseTypeContext)
+    // const {seats} = useContext(SeatContext)
+    // const {casetypes} = useContext(CaseTypeContext)
+    const {masters: {states, districts, seats, casetypes}} = useContext(MasterContext)
+
     const [searchType, setSearchType] = useState(1)
     const [loading, setLoading] = useState(false)
     const [form, setForm] = useState({

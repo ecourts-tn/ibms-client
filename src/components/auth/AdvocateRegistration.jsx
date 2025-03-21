@@ -436,7 +436,6 @@ const AdvocateRegistration = () => {
         }finally{
             setLoading(false)
         }
-
     }
 
     
