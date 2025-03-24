@@ -62,6 +62,7 @@ const Allied = () => {
         }
     };
 
+
     const handleRespondentCheckBoxChange = (respondent) => {
         const isSelected = isRespondentSelected(respondent);
         if (isSelected) {
@@ -207,7 +208,7 @@ const Allied = () => {
                                             onChange={(e) =>setPetition({...petition, [e.target.name]:e.target.value})}
                                         >
                                             <option value="">{t('alerts.select_case_type')}</option>
-                                            { casetypes.filter((c) => c.is_allied).map((c, index) => (
+                                            { casetypes.filter((c) => c.type_flag === 2).map((c, index) => (
                                                 <option key={index} value={c.id}>{ language === 'ta' ? c.type_lfull_form : c.type_full_form}</option>
                                             ))}
                                         </select>
@@ -292,9 +293,9 @@ const Allied = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                { (parseInt(petition.case_type) === 5 || parseInt(petition.case_type) === 3 || parseInt(petition.case_type) === 8) && (<ConditionDetail />)}
-                                { parseInt(petition.case_type) === 7 && (<PassportDetail />)}
-                                { parseInt(petition.case_type) === 10 && (<PropertyDetail />)}
+                                { (parseInt(petition.case_type) === 3 || parseInt(petition.case_type) === 4 || parseInt(petition.case_type) === 5) && (<ConditionDetail />)}
+                                { parseInt(petition.case_type) === 6 && (<PassportDetail />)}
+                                { parseInt(petition.case_type) === 7 && (<PropertyDetail />)}
                             </>
                         )}
                         { isPetition && (
