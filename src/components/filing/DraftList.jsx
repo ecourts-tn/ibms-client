@@ -4,7 +4,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from 'components/common/ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
-import { formatDate } from 'utils'
+import { formatDate, encode_efile_number } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
@@ -92,16 +92,24 @@ const DraftList = () => {
         pageNumbers.push(i)
     }
 
-    const handleEdit = (efile_no) => {
-        if (window.confirm("Are you sure you want to edit the petition?")) {
-            sessionStorage.setItem('efile_no', efile_no);
-            navigate("/filing/bail/initial-input");
+    const handleEdit = (petition) => {
+        if (!window.confirm("Are you sure you want to edit the petition?")) {
+            return; // Exit the function if the user cancels
+        }
+        const encodedPk = encode_efile_number(petition.efile_number);
+        const route = petition.case_type.url;
+        if (route) {
+            navigate(`${route}?q=${encodedPk}`);
+        } else {
+            console.error("Invalid case type:", petition.case_type);
+            alert("Invalid case type. Please contact support.");
         }
     };
 
     const handleSubmit = async(efile_no) => {
         if(window.confirm("Are you sure you want to submit the petition")){
             try{
+                setLoading(true)
                 const response = await api.post("case/filing/final-submit/", { efile_no})
                 if(response.status === 200){
                     try{
@@ -123,7 +131,9 @@ const DraftList = () => {
                     setShowError(true)
                     setErrors(error.response?.data.messages)
                 }
-            }  
+            }finally{
+                setLoading(false)
+            }
         }
     }
 
@@ -197,7 +207,7 @@ const DraftList = () => {
                             </div>
                         </div>
                         <table className="table table-striped table-bordered">
-                            <thead className="bg-secondary">
+                            <thead className="bg-info">
                                 <tr className='text-center'>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>
@@ -212,12 +222,6 @@ const DraftList = () => {
                                 { currentPetitions.map((item, index) => (
                                 <tr key={index}>
                                     <td>{ index + 1 + indexOfFirstItem }</td>
-                                    {/* <td>
-                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
-                                            <strong>{ item.petition.efile_number }</strong>
-                                        </Link>
-                                        <span style={{display:"block"}}>{t('efile_date')}: {formatDate(item.petition.efile_date)}</span>
-                                    </td> */}
                                     <td>
                                         <Link 
                                             to="/filing/detail" 
@@ -248,7 +252,7 @@ const DraftList = () => {
                                         { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))}
-                                            <br/>
+                                            {/* <br/> */}
                                             <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
@@ -280,7 +284,7 @@ const DraftList = () => {
                                         <Button
                                             variant="outlined"
                                             color="primary"
-                                            onClick={() => handleEdit(item.petition.efile_number)}
+                                            onClick={() => handleEdit(item.petition)}
                                         >
                                             <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
                                         </Button>

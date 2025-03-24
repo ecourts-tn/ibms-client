@@ -1,11 +1,11 @@
 import React, {useContext} from 'react'
+import api from 'api';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from '../../utils';
 import * as Yup from 'yup'
-import { BaseContext } from 'contexts/BaseContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
@@ -19,24 +19,33 @@ import { GenderContext } from 'contexts/GenderContext';
 import { NationalityContext } from 'contexts/NationalityContext';
 import { useLocation } from 'react-router-dom';
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { MasterContext } from 'contexts/MasterContext';
 
 
 const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
-  const {fir, accused} = useContext(BaseContext)
-  const {states} = useContext(StateContext)
-  const {districts} = useContext(DistrictContext)
-  const {taluks} = useContext(TalukContext)
-  const {relations} = useContext(RelationContext)
-  const {prisons} = useContext(PrisonContext)
-  const {proofs} = useContext(ProofContext)
-  const {countries} = useContext(CountryContext)
+  const [petition, setPetition] = useState({})
   const {language} = useContext(LanguageContext)
-  const {genders} = useContext(GenderContext)
-  const {nationalities} = useContext(NationalityContext)
+  // const {states} = useContext(StateContext)
+  // const {districts} = useContext(DistrictContext)
+  // const {taluks} = useContext(TalukContext)
+  // const {relations} = useContext(RelationContext)
+  // const {prisons} = useContext(PrisonContext)
+  // const {proofs} = useContext(ProofContext)
+  // const {countries} = useContext(CountryContext)
+  // const {genders} = useContext(GenderContext)
+  // const {nationalities} = useContext(NationalityContext)
+  const { 
+          masters: { 
+              states, districts, taluks, relations, prisons, proofs, 
+              countries, genders, nationalities
+          }
+      } = useContext(MasterContext);
   const location = useLocation()
   const {t} = useTranslation()
   const[alternateAddress, setAlternateAddress] = useState(false)
+  const [fir, setFir] = useState({})
+  const[accused, setAccused] = useState([])
   
   const initialState = {
       litigant: 'o',
@@ -76,6 +85,10 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
   useEffect(() => {
     setLitigant(selectedPetitioner)
   }, [selectedPetitioner])
+
+  useEffect(() => {
+    setPetition(JSON.parse(sessionStorage.getItem("petition")))
+  },[])
   
   const validationSchema = Yup.object({
     litigant_name: Yup.string().required(t('errors.litigant_name_required')),
@@ -128,14 +141,27 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       }));
   };
 
-  // const handleBlur = (e) => {
-  //     const { name, value } = e.target;
-  //     const errorMessage = validateEmail(name, value);  // Validate the field on blur
-  //     setErrors((prevErrors) => ({
-  //         ...prevErrors,
-  //         [name]: errorMessage,  // Set the error message for the specific field
-  //     }));
-  // };
+  useEffect(() => { 
+      const fetchFIR = async () => {
+          const api_id = sessionStorage.getItem("api_id")
+          try {
+              const response = await api.post("external/police/fir-detail/", { id: api_id });
+              if (response.status === 200) {
+                  const data = response.data
+                  setFir({
+                  ...fir,
+                  act: data?.act || "",
+                  section: data?.section.toString() || [],
+              });
+              setAccused(response.data?.accused || []);
+              }
+          } catch (error) {
+              console.error("Error fetching FIR details:", error);
+          }
+      };
+      fetchFIR();
+  }, []);
+
 
   useEffect(() => {
     if(accused){
@@ -175,7 +201,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
       await validationSchema.validate(litigant, { abortEarly: false });
       addPetitioner(litigant);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {
@@ -232,13 +258,15 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   };
 
+  console.log(sessionStorage.getItem('petitioner'))
+
   return (
     <>
       <ToastContainer />
       <form encType='multipart/form-data'>
         { accused.length > 0 && (
           <div className="row">
-            <div className="col-md-4 mb-3">
+            <div className="col-md-4">
                 <div className="form-group">
                     <label htmlFor="litigant">Select petitioner</label><br />
                     <select name="litigant" value={litigant.litigant} className="form-control" onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})} >
@@ -257,7 +285,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>{t('name_of_litigant')}<RequiredField /></Form.Label>
+                <Form.Label>{t('petitioner_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -595,7 +623,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                 {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
             </div>
-            { location.pathname !== "/filing/anticipatory-bail/litigant" && (
+            { parseInt(petition?.case_type?.id) === 1 && (
               <>
                 <div className="col-md-3">
                     <div className="form-group">
@@ -704,7 +732,7 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   ></Form.Control>
                 </Form.Group>
               </div> */}
-              <div className="col-md-3 mt-4 pt-2">
+              <div className="col-md-3 my-2">
                 <Button 
                   variant="secondary"
                   onClick={handleSubmit}

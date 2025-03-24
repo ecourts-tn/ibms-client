@@ -111,29 +111,22 @@ const Advocate = () => {
 
     
     return (
-        <div className="container">
-            <div className="card card-outline card-info">
-                <div className="card-header">
-                    <h3 className="card-title"><i className="fas fa-graduation-cap mr-2"></i><strong>Advocate Details</strong></h3>
-                </div>
-                <div className="card-body p-2">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <AdvocateList 
-                                advocates={advocates}
-                                deleteAdvocate={deleteAdvocate}
-                                editAdvocate={editAdvocate}
-                            />
-                        </div>
-                    </div>
-                    <AdvocateForm 
-                        addAdvocate={addAdvocate}
-                        setAdvocates={setAdvocates}
-                        selectedAdvocate={selectedAdvocate}
+        <div className="container-fluid">
+            <div className="row">
+                <div className="col-md-12">
+                    <AdvocateList 
                         advocates={advocates}
+                        deleteAdvocate={deleteAdvocate}
+                        editAdvocate={editAdvocate}
                     />
                 </div>
             </div>
+            <AdvocateForm 
+                addAdvocate={addAdvocate}
+                setAdvocates={setAdvocates}
+                selectedAdvocate={selectedAdvocate}
+                advocates={advocates}
+            />
         </div>
     )
 }
@@ -144,6 +137,7 @@ export default Advocate
 const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const[search, setSearch] = useState('')
     const[loading, setLoading] = useState(false)
+    const [isSearchComplete, setIsSearchComplete] = useState(false);
     const initialAdvocate = {
         adv_id:'',
         adv_name: '',
@@ -273,6 +267,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                     adv_mobile: response.data.mobile,
                     adv_reg: response.data.adv_reg
                 })
+                setIsSearchComplete(true);
             }
         }catch(error){
             setAdvocate(initialAdvocate)
@@ -281,6 +276,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
             } else {
                 toast.error("An unexpected error occurred", { theme: "colored" });
             }
+            setIsSearchComplete(false);
         }finally{
             setLoading(false)
         }
@@ -376,6 +372,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
                         variant="contained"
                         color="success"
                         onClick={handleSubmit}
+                        disabled={!isSearchComplete || !advocate.adv_name || !advocate.adv_email || !advocate.adv_mobile || !advocate.adv_reg}
                     ><i className="fa fa-plus mr-2"></i>{t('add_advocate')}</Button>
                 </div>
             </div>
@@ -389,9 +386,9 @@ const AdvocateList = ({advocates, deleteAdvocate, editAdvocate}) => {
     return (
     <>
       <div className="table-responsive">
-      <table className="table table-striped table-bordered">
-            <thead className="bg-secondary">
-              <tr>
+      <table className="table table-striped table-bordered table-sm">
+            <thead>
+              <tr className="bg-info">
                 <td>{t('sl_no')}</td>
                 <th>{t('adv_name')}</th>
                 <th>{t('enrollment_number')}</th>

@@ -7,7 +7,7 @@ const Stepper = () => {
     const location = useLocation()
     const steps = [
         { path: 'initial-input', label: t('basic_details') },
-        { path: 'litigant', label: t('litigant') },
+        { path: 'litigant', label: t('litigants') },
         { path: 'ground', label: t('ground') },
         { path: 'previous-history', label: t('previous_case_details') },
         { path: 'advocate', label: t('advocate_details') },
@@ -15,7 +15,7 @@ const Stepper = () => {
         { path: 'payment', label: t('payment_details') },
         { path: 'efile', label: t('efile') },
       ];
-
+ 
       
     return (
         <div>
@@ -23,7 +23,7 @@ const Stepper = () => {
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
                     <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                    <li className="breadcrumb-item active" aria-current="page">{t('bail')}</li>
+                    <li className="breadcrumb-item active" aria-current="page">{t('abail')}</li>
                 </ol>
             </nav>
             <div id="stepper1" className="bs-stepper">
@@ -39,7 +39,7 @@ const Stepper = () => {
                             className="step-trigger"
                         >
                             <span className="bs-stepper-circle">{index + 1}</span>
-                            <span className="bs-stepper-label">{step.label}</span>
+                            <span className="bs-stepper-label">{t(step.label)}</span>
                         </NavLink>
                         </div>
                         {index < steps.length - 1 && <div className="line"></div>}

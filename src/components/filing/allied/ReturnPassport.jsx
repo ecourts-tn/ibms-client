@@ -12,13 +12,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import SearchIcon from '@mui/icons-material/Search'
 import Document from 'components/filing/Document';
-import GroundsContainer from 'components/filing/Ground';
+import Grounds from 'components/filing/Grounds';
 import { StateContext } from 'contexts/StateContext';
 import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import PetitionSearch from 'components/common/PetitionSearch';
 
 
 const ReturnPassport = () => {
@@ -144,7 +145,7 @@ const ReturnPassport = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted/`)
+                const response = await api.get(`case/filing/pending/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -321,249 +322,14 @@ const ReturnPassport = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
-                <div className="row">
-                    <div className="col-md-12 text-center">
-                        <div className="form-group">
-                            <div>
-                                <div className="icheck-primary d-inline mx-2">
-                                <input 
-                                    type="radio" 
-                                    name="search_petition" 
-                                    id="searchPetitionYes" 
-                                    value={searchPetition}
-                                    checked={ parseInt(searchPetition) === 1 ? true : false}
-                                    onChange={(e) => setSearchPetition(1)} 
-                                />
-                                <label htmlFor="searchPetitionYes">{t('select_petition')}</label>
-                                </div>
-                                <div className="icheck-primary d-inline mx-2">
-                                <input 
-                                    type="radio" 
-                                    id="searchPetitionNo" 
-                                    name="search_petition" 
-                                    value={searchPetition}
-                                    checked={ parseInt(searchPetition) === 2 ? true : false } 
-                                    onChange={(e) => setSearchPetition(2)}
-                                />
-                                <label htmlFor="searchPetitionNo">{t('search_petition')}</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div className="container-fluid mt-3">
+                <PetitionSearch 
+                    cases={cases}
+                    eFileNumber={eFileNumber}
+                    seteFileNumber={seteFileNumber}
+                />
                 <div className="row">
                     <div className="col-md-12">
-                        { parseInt(searchPetition) === 1 && (
-                            <div className="form-group row">
-                                <div className="col-sm-8 offset-md-2">
-                                    <select 
-                                        name="efile_no" 
-                                        className="form-control"
-                                        value={eFileNumber}
-                                        onChange={(e) => seteFileNumber(e.target.value)}
-                                    >
-                                        <option value="">Select petition</option>
-                                        { cases.map((c, index) => (
-                                            <option value={c.petition.efile_number} key={index}><>{c.petition.efile_number}</> - { c.litigants.filter(l=>l.litigant_type===1).map((p, index) => (
-                                                <>{index+1}. {p.litigant_name}</>
-                                                ))}&nbsp;&nbsp;Vs&nbsp;&nbsp;
-                                                { c.litigants.filter(l=>l.litigant_type===2).map((res, index) => (
-                                                <>{res.litigant_name} {res.designation?.designation_name}</>
-                                                ))} 
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <div className="col-md-12">
-                        { parseInt(searchPetition) === 2 && (
-                        <form>
-                            <div className="row">
-                                <div className="col-md-12 d-flex justify-content-center">
-                                    <div className="form-group">
-                                        <div className="icheck-success d-inline mx-2">
-                                            <input 
-                                                type="radio" 
-                                                name="judiciary" 
-                                                id="court_type_hc" 
-                                                value={ searchForm.judiciary }
-                                                checked={parseInt(searchForm.judiciary) === 1 ? true : false }
-                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 1, state:'', district:'', establishment:''})} 
-                                            />
-                                            <label htmlFor="court_type_hc">{t('high_court')}</label>
-                                        </div>
-                                        <div className="icheck-success d-inline mx-2">
-                                            <input 
-                                                type="radio" 
-                                                id="court_type_dc" 
-                                                name="judiciary" 
-                                                value={searchForm.judiciary}
-                                                checked={parseInt(searchForm.judiciary) === 2 ? true : false } 
-                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: 2, seat:''})}
-                                            />
-                                            <label htmlFor="court_type_dc">{t('district_court')}</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-8 offset-md-2">
-                                    { parseInt(searchForm.judiciary) === 2 && (
-                                        <div className="row">
-                                            <div className="col-md-6">
-                                                <div className="form-group">
-                                                    <label htmlFor="">{t('state')}</label>
-                                                    <select 
-                                                        name="state" 
-                                                        className={`form-control ${errors.state ? 'is-invalid': ''}`}
-                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="">{t('alerts.select_state')}</option>
-                                                        { states.map((state, index) => (
-                                                        <option value={state.state_code} key={index}>
-                                                            { language === 'ta' ? state.state_lname : state.state_name}
-                                                        </option>
-                                                        ))}
-                                                    </select>
-                                                    <div className="invalid-feedback">
-                                                        { searchErrors.state }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="col-md-6">
-                                                <div className="form-group">
-                                                    <label htmlFor="">{t('district')}</label>
-                                                    <select 
-                                                        name="district" 
-                                                        className={`form-control ${errors.district ? 'is-invalid': ''}`}
-                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="">{t('alerts.select_district')}</option>
-                                                        { districts.filter(district => parseInt(district.state) === parseInt(searchForm.state)).map((district, index) => (
-                                                            <option value={district.district_code} key={index}>
-                                                                { language === 'ta' ? district.district_lname : district.district_name }
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                    <div className="invalid-feedback">
-                                                        { searchErrors.district }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <div className="row">
-                                        { parseInt(searchForm.judiciary) === 2 && (
-                                        <div className="col-md-8">
-                                            <div className="form-group">
-                                                <label htmlFor="">{t('est_name')}</label>
-                                                <select 
-                                                    name="establishment" 
-                                                    className={`form-control ${errors.establishment ? 'is-invalid': ''}`}
-                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
-                                                >
-                                                    <option value="">{t('alerts.select_establishment')}</option>
-                                                    {establishments.filter(est=>parseInt(est.district) === parseInt(searchForm.district)).map((estd, index)=>(
-                                                        <option key={index} value={estd.establishment_code}>
-                                                            { language === 'ta' ? estd.establishment_lname : estd.establishment_name}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <div className="invalid-feedback">
-                                                    { searchErrors.establishment }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        )}
-                                        { parseInt(searchForm.judiciary) === 1 && (
-                                        <div className="col-md-8">
-                                            <div className="form-group">
-                                                <label htmlFor="">{t('hc_bench')}</label>
-                                                <select 
-                                                    name="seat" 
-                                                    className={`form-control ${searchErrors.seat ? 'is-invalid': ''}`}
-                                                    onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value})}
-                                                >
-                                                    <option value="">{t('alerts.select_bench_type')}</option>
-                                                    {seats.map((s, index)=>(
-                                                        <option key={index} value={ s.seat_code}>{language === 'ta' ? s.seat_lname : s.seat_name }</option>
-                                                    ))}
-                                                </select>
-                                                <div className="invalid-feedback">
-                                                    { searchErrors.seat }
-                                                </div>
-                                            </div>
-                                        </div>
-                                        )}
-                                        <div className="col-md-4">
-                                            <label htmlFor="case_type">{t('case_type')}</label>
-                                            <select 
-                                                name="case_type" 
-                                                id="case_type" 
-                                                className={`form-control ${searchErrors.case_type ? 'is-invalid' : null}`}
-                                                onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value})}
-                                            >
-                                                <option value="">{t('alerts.select_case_type')}</option>
-                                                <option value="1">Bail Application</option>
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { searchErrors.case_type }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-10 offset-md-1">
-                                            <div className="row">
-                                                <div className="col-md-5">
-                                                    <div className="form-group">
-                                                        <input 
-                                                            type="text" 
-                                                            className={`form-control ${searchErrors.reg_number ? 'is-invalid': ''}`}
-                                                            name="reg_number"
-                                                            value={searchForm.reg_number}
-                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            placeholder={t('case_number')}
-                                                        />
-                                                        <div className="invalid-feedback">
-                                                            { searchErrors.reg_number }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <div className="form-group">
-                                                        <input 
-                                                            type="text" 
-                                                            className={`form-control ${searchErrors.reg_year ? 'is-invalid': ''}`}
-                                                            name="reg_year"
-                                                            value={searchForm.reg_year}
-                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            placeholder={t('case_year')}
-                                                        />
-                                                        <div className="invalid-feedback">
-                                                            { searchErrors.reg_year }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-3">
-                                                    <Button 
-                                                        variant='contained'
-                                                        color="primary"
-                                                        endIcon={<SearchIcon />}
-                                                        onClick={handleSearch}
-                                                    >
-                                                        {t('search')}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        )}
-                    </div>
-                    <div className="container-fluid mt-5 px-5">
                         { isPetition && (
                             <>
                                 <InitialInput petition={bail} />
@@ -732,15 +498,6 @@ const ReturnPassport = () => {
                                             <th>Expiry Date</th>
                                         </tr>
                                     </thead>
-                                    {/* <tbody>
-                                        <tr>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                            <td><input type="text" className='form-control'/></td>
-                                        </tr>
-                                    </tbody> */}
                                     <tbody>
                                         {passportDetails.map((passport, index) => (
                                         <tr key={index}>

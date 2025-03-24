@@ -21,6 +21,7 @@ import CaseTransferReceive from "components/court/admin/CaseTransferReceive";
 import GenerateOrder from "components/court/orders/GenerateOrder";
 import UploadOrder from "components/court/orders/UploadOrder";
 import BailBond from "components/court/orders/BailBond";
+import DepartmentRegistration from "components/auth/DepartmentRegistration";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
@@ -35,13 +36,14 @@ const courtRoutes = [
     { path: "case/order/odt", component: <BailBond />},
     { path: "case/order/generate", component: <GenerateOrder />},
     { path: "case/order/upload", component: <UploadOrder />},
-    { path: "case/surety", component: <SuretyPendingList />},
+    { path: "case/surety/pendinglist", component: <SuretyPendingList />},
     { path: "case/surety/verify", component: <SuretyVerify />},
     { path: "case/transfer/request", component: <CaseTransferRequest />},
     { path: "case/transfer/receive", component: <CaseTransferReceive />},
     { path: "admin/judge", component: <JudgeForm />},
     { path: "admin/judge/list", component: <JudgeList />},
-    { path: "admin/judge/period", component: <JudgePeriodForm />}
+    { path: "admin/judge/period", component: <JudgePeriodForm />},
+    { path: "auth/user/registration", element:<DepartmentRegistration />},
 
 ];
 

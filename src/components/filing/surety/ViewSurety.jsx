@@ -6,7 +6,7 @@ const ViewSurety = ({surety}) => {
 
     const {t} = useTranslation()
     return (
-        <table className="table table-bordered">
+        <table className="table table-bordered table-sm">
             <tbody>
                 <tr>
                     <td colSpan={2} className='text-center'><strong>Surety Photo & Signature</strong></td>
@@ -31,7 +31,7 @@ const ViewSurety = ({surety}) => {
                 </tr>
                 <tr>
                     <td>{t('address')}</td>
-                    <td>{`${ surety.address}, ${ surety.taluk }, ${ surety.district}-${surety.pincode}`}</td>
+                    <td>{`${ surety.address}, ${ surety.taluk?.taluk_name }, ${ surety.district?.district_name}-${surety.pincode}`}</td>
                 </tr>
                 <tr>
                     <td>{t('residing_since')}</td>

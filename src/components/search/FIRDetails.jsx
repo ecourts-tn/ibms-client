@@ -8,41 +8,60 @@ import api from 'api'
 
 
 const FIRDetails = () => {
-    const {fir, accused, firId} = useContext(BaseContext)
+    const {firId, accused, setAccused, fir, setFir} = useContext(BaseContext)
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     const {t} = useTranslation()
 
-    useEffect(() => {
-        if (firId) {
-            const fetchFIR = async () => {
-                try {
-                    const response = await api.post("external/police/api/detail/", { id: firId });
-                    if (response.status === 200) {
-                        console.log(response.data);
-                    }
-                } catch (error) {
-                    console.error("Error fetching FIR details:", error);
+    useEffect(() => { 
+        const fetchFIR = async () => {
+            const api_id = sessionStorage.getItem("api_id")
+            try {
+                const response = await api.post("external/police/fir-detail/", { id: api_id });
+                if (response.status === 200) {
+                    const data = response.data
+                    setFir({
+                    ...fir,
+                    act: data?.act || "",
+                    section: data?.section || [],
+                    date_of_occurrence: data?.date_of_occurrence || "",
+                    investigation_officer: data?.investigation_officer_name || "",
+                    fir_date_time: data?.fir_date_time || "",
+                    place_of_occurrence: data?.place_of_occurrence || "",
+                    gist_of_fir: data?.gist_of_fir || "",
+                    gist_in_local: data?.gist_of_fir_in_local || "",
+                    complainant_age: data?.complainant_age || "",
+                    complainant_guardian: data?.complainant_guardian || "",
+                    complainant_guardian_name: data?.complainant_guardian_name || "",
+                    complainant_name: data?.complainant_name || "",
+                    investigation_officer_rank: data?.investigation_officer_rank || "",
+                    no_of_accused: data?.no_of_accused || 0,
+                    sencitive_case: data?.sensitive_case || false
+                });
+                setAccused(response.data?.accused || []);
                 }
-            };
+            } catch (error) {
+                console.error("Error fetching FIR details:", error);
+            }
+        };
     
-            fetchFIR();
-        }
+        fetchFIR();
     }, [firId]);
 
     return (
         <>
-            <div className="row mb-5">
+            <Button
+                variant="contained"
+                color="warning"
+                onClick={handleShow}
+                className="ml-2"
+            >   
+                <i className="fa fa-paper-plane mr-2"></i>
+                {t('view_fir')}
+            </Button>
+            <div className="row">
                 <div className="col-md-12 d-flex justify-content-center">
-                    <Button
-                        variant="contained"
-                        color="warning"
-                        onClick={handleShow}
-                    >   
-                        <i className="fa fa-paper-plane mr-2"></i>
-                        {t('view_fir')}
-                    </Button>
                     <Modal 
                             show={show} 
                             onHide={handleClose} 
@@ -107,7 +126,7 @@ const FIRDetails = () => {
                                             <tr>
                                                 <td colSpan={4}>
                                                     <p><strong>{t('gist_in_local')}</strong></p>
-                                                    { fir.gist_in_local }
+                                                    <span dangerouslySetInnerHTML={CreateMarkup(fir.gist_in_local)}></span>
                                                 </td>
                                             </tr>
                                         </table>

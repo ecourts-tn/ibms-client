@@ -6,9 +6,21 @@
 }
 :lang(ta), 
 :lang(ta) .nav-link, 
-:lang(ta) .dropdown-menu li a {
-font-family: 'Marutham', serif; 
+:lang(ta) .dropdown-menu li a 
+:lang(ta) body,
+.content-wrapper
+{
+font-family: 'Marutham', sans-serif; 
+font-size:16px;
 }
+/* custom.css */
+body,
+.content-wrapper {
+    font-family: sans-serif !important; /* Replace with your preferred font */
+    font-size: 14px!important;
+    line-height: 1.7!important;
+}
+
 /* javascript disabled text */
 .no-js-message {
      font-size: 1.5em;
@@ -33,7 +45,7 @@ font-family: 'Marutham', serif;
 }
 .primary-navbar .nav-link{
     color: white!important;
-    font-size: 16px;
+    font-size: 14px;
     padding-left:6px!important;
     padding-right:6px!important;
     text-decoration: none;
@@ -71,7 +83,7 @@ font-family: 'Marutham', serif;
 }
 .secondary-navbar .nav-link{
     color:  #074280;
-    font-size: 16px;
+    font-size: 15px;
     padding-left:10px!important;
     padding-right:10px!important;
     text-decoration: none;
@@ -109,6 +121,7 @@ font-family: 'Marutham', serif;
 .section-heading{
     font-weight: bold;
     margin-bottom: 15px;
+    font-size:24px;
 }
 .registration-card{
     border-style: none!important;
@@ -197,25 +210,23 @@ legend > span {
     width:100%;
     border: 1px solid grey;
 }
+
 .btn-captcha{
     height:40px;
     border-radius:0px;
 }
-.bs-stepper{
-    margin-bottom: 20px;
-}
-.bs-stepper .step-trigger{
-    padding:0px 2px!important
-}
-.step:hover{
-    background-color: inherit!important;
-}
-
-.error > li{
-    list-style-type: none;
-    color:  #cb4335;
-    font-weight: bold;
-    margin:5px 0px;
+.captcha-text{
+    background-image: url('../../images/captcha.jpeg'); /* Path to your image */
+    background-size: cover; /* Ensure the image covers the entire field */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    font-size: 22px!important;
+    font-weight: bold!important;
+    /* background: #ffffff; */
+    color: #c73333!important;
+    height:40px!important;
+    letter-spacing: 2px;
+    text-shadow: 3px 4px 3px #fffdfd
 }
 
 /* Loader */
@@ -230,13 +241,35 @@ legend > span {
     justify-content: center;
     align-items: center;
     z-index: 1000; /* Keeps it above other elements */
-  }
+}
   
-  .loading-spinner {
+.loading-spinner {
     width: 150px; /* Adjust size as needed */
     height: 150px;
-  }
+}
 
-  .sensitive-case{
+.sensitive-case{
     font-weight: bold;
-  }
+}
+
+.list-group-menu > .list-group-item{
+    background-color:#076280;
+    color:#FAFAFA!important;
+    border-top:1px solid #FAFAFA!important;
+}
+
+table.table td, table.table th {
+    border: 1px solid  #2471a3!important;
+  
+}
+tr.bg-info, .bg-info{
+    background-color:  #2471a3;
+}
+.profile img{
+    height:180px;
+    width: 180px;
+    margin-top:20px;
+}
+.benefits li{
+    text-align: justify!important;
+}

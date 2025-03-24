@@ -132,18 +132,21 @@ const handleSubmit = async () => {
               </Button>
           </Modal.Footer>
         </Modal>
-      <div className="row mt-5">
-        <div className="col-md-6 offset-3">
+      <div className="row">
+        <div className="col-md-10 offset-1">
           {/* Dynamically render checkboxes */}
           {checkboxStates.map((checkbox) => (
-            <div key={checkbox.id} className="mt-3">
+            <div key={checkbox.id} className="my-3" style={{textAlign:"justify"}}>
               <input
                 type="checkbox"
                 id={`checkbox-${checkbox.id}`}
                 checked={checkbox.checked}
                 onChange={() => handleCheckboxChange(checkbox.id)}
-              />{' '}
-              {language === 'ta' ? checkbox.tlabel : checkbox.label }
+                className=''
+              />
+              <span className="ml-2">
+                {language === 'ta' ? checkbox.tlabel : checkbox.label }
+              </span>
             </div>
           ))}
         </div>

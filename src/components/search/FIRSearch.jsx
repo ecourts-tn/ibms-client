@@ -117,6 +117,8 @@ const FIRSearch = ({petition}) => {
             setLoading(false)
         }
     }
+
+    const isDisabled = parseInt(petition.judiciary) === 2;
     return (
         <>
             <ToastContainer />
@@ -133,7 +135,7 @@ const FIRSearch = ({petition}) => {
                             className={ `form-control ${errors.state ? 'is-invalid': ''}`}
                             value={form.state}
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}    
-                            disabled={ form.state !== "" ? true : false }
+                            disabled={isDisabled || (form.state && form.state !== "")}
                         >
                         <option value="">{t('alerts.select_state')}</option>
                         { states.map((item, index) => (
@@ -153,7 +155,7 @@ const FIRSearch = ({petition}) => {
                             className="form-control"
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                             value={form.rdistrict}
-                            disabled={ form.rdistrict !== "" ? true : false }
+                            disabled={isDisabled || (form.rdistrict && form.rdistrict !== "")}
                         >
                             <option value="">Select district</option>
                             { districts.map((district, index) => (

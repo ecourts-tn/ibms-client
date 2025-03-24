@@ -12,6 +12,8 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import Loading from 'components/common/Loading'
+import { Link } from 'react-router-dom'
 
 
 const FIRSearch = () => {
@@ -29,7 +31,9 @@ const FIRSearch = () => {
         fir_year:''
     })
     const[errors, setErrors] = useState({})
-    const[petition, setPetition] = useState({})
+    const[petitions, setPetitions] = useState([])
+    const[isExist, setIsExist] = useState(false)
+    const[loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
         state: Yup.string().required("Please select state"),
         district: Yup.string().required("Please select district"),
@@ -37,12 +41,15 @@ const FIRSearch = () => {
         fir_number: Yup.number().typeError("This field should be numeric").required(),
         fir_year:   Yup.number().typeError("This field should be numeric").required()
     })
+
     const handleSubmit = async() => {
         try{
+            setLoading(true)
             await validationSchema.validate(form, { abortEarly: false})
-            const {response} = await api.post("api/case/search/fir-number/", form)
+            const response = await api.post("case/search/fir-number/", form)
             if(response.status === 200){
-                setPetition(response.data)
+                setIsExist(true)
+                setPetitions(response.data)
             }
             if(response.status === 404){
                 toast.error(response.data.message, {theme:"colored"})
@@ -55,10 +62,19 @@ const FIRSearch = () => {
                 })
                 setErrors(newErrors)
             }
+            if(error.response){
+                toast.error(error.response.data.message, {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
         }
     }
+
+    
+
     return (
         <>
+            { loading && <Loading />}
             <ToastContainer />
             <div className="container" style={{ minHeight:"500px"}}>
                 <div className="row">
@@ -130,32 +146,32 @@ const FIRSearch = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row">
+                                <div className="row mt-2">
                                     <div className="col-md-5">
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                error={errors.fir_number ? true : false}
-                                                name="fir_number"
-                                                label={t('fir_number')}
-                                                value={form.fir_number}
-                                                size="small"
-                                                helperText={errors.fir_number}
-                                                onChange={(e) => setForm({...form, fir_number:e.target.value})}
-                                            />
-                                        </FormControl>
+                                        <input 
+                                            type="text" 
+                                            name="fir_number"
+                                            className={`form-control ${errors.fir_number ? 'is-invalid' : ''} `}
+                                            onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                            value={form.fir_number}
+                                            placeholder='FIR Number'
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.fir_number }
+                                        </div>
                                     </div>
                                     <div className="col-md-4">
-                                        <FormControl fullWidth>
-                                            <TextField
-                                                name="fir_year"
-                                                error={errors.fir_year ? true : false }
-                                                label={t('fir_year')}
-                                                value={form.fir_year}
-                                                size="small"
-                                                helperText={errors.fir_year}
-                                                onChange={(e) => setForm({...form, fir_year:e.target.value})}
-                                            />
-                                        </FormControl>
+                                        <input 
+                                            type="text" 
+                                            name="fir_year"
+                                            className={`form-control ${errors.fir_year ? 'is-invalid' : ''} `}
+                                            onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                            value={form.fir_year}
+                                            placeholder='FIR Number'
+                                        />
+                                        <div className="invalid-feedback">
+                                            { errors.fir_year }
+                                        </div>
                                     </div>
                                     <div className="col-md-3">
                                         <Button 
@@ -172,6 +188,47 @@ const FIRSearch = () => {
                         </div>
                     </div>
                 </div>
+                { Object.keys(petitions).length > 0 && (
+                <table className="table table-bordered table-striped mt-5">
+                    <thead>
+                        <tr>
+                            <th>Filing Number</th>
+                            <th>Litigants</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { petitions.map((p, index) => (
+                            <tr key={index}>
+                                <td>{`${p.petition.filing_type?.type_name}/${p.petition.filing_number}/${p.petition.filing_year}`}</td>
+                                <td>
+                                    {p.litigants
+                                        .filter((l) => parseInt(l.litigant_type) === 1)
+                                        .map((l, index) => (
+                                            <span key={index}>
+                                                {index + 1}. {l.litigant_name}
+                                            </span>
+                                        ))}
+                                    <span className="text-danger mx-2">Vs</span>
+                                    {p.litigants
+                                        .filter((l) => parseInt(l.litigant_type) === 2)
+                                        .map((l, index) => (
+                                            <span key={index}>
+                                                {index + 1}. {l.litigant_name}{' '}
+                                                {language === 'ta'
+                                                    ? l.designation?.designation_lname
+                                                    : l.designation?.designation_name}
+                                            </span>
+                                    ))}
+                                </td>
+                                <td>
+                                    <Link to={`/filing/detail/`} state={{ efile_no: p.petition.efile_number }}>View</Link>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                )}
             </div>
         </>
   )

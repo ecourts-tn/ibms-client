@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 
 
-const InitialInput = () => {
+const InitialInput1 = () => {
     const {fir}             = useContext(BaseContext)
     const {states}          = useContext(StateContext)
     const {districts}       = useContext(DistrictContext)
@@ -132,7 +132,7 @@ const InitialInput = () => {
             const response = await api.post("case/filing/create/", {petition, fir})
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                // sessionStorage.setItem("efile_no", efile_no)
+                sessionStorage.setItem("efile_no", efile_no)
                 // const requests = []
                 // if(Object.keys(fir).length > 0){
                 //     fir.efile_no = efile_no
@@ -189,7 +189,7 @@ const InitialInput = () => {
                                     </Form.Group>
                                 </div>
                                 <div className="col-md-6">
-                                    <div className="form-group mb-3">
+                                    <div className="form-group mb-3" style={{ display: parseInt(petition.judiciary) === 2 ? 'none' : 'block' }}>
                                         <label htmlFor="seat">{t('hc_bench')}<RequiredField /></label>
                                         <select 
                                             name="seat" 
@@ -431,4 +431,4 @@ const InitialInput = () => {
     )
 }
 
-export default InitialInput
+export default InitialInput1

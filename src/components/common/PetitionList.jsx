@@ -6,7 +6,7 @@ import { LanguageContext } from 'contexts/LanguageContex';
 const PetitionList = ({ cases, title, url }) => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
-     const [petitions, setPetitions] = useState([])
+    const [petitions, setPetitions] = useState([])
 
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,10 +19,10 @@ const PetitionList = ({ cases, title, url }) => {
         const regType = c.petition?.reg_type?.type_name || '';
         const regNumber = c.petition?.reg_number || '';
         const regYear = c.petition?.reg_year ? c.petition.reg_year.toString() : ''; // Convert to string if not null
-    
+
         // Combine the values
         const caseNumber = `${regType}/${regNumber}/${regYear}`.toLowerCase();
-    
+
         const crimeNumber = c.crime_number?.toLowerCase() || '';
 
         const query = searchQuery.toLowerCase();
@@ -98,11 +98,11 @@ const PetitionList = ({ cases, title, url }) => {
                     <i className="ion ion-clipboard mr-1" />
                     <strong>{title}</strong>
                 </h3>
-                 {/* Search Box */}
+                {/* Search Box */}
                 <div className="d-flex align-items-center">
                     {/* Search Label */}
                     <label htmlFor="" className="mr-2">{t('Search')}</label>
-                    
+
                     {/* Search Box */}
                     <div style={{ width: '300px' }}>
                         <input
@@ -115,9 +115,9 @@ const PetitionList = ({ cases, title, url }) => {
                     </div>
                 </div>
             </div>
-            
+
             <div className="card-body p-1" style={{ height: '650px', overflowY: 'scroll' }}>
-               
+
                 {/* Display cases */}
                 {currentCases.map((c, index) => {
                     const statusBadge = getStatusBadge(
@@ -135,15 +135,19 @@ const PetitionList = ({ cases, title, url }) => {
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <Link to={url} state={{ efile_no: c.petition.efile_number }}>
-                                        {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
-                                            <strong>
-                                                {`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`}
-                                            </strong>
-                                        ) : null}
-                                        <br />
+
                                         {c.petition?.efile_number ? (
                                             <strong>{c.petition.efile_number}</strong>
                                         ) : null}
+                                       {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year && (
+                                            <>
+                                                <span style={{ margin: '0 5px' }}>  </span>
+                                                <strong style={{ color: '#228e3a' }}> 
+                                                    ( {`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`} )
+                                                </strong>
+                                            </>
+                                        )}
+
                                     </Link>
                                 </div>
 

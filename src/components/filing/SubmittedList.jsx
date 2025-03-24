@@ -33,20 +33,6 @@ const SubmittedList = () => {
         setSelectedDocument(null)
     }
 
-    // useEffect(() => {
-    //     async function fetchData(){
-    //         try{
-    //             const response = await api.get(`case/filing/submitted-list/`)
-    //             if(response.status === 200){
-    //                 setCases(response.data)
-    //             }
-    //         }catch(error){
-    //             console.log(error)
-    //         }
-    //     }
-    //     fetchData();
-    // }, [])
-
     useEffect(() => {
         const fetchPetition = async() => {
             try{
@@ -161,10 +147,10 @@ const SubmittedList = () => {
                         </div>
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
-                                <tr>
+                                <tr className='bg-info'>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>
-                                    <th>{t('case_number')}</th>
+                                    {/* <th>{t('case_number')}</th> */}
                                     <th>{t('court')}</th>
                                     <th>{t('litigants')}</th>
                                     <th>{t('documents')}</th>
@@ -187,10 +173,10 @@ const SubmittedList = () => {
                                             to="/filing/detail" 
                                             state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
                                         >
-                                            {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
+                                            {/* {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
                                                 <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
                                             ) : null}
-                                            <br />
+                                            <br /> */}
                                             {item.petition?.efile_number ? (
                                                 <strong>{item.petition.efile_number}</strong>
                                             ) : null}
@@ -201,21 +187,23 @@ const SubmittedList = () => {
                                             </span>
                                         ) : null}
                                     </td>
-                                    <td>
+                                    {/* <td>
                                         {item.petition.filing_type ? `${item.petition.filing_type?.type_name}/${item.petition.filing_number}/${item.petition.filing_year}` : null}
-                                    </td>
+                                    </td> */}
                                     <td>
                                         { item.petition.judiciary.id== 2 && (
-                                        <>
-                                            <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
-                                            <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
-                                            <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
-                                        </>
+                                            <span>
+                                                { 
+                                                    language === 'ta' ? 
+                                                        `${item.petition.court?.court_lname}, ${item.petition.district?.district_lname}` : 
+                                                        `${item.petition.court?.court_name}, ${item.petition.district?.district_name}`
+                                                }
+                                            </span>
                                         )}
                                         { item.petition.judiciary.id === 1 && (
-                                        <>
+                                        <span>
                                             { language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}
-                                        </>
+                                        </span>
                                         )}
                                     </td>
                                     <td className="text-center">
@@ -223,7 +211,6 @@ const SubmittedList = () => {
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))
                                         }
-                                        <br/>
                                         <span className="text text-danger ml-2">Vs</span> <br/>
                                         { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>
