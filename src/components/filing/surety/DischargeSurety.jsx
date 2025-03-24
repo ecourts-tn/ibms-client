@@ -109,7 +109,7 @@ const DischargeSurety = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
+            <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
                     eFileNumber={eFileNumber}

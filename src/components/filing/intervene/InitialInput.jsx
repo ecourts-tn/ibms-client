@@ -22,6 +22,7 @@ import { BailTypeContext } from 'contexts/BailTypeContext';
 import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { MasterContext } from 'contexts/MasterContext';
 
 const InitialInput = () => {
 
@@ -29,14 +30,15 @@ const InitialInput = () => {
     const currentPath = location.pathname;
 
     const {efile_no, setEfileNo, fir} = useContext(BaseContext)
-    const {states}          = useContext(StateContext)
-    const {districts}       = useContext(DistrictContext)
+    // const {states}          = useContext(StateContext)
+    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {judiciaries}     = useContext(JudiciaryContext)
-    const {seats}           = useContext(SeatContext)
-    const {bailtypes}       = useContext(BailTypeContext)
-    const {complainttypes}  = useContext(ComplaintTypeContext)
+    // const {judiciaries}     = useContext(JudiciaryContext)
+    // const {seats}           = useContext(SeatContext)
+    // const {bailtypes}       = useContext(BailTypeContext)
+    // const {complainttypes}  = useContext(ComplaintTypeContext)
+    const {masters: {states, districts, judiciaries, seats, bailtypes, complainttypes}} = useContext(MasterContext)
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
 

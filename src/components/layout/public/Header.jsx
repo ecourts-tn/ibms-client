@@ -1,64 +1,34 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { REFRESH_TOKEN } from "constants";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
-// import './header.css';
-import api from 'api';
 
 const Header = () => {
   const { language, toggleLanguage } = useContext(LanguageContext);
-  const [isAuth, setIsAuth] = useState(false);
-  const [user, setUser] = useState({});
-  const [isHomeDisabled, setIsHomeDisabled] = useState(false)
-  const [isDarkMode, setIsDarkMode] = useState(false); // State for High Contrast Mode
+  const { isAuth, user, logout } = useContext(AuthContext); // Consume AuthContext
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-
-
-  useEffect(() => {
-    const sessionUser = sessionStorage.getItem("user");
-    if (sessionStorage.getItem("access")) {
-      setIsAuth(true);
-      setIsHomeDisabled(true)
-      setUser(JSON.parse(sessionUser));
-    }
-  }, []);
-
   const handleHomeClick = (event) => {
-    if (isHomeDisabled) {
-      event.preventDefault(); // Prevent navigation
+    if (isAuth) {
+      event.preventDefault(); // Prevent navigation if authenticated
     }
   };
+
 
   const handleLogout = async () => {
-    const response = await api.post("auth/logout/", {
-      refresh: sessionStorage.getItem(REFRESH_TOKEN),
-    });
-
-    if (response.status === 205) {
-      sessionStorage.clear();
+    try {
+      await logout(); // Use logout from AuthContext
       toast.success(t("alerts.logged_out"), { theme: "colored" });
-      setIsAuth(false);
-      setUser(null);
       navigate("/");
+    } catch (error) {
+      toast.error(t("alerts.logout_failed"), { theme: "colored" });
     }
   };
-
-  // const toggleDarkMode = () => {
-  //   setIsDarkMode(!isDarkMode);
-  // };
-  // // Inline CSS for body
-  // const bodyStyle = {
-  //   backgroundColor: isDarkMode ? '#121212' : '', // Dark mode background vs light mode
-  //   color: isDarkMode ? 'white' : 'black', // Yellow text color in dark mode, black in light mode
-  // };
-
 
   const renderDropdownLinks = (links) => {
     return links.map((link) => (
@@ -68,15 +38,10 @@ const Header = () => {
 
   const filingLinks = [
     { path: "/filing/bail/initial-input", label: t('bail') },
-    { path: "/filing/anticipatory-bail/initial-input", label: t('abail') },
-    { path: "/filing/condition-relaxation/initial-input", label: t('condition_relaxation') },
-    { path: "/filing/intervene-petition/initial-input", label: t('intervene') },
-    { path: "/filing/modification-petition/initial-input", label: t('modification') },
-    { path: "/filing/surety-petition/initial-input", label: t('surety') },
-    { path: "/filing/surety-discharge/initial-input", label: t('discharge_surety') },
-    { path: "/filing/time-extension/initial-input", label: t('extension') },
-    { path: "/filing/return-passport/initial-input", label: t('return_passport') },
-    { path: "/filing/return-property/initial-input", label: t('return_property') },
+    { path: "/filing/intervene/initial-input", label: t('intervene') },
+    { path: "/filing/surety/main-case-detail", label: t('surety') },
+    { path: "/filing/surety-discharge/main-case-detail", label: t('discharge_surety') },
+    { path: "filing/allied/main-case-detail", label: t('allied') }
   ];
 
   const caseStatusLinks = [
@@ -94,17 +59,11 @@ const Header = () => {
           <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
           <div className="collapse navbar-collapse d-flex justify-content-end" id="primaryNavbarContent">
             <div className="resize-icons">
-              <button type="button" class="btn btn-default"><i class="fa fa-sitemap"></i></button>
-              <button type="button" class="btn btn-default" id="decreaseFont"><i class="fa fa-font"></i>-</button>
-              <button type="button" class="btn btn-default" id="defaultFont"><i class="fa fa-font"></i></button>
-              <button type="button" class="btn btn-default" id="increaseFont"><i class="fa fa-font"></i>+</button>
-              <button type="button" class="btn btn-default" id="highContrast"><i class="fa fa-adjust"></i></button>
-              {/* <button
-                type="button" class="btn btn-default"
-                onClick={toggleDarkMode}
-              >
-              <i className="fa fa-adjust"></i>
-              </button> */}
+              <button type="button" className="btn btn-default"><i className="fa fa-sitemap"></i></button>
+              <button type="button" className="btn btn-default" id="decreaseFont"><i className="fa fa-font"></i>-</button>
+              <button type="button" className="btn btn-default" id="defaultFont"><i className="fa fa-font"></i></button>
+              <button type="button" className="btn btn-default" id="increaseFont"><i className="fa fa-font"></i>+</button>
+              <button type="button" className="btn btn-default" id="highContrast"><i className="fa fa-adjust"></i></button>
             </div>
             <ul className="navbar-nav ml-md-5">
               {isAuth && (
@@ -129,41 +88,45 @@ const Header = () => {
         </div>
       </nav>
       <nav className="navbar navbar-expand-lg secondary-navbar">
-        <div className="container">
+        <div className="container-fluid px-5">
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText">
             <span className="navbar-toggler-icon"></span> Menu
           </button>
           <div className="collapse navbar-collapse" id="navbarText">
             <ul className="navbar-nav ml-md-5">
               <li className="nav-item">
-                <Link 
-                  to={isHomeDisabled ? "#" : "/"}
-                  className="nav-link" 
+                <Link
+                  to={isAuth ? "#" : "/"}
+                  className="nav-link"
                   onClick={handleHomeClick}
                   style={{
-                    pointerEvents: isHomeDisabled ? "none" : "auto",
-                    color: isHomeDisabled ? "#797d7f" : "#074280",
+                    pointerEvents: isAuth ? "none" : "auto",
+                    color: isAuth ? "#797d7f" : "#074280",
                   }}
-                  aria-disabled={isHomeDisabled}
-                >{t('home')}</Link>
+                  aria-disabled={isAuth}
+                >
+                  {t('home')}
+                </Link>
               </li>
+              { isAuth && (
+              <li className="nav-item">
+                <Link to="/filing/dashboard" className="nav-link">{t('dashboard')}</Link>
+              </li>
+              )}
               {isAuth && (
-                <>
-                  <li className="nav-item">
-                    <Link to="/filing/dashboard" className="nav-link">{t('dashboard')}</Link>
-                  </li>
-                  <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
-                      {t('filing')}
-                    </a>
-                    <div className="dropdown-menu">
-                      {renderDropdownLinks(filingLinks)}
-                    </div>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
-                  </li>
-                </>
+              <li className="nav-item dropdown">
+                <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
+                  {t('filing')}
+                </a>
+                <div className="dropdown-menu">
+                  {renderDropdownLinks(filingLinks)}
+                </div>
+              </li>
+              )}
+              {isAuth && (
+              <li className="nav-item">
+                <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
+              </li>
               )}
               <li className="nav-item dropdown">
                 <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown">

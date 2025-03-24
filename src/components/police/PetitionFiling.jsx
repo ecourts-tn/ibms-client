@@ -125,7 +125,8 @@ const PetitionFiling = () => {
         e.preventDefault()
         setLoading(true)
         try{
-            const response = await api.post('police/search/crime/', searchForm)
+            const url = parseInt(searchForm.search) === 1 ? `police/search/crime/` : 'police/search/case/'
+            const response = await api.post(url, searchForm)
             if(response.status === 200){
                 setCaseFound(true)
                 setPetition(response.data.petition)

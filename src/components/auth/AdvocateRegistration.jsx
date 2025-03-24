@@ -370,8 +370,8 @@ const AdvocateRegistration = () => {
     const verifyEmail = async (otp) => {
         try{
             setLoading(true)
-            const response = await api.post("external/email/verify-otp/", {
-                email_address: form.email,
+            const response = await api.post("auth/email/otp/verify/", {
+                email: form.email,
                 otp: parseInt(otp)
             })
             if(response.status === 200){
@@ -419,7 +419,7 @@ const AdvocateRegistration = () => {
             const response = await api.post(`auth/email/verify/`, {email:form.email})
             if(response.status === 200){
                 try{
-                    const response2 = await api.post("external/email/sent-otp/", {email_address: form.email})
+                    const response2 = await api.post("auth/email/otp/", {email: form.email})
                     if(response2.status === 200){
                         toast.success(t('alerts.email_otp_sent'),{theme:"colored"})
                         setEmailOtp(true)
@@ -436,7 +436,6 @@ const AdvocateRegistration = () => {
         }finally{
             setLoading(false)
         }
-
     }
 
     

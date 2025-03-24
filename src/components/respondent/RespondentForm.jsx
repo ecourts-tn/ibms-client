@@ -12,13 +12,15 @@ import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { DesignationContext } from 'contexts/DesignationContext'
 import { handleMobileChange, validateEmail, handleNameChange } from 'components/commonvalidation/validations';
+import { MasterContext } from 'contexts/MasterContext'
 
 
 const RespondentForm = ({addRespondent, selectedRespondent}) => {
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
-    const {designations} = useContext(DesignationContext)
+    // const {designations} = useContext(DesignationContext)
+    const { masters:{states, districts, designations}} = useContext(MasterContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
 
@@ -61,25 +63,28 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
 
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
-        async function getCrimeDetail()  {
+        const fetchData = async() => {
             try{
-                const response = await api.get(`case/crime/detail/`, {
-                    params:{efile_no}
-                })
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
                 if(response.status === 200){
-                    const {state, district, police_station} = response.data
+                    const petition = response.data.petition
                     setLitigant({...litigant, 
-                        state: state?.state_code,
-                        district: district?.district_code,
-                        police_station: police_station?.cctns_code
+                        state: petition.state?.state_code,
+                        district: petition.district?.district_code,
+                        // pdistrict: petition.pdistrict?.district_code,
+                        police_station: petition.police_station?.cctns_code,
                     })
+                }else{
+                    setLitigant(initialState)
                 }
             }catch(error){
-                console.error(error)
+                setLitigant(initialState)
             }
         }
         if(efile_no){
-            getCrimeDetail();
+            fetchData()
+        }else{
+            setLitigant(initialState)
         }
     },[])
 
@@ -138,56 +143,73 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     return (
         <>
             <ToastContainer />
-            <div className="row">
+            <div className="row mt-3">
                 <div className="col-md-12">
                     <div className="form-group">
                         <input type="checkbox" name={respondentPolice} onChange={handleRespondentChange} className="mr-2"/><span className="text-primary"><strong>{t('respondent_police')}</strong></span>
                     </div>
                 </div>
             </div>
-            { respondentPolice && (
-            <div className="row">
-                <div className="col-md-3">
-                    <div className="form-group">
-                    <label htmlFor="state">{t('state')}</label><br />
-                    <select 
-                        name="state" 
-                        id="state" 
-                        className="form-control"
-                        value={litigant.state}
-                        disabled={ litigant.state !== '' }
-                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                    >
-                        <option value="">{t('alerts.select_state')}</option>
-                        { states.map((item, index) => (
-                        <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
-                        ))}
-                    </select>
-                    </div>
-                </div>
-                <div className="col-md-3">
-                    <div className="form-group">
-                    <label htmlFor="district">{t('district')}</label><br />
-                    <select 
-                        name="district" 
-                        id="district" 
-                        className="form-control"
-                        disabled={ litigant.district !== ''}
-                        value={litigant.district}
-                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                    >
-                        <option value="">{t('alerts.select_district')}</option>
-                        { districts.filter(d=>parseInt(litigant.state) === parseInt(d.state)).map((dist, index) => (
-                            <option value={dist.district_code} key={index}>
-                                {language === 'ta' ? dist.district_lname : dist.district_name}
-                            </option>
-                        ))}
-                    </select>
-                    </div>
-                </div>
+            {!respondentPolice && (
+            <div className="form-group row">
+                <label className='col-sm-3 col-form-label'>{t('respondent_name')}</label>
                 <div className="col-md-6">
-                    <div className="form-group">
-                        <label htmlFor="police_station">{t('police_station')}</label><br />
+                    <input
+                        type="text"
+                        name="litigant_name"
+                        value={litigant.litigant_name}
+                        className={`form-control ${errors.litigant_name ? 'is-invalid' : ''}`}
+                        onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
+                    />
+                    <div className="invalid-feedback">
+                        { errors.litigant_name }
+                    </div>
+                </div>
+            </div>    
+            )}
+            { respondentPolice && (
+             <React.Fragment>
+                <div className="form-group row">
+                    <label htmlFor="state" className='col-sm-3 col-form-label'>{t('state')}</label>
+                    <div className="col-md-6">
+                        <select 
+                            name="state" 
+                            id="state" 
+                            className="form-control"
+                            value={litigant.state}
+                            disabled={ litigant.state !== '' }
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        >
+                            <option value="">{t('alerts.select_state')}</option>
+                            { states.map((item, index) => (
+                            <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label htmlFor="district" className='col-sm-3 col-form-label'>{t('district')}</label>
+                    <div className="col-md-6">
+                        <select 
+                            name="district" 
+                            id="district" 
+                            className="form-control"
+                            disabled={ litigant.district !== ''}
+                            value={litigant.district}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                        >
+                            <option value="">{t('alerts.select_district')}</option>
+                            { districts.filter(d=>parseInt(litigant.state) === parseInt(d.state)).map((dist, index) => (
+                                <option value={dist.district_code} key={index}>
+                                    {language === 'ta' ? dist.district_lname : dist.district_name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>                       
+                </div>
+                <div className="form-group row">
+                    <label htmlFor="police_station" className='col-sm-3 col-form-label'>{t('police_station')}</label><br />
+                    <div className="col-md-6">
                         <select 
                             name="police_station" 
                             id="police_station" 
@@ -206,9 +228,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-3">
-                    <Form.Group>
-                        <Form.Label>{t('respondent_name')}</Form.Label>
+                <div className="form-group row">
+                    <label htmlFor="litigant_name" className="col-sm-3 col-form-label">{t('respondent_name')}</label>
+                    <div className="col-md-6">
                         <Form.Control
                             name="litigant_name"
                             value={litigant.litigant_name}
@@ -217,11 +239,11 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             readOnly={respondentPolice}
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.litigant_name }</div>
-                    </Form.Group>
+                    </div>
                 </div>
-                <div className="col-md-3">
-                    <Form.Group>
-                        <Form.Label>{t('designation')}</Form.Label>
+                <div className="form-group row">
+                    <label className='col-sm-3 col-form-group'>{t('designation')}</label>
+                    <div className="col-md-6">
                         <select 
                             name="designation" 
                             className={`form-control ${errors.designation ? 'is-invalid' : ''}` }
@@ -234,90 +256,59 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             ))}
                         </select>
                         <div className="invalid-feedback">{ errors.designation }</div>
-                    </Form.Group>
+                    </div>
                 </div>
-                <div className="col-md-6">
-                    <Form.Group>
-                        <Form.Label>{t('address')}</Form.Label>
-                        <Form.Control
-                            name="address"
-                            value={litigant.address}
-                            className={`${errors.address ? 'is-invalid' : ''}`}
-                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                        ></Form.Control>
-                        <div className="invalid-feedback">{ errors.address }</div>
-                    </Form.Group>
-                </div>
-                <div className="col-md-3 mt-4 pt-2">
-                    <Button 
-                        variant="secondary"
-                        onClick={handleSubmit}>
-                        <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
-                </div>
-            </div>
+             </React.Fragment>   
             )}
-            {!respondentPolice && (
-            <div className="row">
-                <div className="col-md-3">
-                    <Form.Group>
-                        <Form.Label>{t('respondent_name')}</Form.Label>
-                        <Form.Control
-                            name="litigant_name"
-                            value={litigant.litigant_name}
-                            className={`${errors.litigant_name ? 'is-invalid' : ''}`}
-                            onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
-                        ></Form.Control>
-                        <div className="invalid-feedback">{ errors.litigant_name }</div>
-                    </Form.Group>
-                </div>
-                <div className="col-md-2">
-                    <Form.Group>
-                        <Form.Label>{t('mobile_number')}</Form.Label>
+            <React.Fragment>
+                <div className='form-group row'>
+                    <label className='col-sm-3 col-form-label'>{t('mobile_number')}</label>
+                    <div className="col-md-6">
                         <input 
                             type="text"
                             name="mobile_number" 
                             className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}` }
                             value={litigant.mobile_number}
                             onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
-                            // onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                         />
                         <div className="invalid-feedback">{ errors.mobile_number }</div>
-                    </Form.Group>
+                    </div>
                 </div>
-                <div className="col-md-2">
-                    <Form.Group>
-                        <Form.Label>{t('email_address')}</Form.Label>
+                <div className="form-group row">
+                    <label className="col-sm-3 col-form-label">{t('email_address')}</label>
+                    <div className="col-md-6">
                         <input 
                             type="text"
                             name="email_address" 
                             className={`form-control ${errors.email_address ? 'is-invalid' : ''}` }
                             value={litigant.email_address}
                             onChange={handleChange}
-                            // onBlur={() => handleBlur(litigant, setErrors)}
                         />
                         <div className="invalid-feedback">{ errors.email_address }</div>
-                    </Form.Group>
+                    </div>
                 </div>
-                <div className="col-md-5">
-                    <Form.Group>
-                        <Form.Label>{t('address')}</Form.Label>
-                        <Form.Control
+                <div className="form-group row">
+                    <label className="col-sm-3 col-form-label">{t('address')}</label>
+                    <div className="col-md-6">
+                        <textarea
+                            rows={2}
                             name="address"
                             value={litigant.address}
-                            className={`${errors.address ? 'is-invalid' : ''}`}
+                            className={`form-control ${errors.address ? 'is-invalid' : ''}`}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                        ></Form.Control>
+                        ></textarea>
                         <div className="invalid-feedback">{ errors.address }</div>
-                    </Form.Group>
+                    </div>
                 </div>
-                <div className="col-md-3 mt-4 pt-2">
+            </React.Fragment>
+            <div className="row">
+                <div className="col-md-12 d-flex justify-content-center">
                     <Button 
                         variant="secondary"
                         onClick={handleSubmit}>
                         <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
                 </div>
             </div>
-            )}
         </>
     )
 }

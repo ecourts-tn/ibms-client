@@ -4,8 +4,6 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import React, { useEffect, useState, useContext } from 'react'
-import FIRSearch from 'components/search/FIRSearch';
-import CaseSearch from 'components/search/CaseSearch';
 import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { RequiredField } from 'utils';
@@ -25,21 +23,37 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import Loading from 'components/common/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/search/FIRDetails'
+import { StepContext } from 'contexts/StepContext';
+import { AgencyContext } from 'contexts/AgencyContext';
+import { CaseTypeContext } from 'contexts/CaseTypeContext';
+import { CourtCaseTypeContext } from 'contexts/CourtCaseTypeContext';
+import { MasterContext } from 'contexts/MasterContext';
 
 
 const Initial = () => {
-    const {states}          = useContext(StateContext)
-    const {districts}       = useContext(DistrictContext)
+    // const {states}          = useContext(StateContext)
+    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    const {judiciaries}     = useContext(JudiciaryContext)
-    const {seats}           = useContext(SeatContext)
-    const {bailtypes}       = useContext(BailTypeContext)
-    const {complainttypes}  = useContext(ComplaintTypeContext)
-    const {policeDistricts} = useContext(PoliceDistrictContext)
+    // const {judiciaries}     = useContext(JudiciaryContext)
+    // const {seats}           = useContext(SeatContext)
+    // const {casetypes}       = useContext(CaseTypeContext)
+    // const {ccasetypes}      = useContext(CourtCaseTypeContext)
+    // const {bailtypes}       = useContext(BailTypeContext)
+    // const {complainttypes}  = useContext(ComplaintTypeContext)
+    // const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
+    const { 
+        masters: { 
+            states, districts, judiciaries, seats, casetypes, ccasetypes, 
+            bailtypes, complainttypes, policeDistricts 
+        }
+    } = useContext(MasterContext);
+    
     const {language}        = useContext(LanguageContext)
     const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
+    const { agencies } = useContext(AgencyContext)
+    const {updateStep} = useContext(StepContext)
 
     const { t } = useTranslation()
 
@@ -50,8 +64,8 @@ const Initial = () => {
         district:'',
         pdistrict:'',
         police_station:'',
-        fir_number:'',
-        fir_year:'',
+        fir_number:null,
+        fir_year:null,
         search_type: '',
         cnr_number:'',
         investigation_agency:'',
@@ -59,13 +73,14 @@ const Initial = () => {
         crime_year:'',
         establishment: '',
         court:'',
-        case_type: 1,
+        case_type: '',
         cis_case_type:'',
         case_number:'',
         case_year:'',
         bail_type: '',
         complaint_type:'',
         crime_registered: 3,
+        fir: ''
     }
     const[petition, setPetition] = useState(initialState)
     const[jurisdicationCourts, setJurisdictionCourts] = useState([])
@@ -81,6 +96,7 @@ const Initial = () => {
     const handleSearch = () =>{
 
     }
+
     
     useEffect(() => {
         const efile_no = sessionStorage.getItem("efile_no")
@@ -94,6 +110,8 @@ const Initial = () => {
                         seat: petition.seat?.seat_code,
                         state: petition.state?.state_code,
                         district: petition.district?.district_code,
+                        pdistrict: petition.pdistrict?.district_code,
+                        police_station: petition.police_station?.cctns_code,
                         establishment: petition.establishment?.establishment_code,
                         court: petition.court?.court_code,
                         case_type:petition.case_type?.id,
@@ -114,6 +132,26 @@ const Initial = () => {
             setPetition(initialState)
         }
     },[])
+
+    useEffect(() => {
+        const fetchCourtDetail = async() => {
+            try{
+                const response = await api.get(`base/court/detail/`, {params:{id:magistrateCourt}})
+                if(response.status === 200){
+                    console.log(response.data)
+                    setPetition({
+                        ...petition,
+                        court: response.data.court_code,
+                        establishment: response.data.establishment,
+                    })
+                }
+            }catch(error){
+                console.error(error)
+            }
+        }
+        if(magistrateCourt)
+        fetchCourtDetail();
+    }, [magistrateCourt])
 
     const[errors, setErrors] = useState({})
     const [user, setUser] = useLocalStorage("user", null)
@@ -146,6 +184,7 @@ const Initial = () => {
                 return schema.required(t('errors.court_required'))
             }
         }),
+        case_type: Yup.string().required('errors.case_type_required'),
         bail_type: Yup.string().required(t('errors.bail_required')),
         complaint_type: Yup.string().required(t('errors.complaint_required')),
     })
@@ -200,10 +239,13 @@ const Initial = () => {
             }
             setLoading(true)
             setViewFIR(false)
-            const response = await api.post("external/police/tamilnadu/search-fir/", crime);
+            const response = await api.post("external/police/fir-search/", crime);
             if (response.status === 200) {
-                const data = typeof response.data.fir === 'string' ? JSON.parse(JSON.stringify(response.data.fir)) : response.data.fir;
-                setFirId(response.data.id)
+                sessionStorage.setItem("api_id", response.data.api_id)
+                setPetition({
+                    ...petition,
+                    fir: response.data.api_id
+                })
                 setViewFIR(true);
                 setNotFound("");
                 const response2 = await api.post(`base/jurisdiction-courts/`, {station:petition.police_station})
@@ -211,7 +253,6 @@ const Initial = () => {
                    setJurisdictionCourts(response2.data)
                 }
             } else {
-                setNotFound(t('errors.fir_not_found'));
                 setViewFIR(false);
                 setPetition(initialState);
             }
@@ -222,6 +263,19 @@ const Initial = () => {
                     toast.error("Internal server error", {
                         theme : "colored"
                     })
+                }
+                if(error.response.status === 404){
+                    setNotFound(t('errors.fir_not_found'));
+                    setPetition({
+                        ...petition,
+                        state: '',
+                        district: '',
+                        police_station: '',
+                        fir_number: '',
+                        fir_year:'',
+                        // crime_registered: 3
+                    })
+                    setJurisdictionCourts([])
                 }
             }
             if(error.inner){
@@ -248,7 +302,6 @@ const Initial = () => {
                     case_year:petition.case_year
                 }
             });
-            console.log(response.data)
             if(response.status === 200){
                 const accused  = [
                     response.data.res_name, // Add res_name
@@ -273,13 +326,16 @@ const Initial = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", {petition, fir})
+            const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
+                sessionStorage.setItem("efile_no", efile_no)
+                sessionStorage.setItem("petition", JSON.stringify(response.data))
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
                 setIsSubmitted(true); 
+                updateStep(efile_no, 2)
             }
           }catch(error){
             if (error.inner){
@@ -291,10 +347,9 @@ const Initial = () => {
             }
         }
     }
-
  
     return (
-        <div className="container mt-5">
+        <div className="container-fluid mt-5">
             { loading && <Loading />}
             <ToastContainer />
             <form method='post' id="initial-input">
@@ -318,7 +373,7 @@ const Initial = () => {
                         </div>    
                     </div>
                     <label htmlFor="" className="col-sm-2">{t('crime_registered')}<RequiredField /></label>
-                    <div className="col-sm-3">
+                    <div className="col-sm-4">
                         <div className="icheck-success d-inline mx-2">
                             <input 
                                 type="radio" 
@@ -459,12 +514,20 @@ const Initial = () => {
                         { viewFIR && (<FIRDetails/>)}
                     </div>
                 </div>
+                { notFound && (
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span><strong>{ notFound }</strong> </span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                )}
                 </React.Fragment>
                 )}
                 { parseInt(petition.complaint_type) === 3 && (
                 <div className="form-group row mb-4">
                     <label htmlFor="" className="col-sm-2 col-form-label">Search Type</label>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <div className="icheck-success d-inline mx-2">
                             <input 
                                 type="radio" 
@@ -510,33 +573,76 @@ const Initial = () => {
                 </div>
                 )}
                 { parseInt(petition.complaint_type) === 2 && (
-                <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Investigation Agency</label>
-                    <div className="col-md-6">
-                        <input 
-                            type="text" 
-                            name="" 
-                            className="form-control" 
-                            placeholder='Investigation Agency Name'
-                        />
+                <React.Fragment>
+                    <div className="form-group row mb-4">
+                        <label htmlFor="state" className='col-sm-2 col-form-label'>{t('state')}<RequiredField/></label>
+                        <div className="col-md-4">
+                            <select 
+                                name="state" 
+                                id="state" 
+                                className={ `form-control ${errors.state ? 'is-invalid': ''}`}
+                                value={petition.state}
+                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}    
+                            >
+                                <option value="">{t('alerts.select_state')}</option>
+                                { states.map((item, index) => (
+                                    <option key={index} value={item.state_code }>{ language === 'ta' ? item.state_lname : item.state_name }</option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">
+                                { errors.state }
+                            </div>
+                        </div>
+                        <label htmlFor="district" className="col-sm-2 col-form-label">{t('district')}<RequiredField/></label>
+                        <div className="col-md-4">
+                            <select 
+                                name="district" 
+                                className={`form-control ${errors.district ? 'is-invalid' : ''}`}
+                                onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                                value={petition.district}
+                            >
+                                <option value="">Select district</option>
+                                { districts.filter(d=>parseInt(d.state) === parseInt(petition.state)).map((district, index) => (
+                                    <option key={index} value={district.district_code}>{language === 'ta' ? district.district_lname : district.district_name}</option>
+                                ))}
+                            </select>
+                            <div className="invalid-feedback">
+                                { errors.district }
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-md-2">
+                    <div className="form-group row mb-4">
+                        <label htmlFor="" className="col-sm-2 col-form-label">{t('investigation_agency')}</label>
+                        <div className="col-md-6">
+                            <Select 
+                                name="agency"
+                                // placeholder={t('alerts.select_agency')}
+                                options={agencies.filter(a=>parseInt(a.district)===parseInt(petition.district)).map((a) => { return { 
+                                    value:a.id, label:language === 'ta' ? a.agency_name.toUpperCase() : a.agency_name.toUpperCase()
+                                }})} 
+                                className={`${errors.agency ? 'is-invalid' : null}`}
+                                onChange={(e) => setPetition({...petition, agency:e.value})}
+                            />
+                        </div>
+                        <div className="invalid-feedback">{ errors.agency }</div>
+                        <div className="col-md-2">
                             <input 
-                            type="text" 
-                            name="" 
-                            className="form-control" 
-                            placeholder='Crime Number'
-                        />
+                                type="text" 
+                                name="" 
+                                className="form-control" 
+                                placeholder='Crime Number'
+                            />
+                        </div>
+                        <div className="col-md-2">
+                            <input 
+                                type="text" 
+                                name=""
+                                className="form-control" 
+                                placeholder='Crime year'
+                            />
+                        </div>
                     </div>
-                    <div className="col-md-2">
-                        <input 
-                            type="text" 
-                            name=""
-                            className="form-control" 
-                            placeholder='Crime year'
-                        />
-                    </div>
-                </div>
+                </React.Fragment>
                 )}
                 { parseInt(petition.search_type) === 2 && (
                 <React.Fragment>    
@@ -610,7 +716,9 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}    
                         >
                             <option value="">{t('alerts.select_case_type')}</option>
-                            <option value="321">SC</option>
+                            { ccasetypes.filter((c) => c.type_flag === 2).map((c, index) => (
+                                <option key={index} value={c.case_type}>{`${c.type_name} - ${c.type_full_form}`}</option>
+                            ))}
                         </select>
                         <div className="invalid-feedback">{t('errors.case_type_required')}</div>
                     </div>
@@ -644,7 +752,7 @@ const Initial = () => {
                 </React.Fragment> 
                 )}
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Select Jurisdiction</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}</label>
                     <div className="col-md-4">
                         <select 
                             name="judiciary" 
@@ -653,9 +761,22 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">Select jurisdiction</option>
-                            { judiciaries.map((j, index) => (
+                            {/* { judiciaries.map((j, index) => (
                                 <option key={index} value={j.id}>{language === 'ta' ? j.judiciary_lname : j.judiciary_name}</option>
-                            ))}
+                            ))} */}
+                            { judiciaries
+                                .filter((j, index) => {
+                                    // Allow all values except the third unless the state condition is met
+                                    if (index === 2) {
+                                        return jurisdicationCourts.length > 0;
+                                    }
+                                    return true;
+                                })
+                                .map((j, index) => (
+                                    <option key={index} value={j.id}>
+                                        {language === 'ta' ? j.judiciary_lname : j.judiciary_name}
+                                    </option>
+                                ))}
                         </select>
                     </div>
                     { parseInt(petition.judiciary) === 1 && (
@@ -682,7 +803,7 @@ const Initial = () => {
                 </div>
                 { parseInt(petition.judiciary) === 3 && (
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">Select Magistrate Court</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('alerts.select_magistrate_court')}</label>
                     <div className="col-md-4">
                         <select 
                             name="jurisdiction_court" 
@@ -782,6 +903,24 @@ const Initial = () => {
                 </React.Fragment>    
                 )}
                 <div className="form-group row mb-4">
+                    <label htmlFor="case_type" className='col-sm-2 col-form-label'>{t('case_type')}<RequiredField /></label>
+                    <div className="col-md-4">
+                        <select 
+                            name="case_type" 
+                            id="case_type" 
+                            className={`form-control ${errors.case_type ? 'is-invalid' : null}`}
+                            value={petition.case_type }
+                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                        >
+                            <option value="">{t('alerts.select_case_type')}</option>
+                            { casetypes.filter((c) => c.id === 1 || c.id === 2).map((c, index) => (
+                            <option key={index} value={c.id}>{ language === 'ta' ? c.type_lfull_form : c.type_full_form }</option>
+                            ))}
+                        </select>
+                        <div className="invalid-feedback">
+                            { errors.bail_type}
+                        </div>
+                    </div>
                     <label htmlFor="bail_type" className='col-sm-2 col-form-label'>{t('bail_type')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
@@ -792,7 +931,7 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_bail_type')}</option>
-                            { bailtypes.map((b, index) => (
+                            { bailtypes.filter((b) => parseInt(b.case_type) == parseInt(petition.case_type)).map((b, index) => (
                             <option key={index} value={b.id}>{ language === 'ta' ? b.type_lname : b.type_name }</option>
                             ))}
                         </select>
