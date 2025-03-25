@@ -20,9 +20,9 @@ import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import Select from 'react-select'
-import FIRDetails from 'components/search/FIRDetails'
+import FIRDetails from 'components/utils/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
@@ -51,7 +51,7 @@ const Initial = () => {
     } = useContext(MasterContext);
     
     const {language}        = useContext(LanguageContext)
-    const {fir, setFir, setAccused, setFirId} = useContext(BaseContext)
+    const {fir, setFir, setAccused, setFirId, efileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
     const {updateStep} = useContext(StepContext)
 
@@ -99,10 +99,9 @@ const Initial = () => {
 
     
     useEffect(() => {
-        const efile_no = sessionStorage.getItem("efile_no")
-        const fetchData = async() => {
+        const getPetitionDetail = async() => {
             try{
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
                 if(response.status === 200){
                     const petition = response.data.petition
                     setPetition({...petition, 
@@ -126,12 +125,11 @@ const Initial = () => {
                 setPetition(initialState)
             }
         }
-        if(efile_no){
-            fetchData()
-        }else{
-            setPetition(initialState)
+        if(efileNumber){
+            getPetitionDetail();
         }
-    },[])
+    },[efileNumber])
+
 
     useEffect(() => {
         const fetchCourtDetail = async() => {

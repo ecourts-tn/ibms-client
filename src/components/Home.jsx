@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col';
 import { ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
 import Login from 'components/auth/Login';
-import Translate from './Translate';
+
 
 
 const Home = () => {

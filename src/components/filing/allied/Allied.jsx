@@ -2,17 +2,18 @@ import api from 'api';
 import * as Yup from 'yup'
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import Button from '@mui/material/Button'
-import InitialInput from '../InitialInput';
+import InitialInput from 'components/filing/common/InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
-import PetitionSearch from 'components/common/PetitionSearch';
+import PetitionSearch from 'components/utils/PetitionSearch';
 import ConditionDetail from './ConditionDetail';
 import PassportDetail from './PassportDetail';
 import PropertyDetail from './PropertyDetail';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { MasterContext } from 'contexts/MasterContext';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const Allied = () => {
@@ -20,7 +21,8 @@ const Allied = () => {
     const {language} = useContext(LanguageContext)
     const {masters:{casetypes}} = useContext(MasterContext)
     const[bail, setBail] = useState({})
-    const[eFileNumber, seteFileNumber] = useState('')
+    const {setEfileNumber} = useContext(BaseContext)
+    const[mainNumber, setMainNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
@@ -92,10 +94,9 @@ const Allied = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:main, litigants} = response.data
-                    console.log(response.data)
                     setIsPetition(true)
                     setBail(main)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
@@ -118,8 +119,10 @@ const Allied = () => {
                 console.log(error)
             }
         }
-        fetchDetails()
-    },[eFileNumber])
+        if(mainNumber){
+            fetchDetails()
+        }
+    },[mainNumber])
 
 
     const handleInitialSubmit = async () => {
@@ -160,7 +163,7 @@ const Allied = () => {
                 setSelectedRespondent([]);
                 
                 // Store efile number in sessionStorage
-                sessionStorage.setItem("efile_no", response.data.efile_number);
+                setEfileNumber(response.data.efile_number);
                 
                 // Show success message
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
@@ -192,8 +195,8 @@ const Allied = () => {
             <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
-                    eFileNumber={eFileNumber}
-                    seteFileNumber={seteFileNumber}
+                    mainNumber={mainNumber} 
+                    setMainNumber={setMainNumber}                  
                 />
                 <div className="row">
                     <div className="col-md-12">

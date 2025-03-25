@@ -12,14 +12,19 @@ import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { Link } from 'react-router-dom'
+import { MasterContext } from 'contexts/MasterContext'
 
 
 const FIRSearch = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
+    const {masters:{
+        states,
+        districts
+    }} = useContext(MasterContext)
     const {policeStations} = useContext(PoliceStationContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()

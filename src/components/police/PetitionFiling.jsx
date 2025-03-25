@@ -12,8 +12,8 @@ import { RelationContext } from 'contexts/RelationContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { RequiredField } from 'utils';
-import Loading from 'components/common/Loading';
-import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import Loading from 'components/utils/Loading';
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import { DesignationContext } from 'contexts/DesignationContext'
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
