@@ -1,5 +1,5 @@
 import api from 'api';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import React, { useContext, useState } from 'react';

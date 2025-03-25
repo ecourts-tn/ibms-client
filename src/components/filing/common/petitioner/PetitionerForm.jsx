@@ -1,42 +1,56 @@
 import React, {useContext} from 'react'
+import api from 'api';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from 'utils';
 import * as Yup from 'yup'
-import api from 'api';
-import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
+import { StateContext } from 'contexts/StateContext';
+import { DistrictContext } from 'contexts/DistrictContext';
+import { TalukContext } from 'contexts/TalukContext';
+import { PrisonContext } from 'contexts/PrisonContext';
+import { ProofContext } from 'contexts/ProofContext';
+import { CountryContext } from 'contexts/CountryContext';
 import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
+import { GenderContext } from 'contexts/GenderContext';
+import { NationalityContext } from 'contexts/NationalityContext';
+import { useLocation } from 'react-router-dom';
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import { MasterContext } from 'contexts/MasterContext';
-import { LanguageContext } from 'contexts/LanguageContex';
 
 
-const AccusedDetails = ({addPetitioner}) => {
-  const { language } = useContext(LanguageContext)
-  const {fir, accused} = useContext(BaseContext)
-  const { masters: {
-    states, 
-    districts, 
-    taluks, 
-    countries, 
-    relations,
-    genders,
-    nationalities
-  }} = useContext(MasterContext)
+const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
+
+  const [petition, setPetition] = useState({})
+  const {language} = useContext(LanguageContext)
+  // const {states} = useContext(StateContext)
+  // const {districts} = useContext(DistrictContext)
+  // const {taluks} = useContext(TalukContext)
+  // const {relations} = useContext(RelationContext)
+  // const {prisons} = useContext(PrisonContext)
+  // const {proofs} = useContext(ProofContext)
+  // const {countries} = useContext(CountryContext)
+  // const {genders} = useContext(GenderContext)
+  // const {nationalities} = useContext(NationalityContext)
+  const { 
+          masters: { 
+              states, districts, taluks, relations, prisons, proofs, 
+              countries, genders, nationalities
+          }
+      } = useContext(MasterContext);
+  const location = useLocation()
   const {t} = useTranslation()
-
   const[alternateAddress, setAlternateAddress] = useState(false)
+  const [fir, setFir] = useState({})
+  const[accused, setAccused] = useState([])
+  
   const initialState = {
       litigant: 'o',
       litigant_name: '',
-      litigant_type: '', 
+      litigant_type: 1, 
       relation: '',
       relation_name: '',
       age:'',
@@ -51,11 +65,14 @@ const AccusedDetails = ({addPetitioner}) => {
       pincode:'',
       nationality: 1,
       mobile_number:'',
+      identify_proof:'',
       proof_number:'',
       email_address:'',
       act: '',
       section: '',
       is_custody: false,
+      accused_photo:'',
+      is_auto_fetched:false,
       prison: '',
       custody_days: null,
       is_surrendered: false,
@@ -63,37 +80,88 @@ const AccusedDetails = ({addPetitioner}) => {
     }
 
   const[litigant, setLitigant] = useState(initialState)
-  const[errors, setErrors] = useState({})
+  const[errors, setErrors] = useState(initialState)
 
+  useEffect(() => {
+    setLitigant(selectedPetitioner)
+  }, [selectedPetitioner])
+
+  useEffect(() => {
+    setPetition(JSON.parse(sessionStorage.getItem("petition")))
+  },[])
+  
   const validationSchema = Yup.object({
-    litigant_name: Yup.string().required(),
-    relation: Yup.string().required(),
-    relation_name: Yup.string().required(),
-    age: Yup.number().required().typeError("This is field should be numeric"),
-    rank: Yup.string().required(),
-    gender: Yup.string().required(),
-    address: Yup.string().required(),
-    mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
-    act: Yup.string().required(),
-    section: Yup.string().required(),
-  })
+    litigant_name: Yup.string().required(t('errors.litigant_name_required')),
+    gender: Yup.string().required(t('errors.gender_required')),
+    relation: Yup.string().required(t('errors.relation_required')),
+    relation_name: Yup.string().required(t('errors.relation_name_required')),
+    age: Yup.number()
+      .required(t('errors.age_required'))
+      .typeError(t('errors.numeric')),
+    rank: Yup.string().required(t('errors.rank_required')),
+    gender: Yup.string().required(t('errors.gender_required')),
+    address: Yup.string().required(t('errors.address_required')),
+    mobile_number: Yup.number().required(t('errors.mobile_required')),
+    proof_number: Yup.string().required(t('errors.identity_proof_required')),
+    act: Yup.string().required(t('errors.act_required')),
+    section: Yup.string().required(t('errors.section_required')),
+    is_custody: Yup.boolean().required(t('errors.is_custody_required')),
+  
+    // prison: Yup.string()
+    //   .when('is_custody', {
+    //     is: true,
+    //     then: Yup.string().required('Details are required when custody is true'),
+    //     otherwise: Yup.string().notRequired(),
+    //   })
+    //   .nullable(),
+  
+    // custody_days: Yup.string()
+    //   .when('is_custody', {
+    //     is: true,
+    //     then: Yup.string().required('Number of custody days is required'),
+    //     otherwise: Yup.string().notRequired(),
+    //   })
+    //   .nullable(),
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+      const { name, value } = e.target;
 
-    // Update form state
-    setLitigant((prevForm) => ({
-        ...prevForm,
-        [name]: value,  // Dynamically update the field
-    }));
+      // Update form state
+      setLitigant((prevForm) => ({
+          ...prevForm,
+          [name]: value,  // Dynamically update the field
+      }));
 
-    // Validate the field and update errors
-    const errorMessage = validateEmail(name, value);  // Validate the email field
-    setErrors((prevErrors) => ({
-        ...prevErrors,
-        [name]: errorMessage,  // Set the error message for the specific field
-    }));
+      // Validate the field and update errors
+      const errorMessage = validateEmail(name, value);  // Validate the email field
+      setErrors((prevErrors) => ({
+          ...prevErrors,
+          [name]: errorMessage,  // Set the error message for the specific field
+      }));
   };
+
+  useEffect(() => { 
+      const fetchFIR = async () => {
+          const api_id = sessionStorage.getItem("api_id")
+          try {
+              const response = await api.post("external/police/fir-detail/", { id: api_id });
+              if (response.status === 200) {
+                  const data = response.data
+                  setFir({
+                  ...fir,
+                  act: data?.act || "",
+                  section: data?.section.toString() || [],
+              });
+              setAccused(response.data?.accused || []);
+              }
+          } catch (error) {
+              console.error("Error fetching FIR details:", error);
+          }
+      };
+      fetchFIR();
+  }, []);
+
 
   useEffect(() => {
     if(accused){
@@ -117,52 +185,88 @@ const AccusedDetails = ({addPetitioner}) => {
           address: result.permanent_address === '' ? '-' :result.permanent_address,
           mobile_number: result.mobile_number,
           email_address: result.email_id,
+          accused_photo: result.accused_photo,
+          is_auto_fetched:true
         })
       }
     }
   },[litigant.litigant, accused])
 
-  const handleSubmit = async() => {
-    try{
-      // await validationSchema.validate(litigant, { abortEarly:false})
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({});
+    let formIsValid = true;
+    let newErrors = {};
+    try {
       await validationSchema.validate(litigant, { abortEarly: false });
-
-      // Add litigant_type to the payload
-      const postData = {
-        ...litigant,
-        litigant_type: 3, // Add litigant_type=3
-      };
-      const response = await api.post("litigant/create/", postData);
-      if(response.status === 201) {
-        toast.success("Accused Details Added Successfully",{theme:"colored"})
-        setErrors({});
-      }
-    }catch(error){
-      // console.log(error.inner)
-      if(error.inner){
+      addPetitioner(litigant);
+    } catch (error) {
+      // console.log(error);
+      if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {
-            newErrors[err.path] = err.message;
+          newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
+      } else {
+        console.error("Unexpected validation error:", error);
+        toast.error("Validation failed. Please check your input.", { theme: "colored" });
       }
       if (error.response) {
-        toast.error(error.response.data?.message || "An error occurred", {
-          theme: "colored",
-        });
-      } else {
-        console.error("Error:", error);
-        toast.error("An unexpected error occurred", { theme: "colored" });
+        toast.error(error.response, { theme: "colored" });
       }
     }
-  }
+
+    // const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
+    // if (mobileError) {
+    //   newErrors.mobile_number = mobileError;
+    //   formIsValid = false;
+    // }
+
+    
+    const ageError = handleAgeChange({ target: { value: litigant.age } }, setLitigant, litigant);
+    if (ageError) {
+      newErrors.age = ageError;
+      formIsValid = false;
+    }
+
+    const pincodeError = handlePincodeChange({ target: { value: litigant.pincode } }, setLitigant, litigant);
+    if([pincodeError]) {
+      newErrors.pincode = pincodeError;
+      formIsValid = false;
+    }
+
+   // Validate the litigant_name
+   const nameError = handleNameChange({ target: { value: litigant.litigant_name } }, setLitigant, litigant);
+   if (nameError) {
+       newErrors.litigant_name = nameError;
+       formIsValid = false;
+   }
+
+   // Validate the relation_name
+   const relationNameError = handleNameChange({ target: { value: litigant.relation_name } }, setLitigant, litigant);
+   if (relationNameError) {
+       newErrors.relation_name = relationNameError;
+       formIsValid = false;
+   }
+
+   if (!formIsValid) {
+       setErrors(newErrors); // Update the errors state
+   }
+
+   return formIsValid;
+
+  };
+
+  console.log(sessionStorage.getItem('petitioner'))
 
   return (
-    <div className="container-fluid">
+    <>
       <ToastContainer />
+      <form encType='multipart/form-data'>
         { accused.length > 0 && (
           <div className="row">
-            <div className="col-md-4 mb-3">
+            <div className="col-md-4">
                 <div className="form-group">
                     <label htmlFor="litigant">Select petitioner</label><br />
                     <select name="litigant" value={litigant.litigant} className="form-control" onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})} >
@@ -181,7 +285,7 @@ const AccusedDetails = ({addPetitioner}) => {
           <div className="row mt-2">  
             <div className="col-md-3">
               <Form.Group className="mb-3">
-                <Form.Label>{t('name_of_litigant')}<RequiredField /></Form.Label>
+                <Form.Label>{t('petitioner_name')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="litigant_name" 
@@ -268,6 +372,7 @@ const AccusedDetails = ({addPetitioner}) => {
                         <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                       )) }
                     </select>
+                    <div className="invalid-feedback">{ errors.relation }</div>
                   </>  
                   )}
                 </div>
@@ -438,31 +543,66 @@ const AccusedDetails = ({addPetitioner}) => {
                     <option value={n.id} key={index}>{language === 'ta' ? n.nationality_lname : n.nationality_name }</option>
                   ))}
                 </select>
+
               </Form.Group>
             </div>
             <div className="col-md-3">
+              <div className="form-group">
+                <label htmlFor="">{t('identity_proof')}<RequiredField/></label>
+                <select 
+                  name="identity_proof" 
+                  className="form-control"
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
+                  <option value="">{t('alerts.select_proof')}</option>
+                  { proofs.map((p, index) => (
+                    <option key={index} value={p.id}>{ language === 'ta' ? p.proof_lname : p.proof_name}</option>
+                  ))}
+                </select>
+
+              </div>
+            </div>
+            <div className="col-md-3">
               <Form.Group>
-                <Form.Label>{t('country_code')}</Form.Label>
-                <select name="country" className="form-control">
+                <Form.Label>{t('identity_proof_number')}<RequiredField /></Form.Label>
+                <Form.Control
+                  type="text"
+                  name="proof_number"
+                  value={litigant.proof_number}
+                  className={`${errors.proof_number ? 'is-invalid' : ''}`}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                ></Form.Control>
+                <div className="invalid-feedback">{ errors.proof_number }</div>
+              </Form.Group>
+            </div>
+            <div className="col-md-2">
+              <Form.Group>
+                <Form.Label>{t('country_code')}<RequiredField /></Form.Label>
+                <select 
+                  name="country_code" 
+                  className="form-control"
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
                   <option value="">{t('alerts.select_country')}</option>
                   {countries.map((c, index) => (
                     <option key={index} value={c.iso}>{`+(${c.iso})`} {c.country_name}</option>
                   ))}
                 </select>
                 <div className="invalid-feedback">
-                  { errors.mobile_number}
+                  { errors.country_code}
                 </div>
               </Form.Group>
             </div>
             <div className="col-md-3">
               <Form.Group>
-                <Form.Label>{t('mobile_number')}</Form.Label>
+                <Form.Label>{t('mobile_number')}<RequiredField /></Form.Label>
                 <Form.Control
                   type="text"
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
                   onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
+                  // onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -478,20 +618,130 @@ const AccusedDetails = ({addPetitioner}) => {
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
                   onChange={handleChange}
-                  // onBlur={() => handleBlur(litigant, setErrors)}
+                  // onBlur={handleBlur}
                 ></Form.Control>
-                <div className="invalid-feedback">{ errors.email_address }</div>
+                {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
             </div>
-            <div className="col-md-3 mt-4 pt-2">
-            <Button 
-                variant="secondary"
-                onClick={handleSubmit}
-                ><i className="fa fa-plus mr-2"></i>{t('add_litigant')}</Button>
-            </div>
-        </div>
-    </div>
+            { parseInt(petition?.case_type?.id) === 1 && (
+              <>
+                <div className="col-md-3">
+                    <div className="form-group">
+                      <label>{t('custody')}<RequiredField /></label><br />
+                      <div>
+                        <div className="icheck-success d-inline mx-2">
+                          <input 
+                            type="radio" 
+                            name="is_custody" 
+                            id="custodyYes" 
+                            value={litigant.is_custody}
+                            checked={ litigant.is_custody }
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: true})} 
+                          />
+                          <label htmlFor="custodyYes">{t('yes')}</label>
+                        </div>
+                        <div className="icheck-danger d-inline mx-2">
+                          <input 
+                            type="radio" 
+                            id="custodyNo" 
+                            name="is_custody" 
+                            value={litigant.is_custody}
+                            checked={ !litigant.is_custody } 
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: false, prison:''})}
+                          />
+                          <label htmlFor="custodyNo">{t('no')}</label>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div className="col-md-3 mt-2">
+                    <Form.Group>
+                      <Form.Label>{t('custody_days')}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="custody_days"
+                        className={`${errors.custody_days ? 'is-invalid' : ''}`}
+                        disabled={ !litigant.is_custody }
+                        value={litigant.custody_days}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
+                      ></Form.Control>
+                      <div className="invalid-feedback">
+                        {errors.custody_days}
+                      </div>
+                    </Form.Group>
+                </div>
+                <div className="col-md-6 mt-2">
+                    <div className="form-group">
+                      <label htmlFor="prison">{t('prison_name')}</label><br />
+                      <select 
+                        name="prison" 
+                        id="prison" 
+                        className={`form-control ${errors.prison ? 'is-invalid' : ''}`}
+                        disabled={ !litigant.is_custody } 
+                        value={litigant.prison}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value })}
+                      >
+                        <option value="">{t('alerts.select_prison')}</option>
+                        { prisons.map((item, index) => (
+                          <option value={item.prison_code} key={index}>{language === 'ta' ? item.prison_lname : item.prison_name}</option>
+                        ))}
+                      </select>
+                      <div className="invalid-feedback">{ errors.prison}</div>
+                    </div>
+                </div>  
+              </>
+            )}
+            { console.log(location.pathname)}
+              <div className="col-md-4 mt-2">
+                <div className="form-group">
+                  <label>{t('accused_surrender')}<RequiredField /></label><br />
+                  <div>
+                    <div className="icheck-success d-inline mx-2">
+                      <input 
+                        type="radio" 
+                        id="surrenderedYes" 
+                        name="is_surrendered" 
+                        value={litigant.is_surrendered}
+                        checked={ litigant.is_surrendered }
+                        onChange={(e) => setLitigant({...litigant, is_surrendered: true })}
+                      />
+                      <label htmlFor="surrenderedYes">{t('yes')}</label>
+                    </div>
+                    <div className="icheck-danger d-inline mx-2">
+                      <input 
+                        type="radio" 
+                        id="surrenderedNo" 
+                        name="is_surrendered" 
+                        value={litigant.is_surrendered}
+                        checked={ !litigant.is_surrendered }
+                        onChange={(e) => setLitigant({...litigant, is_surrendered: false })}
+                      />
+                      <label htmlFor="surrenderedNo">{t('no')}</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* <div className="col-md-4">
+                <Form.Group>
+                  <Form.Label>Identification marks of Accused<RequiredField /></Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="identification_marks"
+                    value={litigant.identification_marks}
+                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                  ></Form.Control>
+                </Form.Group>
+              </div> */}
+              <div className="col-md-3 my-2">
+                <Button 
+                  variant="secondary"
+                  onClick={handleSubmit}
+                  ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
+              </div>
+          </div>
+          </form>
+    </>
   )
 }
 
-export default AccusedDetails
+export default PetitionerForm

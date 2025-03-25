@@ -11,8 +11,9 @@ import './style.css'
 import { SeatContext } from 'contexts/SeatContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { Link } from 'react-router-dom'
+import { MasterContext } from 'contexts/MasterContext'
 
 const FilingSearch = () => {
 
@@ -26,10 +27,15 @@ const FilingSearch = () => {
         filing_year:'',
     })
     const {t} = useTranslation()
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {seats} = useContext(SeatContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
+    // const {seats} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
+    const {masters:{
+        states,
+        districts, 
+        seats
+    }} = useContext(MasterContext)
     const {language} = useContext(LanguageContext)
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState({})

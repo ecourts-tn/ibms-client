@@ -11,10 +11,10 @@ import FormLabel from 'react-bootstrap/FormLabel'
 import Button from '@mui/material/Button'
 import Document from 'components/police/Document';
 import FIRDetails from 'components/police/FIRDetails';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import MaterialDetails from 'components/police/MaterialDetails';
 import VehicleDetails from 'components/police/VehicleDetails';
-import { handleMobileChange, handleNumberChange, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, handleNumberChange, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { LanguageContext } from 'contexts/LanguageContex';

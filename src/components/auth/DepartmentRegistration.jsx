@@ -12,7 +12,7 @@ import api from 'api';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 
 
 import { StateContext } from 'contexts/StateContext'

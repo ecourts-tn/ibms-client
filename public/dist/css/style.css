@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @font-face {
     font-family: 'Marutham';
     src: url('../fonts/marutham.ttf') format('truetype');
@@ -8,15 +11,15 @@
 :lang(ta) .nav-link, 
 :lang(ta) .dropdown-menu li a 
 :lang(ta) body,
-.content-wrapper
+:lang(ta) .content-wrapper
 {
-font-family: 'Marutham', sans-serif; 
-font-size:16px;
+font-family: 'Marutham', 'Open Sans'; 
+font-size:14px;
 }
 /* custom.css */
 body,
 .content-wrapper {
-    font-family: sans-serif !important; /* Replace with your preferred font */
+    font-family: 'Open Sans' !important; /* Replace with your preferred font */
     font-size: 14px!important;
     line-height: 1.7!important;
 }

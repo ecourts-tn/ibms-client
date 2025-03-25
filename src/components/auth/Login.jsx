@@ -11,7 +11,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import LoginIcon from '@mui/icons-material/LockOpen';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
@@ -23,7 +23,7 @@ import { MasterContext } from 'contexts/MasterContext';
 
 const Login = () => {
   // const { groups}     = useContext(GroupContext)
-  const { masters: {groups}} = useContext(MasterContext)
+  const { masters: {groups, departments}} = useContext(MasterContext)
   const { language }  = useContext(LanguageContext);
   const { t }         = useTranslation();
   const { login }     = useContext(AuthContext);
@@ -51,7 +51,9 @@ const Login = () => {
 
   const fetchCaptcha = async () => {
     try {
-        const response = await api.get("auth/captcha/generate/")
+        const response = await api.get("auth/captcha/generate/", {
+          withCredentials:true
+        })
 
         if (response.status === 200) {
             setCaptchaText(response.data.captcha);
@@ -201,6 +203,21 @@ const Login = () => {
                         ))}
                     </select>
                   </div>
+                  {/* <div className="form-group">
+                    <label htmlFor="">{t('usertype')}</label>
+                    <select
+                      name="usertype"
+                      className="form-control"
+                      onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                    >
+                      <option value="">{t('alerts.select_usertype')}</option>
+                      {departments.map((d, index) => (
+                          <option key={index} value={d.id}>
+                            {language === 'ta' ? d.department_lname : d.department_name}
+                          </option>
+                        ))}
+                    </select>
+                  </div> */}
                 </div>
               )}
               <div className="col-md-12">

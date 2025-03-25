@@ -15,7 +15,7 @@ import { handleMobileChange, validateEmail, handleNameChange } from 'components/
 import { MasterContext } from 'contexts/MasterContext'
 
 
-const Respondent = ({addRespondent, selectedRespondent}) => {
+const RespondentForm = ({addRespondent, selectedRespondent}) => {
     // const {states} = useContext(StateContext)
     // const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
@@ -313,4 +313,4 @@ const Respondent = ({addRespondent, selectedRespondent}) => {
     )
 }
 
-export default Respondent
+export default RespondentForm
