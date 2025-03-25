@@ -1,0 +1,278 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+@font-face {
+    font-family: 'Marutham';
+    src: url('../fonts/marutham.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+:lang(ta), 
+:lang(ta) .nav-link, 
+:lang(ta) .dropdown-menu li a 
+:lang(ta) body,
+:lang(ta) .content-wrapper
+{
+font-family: 'Marutham', 'Open Sans'; 
+font-size:14px;
+}
+/* custom.css */
+body,
+.content-wrapper {
+    font-family: 'Open Sans' !important; /* Replace with your preferred font */
+    font-size: 14px!important;
+    line-height: 1.7!important;
+}
+
+/* javascript disabled text */
+.no-js-message {
+     font-size: 1.5em;
+     color: #c0392b;
+     text-align: center;
+     font-weight: bold; /* Makes the text bold */
+     position: absolute; /* Allows centering */
+     top: 50%; /* Moves it vertically */
+     left: 50%; /* Moves it horizontally */
+     transform: translate(-50%, -50%); /* Centers the element */
+     padding: 20px;
+}
+/* header & navbar */
+.primary-navbar{
+    background-color: #074280;
+    padding-bottom: 2px!important;
+    padding-top:0px!important;
+}
+
+.primary-navbar .navbar-toggler{
+    color:#FAFAFA!important;
+}
+.primary-navbar .nav-link{
+    color: white!important;
+    font-size: 14px;
+    padding-left:6px!important;
+    padding-right:6px!important;
+    text-decoration: none;
+}
+.primary-navbar .navbar-brand{
+    color:#FAFAFA!important;
+    font-size:20px;
+}
+.navbar-nav .dropdown-menu a:hover{
+    background-color: #FFAB1F;
+    color:#FAFAFA;
+}
+.navbar-nav .dropdown-menu{
+    background-color: #0f4676;
+    padding-top:0px;
+    padding-bottom:0px;
+    padding:0px !important;
+    border-radius: 0px;
+    min-width:250px;
+}
+.dropdown-menu a.nav-link{
+    color:#FAFAFA!important;
+    padding:8px 8px;
+    border-bottom:1px solid #FAFAFA;
+}
+.dropdown-menu a > a {
+    border:none
+}
+.secondary-navbar{
+    border-bottom: 1px solid #074280!important;
+    background-color: #e1e5e6bd;
+}
+.secondary-navbar .navbar-toggler{
+    color:#f0ebeb!important;
+}
+.secondary-navbar .nav-link{
+    color:  #074280;
+    font-size: 15px;
+    padding-left:10px!important;
+    padding-right:10px!important;
+    text-decoration: none;
+    font-weight: 500;
+}
+.secondary-navbar .dropdown{
+    margin:0; 
+}
+.secondary-navbar a.dropdown-item{
+    padding:10px 5px;
+    min-width: 250px;
+}
+.secondary-navbar a.dropdown-item {
+    text-decoration: none;
+    padding:10px;
+    color:#ece7e7;
+}
+
+.sub-footer h6{
+    color:orange;
+    font-weight:bold;
+    font-size:18px;
+    text-decoration: underline;
+    padding-bottom:10px;
+}
+
+.important-links > li, .quick-links > li{
+    list-style-type: none;
+}
+
+.important-links > li > a, .quick-links > li > a{
+    color:#FAFAFA;
+    text-decoration: none;
+}
+.section-heading{
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-size:24px;
+}
+.registration-card{
+    border-style: none!important;
+    box-shadow: none;
+}
+.registration-card .card-header{
+    background-color: inherit;
+    border-bottom: none;
+    text-align: center;
+    color:rgba(233, 9, 9)
+}
+.Toastify__toast-container{
+    width:500px;
+}
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm {
+      min-width: 1400px;
+    }
+}
+.registration-alert{
+    font-size: 18px!important;
+    font-weight:bold!important;
+}
+legend > span {
+    font-weight:400!important
+}
+
+.profile .card{
+    border:none;
+    border-radius:0px;
+    box-shadow: none;
+}
+
+.navbar-toggler {
+    background-color: #074280; /* Background color */
+    border: px solid #ffffff; /* Border color and width */
+    padding: 1px 10px; /* Adjust padding */
+    border-radius: 4px; /* Rounded corners */
+}
+.navbar-toggler-icon {
+    width: 1.5em;  /* Adjust width */
+    height: 1.5em; /* Adjust height */
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+.navbar-toggler:hover {
+    background-color: #074280; /* Hover background */
+    border-color: #adb5bd; /* Hover border */
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Focus shadow */
+    outline: none; /* Remove outline */
+}
+.fa, .fas, .far, .fal, .fab {
+    font-family: "Font Awesome 5 Free" !important; /* Or "Font Awesome 5 Brands" for brand icons */
+    font-weight: 900; /* Or lighter if needed */
+  }
+.resize-icons .btn{
+    color:#FAFAFA;
+}
+.resize-icons .btn:hover{
+    background-color: inherit;
+}
+
+.bs-stepper{
+    margin-bottom: 20px;
+}
+.bs-stepper .step-trigger{
+    padding:0px 2px!important
+}
+.step:hover{
+    background-color: inherit!important;
+}
+
+.error > li{
+    list-style-type: none;
+    color:  #cb4335;
+    font-weight: bold;
+    margin:5px 0px;
+}
+
+/* Login  */
+.img-captcha{
+    height:40px;
+    width:100%;
+    border: 1px solid grey;
+}
+
+.btn-captcha{
+    height:40px;
+    border-radius:0px;
+}
+.captcha-text{
+    background-image: url('../../images/captcha.jpeg'); /* Path to your image */
+    background-size: cover; /* Ensure the image covers the entire field */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    font-size: 22px!important;
+    font-weight: bold!important;
+    /* background: #ffffff; */
+    color: #c73333!important;
+    height:40px!important;
+    letter-spacing: 2px;
+    text-shadow: 3px 4px 3px #fffdfd
+}
+
+/* Loader */
+.loading-overlay {
+    position: fixed; /* Ensures it covers the entire page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Keeps it above other elements */
+}
+  
+.loading-spinner {
+    width: 150px; /* Adjust size as needed */
+    height: 150px;
+}
+
+.sensitive-case{
+    font-weight: bold;
+}
+
+.list-group-menu > .list-group-item{
+    background-color:#076280;
+    color:#FAFAFA!important;
+    border-top:1px solid #FAFAFA!important;
+}
+
+table.table td, table.table th {
+    border: 1px solid  #2471a3!important;
+  
+}
+tr.bg-info, .bg-info{
+    background-color:  #2471a3;
+}
+.profile img{
+    height:180px;
+    width: 180px;
+    margin-top:20px;
+}
+.benefits li{
+    text-align: justify!important;
+}
