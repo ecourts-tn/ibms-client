@@ -1,17 +1,13 @@
-import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { StateContext } from 'contexts/StateContext'
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
-import { SeatContext } from 'contexts/SeatContext'
 import * as Yup from 'yup'
 import Loading from 'components/utils/Loading'
 import api from 'api'
 import { ToastContainer, toast } from 'react-toastify'
-import { CaseTypeContext } from 'contexts/CaseTypeContext'
 import { MasterContext } from 'contexts/MasterContext'
 
 const PetitionSearch = ({cases, mainNumber, setMainNumber}) => {

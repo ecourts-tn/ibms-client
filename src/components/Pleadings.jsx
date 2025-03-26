@@ -1,143 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
-import 'bs-stepper/dist/css/bs-stepper.min.css';
 import api from 'api';
-import Button from '@mui/material/Button'
+import React, { useState, useEffect, useContext } from 'react';
+import InitialInput from 'components/filing/common/InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
-import Editor  from 'react-simple-wysiwyg';
-import * as Yup from 'yup'
-import { useTranslation } from 'react-i18next';
 import PetitionSearch from 'components/utils/PetitionSearch';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
+import Loading from 'components/utils/Loading';
+import { MasterContext } from 'contexts/MasterContext';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const Pleadings = () => {
-
-    const[petition, setPetition] = useState({})
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
+    const {masters:{casetypes}} = useContext(MasterContext)
+    const {setEfileNumber} = useContext(BaseContext)
+    const[bail, setBail] = useState({})
+    const[mainNumber, setMainNumber] = useState('')
+    const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[respondents, setRespondents] = useState([])
-    const[advocates, setAdvocates]     = useState([])
-    const[eFileNumber, seteFileNumber] = useState('')
-    const[errors, setErrors] = useState({})
-    const {t} = useTranslation()
+    const[cases, setCases] = useState([])
+    const[loading, setLoading] = useState(false)
 
-    const initialState = {
-        efile_no: '',
-        case_no: '',
-        court_type: '',
-        bench_type:'',
+    const[petition, setPetition] = useState({
+        judiciary: '',
+        bench_type: '',
         state: '',
         district:'',
         establishment: '',
-        court:'',
+        court: '',
         case_type: '',
         bail_type: '',
-        complaint_type:'',
+        complaint_type: '',
         crime_registered: '',
-        crime_state: null,
-        crime_district: null,
-        police_station:null,
-        crime_number: null,
-        crime_year: null,
-        case_state: null,
-        case_district: null,
-        case_establishment: null,
-        case_court: null,
-        case_case_type:  null,
-        case_number: null,
-        case_year: null,
-        cnr_number: null,
-        date_of_occurrence:'',
-        fir_date_time:'',
-        place_of_occurrence:'',
-        investigation_officer:'',
-        complaintant_name:'',
-        gist_of_fir:'',
-        gist_in_local:'',
-        grounds:'',
-        is_details_correct: true,
-        remarks:'',
-        is_previous_pending: false,
-        advocate_name:'',
-        enrolment_number: null,
-        advocate_mobile: '',
-        advocate_email:'',
-        prev_case_number: '',
-        prev_case_year: '',
-        prev_case_status:'',
-        prev_disposal_date:'',
-        prev_proceedings:'',
-        prev_is_correct:false,
-        prev_remarks:'',
-        prev_is_pending:false,
-        vakalath: '',
-        supporting_document:''
-        
-    }
-
-    const[form, setForm] = useState(initialState);
-    const[cases, setCases] = useState([])
-    const[searchPetition, setSearchPetition] = useState(1)
-    const[searchForm, setSearchForm] = useState({
-        case_type:null,
-        case_number: undefined,
-        case_year: undefined
+        main_petition: ''
     })
-    const searchSchema = Yup.object({
-        case_type: Yup.string().required("Please select the case type"),
-        case_number: Yup.number().required("Please enter case number"),
-        case_year: Yup.number().required("Please enter the case year")
-    })
-
-    const[searchErrors, setSearchErrors] = useState({})
-
-    // const stepperRef = useRef(null);
-
-    // useEffect(() => {
-    //     stepperRef.current = new Stepper(document.querySelector('#stepper1'), {
-    //     linear: false,
-    //     animation: true,
-    //     });
-    // }, []);
-
-    const[otp, setOtp] = useState('')
-
-    const[mobileOtp, setMobileOtp] = useState(false)
-    const[mobileVerified, setMobileVerified] = useState(false)
-
-    const sendMobileOTP = () => {
-        // if(otp === ''){
-        //     toast.error("Please enter valid mobile number",{
-        //         theme:"colored"
-        //     })
-        // }else{
-            // setMobileLoading(true)
-        if(mobileOtp){
-            toast.success("OTP already verified successfully.", {
-                theme: "colored"
-            })
-            return
-        }
-            toast.success("OTP has been sent your mobile number",{
-                theme:"colored"
-            })
-            setMobileOtp(true)
-        // }
-    }
-
-    const verifyMobile = (otp) => {
-        if(parseInt(otp) === 123456){
-            toast.success("Mobile otp verified successfully",{
-                theme:"colored"
-            })
-            setMobileVerified(true)
-        }else{
-            toast.error("Invalid OTP. Please enter valid OTP",{
-                theme:"colored"
-            })
-            setMobileVerified(false)
-            setMobileOtp(true)
-        }
-    }
-
 
     useEffect(() => {
         async function fetchData(){
@@ -155,169 +53,116 @@ const Pleadings = () => {
 
 
     useEffect(() => {
-        const fetchDetails = async() => {
+        const fetchPetitionDetail = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:form.efile_no}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
+                    const {petition:main, litigants} = response.data
                     console.log(response.data)
-                    setPetition(response.data.petition)
-                    setPetitioners(response.data.litigant.filter(l=>l.litigant_type===1))
-                    setRespondents(response.data.litigant.filter(l=>l.litigant_type===2))
-                    setAdvocates(response.data.advocate)
+                    setIsPetition(true)
+                    setBail(main)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
+                    setPetition((prevPetition) => ({
+                        ...prevPetition,
+                        judiciary: main.judiciary?.id,
+                        bench_type: main.bench_type ? main.bench_type.bench_code : null,
+                        state: main.state ? main.state.state_code : null,
+                        district: main.district ? main.district.district_code : null,
+                        establishment: main.establishment ? main.establishment.establishment_code : null,
+                        court: main.court ? main.court.court_code : null,
+                        bail_type: main.bail_type ? main.bail_type.type_code : null,
+                        complaint_type: main.complaint_type ? main.complaint_type.id : null,
+                        crime_registered: main.crime_registered ? main.crime_registered.id : null,
+                        main_petition: main.efile_number,
+                    }));
                 }
             }catch(error){
                 console.log(error)
             }
         }
-        if(form.efile_no !== ''){
-            fetchDetails()
+        if(mainNumber){
+            setEfileNumber(mainNumber)
+            fetchPetitionDetail();
         }
-    },[form.efile_no])
+    },[mainNumber])
 
-
-    const handleSearch = async(e) => {
-        e.preventDefault()
-        try{
-            // await searchSchema.validate(searchForm, { abortEarly:false})
-            const response = await api.get("api/bail/petition/detail/", { params: searchForm})
-            if(response.status === 200){
-                setPetition(response.data.petition)
-                setPetitioners(response.data.petitioner)
-                setRespondents(response.data.respondent)
-                setAdvocates(response.data.advocate)
-                setForm({...form, cino:response.data.petition.cino})
-            }
-            if(response.status === 404){
-                toast.error("Petition details not found",{
-                    theme:"colored"
-                })
-            }
-        }catch(error){
-            const newError = {}
-            if(error.inner){
-                error.inner.forEach((err) => {
-                    newError[err.path] = err.message
-                });
-                setSearchErrors(newError)
-            }
-            if(error){
-                toast.error(error.response.message,{
-                    theme:"colored"
-                })
-            }
-        }
-    }
-
-    const petitionerOptions = petitioners.map((petitioner, index) => {
-        return {
-            value : petitioner.petitioner_id,
-            label : petitioner.petitioner_name
-        }
-    })
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-    }
 
     return(
-        <React.Fragment>
+        <>
             <ToastContainer />
-            <div className="container-fluid" style={{minHeight:"500px"}}>
+            { loading && <Loading />}
+            <div className="container-fluid mt-3">
+                <PetitionSearch 
+                    cases={cases}
+                    mainNumber={mainNumber}
+                    setMainNumber={setMainNumber}
+                />
                 <div className="row">
                     <div className="col-md-12">
-                        <nav aria-label="breadcrumb" className="mt-2 mb-1">
-                            <ol className="breadcrumb">
-                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
-                                <li className="breadcrumb-item"><a href="#">{t('filing')}</a></li>
-                                <li className="breadcrumb-item active" aria-current="page">{t('pleadings')}</li>
-                            </ol>
-                        </nav>
-                    </div>
-                </div>
-                <div className="row mt-2">
-                    <div className="col-md-10 offset-md-1">
-                        <PetitionSearch 
-                            cases={cases}
-                            eFileNumber={eFileNumber}
-                            seteFileNumber={seteFileNumber}
-                        />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="container-fluid mt-2">
-                        { form.cino !== '' && (
-                            <>
-                            { Object.keys(petition).length > 0 && (
-                                <>  
-                                    <div className="row">
-                                        <div className="col-md-8 offset-md-2">
-                                            <p>Next Hearing : 19-09-2024</p>
-                                            <p>Purpose: </p>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-8 offset-md-2">
-                                            <div className="card">
-                                                <div className="card-header bg-navy">
-                                                    <strong>Pleading / Written Arguments</strong>
-                                                </div>
-                                                <div className="card-body p-1">
-                                                    <Editor 
-                                                        value={form.ground} 
-                                                        onChange={(e) => setForm({...form, ground: e.target.value })} 
-                                                    />
-                                                    <div className="invalid-feedback">
-                                                        { errors.ground }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-8 offset-md-2">
-                                            <div className="row">
-                                                <div className="col-md-12">
-                                                    {/* <Document /> */}
-                                                </div>
-                                                <div className="col-md-5"> 
-                                                    <div className="form-group">
-                                                        <label htmlFor="vakkalat">Document Name</label>
-                                                        <input type="text" className="form-control" />
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-4">
-                                                    <label htmlFor="">Document</label>
-                                                    <input type="file" className="form-control" />
-                                                </div>
-                                                <div className="col-md-3 pt-4 mt-2">
-                                                    <Button
-                                                        variant='contained'
-                                                        color="primary"
-                                                    >Add Document</Button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-12 mb-3">
-                                            <div className="d-flex justify-content-center">
-                                                <Button
-                                                    variant="contained"
-                                                    color="success"
-                                                    onClick={handleSubmit}
-                                                >
-                                                    Submit
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </>
-                            )}
-                            </>
+                        { isPetition && (
+                            <React.Fragment>
+                                <InitialInput petition={bail} />
+                                <table className="table table-bordered table-striped">
+                                    <thead>
+                                        <tr className="bg-navy">
+                                            <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th className="text-center">#</th>
+                                            <th>{t('petitioner_name')}</th>
+                                            <th>{t('father_name')}</th>
+                                            <th>{t('age')}</th>
+                                            <th>{t('accused_rank')}</th>
+                                            <th>{t('act')}</th>
+                                            <th>{t('section')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { petitioners.map((petitioner, index) => (
+                                        <tr key={index}>
+                                            <td>{index+1}</td>
+                                            <td>{petitioner.litigant_name}</td>
+                                            <td>{petitioner.relation_name}</td>
+                                            <td>{petitioner.age}</td>
+                                            <td>{petitioner.rank}</td>
+                                            <td>{ petitioner.act}</td>
+                                            <td>{petitioner.section}</td>
+                                        </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                                <table className="table table-bordered table-striped">
+                                    <thead>
+                                        <tr className="bg-navy">
+                                            <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <th className='text-center'>#</th>
+                                            <th>{t('respondent_name')}</th>
+                                            <th>{t('designation')}</th>
+                                            <th>{t('police_station')}</th>
+                                            <th>{t('address')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { respondents.map((res, index) => (
+                                            <tr key={index}>
+                                                <td>{index+1}</td>
+                                                <td>{res.litigant_name}</td>
+                                                <td>{ language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</td>
+                                                <td>{ language === 'ta' ? res.police_station?.station_lname : res.police_station?.station_name }</td>
+                                                <td>{res.address}, { language === 'ta' ? res.district.district_lname : res.district.district_name }</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </React.Fragment>
                         )}
                     </div>
                 </div>
             </div>
-        </React.Fragment>
+        </>
     )
 }
 

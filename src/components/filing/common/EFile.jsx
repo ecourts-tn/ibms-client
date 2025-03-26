@@ -9,6 +9,7 @@ import EFileDetails from 'components/filing/common/EFileDetails';
 import { ModelClose } from 'utils';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const EFile = () => {
@@ -22,6 +23,7 @@ const EFile = () => {
   const { t } = useTranslation();
   const {language} = useContext(LanguageContext)
   const [checkboxStates, setCheckboxStates] = useState([]);
+  const {efileNumber, clearEfileNumber} = useContext(BaseContext)
 
   useEffect(() => {
     const fetchDeclarations = async() => {
@@ -68,21 +70,20 @@ const EFile = () => {
   };
 
 const handleSubmit = async () => {
-    const efile_no = sessionStorage.getItem("efile_no");
-    if (!efile_no) {
+    if (!efileNumber) {
       toast.error("Something went wrong! Please verify your data", {theme:"colored"})
       return;
     }
     try {
       setLoading(true)
-      const response = await api.post("case/filing/final-submit/", { efile_no });
+      const response = await api.post("case/filing/final-submit/", { efile_no:efileNumber });
       if (response.status === 200) {
         try {
-          const result = await api.put(`case/filing/final-submit/`, {efile_no});
+          const result = await api.put(`case/filing/final-submit/`, {efile_no:efileNumber});
           if (result.status === 200) {
             toast.success("Petition filed successfully", { theme: "colored" });
           }
-          sessionStorage.removeItem("efile_no");
+          clearEfileNumber()
           setTimeout(() => {
             navigate("/filing/dashboard");
           }, 500)

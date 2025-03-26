@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import api from '../../../api'
+// import GroundsList from './GroundsList'
+// import GroundsForm from './GroundsForm'
+import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { toast, ToastContainer } from 'react-toastify'
 import Loading from 'components/utils/Loading'
@@ -11,11 +13,11 @@ import { BaseContext } from 'contexts/BaseContext'
 
 const Grounds = () => {
 
-    const {efileNumber} = useContext(BaseContext)
     const[grounds, setGrounds] = useState([])
     const[isUpdate, setIsUpdate] = useState(false)
     const[selectedGround, setSelectedGround] = useState(null)
     const[loading, setLoading] = useState(false)
+    const {efileNumber} = useContext(BaseContext)
     const {t} = useTranslation()
     
     useEffect(() => {
@@ -29,9 +31,7 @@ const Grounds = () => {
                 console.error(error)
             }
         }
-        if(efileNumber){
-            fecthGrounds()
-        }
+        fecthGrounds()
     }, [])
 
     const addGround = async (ground) => {
@@ -207,11 +207,11 @@ const GroundsForm = ({ addGround, selectedGround }) => {
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         }
     };
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();  // Prevent the default behavior (line break)
-        }
-      };
+    // const handleKeyDown = (e) => {
+    //     if (e.key === 'Enter') {
+    //       e.preventDefault();  // Prevent the default behavior (line break)
+    //     }
+    //   };
 
     return (
         <React.Fragment>
@@ -221,7 +221,7 @@ const GroundsForm = ({ addGround, selectedGround }) => {
                     value={ground.description}
                     onChange={handleEditorChange}  // Handle text change
                     onPaste={handlePaste}  // Handle paste event
-                    onKeyDown={handleKeyDown} 
+                    // onKeyDown={handleKeyDown} 
                     style={{ minHeight: '300px', width: '100%' }}  // Added width to ensure it's full-width
                 />
                 {/* Display remaining characters */}

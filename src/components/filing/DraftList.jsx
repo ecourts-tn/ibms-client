@@ -27,7 +27,7 @@ const DraftList = () => {
     const {language} = useContext(LanguageContext)
     const[loading, setLoading] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
-    const {setEfileNumber} = useContext(BaseContext)
+    const {setEfileNumber, clearEfileNumber} = useContext(BaseContext)
     
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1)
@@ -122,6 +122,7 @@ const DraftList = () => {
                                 theme:"colored"
                             })
                         }
+                        clearEfileNumber()
                         setTimeout(() => {
                             navigate('/filing/dashboard')
                         }, 2000)
@@ -267,8 +268,8 @@ const DraftList = () => {
                                         </td>
                                         <td>
                                         {item.document.map((d, idx) => (
-                                            <a key={idx} onClick={() => handleShow(d)} href="#">
-                                            {language === "ta" ? d.title?.document_lname || null : d.title?.document_name || null}
+                                            <a key={idx} onClick={() => handleShow(d)} href="#" className='d-block'>
+                                                {language === "ta" ? d.title?.document_lname || null : d.title?.document_name || null}
                                             </a>
                                         ))}
                                         </td>

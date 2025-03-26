@@ -3,21 +3,21 @@ import { CreateMarkup } from 'utils'
 import React, {useState, useEffect, useContext} from 'react'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
+import { BaseContext } from 'contexts/BaseContext'
 
 const EFileDetails = () => {
 
     const[petition, setPetition] = useState({})
     const[litigants, setLitigants] = useState([])
-    const[respondents, setRespondents] = useState([])
     const[grounds, setGrounds] = useState([])
     const {language} = useContext(LanguageContext)
+    const {efileNumber} = useContext(BaseContext)
     const {t} = useTranslation()
 
     useEffect(() => {
-        async function fetchData(){
+        async function fetchPetitionDetail(){
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
                 if(response.status === 200){
                     setPetition(response.data.petition)
                     setLitigants(response.data.litigants)
@@ -27,8 +27,10 @@ const EFileDetails = () => {
                 console.log(error)
             }
         }
-        fetchData();
-    }, [])
+        if(efileNumber){
+            fetchPetitionDetail();
+        }
+    }, [efileNumber])
 
     return (
         <>
