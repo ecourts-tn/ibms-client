@@ -7,27 +7,28 @@ import { RequiredField } from 'utils';
 import api from 'api';
 import * as Yup from 'yup'
 import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
-import { ProofContext } from 'contexts/ProofContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { CountryContext } from 'contexts/CountryContext';
-import { RelationContext } from 'contexts/RelationContext';
 import { useTranslation } from 'react-i18next';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
+import { MasterContext } from 'contexts/MasterContext';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 
 const Petitioner = ({addPetitioner}) => {
 
   const {efile_no, setEfileNo, fir, accused} = useContext(BaseContext)
-  const {states}      = useContext(StateContext)
-  const {districts}   = useContext(DistrictContext)
-  const {proofs}      = useContext(ProofContext)
-  const {taluks}      = useContext(TalukContext)
-  const {countries}   = useContext(CountryContext)
-  const {relations}   = useContext(RelationContext)
+  const {masters: {
+    states, 
+    districts, 
+    proofs, 
+    taluks, 
+    countries, 
+    relations, 
+    genders,
+    nationalities
+  }} = useContext(MasterContext)
   const {t} = useTranslation()
+  const {language} = useContext(LanguageContext)
 
   const[alternateAddress, setAlternateAddress] = useState(false)
   const initialState = {
@@ -68,74 +69,11 @@ const Petitioner = ({addPetitioner}) => {
     relation: Yup.string().required(),
     relation_name: Yup.string().required(),
     age: Yup.number().required(),
-    // rank: Yup.string().required(),
     gender: Yup.string().required(),
-    // address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required"),
     proof_number: Yup.string().required("Identify proof number is required"),
-    // act: Yup.string().required(),
-    // section: Yup.string().required(),
-    // address: Yup.string().required(),
-    // prison: Yup.string().when("is_custody", (is_custody, schema) => {
-    //   if(is_custody){
-    //       return schema.required("Please select the prison")
-    //   }
-    // }),
-  //   custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
-  //     if(is_custody){
-  //         return schema.required()
-  //     }
-  // }),
+
   })
-
-  // useEffect(() => {
-  //   const fetchProofs = async() => {
-  //     const response = await api.get("base/proof/")
-  //     if(response.status===200){
-  //       setProofs(response.data)
-  //     }
-  //   }
-  //   fetchProofs()
-  // },[])
-
-  // useEffect(() => {
-  //   const fetchCountry = async() => {
-  //     const response = await api.get("base/country/")
-  //     if(response.status===200){
-  //       setCountry(response.data)
-  //     }
-  //   }
-  //   fetchCountry()
-  // },[])
-
-
-  // useEffect(() => {
-  //   if(stateStatus === 'idle'){
-  //     dispatch(getStates())
-  //   }
-  // },[stateStatus, dispatch])
-  
-  // useEffect(() => {
-  //   if(litigant.state !== ''){
-  //     dispatch(getDistrictByStateCode(litigant.state))
-  //   }
-  // },[litigant.state, dispatch])
-
-  // useEffect(() => {
-  //   if(litigant.district !== ''){
-  //     dispatch(getTalukByDistrictCode(litigant.district))
-  //   }
-  // },[litigant.district, dispatch])
-
-  // useEffect(() => {
-  //   if(litigant.is_custody){
-  //     dispatch(getPrisons())
-  //   }
-  // },[litigant.is_custody, dispatch])
-
-  // useEffect(() => {
-  //   dispatch(getRelations())
-  // }, [dispatch])
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -211,10 +149,10 @@ const Petitioner = ({addPetitioner}) => {
   }
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <ToastContainer />
         <div className="row mt-2">  
-            <div className="col-md-3">
+            <div className="col-md-4">
               <Form.Group className="mb-3">
                 <Form.Label>{t('petitioner_name')}<RequiredField /></Form.Label>
                 <Form.Control
@@ -222,7 +160,6 @@ const Petitioner = ({addPetitioner}) => {
                   name="litigant_name" 
                   className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                   value={litigant.litigant_name} 
-                  readOnly={litigant.litigant !== 'o' ? 'readOnly' : false }
                   onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
                 ></Form.Control>
                 <div className="invalid-feedback">{ errors.litigant_name }</div>
@@ -236,12 +173,12 @@ const Petitioner = ({addPetitioner}) => {
                     value={litigant.gender} 
                     className="form-control"
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
+                >
+                  <option value="">{t('alerts.select_gender')}</option>
+                  { genders.map((g, index) => (
+                    <option value={g.name} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                  ))}
+                </select>
               </Form.Group>
             </div>
             <div className="col-md-2">
@@ -258,25 +195,25 @@ const Petitioner = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.age }</div>
               </Form.Group>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-4">
                 <div className="form-group mb-3">
                   <label htmlFor="relation">{t('relationship_type')}<RequiredField /></label><br />
-                    <select 
+                  <select 
                       name="relation" 
                       id="relation" 
                       className={`form-control ${errors.relation ? 'is-invalid' : ''}`}
                       value={litigant.relation}
                       onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                       >
-                      <option value="">Select parantage</option>
+                      <option value="">{t('alerts.select_parantage')}</option>
                       { relations.map((item, index) => (
-                        <option key={index} value={item.relation_name}>{ item.relation_name }</option>
+                        <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                       )) }
-                    </select>
-                    <div className="invalid-feedback">{ errors.relation }</div>
+                  </select>
+                  <div className="invalid-feedback">{ errors.relation }</div>
                 </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-4">
               <Form.Group className="mb-3">
                 <Form.Label>{t('relationship_name')}<RequiredField /></Form.Label>
                 <Form.Control
@@ -290,9 +227,6 @@ const Petitioner = ({addPetitioner}) => {
                 <div className="invalid-feedback">{ errors.relation_name }</div>
               </Form.Group>
             </div>
-        </div>
-          { alternateAddress && (
-          <div className="row">
             <div className="col-md-3">
                 <div className="form-group">
                   <label htmlFor="state">{t('state')}</label><br />
@@ -303,9 +237,9 @@ const Petitioner = ({addPetitioner}) => {
                     value={litigant.state}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select state</option>
+                    <option value="">{t('alerts.select_state')}</option>
                     { states.map((item, index) => (
-                      <option value={item.state_code} key={index}>{item.state_name}</option>
+                      <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                     ))}
                   </select>
                 </div>
@@ -320,9 +254,9 @@ const Petitioner = ({addPetitioner}) => {
                     value={litigant.district}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select District</option>
+                    <option value="">{t('alerts.select_district')}</option>
                     { districts.filter(district=>parseInt(district.state)===parseInt(litigant.state)).map((item, index) => (
-                      <option value={item.district_code} key={index}>{item.district_name}</option>
+                      <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                     ))}
                   </select>
                 </div>
@@ -337,12 +271,24 @@ const Petitioner = ({addPetitioner}) => {
                     value={litigant.taluk}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select Taluk</option>
-                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.taluk)).map((item, index) => (
-                      <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
+                    <option value="">{t('alerts.select_taluk')}</option>
+                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.district)).map((item, index) => (
+                      <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                     ))}
                   </select>
                 </div>
+            </div>
+            <div className="col-md-9">
+              <Form.Group className="mb-3">
+                <Form.Label>{t('address')}</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="address"
+                  value={litigant.address}
+                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                >
+                </Form.Control>
+              </Form.Group>
             </div>
             <div className="col-md-3">
               <Form.Group>
@@ -353,18 +299,6 @@ const Petitioner = ({addPetitioner}) => {
                   value={litigant.post_office}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 ></Form.Control>
-              </Form.Group>
-            </div>
-            <div className="col-md-9">
-              <Form.Group className="mb-3">
-                <Form.Label>{t('address')}</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address2"
-                  value={litigant.address2}
-                  onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                >
-                </Form.Control>
               </Form.Group>
             </div>
             <div className="col-md-3">
@@ -378,9 +312,6 @@ const Petitioner = ({addPetitioner}) => {
                 ></Form.Control>
               </Form.Group>
             </div>
-          </div>
-          )}
-          <div className="row">
             <div className="col-md-3">
               <Form.Group>
                 <Form.Label>{t('nationality')}<RequiredField /></Form.Label>
@@ -390,8 +321,10 @@ const Petitioner = ({addPetitioner}) => {
                   value={litigant.nationality}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="1">Indian</option>
-                  <option value="2">Others</option>
+                  <option value="">{t('alerts.select_nationality')}</option>
+                  { nationalities.map((n, index) => (
+                    <option value={n.id} key={index}>{language === 'ta' ? n.nationality_lname : n.nationality_name }</option>
+                  ))}
                 </select>
               </Form.Group>
             </div>
@@ -403,9 +336,9 @@ const Petitioner = ({addPetitioner}) => {
                   className="form-control"
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="">Select proof</option>
+                  <option value="">{t('alerts.select_proof')}</option>
                   { proofs.map((p, index) => (
-                    <option key={index} value={p.id}>{p.proof_name}</option>
+                    <option key={index} value={p.id}>{ language === 'ta' ? p.proof_lname : p.proof_name}</option>
                   ))}
                 </select>
               </div>
@@ -468,11 +401,16 @@ const Petitioner = ({addPetitioner}) => {
             </div>
           </div>
           <div className="row">
-              <div className="col-md-3 mt-2">
-              <Button 
-                  variant="secondary"
-                  onClick={handleSubmit}
-                  ><i className="fa fa-plus mr-2"></i>{t('add_petitioner')}</Button>
+              <div className="col-md-3 mt-4">
+                <div className="form-group">
+                  <Button 
+                    variant="secondary"
+                    onClick={handleSubmit}
+                  >
+                    <i className="fa fa-plus mr-2"></i>{t('add_petitioner')}
+                  </Button>
+
+                </div>
               </div>
         </div>
     </div>

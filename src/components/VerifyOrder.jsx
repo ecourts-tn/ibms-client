@@ -1,6 +1,6 @@
 import React, {useState} from "react"
 import { useTranslation } from "react-i18next"
-import Loading from "components/common/Loading"
+import Loading from "components/utils/Loading"
 import * as Yup from "yup"
 import { toast, ToastContainer } from "react-toastify"
 import api from "api"

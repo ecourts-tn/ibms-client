@@ -2,15 +2,14 @@ import React from 'react'
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
-import Stepper from 'components/filing/stepper/BailStepper';
 
 const PublicLayout = () => {
   return (
-    <>
+    <React.Fragment>
         <Header></Header>
           <Outlet />
         <Footer></Footer>
-    </>
+    </React.Fragment>
   )
 }
 

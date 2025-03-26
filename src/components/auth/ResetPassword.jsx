@@ -3,7 +3,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import * as Yup from 'yup'
 import api from 'api'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 
 const ResetPassword = () => {
 
@@ -24,7 +24,11 @@ const ResetPassword = () => {
                 setEmail('')
             }
         }catch(error){
-            console.error(error)
+            if(error.response){
+                toast.error(error.response.data.error, {
+                    theme:"colored"
+                })
+            }
         }finally{
             setLoading(false)
         }

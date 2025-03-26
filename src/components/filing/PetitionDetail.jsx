@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import api from '../../api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { getPetitionByeFileNo } from 'services/petitionService'
 import { truncateChars } from 'utils'
 
@@ -65,54 +65,92 @@ const PetitionDetail = () => {
                             </nav>
 
                             <h6 className="text-center text-danger"><strong>{t('case_details')}</strong></h6>
-                            <table className="table table-bordered table-striped table-sm">
+                            <div className="d-none d-md-block">
+                                <table className="table table-bordered table-striped table-sm">
                                 <tbody>
                                     <tr>
-                                        <td>{t('efile_number')}</td>
-                                        <td>{petition.efile_number}</td>
-                                        <td>{t('efile_date')}</td>
-                                        <td>{petition.efile_date}</td>
+                                    <td>{t("efile_number")}</td>
+                                    <td>{petition.efile_number}</td>
+                                    <td>{t("efile_date")}</td>
+                                    <td>{petition.efile_date}</td>
                                     </tr>
-                                    { petition.judiciary.id== 2 && (
-                                    <>
-                                    <tr>
-                                        <td>{t('state')}</td>
-                                        <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
-                                        <td>{t('district')}</td>
-                                        <td>{ language === 'ta' ? petition.district.district_lname : petition.district.district_name }</td>
-                                    </tr>
-                                    <tr>
-                                        <td>{t('establishment')}</td>
-                                        <td>{ language === 'ta' ? petition.establishment.establishment_lname : petition.establishment.establishment_name }</td>
-                                        <td>{t('court')}</td>
-                                        <td>{ language === 'ta' ? petition.court.court_lname : petition.court.court_name }</td>
-                                    </tr>
-                                    </>
-                                    )}
-                                    {  petition.judiciary.id === 1 && (
+                                    {(petition.judiciary.id === 2 || petition.judiciary.id === 3) && (
                                     <>
                                         <tr>
-                                            <td>Court Type</td>
-                                            <td>{ language === 'ta' ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
-                                            <td>High Court Bench</td>
-                                            <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
+                                        <td>{t("state")}</td>
+                                        <td>{language === "ta" ? petition.state.state_lname : petition.state.state_name}</td>
+                                        <td>{t("district")}</td>
+                                        <td>{language === "ta" ? petition.district.district_lname : petition.district.district_name}</td>
+                                        </tr>
+                                        <tr>
+                                        <td>{t("establishment")}</td>
+                                        <td>{language === "ta" ? petition.establishment.establishment_lname : petition.establishment.establishment_name}</td>
+                                        <td>{t("court")}</td>
+                                        <td>{language === "ta" ? petition.court.court_lname : petition.court.court_name}</td>
                                         </tr>
                                     </>
                                     )}
+                                    {petition.judiciary.id === 1 && (
                                     <tr>
-                                        <td>{t('filing_number')}</td>
-                                        <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
-                                        <td>{t('filing_date')}</td>
-                                        <td>{ petition.filing_date }</td>
+                                        <td>{t("court_type")}</td>
+                                        <td>{language === "ta" ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
+                                        <td>{t("hc_bench")}</td>
+                                        <td>{language === "ta" ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
+                                    </tr>
+                                    )}
+                                    <tr>
+                                    <td>{t("filing_number")}</td>
+                                    <td>{`${petition.filing_number}/${petition.filing_year}`}</td>
+                                    <td>{t("filing_date")}</td>
+                                    <td>{petition.filing_date}</td>
                                     </tr>
                                     <tr>
-                                        <td>{t('case_number')}</td>
-                                        <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
-                                        <td>{t('registration_date')}</td>
-                                        <td>{  petition.registration_date }</td>
+                                    <td>{t("case_number")}</td>
+                                    <td>{petition.reg_type ? `${petition.reg_type.type_name}/${petition.reg_number}/${petition.reg_year}` : null}</td>
+                                    <td>{t("registration_date")}</td>
+                                    <td>{petition.registration_date}</td>
                                     </tr>
                                 </tbody>
-                            </table>
+                                </table>
+                            </div>
+                            <div className="d-md-none">
+                                <div className="card shadow-sm rounded border">
+                                    <div className="card-body p-0">
+                                    <table className="table table-bordered m-0">
+                                        <tbody>
+                                        {[
+                                            { label: t("efile_number"), value: petition.efile_number },
+                                            { label: t("efile_date"), value: petition.efile_date },
+                                            ...(petition.judiciary.id === 2 || petition.judiciary.id === 3
+                                            ? [
+                                                { label: t("state"), value: language === "ta" ? petition.state.state_lname : petition.state.state_name },
+                                                { label: t("district"), value: language === "ta" ? petition.district.district_lname : petition.district.district_name },
+                                                { label: t("establishment"), value: language === "ta" ? petition.establishment.establishment_lname : petition.establishment.establishment_name },
+                                                { label: t("court"), value: language === "ta" ? petition.court.court_lname : petition.court.court_name },
+                                                ]
+                                            : []),
+                                            ...(petition.judiciary.id === 1
+                                            ? [
+                                                { label: t("court_type"), value: language === "ta" ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name },
+                                                { label: t("hc_bench"), value: language === "ta" ? petition.seat?.seat_lname : petition.seat?.seat_name },
+                                                ]
+                                            : []),
+                                            { label: t("filing_number"), value: `${petition.filing_number}/${petition.filing_year}` },
+                                            { label: t("filing_date"), value: petition.filing_date },
+                                            { label: t("case_number"), value: petition.reg_type ? `${petition.reg_type.type_name}/${petition.reg_number}/${petition.reg_year}` : null },
+                                            { label: t("registration_date"), value: petition.registration_date },
+                                        ].map((item, index) => (
+                                            <tr key={index}>
+                                                <td className="fw-bold">{item.label}</td>
+                                                <td>{item.value}</td>
+                                            </tr>
+                                        ))}
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+
                             <h6 className="text-center text-danger"><strong>{t('petitioner_details')}</strong></h6>
                             <table className="table table-bordered">
                                 <tbody>

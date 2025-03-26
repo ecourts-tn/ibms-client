@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @font-face {
     font-family: 'Marutham';
     src: url('marutham.ttf') format('truetype');
@@ -6,9 +9,21 @@
 }
 :lang(ta), 
 :lang(ta) .nav-link, 
-:lang(ta) .dropdown-menu li a {
-font-family: 'Marutham', serif; 
+:lang(ta) .dropdown-menu li a 
+:lang(ta) body,
+:lang(ta) .content-wrapper
+{
+font-family: 'Marutham', 'Open Sans'; 
+font-size:14px;
 }
+/* custom.css */
+body,
+.content-wrapper {
+    font-family: 'Open Sans' !important; /* Replace with your preferred font */
+    font-size: 14px!important;
+    line-height: 1.7!important;
+}
+
 /* javascript disabled text */
 .no-js-message {
      font-size: 1.5em;
@@ -33,7 +48,7 @@ font-family: 'Marutham', serif;
 }
 .primary-navbar .nav-link{
     color: white!important;
-    font-size: 16px;
+    font-size: 14px;
     padding-left:6px!important;
     padding-right:6px!important;
     text-decoration: none;
@@ -71,7 +86,7 @@ font-family: 'Marutham', serif;
 }
 .secondary-navbar .nav-link{
     color:  #074280;
-    font-size: 16px;
+    font-size: 15px;
     padding-left:10px!important;
     padding-right:10px!important;
     text-decoration: none;
@@ -109,6 +124,7 @@ font-family: 'Marutham', serif;
 .section-heading{
     font-weight: bold;
     margin-bottom: 15px;
+    font-size:24px;
 }
 .registration-card{
     border-style: none!important;
@@ -203,13 +219,17 @@ legend > span {
     border-radius:0px;
 }
 .captcha-text{
-    font-size: 25px!important;
+    background-image: url('../../images/captcha.jpeg'); /* Path to your image */
+    background-size: cover; /* Ensure the image covers the entire field */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    font-size: 22px!important;
     font-weight: bold!important;
-    background: #ffffff;
-    color: #922b21!important;
+    /* background: #ffffff; */
+    color: #c73333!important;
     height:40px!important;
     letter-spacing: 2px;
-    text-shadow: 3px 4px 3px #aaa
+    text-shadow: 3px 4px 3px #fffdfd
 }
 
 /* Loader */
@@ -252,4 +272,7 @@ tr.bg-info, .bg-info{
     height:180px;
     width: 180px;
     margin-top:20px;
+}
+.benefits li{
+    text-align: justify!important;
 }

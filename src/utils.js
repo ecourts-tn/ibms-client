@@ -52,5 +52,13 @@ export const truncateChars = (text, maxLength) => {
       return text.substring(0, maxLength) + "...";
     }
     return text;
+};
+
+export const encode_efile_number = (pk) => {
+    return btoa(pk); 
+};
+
+export const decode_file_number = (encodedPk) => {
+    return atob(encodedPk);
   };
 

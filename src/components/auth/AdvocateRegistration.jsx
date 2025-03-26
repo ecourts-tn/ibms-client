@@ -17,8 +17,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/common/Loading'
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import Loading from 'components/utils/Loading'
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
@@ -370,8 +370,8 @@ const AdvocateRegistration = () => {
     const verifyEmail = async (otp) => {
         try{
             setLoading(true)
-            const response = await api.post("external/email/verify-otp/", {
-                email_address: form.email,
+            const response = await api.post("auth/email/otp/verify/", {
+                email: form.email,
                 otp: parseInt(otp)
             })
             if(response.status === 200){
@@ -419,7 +419,7 @@ const AdvocateRegistration = () => {
             const response = await api.post(`auth/email/verify/`, {email:form.email})
             if(response.status === 200){
                 try{
-                    const response2 = await api.post("external/email/sent-otp/", {email_address: form.email})
+                    const response2 = await api.post("auth/email/otp/", {email: form.email})
                     if(response2.status === 200){
                         toast.success(t('alerts.email_otp_sent'),{theme:"colored"})
                         setEmailOtp(true)
@@ -436,7 +436,6 @@ const AdvocateRegistration = () => {
         }finally{
             setLoading(false)
         }
-
     }
 
     

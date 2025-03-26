@@ -1,6 +1,4 @@
 
-export { default as Initial } from './Initial';
-export { default as PetitionerContainer } from './petitioner/PetitionerContainer';
-export { default as RespondentContainer } from './respondent/RespondentContainer';
-export { default as PreviousCaseContainer } from './history/PreviousCaseContainer';
-export { default as EFile } from "./filing/efile/EFile"
+export { default as PetitionerContainer } from './filing/common/petitioner/PetitionerContainer';
+export { default as RespondentContainer } from './filing/common/respondent/RespondentContainer';
+export { default as EFile } from "./filing/common/EFile"

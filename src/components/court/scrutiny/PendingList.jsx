@@ -4,7 +4,7 @@ import ReactTimeAgo from 'react-time-ago';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 
 const PendingList = () => {
     const [cases, setCases] = useState([]);

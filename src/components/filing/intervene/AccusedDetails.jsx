@@ -13,17 +13,23 @@ import { TalukContext } from 'contexts/TalukContext';
 import { CountryContext } from 'contexts/CountryContext';
 import { RelationContext } from 'contexts/RelationContext';
 import { useTranslation } from 'react-i18next';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
+import { MasterContext } from 'contexts/MasterContext';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 
 const AccusedDetails = ({addPetitioner}) => {
-
+  const { language } = useContext(LanguageContext)
   const {fir, accused} = useContext(BaseContext)
-  const {states}      = useContext(StateContext)
-  const {districts}   = useContext(DistrictContext)
-  const {taluks}      = useContext(TalukContext)
-  const {countries}   = useContext(CountryContext)
-  const {relations}   = useContext(RelationContext)
+  const { masters: {
+    states, 
+    districts, 
+    taluks, 
+    countries, 
+    relations,
+    genders,
+    nationalities
+  }} = useContext(MasterContext)
   const {t} = useTranslation()
 
   const[alternateAddress, setAlternateAddress] = useState(false)
@@ -45,7 +51,6 @@ const AccusedDetails = ({addPetitioner}) => {
       pincode:'',
       nationality: 1,
       mobile_number:'',
-      // identify_proof:'',
       proof_number:'',
       email_address:'',
       act: '',
@@ -69,20 +74,8 @@ const AccusedDetails = ({addPetitioner}) => {
     gender: Yup.string().required(),
     address: Yup.string().required(),
     mobile_number: Yup.number().required("The mobile number is required").typeError("This is field should be numeric"),
-    // proof_number: Yup.string().required("Identify proof number is required"),
     act: Yup.string().required(),
     section: Yup.string().required(),
-    // address: Yup.string().required(),
-    // prison: Yup.string().when("is_custody", (is_custody, schema) => {
-    //   if(is_custody){
-    //       return schema.required("Please select the prison")
-    //   }
-    // }),
-  //   custody_days: Yup.string().when("is_custody", (is_custody, schema) => {
-  //     if(is_custody){
-  //         return schema.required()
-  //     }
-  // }),
   })
 
   const handleChange = (e) => {
@@ -165,7 +158,7 @@ const AccusedDetails = ({addPetitioner}) => {
   }
 
   return (
-    <div className="container">
+    <div className="container-fluid">
       <ToastContainer />
         { accused.length > 0 && (
           <div className="row">
@@ -216,10 +209,10 @@ const AccusedDetails = ({addPetitioner}) => {
                     className="form-control"
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="">{t('alerts.select_gender')}</option>
+                    { genders.map((g, index) => (
+                      <option value={g.name} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                    ))}
                   </select>
                 )}
               </Form.Group>
@@ -270,12 +263,11 @@ const AccusedDetails = ({addPetitioner}) => {
                       value={litigant.relation}
                       onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                       >
-                      <option value="">Select parantage</option>
+                      <option value="">{t('alerts.select_parantage')}</option>
                       { relations.map((item, index) => (
-                        <option key={index} value={item.relation_name}>{ item.relation_name }</option>
+                        <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                       )) }
                     </select>
-                    <div className="invalid-feedback">{ errors.relation }</div>
                   </>  
                   )}
                 </div>
@@ -354,9 +346,9 @@ const AccusedDetails = ({addPetitioner}) => {
                     value={litigant.state}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select state</option>
+                    <option value="">{t('alerts.select_state')}</option>
                     { states.map((item, index) => (
-                      <option value={item.state_code} key={index}>{item.state_name}</option>
+                      <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                     ))}
                   </select>
                 </div>
@@ -371,9 +363,9 @@ const AccusedDetails = ({addPetitioner}) => {
                     value={litigant.district}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select District</option>
+                    <option value="">{t('alerts.select_district')}</option>
                     { districts.filter(district=>parseInt(district.state)===parseInt(litigant.state)).map((item, index) => (
-                      <option value={item.district_code} key={index}>{item.district_name}</option>
+                      <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                     ))}
                   </select>
                 </div>
@@ -388,9 +380,9 @@ const AccusedDetails = ({addPetitioner}) => {
                     value={litigant.taluk}
                     onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                   >
-                    <option value="">Select Taluk</option>
-                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.taluk)).map((item, index) => (
-                      <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
+                    <option value="">{t('alerts.select_taluk')}</option>
+                    { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(litigant.district)).map((item, index) => (
+                      <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                     ))}
                   </select>
                 </div>
@@ -441,18 +433,20 @@ const AccusedDetails = ({addPetitioner}) => {
                   value={litigant.nationality}
                   onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                 >
-                  <option value="1">Indian</option>
-                  <option value="2">Others</option>
+                  <option value="">{t('alerts.select_nationality')}</option>
+                  { nationalities.map((n, index) => (
+                    <option value={n.id} key={index}>{language === 'ta' ? n.nationality_lname : n.nationality_name }</option>
+                  ))}
                 </select>
               </Form.Group>
             </div>
-            <div className="col-md-2">
+            <div className="col-md-3">
               <Form.Group>
                 <Form.Label>{t('country_code')}</Form.Label>
                 <select name="country" className="form-control">
-                  <option value="">Select country</option>
+                  <option value="">{t('alerts.select_country')}</option>
                   {countries.map((c, index) => (
-                    <option key={index} value={c.id}>{`+(${c.iso})`} {c.country_name}</option>
+                    <option key={index} value={c.iso}>{`+(${c.iso})`} {c.country_name}</option>
                   ))}
                 </select>
                 <div className="invalid-feedback">

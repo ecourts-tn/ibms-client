@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import GenerateStyledDocx from './HtmlToDocx';
 import api from 'api';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 
