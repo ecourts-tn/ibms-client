@@ -134,8 +134,8 @@ const handleSubmit = async () => {
               </Button>
           </Modal.Footer>
         </Modal>
-      <div className="row mt-5">
-        <div className="col-md-6 offset-3">
+      <div className="row mt-3">
+        <div className="col-md-10 offset-1">
           {/* Dynamically render checkboxes */}
           {checkboxStates.map((checkbox) => (
             <div key={checkbox.id} className="mt-3">
