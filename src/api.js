@@ -5,7 +5,8 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 axios.defaults.withCredentials = true;
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    //baseURL: process.env.REACT_APP_API_URL,
+    baseURL: "http://192.168.100.155:81/api/v1/"
 });
 
 let FRONTEND_SECRET = localStorage.getItem("frontendSecret") || process.env.REACT_APP_FRONTEND_SECRET;
