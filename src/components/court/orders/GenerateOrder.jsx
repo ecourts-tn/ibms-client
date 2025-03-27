@@ -107,7 +107,7 @@ const GenerateOrder = () => {
         try {
             setLoading(true);
             await validationSchema.validate(form, { abortEarly: false });
-            const response = api.post(``, form);
+            const response = api.post(`court/order/generate/`, form)
             if (response.status === 201) {
                 toast.success("Order uploaded successfully", { theme: "colored" });
             }
@@ -226,7 +226,7 @@ const GenerateOrder = () => {
                                                 variant='contained'
                                                 color='primary'
                                                 type="submit"
-                                                onClick={handleSearch}
+                                                onClick={handleSubmit}
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>
