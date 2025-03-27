@@ -15,6 +15,7 @@ import CrimeDetails from 'components/court/common/CrimeDetails'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DocumentList from 'components/court/common/DocumentList'
+import Loading from 'components/utils/Loading'
 
 
 const CaseScrutiny = () => {
@@ -30,6 +31,7 @@ const CaseScrutiny = () => {
     const[advocates, setAdvocates] = useState([])
     const[documents, setDocuments] = useState([])
     const[fees, setFees] = useState([])
+    const[loading, setLoading] = useState(false)
 
     const initialState = {
         verification_date: null,
@@ -61,7 +63,7 @@ const CaseScrutiny = () => {
     );
 
     useEffect(() => {
-        async function fetchData(){
+        async function fetchPetitionDetail(){
             try{
                 const response = await api.post("court/petition/detail/", {efile_no:state.efile_no})
                 if(response.status === 200){
@@ -78,57 +80,78 @@ const CaseScrutiny = () => {
                 console.log(err)
             }
         }
-        fetchData();
+        fetchPetitionDetail();
     },[])
- 
-    const handleSubmit = async () => {
-        if(form.status === 1){
-            // update main table only
-            try{
-                const response = await api.post(`court/case/registration/`, {
-                    efile_no: state.efile_no,
-                    verification_date: form.verification_date,
-                    status:form.status,
-                    is_verified:true
+
+    const handleSubmit = async() => {
+        try{
+            setLoading(true)
+            form.efile_no = state.efile_no
+            const response = await api.post(`court/case/scrutiny/`, form)
+            if(response.status === 200){
+                toast.success("Petition scrutinized successfully", {
+                    theme:"colored"
                 })
-                if(response.status === 200){
-                    toast.success("Petition verified successfully", {
-                        theme:"colored"
-                    })
-                    setTimeout(() => {
-                        navigate("/court/case/scrutiny")
-                    }, 2000)
-                }
-            }catch(error){
-                console.log(error)
+                setTimeout(() => {
+                    navigate("/court/case/scrutiny")
+                }, 1000)
             }
-        }
-        else if(form.status === 2){
-            // update main table and add objection history
-            try{
-                const response = await api.post(`court/case/objection/`, {
-                    efile_no : state.efile_no,
-                    objection_date: form.verification_date,
-                    complaince_date: form.complaince_date,
-                    remarks: form.remarks
-                })
-                if(response.status === 201){
-                    toast.success("Petition verified successfully", {
-                        theme:"colored"
-                    })
-                    setTimeout(() => {
-                        navigate("/court/case/scrutiny/")
-                    }, 2000)
-                }
-            }catch(error){
-                console.log(error)
-            }
+        }catch(error){
+            toast.error("Something went wrong", {theme:"colored"})
+        }finally{
+            setLoading(false)
         }
     }
+ 
+    // const handleSubmit = async () => {
+    //     if(form.status === 1){
+    //         // update main table only
+    //         try{
+    //             const response = await api.post(`court/case/registration/`, {
+    //                 efile_no: state.efile_no,
+    //                 verification_date: form.verification_date,
+    //                 status:form.status,
+    //                 is_verified:true
+    //             })
+    //             if(response.status === 200){
+    //                 toast.success("Petition verified successfully", {
+    //                     theme:"colored"
+    //                 })
+    //                 setTimeout(() => {
+    //                     navigate("/court/case/scrutiny")
+    //                 }, 2000)
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    //     else if(form.status === 2){
+    //         // update main table and add objection history
+    //         try{
+    //             const response = await api.post(`court/case/objection/`, {
+    //                 efile_no : state.efile_no,
+    //                 objection_date: form.verification_date,
+    //                 complaince_date: form.complaince_date,
+    //                 remarks: form.remarks
+    //             })
+    //             if(response.status === 201){
+    //                 toast.success("Petition verified successfully", {
+    //                     theme:"colored"
+    //                 })
+    //                 setTimeout(() => {
+    //                     navigate("/court/case/scrutiny/")
+    //                 }, 2000)
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    // }
 
     return (
         <>
             <ToastContainer/>
+            {loading && <Loading />}
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="card card-outline card-primary mt-3">

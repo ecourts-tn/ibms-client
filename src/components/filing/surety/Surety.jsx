@@ -15,6 +15,7 @@ const Surety = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const {eFileNumber} = useContext(BaseContext)
+    const[mainNumber, setMainNumber] = useState('')
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
     const[isPetition, setIsPetition] = useState(false)
@@ -38,7 +39,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/pending/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -52,7 +53,7 @@ const Surety = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:main, litigants} = response.data
                     setIsPetition(true)
@@ -78,7 +79,7 @@ const Surety = () => {
             }
         }
         fetchDetails();
-    },[eFileNumber])
+    },[mainNumber])
 
     console.log(petition)
 
@@ -110,6 +111,8 @@ const Surety = () => {
             <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
+                    mainNumber={mainNumber}
+                    setMainNumber={setMainNumber}
                 />
                 <div className="row">
                     <div className="col-md-12">

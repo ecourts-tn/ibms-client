@@ -34,6 +34,7 @@ const Proceeding = ({efile_no}) => {
     const {judge} = useContext(JudgeContext)
     const initialState = {
         efile_no: '',
+        cino: '',
         case_number: '',
         proceeding: '',
         vakalath_filed: false,
@@ -150,6 +151,7 @@ const Proceeding = ({efile_no}) => {
                         setLitigant(response.data.litigants)
                         setForm({
                             ...form, 
+                            cino: response.data.petition.cino,
                             efile_no: response.data.petition.efile_number,
                             case_number: response.data.petition.case_no,
                             district: response.data.petition.district.district_code,

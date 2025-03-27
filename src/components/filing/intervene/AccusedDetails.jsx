@@ -6,12 +6,7 @@ import { useState, useEffect } from 'react'
 import { RequiredField } from 'utils';
 import * as Yup from 'yup'
 import api from 'api';
-import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { CountryContext } from 'contexts/CountryContext';
-import { RelationContext } from 'contexts/RelationContext';
+
 import { useTranslation } from 'react-i18next';
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import { MasterContext } from 'contexts/MasterContext';
@@ -20,7 +15,8 @@ import { LanguageContext } from 'contexts/LanguageContex';
 
 const AccusedDetails = ({addPetitioner}) => {
   const { language } = useContext(LanguageContext)
-  const {fir, accused} = useContext(BaseContext)
+  const[fir, setFir] = useState({})
+  const[accused, setAccused] = useState([])
   const { masters: {
     states, 
     districts, 
