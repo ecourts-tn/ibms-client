@@ -7,31 +7,12 @@ import AdminLayout from 'components/layout/admin/AdminLayout';
 import { AuthProvider } from "contexts/AuthContext";
 import { AppProvider } from 'contexts/AppContext';
 import { publicRoutes } from 'routes/publicRoutes';
-<<<<<<< HEAD
-import { filingRoutes } from 'routes/filingRoutes';
-=======
->>>>>>> deena
 import { CourtRoutes } from 'routes/courtRoutes';
 import { policeRoutes } from 'routes/policeRoutes';
 import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
-<<<<<<< HEAD
-import { BailFilingRoutes } from 'routes/bailRoutes';
-import { ABailFilingRoutes } from 'routes/abilRoutes';
-import { ConditionFilingRoutes } from 'routes/conditionRoutes';
-import { InterveneRoutes } from 'routes/interveneRoute';
-import { ModificationFilingRoutes } from 'routes/modificationRoutes';
-import { SuretyRoutes } from 'routes/suretyRoutes';
-import { DischargeRoutes } from 'routes/dischargeRoutes';
-import { ExtensionRoutes } from 'routes/extensionRoutes';
-import { ReturnPassportRoutes } from 'routes/passportRoutes';
-import { ReturnPropertyRoutes } from 'routes/propertyRoutes';
-import DepartmentRegistration from 'components/auth/DepartmentRegistration';
-
-=======
 import { FilingRoutes } from 'routes/filingRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
->>>>>>> deena
 
 function App() {
 
