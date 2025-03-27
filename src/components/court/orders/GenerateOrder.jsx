@@ -6,13 +6,14 @@ import * as Yup from 'yup';
 import GenerateStyledDocx from './HtmlToDocx';
 import api from 'api';
 import Loading from 'components/utils/Loading';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { MasterContext } from 'contexts/MasterContext';
+
 
 const GenerateOrder = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
-    const { casetypes } = useContext(CaseTypeContext);
+    const {masters:{casetypes}} = useContext(MasterContext)
 
     const initialState = {
         district: '',

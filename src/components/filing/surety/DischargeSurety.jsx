@@ -1,21 +1,11 @@
 import api from 'api';
-import * as Yup from 'yup'
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import ArrowBack  from '@mui/icons-material/ArrowBack';
-import SearchIcon from '@mui/icons-material/Search'
 import { toast, ToastContainer } from 'react-toastify';
-import { RequiredField } from 'utils';
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
 import InitialInput from 'components/filing/common/InitialInput';
 import PetitionSearch from 'components/utils/PetitionSearch';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const DischargeSurety = () => {
@@ -23,7 +13,8 @@ const DischargeSurety = () => {
     const {t} = useTranslation()
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
-    const[eFileNumber, seteFileNumber] = useState('')
+    const {setEfileNumber} = useContext(BaseContext)
+    const[mainNumber, setMainNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petition, setPetition] = useState({
         court_type: '',
@@ -54,9 +45,9 @@ const DischargeSurety = () => {
     },[])
 
     useEffect(() => {
-        const fetchDetails = async() => {
+        const fetchPetitionDetail= async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:pet} = response.data
                     setIsPetition(true)
@@ -79,8 +70,11 @@ const DischargeSurety = () => {
                 console.log(error)
             }
         }
-        fetchDetails();
-    },[eFileNumber])
+        if(mainNumber){
+            setEfileNumber(mainNumber)
+            fetchPetitionDetail();
+        }
+    },[mainNumber])
 
 
     const handleSubmit = async (e) => {
@@ -112,8 +106,8 @@ const DischargeSurety = () => {
             <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
-                    eFileNumber={eFileNumber}
-                    seteFileNumber={seteFileNumber}
+                    mainNumber={mainNumber}
+                    setMainNumber={setMainNumber}
                 />
                 <div className="row">
                     <div className="col-md-12">

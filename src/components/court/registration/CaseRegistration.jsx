@@ -40,7 +40,7 @@ const CaseRegistration = () => {
     })
 
     useEffect(() => {
-        async function fetchData(){
+        async function fetchPetitionDetail(){
             try{
                 const response = await api.post(`court/petition/detail/`, {efile_no:state.efile_no})
                 if(response.status === 200){
@@ -56,13 +56,14 @@ const CaseRegistration = () => {
                 console.log(err)
             }
         }
-        fetchData()
+        fetchPetitionDetail()
     }, [])
 
     const handleSubmit = async() => {
         try{
             await validationSchema.validate(form, {abortEarly:false})
-            const response = await api.post(`court/registration/`, form, {params:{efile_no:state.efile_no}})
+            form.efile_no = state.efile_no
+            const response = await api.post(`court/case/registration/`, form)
             if(response.status === 200){
                 toast.success("Petition registered successfully", {
                     theme:"colored"

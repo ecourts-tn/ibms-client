@@ -2,16 +2,16 @@ import React, {useState, useContext, useEffect} from 'react'
 import {CreateMarkup} from '../../utils'
 import Modal from 'react-bootstrap/Modal'
 import Button from '@mui/material/Button'
-import { BaseContext } from '../../contexts/BaseContext'
 import { useTranslation } from 'react-i18next'
 import api from 'api'
 
 
 const FIRDetails = () => {
-    const {firId, accused, setAccused, fir, setFir} = useContext(BaseContext)
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    const [fir, setFir] = useState({})
+    const [accused, setAccused] = useState([])
     const {t} = useTranslation()
 
     useEffect(() => { 
@@ -47,7 +47,7 @@ const FIRDetails = () => {
         };
     
         fetchFIR();
-    }, [firId]);
+    }, []);
 
     return (
         <>

@@ -19,12 +19,14 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const ResponseCreate = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
     const { state } = useLocation()
+    const {setEfileNumber} = useContext(BaseContext)
     const navigate = useNavigate()
     const initialPetition = {
         filing_type: '',
@@ -32,7 +34,8 @@ const ResponseCreate = () => {
         state: '',
         district: '',
         establishment: '',
-        court: ''
+        court: '',
+        pdistrict_id: ''
     }
     const initialSearchForm = {
         state: 33,
@@ -244,9 +247,10 @@ const ResponseCreate = () => {
                 setForm({
                     ...form,
                     efile_no: response.data.petition.efile_number,
-                    crime_number: response.data.crime.fir_number,
-                    crime_year: response.data.crime.fir_year
+                    crime_number: response.data.petition.fir_number,
+                    crime_year: response.data.petition.fir_year
                 })
+                setEfileNumber(response.data.petition.efile_number)
                 const { petition, litigant, crime } = response.data
                 setPetition(petition)
                 setAccused(litigant.filter(l => l.litigant_type === 1))
@@ -285,13 +289,22 @@ const ResponseCreate = () => {
         try {
             await searchValidationSchema.validate(searchForm, { abortEarly: false })
             setLoading(true)
-            const response = await api.post("external/police/tamilnadu/fir-details/", searchForm)
+            const data = {
+                state: petition.state?.state_code,
+                district: petition.district?.district_code,
+                pdistrict: petition.police_station?.district_code,
+                police_station: petition.police_station?.cctns_code,
+                fir_number: searchForm.crime_number,
+                fir_year: searchForm.year
+            }
+            const response = await api.post("external/police/fir-search/", data)
             if (response.status === 200) {
+                sessionStorage.setItem("api_id", response.data.api_id)
                 setFir({
                     ...fir,
-                    state: searchForm.state,
-                    district: searchForm.district,
-                    police_station: searchForm.police_station,
+                    state: petition.state?.state_code,
+                    district: petition.district?.district_code,
+                    police_station: petition.police_station?.cctns_code,
                     fir_number: searchForm.crime_number,
                     fir_year: searchForm.year,
                     date_of_occurrence: response.data.date_of_occurrence,
@@ -401,7 +414,7 @@ const ResponseCreate = () => {
                                                 </tr>
                                                 <tr>
                                                     <td>Police&nbsp;Station</td>
-                                                    <td>{crime.police_station ? crime.police_station.station_name : null}</td>
+                                                    <td>{petition.police_station ? petition.police_station.station_name : null}</td>
                                                     <td>Date of Occurence</td>
                                                     <td>{crime.date_of_occurrence}</td>
                                                     <td>Complainant&nbsp;Name</td>
@@ -419,7 +432,7 @@ const ResponseCreate = () => {
                                                     <td colSpan={6}>
                                                         <p>
                                                             <strong>Gist in Local Language</strong><br /><br />
-                                                            <span colSpan={5} dangerouslySetInnerHTML={CreateMarkup(crime.gist_in_local)}></span>
+                                                            <span colSpan={5} dangerouslySetInnerHTML={CreateMarkup(crime.gist_of_fir_in_local)}></span>
                                                         </p>
                                                     </td>
                                                 </tr>
@@ -466,8 +479,8 @@ const ResponseCreate = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {crime.fir_number && crime.fir_year ? (
-                                    <>
+                                { crime.fir_no && crime.fir_year ? (
+                                    <React.Fragment>
                                         <div className="card card-outline card-danger">
                                             <div className="card-header">
                                                 <strong>Response</strong>
@@ -1009,16 +1022,16 @@ const ResponseCreate = () => {
                                                 </form>
                                             </div>
                                         </div>
-                                    </>
+                                    </React.Fragment>
                                 ) : (
-                                    <>
+                                    <React.Fragment>
                                         <div className="row">
-                                            <div className="col-md-6 offset-md-3">
-                                                <div className="row" style={{ border: "1px solid #ffc107" }}>
-                                                    <div className="col-md-12 p-0">
-                                                        <p className="bg-warning py-1 px-3"><strong>FIR Search</strong></p>
-                                                    </div>
-                                                    <div className="col-md-3 offset-2">
+                                            <div className="col-md-12">
+                                                <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <div className="row">
+                                                    <div className="col-md-3">
                                                         <Form.Group className="mb-3">
                                                             <Form.Label>FIR Number<RequiredField /></Form.Label>
                                                             <Form.Control
@@ -1054,13 +1067,16 @@ const ResponseCreate = () => {
                                                     </div>
                                                     <div className="col-md-12 d-flex justify-content-center">
                                                         {showAdditionalFields && (
-                                                            <FIRDetails fir={fir} efile_no={state.efile_no} setFirTagged={setFirTagged} />
+                                                            <FIRDetails 
+                                                                setFirTagged={setFirTagged}
+                                                                efile_no = {petition.efile_no}
+                                                            />
                                                         )}
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </>
+                                    </React.Fragment>
                                 )}
 
                             </div>
@@ -1068,6 +1084,7 @@ const ResponseCreate = () => {
                     </div>
                 </div>
             )}
+
             {loading && <Loading />}
         </>
     )

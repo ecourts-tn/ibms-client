@@ -15,6 +15,7 @@ import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { JudgeContext } from 'contexts/JudgeContext'
 import { useNavigate } from 'react-router-dom'
+import { MasterContext } from 'contexts/MasterContext'
 
 const Proceeding = ({efile_no}) => {
     const {user} = useContext(AuthContext)
@@ -23,14 +24,17 @@ const Proceeding = ({efile_no}) => {
     const {language} = useContext(LanguageContext)
     const[petition, setPetition] = useState({})
     const[litigant, setLitigant] = useState([])
-    const{states} = useContext(StateContext)
-    const{districts} = useContext(DistrictContext)
+    const { masters: {
+        states, 
+        districts
+    }} = useContext(MasterContext)
     const{establishments} = useContext(EstablishmentContext)
     const{courts} = useContext(CourtContext)
     const{policeStations} = useContext(PoliceStationContext)
     const {judge} = useContext(JudgeContext)
     const initialState = {
         efile_no: '',
+        cino: '',
         case_number: '',
         proceeding: '',
         vakalath_filed: false,
@@ -147,6 +151,7 @@ const Proceeding = ({efile_no}) => {
                         setLitigant(response.data.litigants)
                         setForm({
                             ...form, 
+                            cino: response.data.petition.cino,
                             efile_no: response.data.petition.efile_number,
                             case_number: response.data.petition.case_no,
                             district: response.data.petition.district.district_code,

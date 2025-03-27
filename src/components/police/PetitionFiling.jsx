@@ -4,11 +4,6 @@ import Form from 'react-bootstrap/Form'
 import { toast, ToastContainer } from 'react-toastify';
 import api from '../../api';
 import * as Yup from 'yup'
-import { nanoid } from '@reduxjs/toolkit';
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { RelationContext } from 'contexts/RelationContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { RequiredField } from 'utils';
@@ -17,16 +12,19 @@ import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange,
 import { DesignationContext } from 'contexts/DesignationContext'
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import { MasterContext } from 'contexts/MasterContext';
 
 const PetitionFiling = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {taluks}  = useContext(TalukContext)
-    const {relations} = useContext(RelationContext)
     const {policeStations} = useContext(PoliceStationContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {designations} = useContext(DesignationContext)
+    const {masters: {
+        states,
+        districts,
+        taluks,
+        relations,
+        designations
+    }} = useContext(MasterContext)
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
 

@@ -14,13 +14,13 @@
 :lang(ta) .content-wrapper
 {
 font-family: 'Marutham', 'Open Sans'; 
-font-size:14px;
+font-size:15px;
 }
 /* custom.css */
 body,
 .content-wrapper {
     font-family: 'Open Sans' !important; /* Replace with your preferred font */
-    font-size: 14px!important;
+    font-size: 15px!important;
     line-height: 1.7!important;
 }
 

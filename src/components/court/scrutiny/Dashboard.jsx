@@ -15,6 +15,7 @@ import CrimeDetails from 'components/court/common/CrimeDetails'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DocumentList from 'components/court/common/DocumentList'
+import Loading from 'components/utils/Loading'
 
 
 const CaseScrutiny = () => {
@@ -30,17 +31,39 @@ const CaseScrutiny = () => {
     const[advocates, setAdvocates] = useState([])
     const[documents, setDocuments] = useState([])
     const[fees, setFees] = useState([])
+    const[loading, setLoading] = useState(false)
 
     const initialState = {
         verification_date: null,
         complaince_date: null,
         remarks: '',
-        status:''
+        status:1
     }
     const[form, setForm] = useState(initialState)
 
+    const statusOptions = [
+        { status: 1, color: "success", icon: <CheckIcon />, label: t('approve') },
+        { status: 2, color: "warning", icon: <CancelIcon />, label: t('return') },
+        { status: 3, color: "error", icon: <CancelIcon />, label: "Reject" }
+    ];
+
+    const renderButton = (status, color, icon, label) => (
+        form.status === status && (
+          <div className="col-md-2 offset-5">
+            <Button
+              variant="contained"
+              color={color}
+              startIcon={icon}
+              onClick={handleSubmit}
+            >
+              {label}
+            </Button>
+          </div>
+        )
+    );
+
     useEffect(() => {
-        async function fetchData(){
+        async function fetchPetitionDetail(){
             try{
                 const response = await api.post("court/petition/detail/", {efile_no:state.efile_no})
                 if(response.status === 200){
@@ -57,57 +80,78 @@ const CaseScrutiny = () => {
                 console.log(err)
             }
         }
-        fetchData();
+        fetchPetitionDetail();
     },[])
- 
-    const handleSubmit = async () => {
-        if(form.status === 1){
-            // update main table only
-            try{
-                const response = await api.post(`court/case/registration/`, {
-                    efile_no: state.efile_no,
-                    verification_date: form.verification_date,
-                    status:form.status,
-                    is_verified:true
+
+    const handleSubmit = async() => {
+        try{
+            setLoading(true)
+            form.efile_no = state.efile_no
+            const response = await api.post(`court/case/scrutiny/`, form)
+            if(response.status === 200){
+                toast.success("Petition scrutinized successfully", {
+                    theme:"colored"
                 })
-                if(response.status === 200){
-                    toast.success("Petition verified successfully", {
-                        theme:"colored"
-                    })
-                    setTimeout(() => {
-                        navigate("/court/case/scrutiny")
-                    }, 2000)
-                }
-            }catch(error){
-                console.log(error)
+                setTimeout(() => {
+                    navigate("/court/case/scrutiny")
+                }, 1000)
             }
-        }
-        else if(form.status === 2){
-            // update main table and add objection history
-            try{
-                const response = await api.post(`court/case/objection/`, {
-                    efile_no : state.efile_no,
-                    objection_date: form.verification_date,
-                    complaince_date: form.complaince_date,
-                    remarks: form.remarks
-                })
-                if(response.status === 201){
-                    toast.success("Petition verified successfully", {
-                        theme:"colored"
-                    })
-                    setTimeout(() => {
-                        navigate("/court/case/scrutiny/")
-                    }, 2000)
-                }
-            }catch(error){
-                console.log(error)
-            }
+        }catch(error){
+            toast.error("Something went wrong", {theme:"colored"})
+        }finally{
+            setLoading(false)
         }
     }
+ 
+    // const handleSubmit = async () => {
+    //     if(form.status === 1){
+    //         // update main table only
+    //         try{
+    //             const response = await api.post(`court/case/registration/`, {
+    //                 efile_no: state.efile_no,
+    //                 verification_date: form.verification_date,
+    //                 status:form.status,
+    //                 is_verified:true
+    //             })
+    //             if(response.status === 200){
+    //                 toast.success("Petition verified successfully", {
+    //                     theme:"colored"
+    //                 })
+    //                 setTimeout(() => {
+    //                     navigate("/court/case/scrutiny")
+    //                 }, 2000)
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    //     else if(form.status === 2){
+    //         // update main table and add objection history
+    //         try{
+    //             const response = await api.post(`court/case/objection/`, {
+    //                 efile_no : state.efile_no,
+    //                 objection_date: form.verification_date,
+    //                 complaince_date: form.complaince_date,
+    //                 remarks: form.remarks
+    //             })
+    //             if(response.status === 201){
+    //                 toast.success("Petition verified successfully", {
+    //                     theme:"colored"
+    //                 })
+    //                 setTimeout(() => {
+    //                     navigate("/court/case/scrutiny/")
+    //                 }, 2000)
+    //             }
+    //         }catch(error){
+    //             console.log(error)
+    //         }
+    //     }
+    // }
 
     return (
         <>
             <ToastContainer/>
+            {loading && <Loading />}
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="card card-outline card-primary mt-3">
@@ -201,15 +245,25 @@ const CaseScrutiny = () => {
                                                 />
                                                 <label htmlFor="radioVerify1">{t('accept')}</label>
                                             </div>
+                                            <div className="icheck-warning d-inline mx-2">
+                                                <input 
+                                                    type="radio" 
+                                                    id="radioVerify2"
+                                                    name="status"
+                                                    onChange={(e) => setForm({...form, status:2 })}
+                                                    checked={form.status === 2 ? true : false }
+                                                />
+                                                <label htmlFor="radioVerify2">Return</label>
+                                            </div>
                                             <div className="icheck-danger d-inline mx-2">
                                                 <input 
                                                     type="radio" 
-                                                    id="radioVerify2" 
+                                                    id="radioVerify3" 
                                                     name="status" 
-                                                    onChange={(e) => setForm({...form, status:2})}
-                                                    checked={form.status === 2 ? true : false }
+                                                    onChange={(e) => setForm({...form, status:3})}
+                                                    checked={form.status === 3 ? true : false }
                                                 />
-                                                <label htmlFor="radioVerify2">{t('return')}</label>
+                                                <label htmlFor="radioVerify3">{'Reject'}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +281,7 @@ const CaseScrutiny = () => {
                                     </div>
                                 </div>
                                 { form.status === 2 && (
-                                <>
+                                <React.Fragment>
                                     <div className="col-md-8 offset-2">
                                         <div className="form-group row">
                                             <label htmlFor="date" className="col-sm-3">{t('compliance_date')}</label>
@@ -254,27 +308,26 @@ const CaseScrutiny = () => {
                                             ></textarea>
                                         </div>
                                     </div>
-                                </>
+                                </React.Fragment>
                                 )}
-                                { form.status !== '' && form.status === 1 && (
-                                <div className="col-md-2 offset-5">
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        startIcon={<CheckIcon />}
-                                        onClick={handleSubmit}
-                                    >{t('approve')}</Button>
-                                </div>
+                                { form.status === 3 && (
+                                <React.Fragment>
+                                    <div className="col-md-8 offset-2">
+                                        <div className="form-group">
+                                            <label htmlFor="remarks">Reason for reject</label>
+                                            <textarea 
+                                                name="remarks" 
+                                                className="form-control" 
+                                                rows="2"
+                                                value={form.remarks}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                </React.Fragment>
                                 )}
-                                { form.status !== '' && form.status === 2 && (
-                                <div className="col-md-2 offset-5">
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        startIcon={<CancelIcon />}
-                                        onClick={handleSubmit}
-                                    >{t('return')}</Button>
-                                </div>
+                                {statusOptions.map((option) =>
+                                    renderButton(option.status, option.color, option.icon, option.label)
                                 )}
                             </div>
                             )}

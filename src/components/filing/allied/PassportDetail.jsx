@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
 
-const PassportDetail = () => {
+const PassportDetail = ({ passportDetails, setPassportDetails }) => {
 
-    const [passportDetails, setPassportDetails] = useState([
-            { nationality: '', passportType: '', passportAuthority: '', issuedDate: '', expiryDate: '' }
-        ]);
+    // const [passportDetails, setPassportDetails] = useState([
+    //         { nationality: '', passportType: '', passportAuthority: '', issuedDate: '', expiryDate: '' }
+    //     ]);
 
     const handlePassportInputChange = (index, field, value) => {
         const updatedPassportDetails = [...passportDetails];
@@ -39,26 +39,26 @@ const PassportDetail = () => {
                         <td><input
                         type="text"
                         className='form-control'
-                        value={passport.passportType}
-                        onChange={(e) => handlePassportInputChange(index, 'passportType', e.target.value)}
+                        value={passport.passport_type}
+                        onChange={(e) => handlePassportInputChange(index, 'passport_type', e.target.value)}
                         /></td>
                         <td><input
                         type="text"
                         className='form-control'
-                        value={passport.passportAuthority}
-                        onChange={(e) => handlePassportInputChange(index, 'passportAuthority', e.target.value)}
+                        value={passport.passport_authority}
+                        onChange={(e) => handlePassportInputChange(index, 'passport_authority', e.target.value)}
                         /></td>
                         <td><input
-                        type="text"
+                        type="date"
                         className='form-control'
-                        value={passport.issuedDate}
-                        onChange={(e) => handlePassportInputChange(index, 'issuedDate', e.target.value)}
+                        value={passport.issued_date}
+                        onChange={(e) => handlePassportInputChange(index, 'issued_date', e.target.value)}
                         /></td>
                         <td><input
-                        type="text"
+                        type="date"
                         className='form-control'
-                        value={passport.expiryDate}
-                        onChange={(e) => handlePassportInputChange(index, 'expiryDate', e.target.value)}
+                        value={passport.expiry_date}
+                        onChange={(e) => handlePassportInputChange(index, 'expiry_date', e.target.value)}
                         /></td>
                     </tr>
                     ))}

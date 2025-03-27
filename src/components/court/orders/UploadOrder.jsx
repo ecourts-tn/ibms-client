@@ -1,17 +1,19 @@
 import api from 'api';
 import Loading from 'components/utils/Loading';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
+import { MasterContext } from 'contexts/MasterContext';
 
 const UploadOrder = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
-    const { casetypes } = useContext(CaseTypeContext);
+    const { masters:{
+        casetypes
+    }} = useContext(MasterContext)
 
     const initialState = {
         district: '',
