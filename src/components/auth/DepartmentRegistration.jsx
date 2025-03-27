@@ -12,20 +12,15 @@ import api from 'api';
 import * as Yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
-
-
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
-import { PrisonContext } from 'contexts/PrisonContext'
-import { UserTypeContext } from 'contexts/UserTypeContext'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; 
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
+import { MasterContext } from 'contexts/MasterContext'
 
 const DepartmentRegistration = () => {
 
@@ -237,14 +232,16 @@ const DepartmentRegistration = () => {
         }
     };
 
-   
-    const { userTypes: usertypes } = useContext(UserTypeContext)
-    const { states } = useContext(StateContext)
-    const { districts } = useContext(DistrictContext)
     const { establishments } = useContext(EstablishmentContext)
     const { courts } = useContext(CourtContext)
     const { policeStations } = useContext(PoliceStationContext)
-    const { prisons } = useContext(PrisonContext)
+
+    const {masters: {
+        states,
+        districts,
+        prisons,
+        groups
+    }} = useContext(MasterContext)
 
     return (
         <>
@@ -270,8 +267,8 @@ const DepartmentRegistration = () => {
                                                 >
                                                     <option value="">Select Usertype</option>
                                                     {
-                                                        usertypes.map((type, index) => (
-                                                            <option value={type.id} key={index}>{type.name}</option>
+                                                        groups.map((g, index) => (
+                                                            <option value={g.id} key={index}>{g.name}</option>
                                                         ))
                                                     }
                                                 </select>

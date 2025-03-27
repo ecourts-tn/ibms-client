@@ -1,26 +1,27 @@
 import api from 'api';
 import * as Yup from 'yup'
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
-import InitialInput from '../InitialInput';
+import InitialInput from 'components/filing/common/InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
-import PetitionSearch from 'components/common/PetitionSearch';
+import PetitionSearch from 'components/utils/PetitionSearch';
 import ConditionDetail from './ConditionDetail';
 import PassportDetail from './PassportDetail';
 import PropertyDetail from './PropertyDetail';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { MasterContext } from 'contexts/MasterContext';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const Allied = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const {masters:{casetypes}} = useContext(MasterContext)
+    const {setEfileNumber} = useContext(BaseContext)
     const[bail, setBail] = useState({})
-    const[eFileNumber, seteFileNumber] = useState('')
+    const[mainNumber, setMainNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
     const[petitioners, setPetitioners] = useState([])
     const[selectedPetitioner, setSelectedPetitioner] = useState([])
@@ -28,6 +29,11 @@ const Allied = () => {
     const[respondents, setRespondents] = useState([])
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false)
+    const [passportDetails, setPassportDetails] = useState([
+        { nationality: '', passport_type: '', passport_authority: '', issued_date: '', expiry_date: '' }
+    ]);
+    const [materials, setMaterials] = useState([]);
+    const [vehicles, setVehicles] = useState([]);
     const[petition, setPetition] = useState({
         judiciary: '',
         bench_type: '',
@@ -77,7 +83,7 @@ const Allied = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/pending/`)
+                const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -92,7 +98,7 @@ const Allied = () => {
     useEffect(() => {
         const fetchDetails = async() => {
             try{
-                const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
+                const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:main, litigants} = response.data
                     console.log(response.data)
@@ -119,7 +125,7 @@ const Allied = () => {
             }
         }
         fetchDetails()
-    },[eFileNumber])
+    },[mainNumber])
 
 
     const handleInitialSubmit = async () => {
@@ -134,7 +140,12 @@ const Allied = () => {
         // Prepare the data to be sent to the backend
         const post_data = {
             petition: petition, 
-            litigants: selectedPetitioner.concat(selectedRespondent)
+            litigants: selectedPetitioner.concat(selectedRespondent),
+            ...(parseInt(petition.case_type) === 6 && { passport: passportDetails }),
+            ...(parseInt(petition.case_type) === 7 && { 
+                materials: materials, 
+                vehicles: vehicles 
+            }) 
         };
 
         try{
@@ -160,7 +171,7 @@ const Allied = () => {
                 setSelectedRespondent([]);
                 
                 // Store efile number in sessionStorage
-                sessionStorage.setItem("efile_no", response.data.efile_number);
+                setEfileNumber(response.data.efile_number);
                 
                 // Show success message
                 toast.success(`${response.data.efile_number} details submitted successfully`, {
@@ -182,6 +193,8 @@ const Allied = () => {
         setSelectedPetitioner([]);
         setSelectedRespondent([]);
         setPetition({});
+        setMaterials([]);  // Reset materials
+        setVehicles([]);  
     };
 
 
@@ -192,8 +205,8 @@ const Allied = () => {
             <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
-                    eFileNumber={eFileNumber}
-                    seteFileNumber={seteFileNumber}
+                    mainNumber={mainNumber}
+                    setMainNumber={setMainNumber}
                 />
                 <div className="row">
                     <div className="col-md-12">
@@ -294,8 +307,17 @@ const Allied = () => {
                                     </tbody>
                                 </table>
                                 { (parseInt(petition.case_type) === 3 || parseInt(petition.case_type) === 4 || parseInt(petition.case_type) === 5) && (<ConditionDetail />)}
-                                { parseInt(petition.case_type) === 6 && (<PassportDetail />)}
-                                { parseInt(petition.case_type) === 7 && (<PropertyDetail />)}
+                                {parseInt(petition.case_type) === 6 && (
+                                    <PassportDetail passportDetails={passportDetails} setPassportDetails={setPassportDetails} />
+                                )}
+                                { petition.case_type && parseInt(petition.case_type) === 7 && (
+                                    <PropertyDetail 
+                                        materials={materials} 
+                                        setMaterials={setMaterials} 
+                                        vehicles={vehicles} 
+                                        setVehicles={setVehicles} 
+                                    />
+                                )}
                             </>
                         )}
                         { isPetition && (

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "api";
 import { useTranslation } from "react-i18next";
 import { toast, ToastContainer} from 'react-toastify'
-import Loading from "components/common/Loading";
+import Loading from "components/utils/Loading";
 import * as Yup from 'yup';
 
 const ResetPasswordConfirm = () => {

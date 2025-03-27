@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
     } else {
       console.log("User is not authenticated.");
+      setIsAuth(false);  // Explicitly set isAuth to false if no valid token or user
     }
   }, []);
 
@@ -53,6 +54,7 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data);
         setIsAuth(true);
 
+        // Store user info in local/session storage based on 'remember' flag
         if (remember) {
           localStorage.setItem("user", JSON.stringify(response.data));
         } else {
@@ -62,7 +64,7 @@ export const AuthProvider = ({ children }) => {
         // Redirect after login
         console.log("Redirecting to:", response.data.redirect_url);
         setTimeout(() => {
-          navigate(response.data.redirect_url);
+          navigate(response.data.redirect_url || "/"); // Default to / if no redirect_url
         }, 1000);
       }
     } catch (error) {

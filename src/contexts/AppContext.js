@@ -13,13 +13,8 @@ export const AppContext = createContext()
 
 export const AppProvider = ({children}) => {
 
-    const [efileNo, seteFileNo] = useState(null)
-    
-
-    const contextValue = useMemo(()=>({efileNo}), [efileNo])
-    
     return(
-        <AppContext.Provider value={contextValue}>
+        <AppContext.Provider>
             <StepProvider>
                 <LanguageProvider>
                     <BaseProvider>

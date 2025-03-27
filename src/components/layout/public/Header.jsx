@@ -28,6 +28,7 @@ const Header = () => {
     } catch (error) {
       toast.error(t("alerts.logout_failed"), { theme: "colored" });
     }
+
   };
 
   const renderDropdownLinks = (links) => {

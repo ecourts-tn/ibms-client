@@ -11,9 +11,10 @@ import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { Link } from 'react-router-dom';
 import { truncateChars } from 'utils';
+import { MasterContext } from 'contexts/MasterContext';
 
 const RegistrationSearch = () => {
     
@@ -27,12 +28,18 @@ const RegistrationSearch = () => {
         reg_number: '',
         reg_year: ''
     })
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {seats} = useContext(SeatContext)
+    // const {seats} = useContext(SeatContext)
     const {language} = useContext(LanguageContext)
-    const {casetypes}   = useContext(CaseTypeContext)
+    // const {casetypes}   = useContext(CaseTypeContext)
+        const {masters:{
+            states,
+            districts, 
+            seats, 
+            casetypes
+        }} = useContext(MasterContext)
     const {t} = useTranslation()
     const[petition, setPetition] = useState({})
     const[errors, setErrors] = useState({})

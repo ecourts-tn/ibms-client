@@ -23,7 +23,10 @@ export const MasterProvider = ({children}) => {
         relations: [],
         proofs: [],
         prisons: [],
-        countries:[]
+        countries:[],
+        employments:[],
+        propertytypes:[],
+        departments:[]
     });
 
     useEffect(() => {
@@ -50,7 +53,10 @@ export const MasterProvider = ({children}) => {
                         relations: response.data.relation,
                         proofs: response.data.proof,
                         prisons: response.data.prison,
-                        countries: response.data.countries
+                        countries: response.data.countries,
+                        employments: response.data.employment,
+                        propertytypes: response.data.property_type,
+                        departments: response.data.department
                     });
                 }
             }catch(error){

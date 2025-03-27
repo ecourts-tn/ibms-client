@@ -14,8 +14,8 @@ import { SeatContext } from 'contexts/SeatContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/InitialInput';
-import PetitionSearch from 'components/common/PetitionSearch';
+import InitialInput from 'components/filing/common/InitialInput';
+import PetitionSearch from 'components/utils/PetitionSearch';
 
 
 const DischargeSurety = () => {

@@ -3,7 +3,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import { AuthContext } from 'contexts/AuthContext'
 import api from 'api'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 
 
 const Profile = () => {

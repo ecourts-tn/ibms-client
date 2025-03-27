@@ -8,7 +8,7 @@ import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { LanguageContext } from 'contexts/LanguageContex'
 
 const CNRSearch = () => {

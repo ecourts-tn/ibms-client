@@ -3,81 +3,58 @@ import { useTranslation } from 'react-i18next'
 import MaterialDetails from './MaterialDetails';
 import VehicleDetails from './VehicleDetails';
 
-const PropertyDetail = () => {
+const PropertyDetail = ({ materials, setMaterials, vehicles, setVehicles }) => {
+    const {t} = useTranslation();
+    const [propertyType, setPropertyType] = useState(1);
 
-    const {t} = useTranslation()
-    const materialState = {
-            name: '',
-            quantity:'',
-            nature:'',
-            is_produced: '',
-            produced_date: '',
-            reason: ''
-        }
-    const[material, setMaterial] = useState(materialState)
-    const[materialErrors, setMaterialErrors] = useState({})
-    const[materials, setMaterials] = useState([])
-    const vehicleState = {
-        vehicle_name: '',
-        owner_details: '',
-        vehicle_number: '',
-        fastag_details: '',
-        is_owner_accused: ''
-    }
-    const[vehicle, setVehicle] = useState(vehicleState)
-    const[vehicles, setVehicles] = useState([])
-    const[propertyType, setPropertyType] = useState(1)
-
-    const addMaterial = () => {}
-    
     return (
-        <React.Fragment>
-            <div className="card card-navy">
-                <div className="card-header">
-                    <strong>{t('property_details')}</strong>
-                </div>
-                <div className="card-body">
-                    <div className="row">
-                        <div className="col-md-12">
-                            <div className="form-group row">
-                                <label htmlFor="" className='col-sm-2 form-label'>{t('property_type')}</label>
-                                <div className="col-sm-9">
-                                    <div className="icheck-primary d-inline mx-2">
+        <div className="card card-navy">
+            <div className="card-header">
+                <strong>{t('property_details')}</strong>
+            </div>
+            <div className="card-body">
+                <div className="row">
+                    <div className="col-md-6 offset-md-3">
+                        <div className="form-group row">
+                            <label className='col-sm-3 form-label'>{t('property_type')}</label>
+                            <div className="col-sm-7">
+                                <div className="icheck-primary d-inline mx-2">
                                     <input 
                                         type="radio" 
                                         name="property_type" 
-                                        id="propertyTypeYes" 
-                                        value={propertyType}
-                                        checked={ parseInt(propertyType) === 1 ? true : false}
-                                        onChange={(e) => setPropertyType(1)} 
+                                        id="propertyTypeMaterial" 
+                                        value="1"
+                                        checked={propertyType === 1}
+                                        onChange={() => setPropertyType(1)} 
                                     />
-                                    <label htmlFor="propertyTypeYes">{t('material')}</label>
-                                    </div>
-                                    <div className="icheck-primary d-inline mx-2">
+                                    <label htmlFor="propertyTypeMaterial">{t('material')}</label>
+                                </div>
+                                <div className="icheck-primary d-inline mx-2">
                                     <input 
                                         type="radio" 
-                                        id="propertyTypeNo" 
+                                        id="propertyTypeVehicle" 
                                         name="property_type" 
-                                        value={propertyType}
-                                        checked={ parseInt(propertyType) === 2 ? true : false } 
-                                        onChange={(e) => setPropertyType(2)}
+                                        value="2"
+                                        checked={propertyType === 2} 
+                                        onChange={() => setPropertyType(2)}
                                     />
-                                    <label htmlFor="propertyTypeNo">{t('vehicle')}</label>
-                                    </div>
+                                    <label htmlFor="propertyTypeVehicle">{t('vehicle')}</label>
                                 </div>
                             </div>
-                            { parseInt(propertyType) === 1 && (
-                                <MaterialDetails material={material} setMaterial={setMaterial} addMaterial={addMaterial}/>
-                            )}
-                            { parseInt(propertyType) === 2 && (
-                                <VehicleDetails  vehicle={vehicle} setVehicle={setVehicle}/>
-                            )}
                         </div>
+                    </div>
+                    <div className='col-md-12'>
+                        {propertyType === 1 && (
+                            <MaterialDetails materials={materials} setMaterials={setMaterials} />
+                        )}
+                        {propertyType === 2 && (
+                            <VehicleDetails vehicles={vehicles} setVehicles={setVehicles} />
+                        )}
                     </div>
                 </div>
             </div>
-        </React.Fragment>
-    )
-}
+        </div>
+    );
+};
 
-export default PropertyDetail
+export default PropertyDetail;

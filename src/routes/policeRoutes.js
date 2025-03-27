@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { PrivateRoute } from "hooks/PrivateRoute";
 /* -------- Components ----------- */
 import Dashboard from "components/police/Dashboard"

@@ -11,9 +11,10 @@ import { TalukContext } from 'contexts/TalukContext'
 import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import ViewSurety from './ViewSurety'
 import { MasterContext } from 'contexts/MasterContext'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 
@@ -23,7 +24,15 @@ const SuretyForm = () => {
     // const {districts} = useContext(DistrictContext)
     // const {taluks}    = useContext(TalukContext)
     // const {relations} = useContext(RelationContext)  
-    const { masters: {states, districts, taluks, relations}} = useContext(MasterContext)
+    const {language} = useContext(LanguageContext)
+    const { masters: {
+        states, 
+        districts, 
+        taluks, 
+        relations,
+        employments,
+        propertytypes
+    }} = useContext(MasterContext)
     const {t} = useTranslation()
     
     const initialState = {
@@ -230,16 +239,6 @@ const SuretyForm = () => {
         }
     }
 
-   
-
-    // const addBankAccount = () => {
-    //     setBankAccounts([...bankAccounts, account])
-    //     toast.success("Bank details added successfully", {
-    //         theme : "colored"
-    //     })
-    //     setAccount(initialAccount)
-    // }
-
     const addBankAccount = () => {
         if (
             account.bank_name && 
@@ -332,7 +331,7 @@ const SuretyForm = () => {
         }));
     };
     
-
+    console.log("employments:", employments)
 
     return (
         <div className="container-fluid">
@@ -429,18 +428,17 @@ const SuretyForm = () => {
                             <label htmlFor="">{t('relationship_type')} <RequiredField/></label>
                             <select 
                                 name="relation" 
-                                className={`form-control ${errors.relation ? 'is-invalid' : null }`}
+                                id="relation" 
+                                className={`form-control ${errors.relation ? 'is-invalid' : ''}`}
                                 value={surety.relation}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            >
-                                <option value="">Select parentage</option>
-                                { relations.map((relation, index) => (
-                                <option key={index} value={relation.id}>{relation.relation_name}</option>
-                                ))}
+                                >
+                                <option value="">{t('alerts.select_parantage')}</option>
+                                { relations.map((item, index) => (
+                                    <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
+                                )) }
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.relation }
-                            </div>
+                            <div className="invalid-feedback">{ errors.relation }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -484,9 +482,9 @@ const SuretyForm = () => {
                                 value={surety.state}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select state</option>
-                                { states.map((state, index) => (
-                                <option key={index} value={state.state_code}>{state.state_name}</option>
+                                <option value="">{t('alerts.select_state')}</option>
+                                { states.map((item, index) => (
+                                <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -503,9 +501,9 @@ const SuretyForm = () => {
                                 value={surety.district}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select district</option>
-                                { districts.filter(d=>parseInt(d.state)===parseInt(surety.state)).map((district, index) => (
-                                <option value={district.district_code} key={index}>{district.district_name}</option>
+                                <option value="">{t('alerts.select_district')}</option>
+                                { districts.filter(district=>parseInt(district.state)===parseInt(surety.state)).map((item, index) => (
+                                <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -522,9 +520,9 @@ const SuretyForm = () => {
                                 value={surety.taluk}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select taluk</option>
-                                { taluks.filter(t=>parseInt(t.district)===parseInt(surety.district)).map((taluk, index) => (
-                                <option value={taluk.id} key={index}>{taluk.taluk_name}</option>
+                                <option value="">{t('alerts.select_taluk')}</option>
+                                { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(surety.district)).map((item, index) => (
+                                <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -618,8 +616,9 @@ const SuretyForm = () => {
                                 className={`form-control ${errors.property_type ? 'is-invalid' : null}`}
                             >
                                 <option value="">Select type</option>
-                                <option value="1">Own</option>
-                                <option value="2">Rental</option>
+                                {propertytypes.map((p, index) => (
+                                <option key={index} value={p.id}>{language === 'ta' ? p.type_lname : p.type_name}</option>
+                                ))}
                             </select>
                             <div className="invalid-feedback">
                                 { errors.property_type }
@@ -732,11 +731,9 @@ const SuretyForm = () => {
                                 className={`form-control ${errors.employment_type ? 'is-invalid' : null }`}
                             >
                                 <option value="">Select type</option>
-                                <option value="1">Employed</option>
-                                <option value="2">Self Employed</option>
-                                <option value="3">Business</option>
-                                <option value="4">Agriculture</option>
-                                <option value="5">Unemployed</option>
+                                { employments.map((e, index) => (
+                                <option key={index} value={e.id}>{language === 'ta' ? e.type_lname : e.type_name }</option>
+                                ))}
                             </select>
                             <div className="invalid-feedback">
                                 { errors.employment_type }

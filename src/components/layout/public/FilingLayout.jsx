@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Button from "react-bootstrap/Button";
 import { StepContext } from "contexts/StepContext";
+import { BaseContext } from "contexts/BaseContext";
 
 
 const FilingLayout = ({routes, title}) => {
@@ -14,6 +15,7 @@ const FilingLayout = ({routes, title}) => {
     const location = useLocation();
     const { t } = useTranslation();
     const [nextDisabled, setNextDisabled] = useState(true);
+    const {efileNumber} = useContext(BaseContext)
 
     // Extract base path from the current location or default to "bail"
     const pathSegments = location.pathname.split('/');
@@ -53,9 +55,6 @@ const FilingLayout = ({routes, title}) => {
             navigate(`/filing/${basePath}/${routes[currentIndex - 1].path}`);
         }
     };
-
-    const efile_no = sessionStorage.getItem("efile_no" || null)
-
 
     return (
         <PrivateRoute>
@@ -104,7 +103,7 @@ const FilingLayout = ({routes, title}) => {
                             <div className="card-header" style={{ backgroundColor: "#076280", color: "#FAFAFA", borderRadius: 0 }}>
                                 <div className="d-flex justify-content-between font-weight-bold">
                                     <span>{t(headerTitle)}</span>
-                                    <span>{efile_no}</span>
+                                    <span>{ efileNumber ? efileNumber : null }</span>
                                 </div>
                             </div>
                             <div className="card-body p-2">

@@ -2,8 +2,8 @@ import api from 'api'
 import React, {useState, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import { useLocation } from 'react-router-dom'
-import WebcamCapture from 'components/common/WebCamCapture'
-import FingerPrintCapture from 'components/common/FingerPrintCapture'
+import WebcamCapture from 'components/utils/WebCamCapture'
+import FingerPrintCapture from 'components/utils/FingerPrintCapture'
 
 const ConditionForm = () => {
     const {state} = useLocation()

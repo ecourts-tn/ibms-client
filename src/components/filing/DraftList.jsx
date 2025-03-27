@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
-import ViewDocument from 'components/common/ViewDocument'
+import ViewDocument from 'components/utils/ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { formatDate, encode_efile_number } from 'utils'
@@ -9,8 +9,9 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { pendingPetition } from 'services/petitionService'
+import { BaseContext } from 'contexts/BaseContext'
 
 
 const DraftList = () => {
@@ -26,6 +27,7 @@ const DraftList = () => {
     const {language} = useContext(LanguageContext)
     const[loading, setLoading] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
+    const {setEfileNumber, clearEfileNumber} = useContext(BaseContext)
     
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1)
@@ -33,6 +35,7 @@ const DraftList = () => {
     const [totalItems, setTotalItems] = useState(0)
     
     const handleShow = (document) => {
+        console.log(document)
         setSelectedDocument(document)
     }
 
@@ -96,10 +99,10 @@ const DraftList = () => {
         if (!window.confirm("Are you sure you want to edit the petition?")) {
             return; // Exit the function if the user cancels
         }
-        const encodedPk = encode_efile_number(petition.efile_number);
+        setEfileNumber(petition.efile_number)
         const route = petition.case_type.url;
         if (route) {
-            navigate(`${route}?q=${encodedPk}`);
+            navigate(route);
         } else {
             console.error("Invalid case type:", petition.case_type);
             alert("Invalid case type. Please contact support.");
@@ -119,6 +122,7 @@ const DraftList = () => {
                                 theme:"colored"
                             })
                         }
+                        clearEfileNumber()
                         setTimeout(() => {
                             navigate('/filing/dashboard')
                         }, 2000)
@@ -138,7 +142,7 @@ const DraftList = () => {
     }
 
     return (
-        <>
+        <React.Fragment>
             <ToastContainer />
             <Modal 
                     show={showError} 
@@ -164,7 +168,15 @@ const DraftList = () => {
                     </Modal.Footer>
             </Modal>
             {loading && <Loading />}
-            <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
+            { selectedDocument && (
+                <ViewDocument 
+                    url={`${config.docUrl}${selectedDocument.document}`}
+                    title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
+                    show={!!selectedDocument}
+                    handleClose={handleClose}
+                />
+            )}
+            <div className="container-fluid px-md-5 my-4" style={{minHeight:'500px'}}>
                 <div className="row">
                     <div className="col-md-12">
                         <nav aria-label="breadcrumb" className="mt-2 mb-1">
@@ -206,106 +218,132 @@ const DraftList = () => {
                                 </div>
                             </div>
                         </div>
-                        <table className="table table-striped table-bordered">
-                            <thead className="bg-info">
-                                <tr className='text-center'>
-                                    <th>{t('sl_no')}</th>
-                                    <th>{t('efile_number')}</th>
-                                    <th>{t('court')}</th>
-                                    <th>{t('litigants')}</th>
-                                    <th>{t('documents')}</th>
-                                    <th>{t('payment')}</th>
-                                    <th>{t('action')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { currentPetitions.map((item, index) => (
-                                <tr key={index}>
-                                    <td>{ index + 1 + indexOfFirstItem }</td>
-                                    <td>
-                                        <Link 
-                                            to="/filing/detail" 
+                        <div>
+                            {/* Desktop Table View */}
+                            <div className="d-none d-md-block">
+                                <table className="table table-striped table-bordered">
+                                <thead className="bg-info">
+                                    <tr className="text-center">
+                                    <th>{t("sl_no")}</th>
+                                    <th>{t("efile_number")}</th>
+                                    <th>{t("court")}</th>
+                                    <th>{t("litigants")}</th>
+                                    <th>{t("documents")}</th>
+                                    <th>{t("payment")}</th>
+                                    <th>{t("action")}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentPetitions.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{index + 1 + indexOfFirstItem}</td>
+                                        <td>
+                                        <Link
+                                            to="/filing/detail"
                                             state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
                                         >
-                                            {item.petition?.efile_number ? (
-                                                <strong>{item.petition.efile_number}</strong>
-                                            ) : null}
+                                            <strong>{item.petition?.efile_number}</strong>
                                         </Link>
-                                        {item.petition?.efile_date ? (
-                                            <span style={{ display: "block" }}>
-                                                {t('efile_date')}: {formatDate(item.petition.efile_date)}
-                                            </span>
-                                        ) : null}
-                                    </td>
-                                    { item.petition?.judiciary.id === 1 ? (
-                                        <td>
-                                            <span>{ language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name }</span><br />
+                                        <span style={{ display: "block" }}>
+                                            {t("efile_date")}: {formatDate(item.petition?.efile_date)}
+                                        </span>
                                         </td>
-                                    ) : (
                                         <td>
-                                            <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
-                                            <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
-                                            <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
-                                        </td>
-                                    )}
-                                    <td className="text-center">
-                                        { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
-                                        ))}
-                                            {/* <br/> */}
-                                            <span className="text text-danger ml-2">Vs</span> <br/>
-                                        { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
-                                        ))}
-                                    </td>
-                                    <td>
-                                        { item.document.map((d, index) => (
-                                            <div>
-                                                <span key={index} onClick={()=>handleShow(d)} className='badge badge-pill badge-info mt-1'>
-                                                    { language === 'ta' ?  d.title?.document_lname || null : d.title?.document_name || null}
-                                                </span>
-                                            </div>
-                                        ))}
-                                        { selectedDocument && (
-                                            <ViewDocument 
-                                                url={`${config.docUrl}${selectedDocument.document}`}
-                                                title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
-                                                show={!!selectedDocument}
-                                                handleClose={handleClose}
-                                            />
+                                        {item.petition?.judiciary.id === 1 ? (
+                                            <span>{language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}</span>
+                                        ) : (
+                                            <>
+                                            <span>{language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}</span><br />
+                                            {/* <span>{language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}</span><br /> */}
+                                            {/* <span>{language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}</span> */}
+                                            </>
                                         )}
-                                    </td>
-                                    <td>
-                                        { item.fees.map((fee, index) => (
-                                            <span key={index}>Rs.{fee.amount}<br/></span>
+                                        </td>
+                                        <td>{item.petition.pet_name} <span className='text-danger mx-2'>Vs</span>{item.petition.res_name}
+                                        {/* {item.litigants.map((l, idx) => (
+                                            <span key={idx} className="d-block">
+                                            {l.litigant_type === 1 ? "Petitioner: " : "Respondent: "} {l.litigant_name}
+                                            </span>
+                                        ))} */}
+                                        </td>
+                                        <td>
+                                        {item.document.map((d, idx) => (
+                                            <a key={idx} onClick={() => handleShow(d)} href="#" className='d-block'>
+                                                {language === "ta" ? d.title?.document_lname || null : d.title?.document_name || null}
+                                            </a>
                                         ))}
-                                    </td>
-                                    <td>
-                                        <Button
-                                            variant="outlined"
-                                            color="primary"
-                                            onClick={() => handleEdit(item.petition)}
-                                        >
-                                            <i className="fa fa-pencil-alt mr-1"></i>{t('edit')}
+                                        </td>
+                                        <td>
+                                        {item.fees.map((fee, idx) => (
+                                            <span key={idx} className="d-block">Rs.{fee.amount}</span>
+                                        ))}
+                                        </td>
+                                        <td>
+                                        <Button variant="outlined" color="primary" onClick={() => handleEdit(item.petition)}>
+                                            <i className="fa fa-pencil-alt mr-1"></i>{t("edit")}
                                         </Button>
-                                        <Button
-                                            variant="outlined"
-                                            color="success"
-                                            className="ml-1"
-                                            onClick = {(e) => handleSubmit(item.petition.efile_number) }
-                                        >
-                                            <i className="fa fa-upload mr-1"></i>{t('submit')}
+                                        <Button variant="outlined" color="success" className="ml-1" onClick={() => handleSubmit(item.petition.efile_number)}>
+                                            <i className="fa fa-upload mr-1"></i>{t("submit")}
                                         </Button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
+                                    ))}
+                                </tbody>
+                                </table>
+                            </div>
+                            <div className="d-md-none">
+                                {currentPetitions.map((item, index) => (
+                                <div key={index} className="card mb-3 border shadow-sm">
+                                    <div className="card-header bg-info">
+                                        <span className="">
+                                            <strong>{item.petition?.efile_number}</strong><br/>
+                                            <span className="">{t("efile_date")}: {formatDate(item.petition?.efile_date)}</span>
+                                        </span>
+                                    </div>
+                                    <div className="card-body">
+                                        <p ><strong>{t("court")}</strong><br/>
+                                        {item.petition?.judiciary.id === 1
+                                        ? language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name
+                                        : <>
+                                            {language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}<br />
+                                            {language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}<br />
+                                            {language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}
+                                            </>
+                                        }
+                                    </p>
+                                    <p><strong>{t("litigants")}</strong><br/>
+                                        {item.litigants.map((l, idx) => (
+                                        <span key={idx} className="d-block">{l.litigant_type === 1 ? "Petitioner: " : "Respondent: "} {l.litigant_name}</span>
+                                        ))}
+                                    </p>
+                                    <p><strong>{t("documents")}</strong><br/></p>
+                                    {item.document.map((d, idx) => (
+                                        <span key={idx} onClick={() => handleShow(d)} className="badge badge-pill badge-info m-1">
+                                        {language === "ta" ? d.title?.document_lname || null : d.title?.document_name || null}
+                                        </span>
+                                    ))}
+
+                                    <p className="mt-2">{t("payment")}</p>
+                                    <p>
+                                        {item.fees.map((fee, idx) => (
+                                        <span key={idx} className="d-block">Rs.{fee.amount}</span>
+                                        ))}
+                                    </p>
+
+                                    <div className="d-flex justify-content-start">
+                                        <Button variant="outlined" color="primary" onClick={() => handleEdit(item.petition)} className="mr-2">
+                                        <i className="fa fa-pencil-alt mr-1"></i>{t("edit")}
+                                        </Button>
+                                        <Button variant="outlined" color="success" onClick={() => handleSubmit(item.petition.efile_number)}>
+                                        <i className="fa fa-upload mr-1"></i>{t("submit")}
+                                        </Button>
+                                    </div>
+                                    </div>
+                                </div>
                                 ))}
-                                {/* { currentPetitions.length <= 0 && (
-                                <tr>
-                                    <td colSpan={6} className="text-danger text-center">***** No petitions found *****</td>
-                                </tr>
-                                )} */}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+
                         {/* Pagination Controls */}
                         <div className="d-flex justify-content-between mt-3">
                             <div className="pagination">
@@ -330,7 +368,7 @@ const DraftList = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </React.Fragment>
     )
 }
 

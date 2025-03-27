@@ -5,7 +5,8 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 axios.defaults.withCredentials = true;
 
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    //baseURL: process.env.REACT_APP_API_URL,
+    baseURL: "http://192.168.100.155:81/api/v1/"
 });
 
 let FRONTEND_SECRET = localStorage.getItem("frontendSecret") || process.env.REACT_APP_FRONTEND_SECRET;
@@ -115,23 +116,23 @@ api.interceptors.response.use(
   }
 );
 
-export const refreshFrontendSecret = async () => {
-  try {
-      const response = await axios.get("auth/latest-secret/");
+// export const refreshFrontendSecret = async () => {
+//   try {
+//       const response = await axios.get("auth/latest-secret/");
 
-      if (response.status === 200) {
-          FRONTEND_SECRET = response.data.secret;
-          localStorage.setItem("frontendSecret", FRONTEND_SECRET);
-      }
-  } catch (error) {
-      console.error("Failed to refresh frontend secret", error);
-  }
-};
+//       if (response.status === 200) {
+//           FRONTEND_SECRET = response.data.secret;
+//           localStorage.setItem("frontendSecret", FRONTEND_SECRET);
+//       }
+//   } catch (error) {
+//       console.error("Failed to refresh frontend secret", error);
+//   }
+// };
 
-//  Auto-refresh secret every 15 minutes
-setInterval(refreshFrontendSecret, 15 * 60 * 1000); // 15 minutes
+// //  Auto-refresh secret every 15 minutes
+// setInterval(refreshFrontendSecret, 15 * 60 * 1000); // 15 minutes
 
-//  Fetch the latest secret on app startup
-refreshFrontendSecret();
+// //  Fetch the latest secret on app startup
+// refreshFrontendSecret();
 
 export default api;
