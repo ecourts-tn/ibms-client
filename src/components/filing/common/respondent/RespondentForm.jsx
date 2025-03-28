@@ -4,26 +4,21 @@ import Button from 'react-bootstrap/Button'
 import * as Yup from 'yup'
 import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
-import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { DesignationContext } from 'contexts/DesignationContext'
 import { handleMobileChange, validateEmail, handleNameChange } from 'components/validation/validations';
 import { MasterContext } from 'contexts/MasterContext'
+import { BaseContext } from 'contexts/BaseContext'
+import { RequiredField } from 'utils'
 
 
 const RespondentForm = ({addRespondent, selectedRespondent}) => {
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
-    // const {designations} = useContext(DesignationContext)
     const { masters:{states, districts, designations}} = useContext(MasterContext)
     const {language} = useContext(LanguageContext)
     const {t} = useTranslation()
-
+    const {efileNumber} = useContext(BaseContext)
     const initialState = {
         litigant_name: '',
         litigant_type: 2, 
@@ -62,10 +57,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     }, [selectedRespondent])
 
     useEffect(() => {
-        const efile_no = sessionStorage.getItem("efile_no")
-        const fetchData = async() => {
+        const fetchPetitionDetail = async() => {
             try{
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
                 if(response.status === 200){
                     const petition = response.data.petition
                     setLitigant({...litigant, 
@@ -81,12 +75,12 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 setLitigant(initialState)
             }
         }
-        if(efile_no){
-            fetchData()
+        if(efileNumber){
+            fetchPetitionDetail()
         }else{
             setLitigant(initialState)
         }
-    },[])
+    },[efileNumber])
 
 
 
@@ -152,7 +146,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
             </div>
             {!respondentPolice && (
             <div className="form-group row">
-                <label className='col-sm-3 col-form-label'>{t('respondent_name')}</label>
+                <label className='col-sm-3 col-form-label'>{t('respondent_name')} <RequiredField /></label>
                 <div className="col-md-6">
                     <input
                         type="text"
@@ -170,7 +164,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
             { respondentPolice && (
              <React.Fragment>
                 <div className="form-group row">
-                    <label htmlFor="state" className='col-sm-3 col-form-label'>{t('state')}</label>
+                    <label htmlFor="state" className='col-sm-3 col-form-label'>{t('state')} <RequiredField /></label>
                     <div className="col-md-6">
                         <select 
                             name="state" 
@@ -188,7 +182,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="district" className='col-sm-3 col-form-label'>{t('district')}</label>
+                    <label htmlFor="district" className='col-sm-3 col-form-label'>{t('district')} <RequiredField /></label>
                     <div className="col-md-6">
                         <select 
                             name="district" 
@@ -208,7 +202,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     </div>                       
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="police_station" className='col-sm-3 col-form-label'>{t('police_station')}</label><br />
+                    <label htmlFor="police_station" className='col-sm-3 col-form-label'>{t('police_station')}<RequiredField /></label><br />
                     <div className="col-md-6">
                         <select 
                             name="police_station" 
@@ -229,7 +223,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="litigant_name" className="col-sm-3 col-form-label">{t('respondent_name')}</label>
+                    <label htmlFor="litigant_name" className="col-sm-3 col-form-label">{t('respondent_name')}<RequiredField /></label>
                     <div className="col-md-6">
                         <Form.Control
                             name="litigant_name"
@@ -242,7 +236,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label className='col-sm-3 col-form-group'>{t('designation')}</label>
+                    <label className='col-sm-3 col-form-group'>{t('designation')} <RequiredField /></label>
                     <div className="col-md-6">
                         <select 
                             name="designation" 
@@ -288,7 +282,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label className="col-sm-3 col-form-label">{t('address')}</label>
+                    <label className="col-sm-3 col-form-label">{t('address')} <RequiredField /></label>
                     <div className="col-md-6">
                         <textarea
                             rows={2}

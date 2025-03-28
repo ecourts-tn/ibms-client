@@ -623,8 +623,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                 {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
               </Form.Group>
             </div>
-            { parseInt(petition?.case_type?.id) === 1 && (
-              <>
                 <div className="col-md-3">
                     <div className="form-group">
                       <label>{t('custody')}<RequiredField /></label><br />
@@ -689,8 +687,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                       <div className="invalid-feedback">{ errors.prison}</div>
                     </div>
                 </div>  
-              </>
-            )}
             { console.log(location.pathname)}
               <div className="col-md-4 mt-2">
                 <div className="form-group">

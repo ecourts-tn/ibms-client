@@ -164,7 +164,7 @@ const ResponsePending = () => {
                                                 <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
                                                 <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
                                             </td>
-                                            <td>{ item.crime?.fir_number }/{ item.crime?.fir_year }</td>
+                                            <td>{ item.crime?.fir_no }/{ item.crime?.fir_year }</td>
                                             <td>
                                                 { item.crime?.date_of_occurrence}<br/>
                                                 { item.crime?.place_of_occurrence}

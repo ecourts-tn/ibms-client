@@ -99,7 +99,7 @@ const ResponseDetails = () => {
                                             {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}
                                         </td>
                                         <td>Crime&nbsp;Number</td>
-                                        <td>{`${crime.fir_number }/${ crime.fir_year }`}</td>
+                                        <td>{`${crime.fir_no }/${ crime.fir_year }`}</td>
                                         <td>Date of FIR</td>
                                         <td>{ crime.fir_date_time }</td>
                                     </tr>
@@ -134,7 +134,7 @@ const ResponseDetails = () => {
                                     </tr>
                                     <tr>
                                         <td>Gist&nbsp;in&nbsp;Local&nbsp;Language</td>
-                                        <td colSpan={5}><span dangerouslySetInnerHTML={CreateMarkup(crime.gist_in_local)}></span></td>
+                                        <td colSpan={5}><span dangerouslySetInnerHTML={CreateMarkup(crime.gist_of_fir_in_local)}></span></td>
                                     </tr>
                                 </tbody>
                             </table>

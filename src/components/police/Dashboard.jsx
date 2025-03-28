@@ -62,33 +62,34 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
+                    { console.log(count)}
                     <section className="content">
                         <div className="container-fluid">
                             <div className="row">
                                 <DashboardCard
                                     color={'bg-info'}
-                                    count={count.total}
+                                    count={count.response_pending}
                                     title="Pending Response"
                                     icon={'ion-bag'}
                                     url="#"
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
-                                    count={count.submitted}
+                                    count={count.response_submitted}
                                     title="Submitted Response"
                                     icon={'ion-bag'}
                                     url="#"
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}
-                                    count={count.approved}
+                                    count={count.case_pending}
                                     title="Pending Cases"
                                     icon={'ion-bag'}
                                     url="#"
                                 />
                                 <DashboardCard 
                                     color={'bg-danger'}
-                                    count={count.returned}
+                                    count={count.case_disposed}
                                     title="Disposed Cases"
                                     icon={'ion-bag'}
                                     url="#"
