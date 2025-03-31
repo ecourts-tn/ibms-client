@@ -128,28 +128,28 @@ const ResponseSubmitted = () => {
                                             <th>{t('Case Number or efile_number')}</th>
                                             <th>{t('court')}</th>
                                             <th>Crime Number/Year</th>
+                                            <th>Date & Place of Occurence</th>
                                             <th>Accused Details</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     { currentPetitions.map((item, index) => (
                                         <tr key={index}>
-                                            <td>{ index + 1 }</td>
-                                            {/* <td>
-                                                <Link to="/police/response/detail/" state={{efile_no:item.petition.efile_number}}>
-                                                    <strong>{ item.petition.efile_number }</strong>
-                                                </Link>
-                                                <span style={{display:"block"}}>{t('efile_date')}: {formatDate(item.petition.efile_date)}</span>
-                                            </td> */}
-                                            <td>
+                                            <td>{ index + 1 + indexOfFirstItem}</td>
+                                             <td>
+                                                <span className="d-block">
+                                                    {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
+                                                        <span className="text-success">
+                                                            <strong>
+                                                                {`(${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year})`}
+                                                            </strong>
+                                                        </span>
+                                                    ) : null}
+                                                </span>
                                                 <Link 
                                                     to="/police/response/detail/" 
                                                     state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
                                                 >
-                                                    {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
-                                                        <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
-                                                    ) : null}
-                                                    <br />
                                                     {item.petition?.efile_number ? (
                                                         <strong>{item.petition.efile_number}</strong>
                                                     ) : null}
@@ -165,7 +165,25 @@ const ResponseSubmitted = () => {
                                                 <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
                                                 <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
                                             </td>
-                                            <td>{ item.crime?.fir_number }/{ item.crime?.fir_year }</td>
+                                            <td>
+                                                { (!item.crime?.fir_no && !item.crime?.fir_year) ? (
+                                                    <span className="text-warning">
+                                                        FIR details not available
+                                                    </span>
+                                                ): (
+                                                    `${item.crime?.fir_no }/${ item.crime?.fir_year}`
+                                                )}
+                                            </td>
+                                            <td>
+                                                { item.crime?.date_of_occurrence ? (
+                                                    <span>
+                                                        {item.crime?.date_of_occurrence}<br/>
+                                                        {item.crime?.place_of_occurrence}
+                                                    </span>
+                                                ): (
+                                                    <span className="text-center">-----</span>
+                                                )}
+                                            </td>
                                             <td className="text-center">
                                                 { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2" style={{display:'block'}} key={index}>{index+1}. {l.litigant_name}</span>

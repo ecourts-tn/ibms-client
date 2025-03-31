@@ -174,32 +174,7 @@ const PetitionFiling = () => {
         }
     };
 
-    const handleSubmit1 = async(e) => {
-        e.preventDefault()
-        try{
-            const post_data = {
-                petitioner: form,
-                accused: selectedRespondent,
-                petition: petition,
-              
-            }
-            // const merged = {...form,...grounds}
-            await validationSchema.validate(form, {abortEarly:false})
-            const response = await api.post("police/filing/cancellation/bail/", post_data)
-            if(response.status === 201){
-                toast.success("Bail cancellation petition submitted successfully", {theme:"colored"})
-            }
-        }catch(error){
-            console.log(error.inner)
-            if(error.inner){
-                const newErrors = {}
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message
-                })
-                setErrors(newErrors)
-            }
-        }
-    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -251,7 +226,7 @@ const PetitionFiling = () => {
             const response = await api.post("police/filing/petition/", post_data);
             
             if (response.status === 201) {
-                toast.success("Bail cancellation petition submitted successfully", { theme: "colored" });
+                toast.success("Petition filed successfully", { theme: "colored" });
             }
         } catch (error) {
             // console.log(error.inner);
@@ -267,8 +242,9 @@ const PetitionFiling = () => {
     
 
     return (
-        <>
+        <React.Fragment>
             <ToastContainer />
+            { loading && (<Loading />)}
             <div className="content-wrapper">
                 <div className="container-fluid">
                     <div className="row">
@@ -407,7 +383,7 @@ const PetitionFiling = () => {
                                                                 <div className="invalid-feedback">{ errors.police_station }</div>
                                                                 </div>
                                                             </div>
-                                                            <div className="col-md-2 offset-md-4">
+                                                            <div className="col-md-3 offset-md-3">
                                                                 <div className="form-group">
                                                                     <label htmlFor="case_number">Crime Number<RequiredField /></label>
                                                                     <input 
@@ -560,9 +536,6 @@ const PetitionFiling = () => {
                                                                 >Search</Button>
                                                             </div>
                                                         </div>
-                                                        {/* { loading && (
-                                                            <Loading />
-                                                        )} */}
                                                     </form>
                                                 </div>
                                             </div>
@@ -856,7 +829,7 @@ const PetitionFiling = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </React.Fragment>
     )
 }
 

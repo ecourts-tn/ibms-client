@@ -13,6 +13,7 @@ const Dashboard = () => {
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false)
+    const[calendar, setCalendar] = useState([])
     const { t } = useTranslation()
 
     const fetchDashboardData = async () => {
@@ -20,16 +21,20 @@ const Dashboard = () => {
             setLoading(true)
             const countsEndpoint = 'police/dashboard/counts/';
             const petitionsEndpoint = 'police/dashboard/petitions/';
+            const calendarEndpoint = 'police/dashboard/upcoming/'
             // Use Promise.all to fetch both endpoints in parallel
-            const [countsResponse, petitionsResponse] = await Promise.all([
+            const [countsResponse, petitionsResponse, calendarResponse] = await Promise.all([
                 api.get(countsEndpoint),
                 api.get(petitionsEndpoint),
+                api.get(calendarEndpoint)
             ]);
             // Extract the data from the responses
             const counts = countsResponse.data;
-            const petitions = petitionsResponse.data;           
+            const petitions = petitionsResponse.data;   
+            const upcoming = calendarResponse.data        
             setCount(counts)
             setCases(petitions?.petitions)
+            setCalendar(upcoming)
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             throw error;
@@ -62,7 +67,6 @@ const Dashboard = () => {
                             </div>
                         </div>
                     </div>
-                    { console.log(count)}
                     <section className="content">
                         <div className="container-fluid">
                             <div className="row">
@@ -97,7 +101,9 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-5">
-                                    {/* <Calendar /> */}
+                                    <Calendar 
+                                        upcoming={calendar}    
+                                    /> 
                                 </div>
                                 <div className="col-md-7">
                                     <PetitionList 
