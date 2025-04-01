@@ -87,6 +87,7 @@ const ResponseCreate = () => {
     const [respondent, setRespondent] = useState([])
     const [firTagged, setFirTagged] = useState(false)
     const [courts, setCourts] = useState([]);
+    const [notFound, setNotFound] = useState(false)
 
     const [documents, setDocuments] = useState([])
 
@@ -274,6 +275,13 @@ const ResponseCreate = () => {
         fetchCourts();
     }, []);
 
+
+    useEffect(() => {
+        if(firTagged){
+            window.location.reload()
+        }
+    }, [firTagged])
+
     const handleCourtChange = (e) => {
         setForm({
             ...form,
@@ -319,6 +327,7 @@ const ResponseCreate = () => {
                     no_of_accused: response.data.no_of_accused
                 })
                 setShowAdditionalFields(true)
+                setNotFound(false)
             }
         } catch (error) {
             if (error.inner) {
@@ -327,6 +336,11 @@ const ResponseCreate = () => {
                     newErrors[err.path] = err.message
                 })
                 setSearchErrors(newErrors)
+            }
+            if(error.response){
+                if(error.response.status === 404){
+                    setNotFound(true);
+                }
             }
         } finally {
             setLoading(false)
@@ -364,6 +378,7 @@ const ResponseCreate = () => {
         }
     }
 
+
     return (
         <>
             <ToastContainer />
@@ -387,7 +402,7 @@ const ResponseCreate = () => {
                                                     <td>
                                                         { (petition.filing_type && petition.filing_number && petition.filing_year) ? (
                                                             <strong>
-                                                                {`(${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year})`}
+                                                                {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}
                                                             </strong>
                                                         ):(
                                                             null
@@ -562,13 +577,6 @@ const ResponseCreate = () => {
                                                                 <div className="invalid-feedback">
                                                                     {errors.date_of_arrest}
                                                                 </div>
-                                                                {/* <div className="input-group-append">
-                                                        <button 
-                                                            className="btn btn-outline-primary" 
-                                                            type="button"
-                                                            onClick={(e) => setArrestModify(!arrestModify)}
-                                                        >Modify</button>
-                                                    </div> */}
                                                             </div>
                                                         </div>
                                                         <div className="col-md-6">
@@ -618,7 +626,7 @@ const ResponseCreate = () => {
                                                                 </div>
                                                             </FormGroup>
                                                         </div>
-                                                        <div className="col-md-6np[">
+                                                        <div className="col-md-6">
                                                             <FormGroup className='mb-3'>
                                                                 <FormLabel>Materials & Circumstances against the Petitioner</FormLabel>
                                                                 <FormControl
@@ -1081,6 +1089,18 @@ const ResponseCreate = () => {
                                                         setFirTagged={setFirTagged}
                                                         efile_no = {petition.efile_no}
                                                     />
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-md-12">
+                                                { notFound && (
+                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                        <span><strong>{t('errors.fir_not_found')}</strong> </span>
+                                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>

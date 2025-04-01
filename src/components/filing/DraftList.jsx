@@ -249,15 +249,15 @@ const DraftList = () => {
                                         </span>
                                         </td>
                                         <td>
-                                        {item.petition?.judiciary.id === 1 ? (
-                                            <span>{language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}</span>
-                                        ) : (
-                                            <>
-                                            <span>{language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}</span><br />
-                                            {/* <span>{language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}</span><br /> */}
-                                            {/* <span>{language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}</span> */}
-                                            </>
-                                        )}
+                                            {item.petition?.judiciary.id === 1 ? (
+                                                <span>{language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}</span>
+                                            ) : (
+                                                <>
+                                                <span>{language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}</span><br />
+                                                {/* <span>{language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}</span><br /> */}
+                                                {/* <span>{language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}</span> */}
+                                                </>
+                                            )}
                                         </td>
                                         <td>{item.petition.pet_name} <span className='text-danger mx-2'>Vs</span>{item.petition.res_name}
                                         {/* {item.litigants.map((l, idx) => (

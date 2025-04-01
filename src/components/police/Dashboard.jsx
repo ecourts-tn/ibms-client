@@ -75,14 +75,14 @@ const Dashboard = () => {
                                     count={count.response_pending}
                                     title="Pending Response"
                                     icon={'ion-bag'}
-                                    url="#"
+                                    url="/police/response/pending"
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
                                     count={count.response_submitted}
                                     title="Submitted Response"
                                     icon={'ion-bag'}
-                                    url="#"
+                                    url="/police/response/submitted"
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}

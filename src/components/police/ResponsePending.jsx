@@ -158,13 +158,19 @@ const ResponsePending = () => {
                                                 ) : null}
                                             </td>
                                             <td>
-                                                <span>{ language === 'ta' ? item.petition.court?.court_lname : item.petition.court?.court_name }</span><br />
-                                                <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
-                                                <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
+                                                {item.petition?.judiciary.id === 1 ? (
+                                                    <span>{language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}</span>
+                                                ) : (
+                                                    <React.Fragment>
+                                                        <span>{language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}</span><br />
+                                                        {/* <span>{language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}</span><br /> */}
+                                                        <span>{language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}</span>
+                                                    </React.Fragment>
+                                                )}
                                             </td>
                                             <td>
                                                 { (!item.crime?.fir_no && !item.crime?.fir_year) ? (
-                                                    <span className="text-warning">
+                                                    <span className="text-danger">
                                                         FIR details not available
                                                     </span>
                                                 ): (
@@ -181,7 +187,7 @@ const ResponsePending = () => {
                                                     <span className="text-center">-----</span>
                                                 )}
                                             </td>
-                                            <td className="text-center">
+                                            <td>
                                                 { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2" style={{display:'block'}} key={index}>{index+1}. {l.litigant_name}</span>
                                                 ))}
