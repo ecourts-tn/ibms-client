@@ -3,8 +3,8 @@ import { useLocation } from 'react-router-dom';
 import generatePDF from "react-to-pdf";
 import Button from '@mui/material/Button'
 import DownloadIcon from '@mui/icons-material/Download'
-import api from '../../api';
-import { CreateMarkup, formatDate } from '../../utils'
+import api from 'api';
+import { CreateMarkup, formatDate } from 'utils'
 import './pdfstyle.css'
 
 const PdfGenerator = () => {
@@ -33,6 +33,7 @@ const PdfGenerator = () => {
         async function fetchData(){
             const response = await api.get(`case/filing/detail/`, {params:{efile_no:state.efile_no}})
             if(response.status === 200){
+                console.log(response.data.crime)
                 setPetition(response.data.petition)
                 setAdvocates(response.data.advocates)
                 setCrime(response.data.crime)
@@ -60,8 +61,8 @@ const PdfGenerator = () => {
                             <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.court?.court_name}<br/>{petition.establishment.establishment_name}</strong> </h4>
                             <p><strong>{ petition.efile_number }</strong></p>
                             <p className="mb-4">
-                                {`In the matter of Crime number: ${crime?.fir_number || '0'}/${crime?.fir_year || '0000'} of ${crime?.police_station?.station_name || 'xxxxx'} 
-                                Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.court.court_name}
+                                {`In the matter of Crime number: ${petition?.fir_number || '0'}/${petition?.fir_year || '0000'} of ${petition?.police_station?.station_name || 'xxxxx'} 
+                                Police Station U/s. ${crime?.section } of ${crime?.act } pending before the ${petition.court.court_name}
                                 ${petition.establishment.establishment_name}, ${petition.district.district_name}, ${petition.state.state_name}`}
                             </p>
                         </div>
@@ -71,8 +72,8 @@ const PdfGenerator = () => {
                             <h4 className="mb-5"><strong>IN THE COURT OF THE HONOURABLE {petition.judiciary?.judiciary_name}<br/>{petition.seat.seat_name}</strong> </h4>
                             <p><strong>{ petition.efile_number }</strong></p>
                             <p className="mb-4">
-                                {`In the matter of Crime number: ${crime?.fir_number || '0'}/${crime?.fir_year || '0000'} of ${crime?.police_station?.station_name || 'xxxxx'} 
-                                Police Station U/s. ${petitioner[0].section } of ${petitioner[0].act } pending before the ${petition.judiciary?.judiciary_name}
+                                {`In the matter of Crime number: ${petition?.fir_number || '0'}/${petition?.fir_year || '0000'} of ${petition?.police_station?.station_name || 'xxxxx'} 
+                                Police Station U/s. ${crime?.section } of ${crime?.act } pending before the ${petition.judiciary?.judiciary_name}
                                 ${petition.seat?.seat_name}`}
                             </p>
                         </div>
@@ -131,7 +132,7 @@ const PdfGenerator = () => {
                                 </li> */}
                                 <li>
                                     It is most humbly submitted that the alleged facts stated in the F.I.R. are<br></br>
-                                    <span dangerouslySetInnerHTML={CreateMarkup(crime?.gist_in_local)}></span>
+                                    <span dangerouslySetInnerHTML={CreateMarkup(crime?.gist_of_fir_in_local)}></span>
                                 </li>
                                 <li>
                                     It is most humbly submitted that the petitioner was arrested by the respondent police in connection with this case and was remanded to judicial custody on <strong>[{crime?.date_of_arrest}]</strong> and he/she is languishing at District Jail/Central Prison at <strong>[{ petitioner[0]?.prison ? petitioner[0].prison?.prison_name : '*****'}]</strong>
@@ -161,7 +162,7 @@ const PdfGenerator = () => {
                             <p>Advocates</p>
                             <p>
                             { advocates.map((a, index) => (
-                               <span key={index} style={{textTransform:'uppercase'}}><strong>&nbsp;{`${a.adv_name} - [${a.adv_reg}]`}</strong><br/></span>
+                               <span key={index} style={{textTransform:'uppercase'}}><strong>&nbsp;{`${a.advocate.username} - [${a.advocate.adv_reg}]`}</strong><br/></span>
                             ))}
                             </p>
                         </div>

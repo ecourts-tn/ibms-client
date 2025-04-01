@@ -8,40 +8,22 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { RequiredField } from 'utils';
 import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import { JudiciaryContext } from 'contexts/JudiciaryContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { BailTypeContext } from 'contexts/BailTypeContext';
-import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import Loading from 'components/utils/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/utils/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
-import { CourtCaseTypeContext } from 'contexts/CourtCaseTypeContext';
 import { MasterContext } from 'contexts/MasterContext';
 
 
 const Initial = () => {
-    // const {states}          = useContext(StateContext)
-    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    // const {judiciaries}     = useContext(JudiciaryContext)
-    // const {seats}           = useContext(SeatContext)
-    // const {casetypes}       = useContext(CaseTypeContext)
-    // const {ccasetypes}      = useContext(CourtCaseTypeContext)
-    // const {bailtypes}       = useContext(BailTypeContext)
-    // const {complainttypes}  = useContext(ComplaintTypeContext)
-    // const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
     const { 
         masters: { 
@@ -51,10 +33,8 @@ const Initial = () => {
     } = useContext(MasterContext);
     
     const {language}        = useContext(LanguageContext)
-    const {fir, setFir, setAccused, setFirId, efileNumber} = useContext(BaseContext)
+    const {setAccused, efileNumber, setEfileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
-    const {updateStep} = useContext(StepContext)
-
     const { t } = useTranslation()
 
     const initialState = {
@@ -327,13 +307,11 @@ const Initial = () => {
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                sessionStorage.setItem("efile_no", efile_no)
-                sessionStorage.setItem("petition", JSON.stringify(response.data))
+                setEfileNumber(efile_no)
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
                 setIsSubmitted(true); 
-                updateStep(efile_no, 2)
             }
           }catch(error){
             if (error.inner){
