@@ -97,11 +97,11 @@ const VehicleDetails = ({ vehicles = [], setVehicles }) => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container-fluid p-0">
       {/* <ToastContainer /> */}
       <div className="card shadow-sm">
-        <div className="card-header bg-secondary text-white">Vehicle Details</div>
-        <div className="card-body">
+        {/* <div className="card-header bg-secondary text-white">Vehicle Details</div> */}
+        <div className="card-body p-1">
           <table className="table table-bordered table-striped">
             <thead className="bg-navy">
               <tr>
@@ -109,7 +109,7 @@ const VehicleDetails = ({ vehicles = [], setVehicles }) => {
                 <th>Vehicle Name</th>
                 <th>Vehicle Number</th>
                 <th>Fastag Details</th>
-                <th>Is Owner Accused?</th>
+                <th>Owner&nbsp;involved?</th>
                 <th>Owner Details</th>
                 <th>Action</th>
               </tr>
@@ -142,8 +142,7 @@ const VehicleDetails = ({ vehicles = [], setVehicles }) => {
                 </tr>
               )}
               <tr>
-                <td></td>
-                <td>
+                <td colSpan={2}>
                   <input
                     type="text"
                     className={`form-control ${errors.vehicle_name ? "is-invalid" : ""}`}
@@ -193,6 +192,7 @@ const VehicleDetails = ({ vehicles = [], setVehicles }) => {
                     name="owner_details"
                     value={vehicle.owner_details}
                     onChange={handleInputChange}
+                    rows={1}
                   ></textarea>
                   <div className="invalid-feedback">{errors.owner_details}</div>
                 </td>

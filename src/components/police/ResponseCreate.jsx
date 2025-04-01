@@ -21,6 +21,9 @@ import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next';
 import { BaseContext } from 'contexts/BaseContext';
 import { AuthContext } from 'contexts/AuthContext';
+import PetitionDetail from './PetitionDetail';
+import AccusedDetail from './AccusedDetail';
+import LinkFIR from './LinkFIR';
 
 
 const ResponseCreate = () => {
@@ -75,7 +78,6 @@ const ResponseCreate = () => {
     }
     const [materials, setMaterials] = useState([])
     const [vehicles, setVehicles] = useState([])
-    const [arrestModify, setArrestModify] = useState(true)
     const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [petition, setPetition] = useState(initialPetition)
     const [searchForm, setSearchForm] = useState(initialSearchForm)
@@ -240,25 +242,33 @@ const ResponseCreate = () => {
     }, [form]);
 
     useEffect(() => {
-        async function fetchData() {
-            const response = await api.get(`police/filing/detail/`, { params: { efile_no: state.efile_no } })
-            if (response.status === 200) {
-                setForm({
-                    ...form,
-                    efile_no: response.data.petition.efile_number,
-                    crime_number: response.data.petition.fir_number,
-                    crime_year: response.data.petition.fir_year
-                })
-                setEfileNumber(response.data.petition.efile_number)
-                const { petition, litigant, crime } = response.data
-                setPetition(petition)
-                setAccused(litigant.filter(l => l.litigant_type === 1))
-                setRespondent(litigant.filter(l => l.litigant_type === 2))
-                setCrime(crime)
+        async function fetchPetitionDetail() {
+            try{
+                setLoading(true)
+                const response = await api.get(`police/filing/detail/`, { params: { efile_no: state.efile_no } })
+                if (response.status === 200) {
+                    setForm({
+                        ...form,
+                        efile_no: response.data.petition.efile_number,
+                        crime_number: response.data.petition.fir_number,
+                        crime_year: response.data.petition.fir_year
+                    })
+                    setEfileNumber(response.data.petition.efile_number)
+                    const { petition, litigant, crime } = response.data
+                    setPetition(petition)
+                    setAccused(litigant.filter(l => l.litigant_type === 1))
+                    setRespondent(litigant.filter(l => l.litigant_type === 2))
+                    setCrime(crime)
+                }
+            }catch(error){
+                console.log(error)
+            }finally{
+                setLoading(false)
             }
         }
-        fetchData()
+        fetchPetitionDetail()
     }, [firTagged])
+
 
     useEffect(() => {
         async function fetchCourts() {
@@ -350,7 +360,7 @@ const ResponseCreate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            // await validationSchema.validate(form, { abortEarly: false })
+            await validationSchema.validate(form, { abortEarly: false })
             form.efile_no = state.efile_no
             const post_data = {
                 response: form,
@@ -387,126 +397,20 @@ const ResponseCreate = () => {
                 <div className="content-wrapper">
                     <div className="container-fluid mt-3">
                         <div className="card card-outline card-primary">
-                            <div className="card-header">
-                                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Police Response</strong></h3>
+                            <div className="card-header d-flex justify-content-between">
+                                <h3 className="card-title">
+                                    <i className="fas fa-edit mr-2"></i><strong>Police Response: </strong>
+                                </h3>
+                                <span className="text-primary"><strong>{state.efile_no}</strong></span>
                             </div>
                             <div className="card-body">
-                                <div className="card card-outline card-warning">
-                                    <div className="card-header">
-                                        <strong>Petition Details</strong>
-                                    </div>
-                                    <div className="card-body p-1">
-                                        <table className="table table-bordered table-striped table-sm">
-                                            <tbody>
-                                                <tr>
-                                                    <td>Petition&nbsp;Number</td>
-                                                    <td>
-                                                        { (petition.filing_type && petition.filing_number && petition.filing_year) ? (
-                                                            <strong>
-                                                                {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}
-                                                            </strong>
-                                                        ):(
-                                                            null
-                                                        )}
-                                                        
-                                                    </td>
-                                                    <td>{t('court_type')}</td>
-                                                    <td>{ language === 'ta' ? petition.judiciary?.judiciary_lname : petition.judiciary?.judiciary_name}</td>
-                                                </tr>
-                                                { (parseInt(petition.judiciary?.id) === 2 || parseInt(petition.judiciary?.id) === 3) && (
-                                                    <React.Fragment>
-                                                        <tr>
-                                                            <td>{t('state')}</td>
-                                                            <td>{ language === 'ta' ? petition.state?.state_lname : petition.state?.state_name}</td>
-                                                            <td>{t('district')}</td>
-                                                            <td>{ language === 'ta' ? petition.district?.district_lname : petition.district?.district_name }</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{t('establishment')}</td>
-                                                            <td>{ language === 'ta' ? petition.establishment?.establishment_lname : petition.establishment?.establishment_name}</td>
-                                                            <td>{t('court')}</td>
-                                                            <td>{ language === 'ta' ? petition.court?.court_lname : petition.court?.court_name }</td>
-                                                        </tr>
-                                                    </React.Fragment>
-                                                )}
-                                                { !crime?.fir_no > 0 ? (
-                                                    <tr>
-                                                        <td colSpan={6}>
-                                                            <strong className="text-danger">FIR details not available</strong>
-                                                        </td>
-                                                    </tr>
-                                                ):(
-                                                    <React.Fragment>
-                                                        <tr> 
-                                                            <td>Crime&nbsp;Number</td>
-                                                            <td>{`${crime?.fir_no }/${ crime?.fir_year}`}</td>
-                                                            <td>{t('fir_date_time')}</td>
-                                                            <td>{crime.fir_date_time}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{t('police_station')}</td>
-                                                            <td>{petition.police_station ? petition.police_station.station_name : null}</td>
-                                                            <td>{t('date_of_occurence')}</td>
-                                                            <td>{crime.date_of_occurrence}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{t('act')}</td>
-                                                            <td>{crime.act}</td>
-                                                            <td>{t('section')}</td>
-                                                            <td>{crime.section.toString()}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>{t('complaintant_name')}</td>
-                                                            <td>{ crime.complainant_name }</td>
-                                                            <td>{t('place_of_occurence')}</td>
-                                                            <td>{ crime.place_of_occurrence }</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colSpan={4}>
-                                                                <p>
-                                                                    <strong>{t('gist_of_fir')}</strong><br /><br />
-                                                                    <span dangerouslySetInnerHTML={CreateMarkup(crime.gist_of_fir)}></span>
-                                                                </p>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colSpan={4}>
-                                                                <p>
-                                                                    <strong>{t('gist_in_local')}</strong><br /><br />
-                                                                    <span dangerouslySetInnerHTML={CreateMarkup(crime.gist_of_fir_in_local)}></span>
-                                                                </p>
-                                                            </td>
-                                                        </tr>
-                                                    </React.Fragment>    
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div className="card card-outline card-secondary">
-                                    <div className="card-header">
-                                        <strong>Accused Details</strong>
-                                    </div>
-                                    <div className="card-body p-1">
-                                        {accused.filter((l) => l.litigant_type === 1)
-                                            .map((a, index) => (
-                                            <div class="card mb-3 border-info">
-                                                <div class="row no-gutters">
-                                                <div class="col-md-2 d-flex justify-content-center pt-2">
-                                                    <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" style={{width:"120px", height:"120px"}}/>
-                                                </div>
-                                                <div class="col-md-10">
-                                                    <div class="card-body">
-                                                    <h5 class="card-title"><strong>{a.litigant_name}</strong>{` ${a.age}, ${a.gender}`}</h5>
-                                                    <p class="card-text">{`${a.relation} Name: ${a.relation_name}`}</p>
-                                                    <p class="card-text">{ a.address }</p>
-                                                    </div>
-                                                </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                <PetitionDetail 
+                                    petition={petition}
+                                    crime={crime}
+                                />
+                                <AccusedDetail 
+                                    accused={accused}
+                                />
                                 { crime.fir_no && crime.fir_year ? (
                                     <React.Fragment>
                                         <div className="card card-outline card-danger">
@@ -1043,63 +947,72 @@ const ResponseCreate = () => {
                                     </React.Fragment>
                                 ) : (
                                     <React.Fragment>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
-                                            </div>
-                                            <div className="col-md-2">
-                                                <Form.Group className="mb-3">
-                                                    <Form.Label>FIR Number<RequiredField /></Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="crime_number"
-                                                        className={`${searchErrors.crime_number ? 'is-invalid' : ''}`}
-                                                        value={searchForm.crime_number}
-                                                        onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                    ></Form.Control>
-                                                    <div className="invalid-feedback">{searchErrors.crime_number}</div>
-                                                </Form.Group>
-                                            </div>
-                                            <div className="col-md-2">
-                                                <Form.Group>
-                                                    <Form.Label>Year<RequiredField /></Form.Label>
-                                                    <Form.Control
-                                                        type="text"
-                                                        name="year"
-                                                        className={`${searchErrors.year ? 'is-invalid' : ''}`}
-                                                        value={searchForm.year}
-                                                        onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                    ></Form.Control>
-                                                    <div className="invalid-feedback">{searchErrors.year}</div>
-                                                </Form.Group>
-                                            </div>
-                                            <div className="col-md-1 mt-4 pt-2">
-                                                <Form.Group>
-                                                    <Button
-                                                        variant="contained"
-                                                        onClick={handleSearch}
-                                                    ><i className="fa fa-search mr-2"></i>Search</Button>
-                                                </Form.Group>
-                                            </div>
-                                            <div className="col-md-3 mt-4 pt-2">
-                                                {showAdditionalFields && (
-                                                    <FIRDetails 
-                                                        setFirTagged={setFirTagged}
-                                                        efile_no = {petition.efile_no}
-                                                    />
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="row">
-                                            <div className="col-md-12">
-                                                { notFound && (
-                                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                        <span><strong>{t('errors.fir_not_found')}</strong> </span>
-                                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
+                                        <LinkFIR 
+                                            setFirTagged={setFirTagged}
+                                            efileNumber={petition.efile_no}
+                                        />
+                                        <div className="card card-outline card-info">
+                                            <div className="card-header"><strong>Tag FIR</strong></div>
+                                            <div className="card-body">
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
                                                     </div>
-                                                )}
+                                                    <div className="col-md-2">
+                                                        <Form.Group className="mb-3">
+                                                            <Form.Label>FIR Number<RequiredField /></Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                name="crime_number"
+                                                                className={`${searchErrors.crime_number ? 'is-invalid' : ''}`}
+                                                                value={searchForm.crime_number}
+                                                                onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
+                                                            ></Form.Control>
+                                                            <div className="invalid-feedback">{searchErrors.crime_number}</div>
+                                                        </Form.Group>
+                                                    </div>
+                                                    <div className="col-md-2">
+                                                        <Form.Group>
+                                                            <Form.Label>Year<RequiredField /></Form.Label>
+                                                            <Form.Control
+                                                                type="text"
+                                                                name="year"
+                                                                className={`${searchErrors.year ? 'is-invalid' : ''}`}
+                                                                value={searchForm.year}
+                                                                onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
+                                                            ></Form.Control>
+                                                            <div className="invalid-feedback">{searchErrors.year}</div>
+                                                        </Form.Group>
+                                                    </div>
+                                                    <div className="col-md-1 mt-4 pt-2">
+                                                        <Form.Group>
+                                                            <Button
+                                                                variant="contained"
+                                                                onClick={handleSearch}
+                                                            ><i className="fa fa-search mr-2"></i>Search</Button>
+                                                        </Form.Group>
+                                                    </div>
+                                                    <div className="col-md-3 mt-4 pt-2">
+                                                        {showAdditionalFields && (
+                                                            <FIRDetails 
+                                                                setFirTagged={setFirTagged}
+                                                                efile_no = {petition.efile_no}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-md-12">
+                                                        { notFound && (
+                                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                                <span><strong>{t('errors.fir_not_found')}</strong> </span>
+                                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </React.Fragment>
