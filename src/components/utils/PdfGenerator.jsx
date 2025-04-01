@@ -45,6 +45,7 @@ const PdfGenerator = () => {
                     return l.litigant_type === 2
                 }))
                 setRespondent(filtered_respondent)
+                setGrounds(response.data.grounds)
             }
         }
         fetchData()
@@ -137,6 +138,7 @@ const PdfGenerator = () => {
                                 <li>
                                     It is most humbly submitted that the petitioner was arrested by the respondent police in connection with this case and was remanded to judicial custody on <strong>[{crime?.date_of_arrest}]</strong> and he/she is languishing at District Jail/Central Prison at <strong>[{ petitioner[0]?.prison ? petitioner[0].prison?.prison_name : '*****'}]</strong>
                                 </li>
+                                { console.log(grounds)}
                                 { grounds.map((ground, index) => (
                                     <li key={index}  dangerouslySetInnerHTML={CreateMarkup(ground.description)}></li>
                                 ))}

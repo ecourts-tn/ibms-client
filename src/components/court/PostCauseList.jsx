@@ -200,9 +200,9 @@ const PostCauseList = () => {
                                                         ) : null}
                                                     </td>
                                                     <td>
-                                                        {c.crime?.fir_number} / {c.crime?.fir_year}<br />
-                                                        {c.crime?.police_station?.station_name && (
-                                                            <span>{c.crime.police_station.station_name}, {c.crime.district?.district_name}</span>
+                                                        {c.petition?.fir_number} / {c.petition?.fir_year}<br />
+                                                        {c.police_station?.station_name && (
+                                                            <span>{c.police_station?.station_name}, {c.district?.district_name}</span>
                                                         )}
                                                     </td>
                                                     <td className="text-center">

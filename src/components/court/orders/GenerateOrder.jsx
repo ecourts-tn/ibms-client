@@ -86,30 +86,30 @@ const GenerateOrder = () => {
         filteredYears.push(year);
     }
 
-    const handleSearch = async (e) => {
-        e.preventDefault();
-        try {
-            setLoading(true);
-            const response = await api.post(`court/petition/detail/`, form);
-
-            if (response.status === 200) {
-                setOrder(response.data);
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
             await validationSchema.validate(form, { abortEarly: false });
-            const response = api.post(``, form);
-            if (response.status === 201) {
-                toast.success("Order uploaded successfully", { theme: "colored" });
+            try {
+                const response = await api.post(`court/order/generate/`, form, {
+                    responseType: "blob",  // This is necessary for binary files
+                });
+                const cino = response.headers["x-cino"];
+                if (!response.data || response.data.size === 0) {
+                    console.error("Downloaded file is empty.");
+                    return;
+                }
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${cino}.odt`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch (error) {
+                console.error("Error downloading file:", error);
             }
         } catch (error) {
             if (error.inner) {
@@ -119,27 +119,14 @@ const GenerateOrder = () => {
                 });
                 setErrors(newErrors);
             }
-            console.log(error);
+            if(error.response?.status === 500){
+                toast.error("Something went wrong!", {theme:"colored"})
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    const handleGenerate = async () => {
-        try {
-            setLoading(true);
-            const response = await api.delete(``, {
-                data: {}
-            });
-            if (response.status === 204) {
-                toast.error("Order deleted successfully", { theme: "colored" });
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <div className="content-wrapper">
@@ -226,7 +213,7 @@ const GenerateOrder = () => {
                                                 variant='contained'
                                                 color='primary'
                                                 type="submit"
-                                                onClick={handleSearch}
+                                                onClick={handleSubmit}
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>

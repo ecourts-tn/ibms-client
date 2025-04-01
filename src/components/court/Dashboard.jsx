@@ -49,6 +49,7 @@ const Dashboard = () => {
         }
     };
 
+
     useEffect(() => {
         fetchDashboardData();
     },[])
@@ -92,28 +93,28 @@ const Dashboard = () => {
                             <div className="row">
                                 <DashboardCard
                                     color={'bg-info'}
-                                    count={count.total}
+                                    count={count.total_petitions}
                                     title="Total Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
-                                    count={count.submitted}
+                                    count={count.submitted_petitions}
                                     title="Approved Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}
-                                    count={count.approved}
+                                    count={count.approved_petitions}
                                     title="Returened Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}
                                 />
                                 <DashboardCard 
                                     color={'bg-danger'}
-                                    count={count.returned}
+                                    count={count.returned_petitions}
                                     title="Rejected Petitions"
                                     icon={'ion-bag'}
                                     url={`/filing/draft`}

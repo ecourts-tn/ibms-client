@@ -728,7 +728,7 @@ const Initial = () => {
                 </React.Fragment> 
                 )}
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
                             name="judiciary" 

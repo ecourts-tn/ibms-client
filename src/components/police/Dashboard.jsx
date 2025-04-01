@@ -13,6 +13,7 @@ const Dashboard = () => {
     const[count, setCount] = useState({})
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false)
+    const[calendar, setCalendar] = useState([])
     const { t } = useTranslation()
 
     const fetchDashboardData = async () => {
@@ -20,16 +21,20 @@ const Dashboard = () => {
             setLoading(true)
             const countsEndpoint = 'police/dashboard/counts/';
             const petitionsEndpoint = 'police/dashboard/petitions/';
+            const calendarEndpoint = 'police/dashboard/upcoming/'
             // Use Promise.all to fetch both endpoints in parallel
-            const [countsResponse, petitionsResponse] = await Promise.all([
+            const [countsResponse, petitionsResponse, calendarResponse] = await Promise.all([
                 api.get(countsEndpoint),
                 api.get(petitionsEndpoint),
+                api.get(calendarEndpoint)
             ]);
             // Extract the data from the responses
             const counts = countsResponse.data;
-            const petitions = petitionsResponse.data;           
+            const petitions = petitionsResponse.data;   
+            const upcoming = calendarResponse.data        
             setCount(counts)
             setCases(petitions?.petitions)
+            setCalendar(upcoming)
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
             throw error;
@@ -67,28 +72,28 @@ const Dashboard = () => {
                             <div className="row">
                                 <DashboardCard
                                     color={'bg-info'}
-                                    count={count.total}
+                                    count={count.response_pending}
                                     title="Pending Response"
                                     icon={'ion-bag'}
-                                    url="#"
+                                    url="/police/response/pending"
                                 />
                                     <DashboardCard 
                                     color={'bg-success'}
-                                    count={count.submitted}
+                                    count={count.response_submitted}
                                     title="Submitted Response"
                                     icon={'ion-bag'}
-                                    url="#"
+                                    url="/police/response/submitted"
                                 />
                                 <DashboardCard 
                                     color={'bg-warning'}
-                                    count={count.approved}
+                                    count={count.case_pending}
                                     title="Pending Cases"
                                     icon={'ion-bag'}
                                     url="#"
                                 />
                                 <DashboardCard 
                                     color={'bg-danger'}
-                                    count={count.returned}
+                                    count={count.case_disposed}
                                     title="Disposed Cases"
                                     icon={'ion-bag'}
                                     url="#"
@@ -96,7 +101,9 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-5">
-                                    {/* <Calendar /> */}
+                                    <Calendar 
+                                        upcoming={calendar}    
+                                    /> 
                                 </div>
                                 <div className="col-md-7">
                                     <PetitionList 

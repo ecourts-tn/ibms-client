@@ -53,16 +53,20 @@ const FIRDetails = ({setFirTagged}) => {
 
 
     const tagFir = async() => {
-        const data = {
-            efile_no: efileNumber,
-            fir : sessionStorage.getItem("api_id")
-        }
-        const response = await api.put(`case/filing/update/`, data)
-        if(response.status === 201){
-            handleClose();
-            clearEfileNumber()
-            sessionStorage.removeItem("api_id")
-            setFirTagged(true)
+        try{
+            const data = {
+                efile_no: efileNumber,
+                fir : sessionStorage.getItem("api_id")
+            }
+            const response = await api.put(`case/filing/update/`, data)
+            if(response.status === 200){
+                handleClose();
+                clearEfileNumber()
+                sessionStorage.removeItem("api_id")
+                setFirTagged(true)
+            }
+        }catch(error){
+            console.log(error)
         }
     }
 

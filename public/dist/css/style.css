@@ -3,7 +3,7 @@
 
 @font-face {
     font-family: 'Marutham';
-    src: url('../fonts/marutham.ttf') format('truetype');
+    src: url('marutham.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }

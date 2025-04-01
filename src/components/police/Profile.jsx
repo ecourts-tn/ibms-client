@@ -2,17 +2,23 @@ import React, {useState, useEffect, useContext} from 'react'
 import Button from '@mui/material/Button'
 import Form from 'react-bootstrap/Form'
 import * as Yup from 'yup'
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { RelationContext } from 'contexts/RelationContext';
+import { MasterContext } from 'contexts/MasterContext';
+import { RequiredField } from 'utils';
+import { useTranslation } from 'react-i18next';
+import { LanguageContext } from 'contexts/LanguageContex';
 
 const Profile = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {taluks}  = useContext(TalukContext)
-    const {relations} = useContext(RelationContext)
+    const {masters:{
+        states,
+        districts,
+        taluks,
+        relations,
+        designations,
+        genders
+    }} = useContext(MasterContext)
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
 
     const initialState = {
         petitioner_name:'',
@@ -67,7 +73,7 @@ const Profile = () => {
                             <div className="row">  
                                 <div className="col-md-3">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Name of the Petitioner</Form.Label>
+                                        <Form.Label>Name of the Petitioner<RequiredField /></Form.Label>
                                         <Form.Control
                                             name="litigant_name" 
                                             className={`${errors.litigant_name ? 'is-invalid' : ''}`}
@@ -79,34 +85,41 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-3">
                                     <Form.Group>
-                                        <Form.Label>Designation</Form.Label>
-                                        <Form.Control
-                                            name="designation"
+                                        <Form.Label>Designation<RequiredField/></Form.Label>
+                                        <select 
+                                            name="designation" 
+                                            className="form-control"
                                             value={form.designation}
-                                            className={`${errors.designation ? 'is-invalid' : ''}`}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                        ></Form.Control>
+                                        >
+                                            <option value="">Select designation</option>
+                                            { designations.map((d, index) => (
+                                                <option key={index} value={d.id}>{ language === 'ta' ? d.designation_lname : d.designation_name }</option>
+                                            ))}
+                                        </select>
                                         <div className="invalid-feedback">{ errors.designation }</div>
                                     </Form.Group>
                                 </div>
                                 <div className="col-md-2">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Gender</Form.Label>
+                                        <Form.Label>Gender<RequiredField/></Form.Label>
                                         <select 
                                             name="gender" 
                                             value={form.gender} 
                                             className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                            <option value="Other">Other</option>
+                                            <option value="">Select gender</option>
+                                            { genders.map((g, index) => (
+                                            <option key={index} value={g.id}>{ language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                                            ))}
                                         </select>
                                         <div className="invalid-feedback">{ errors.gender }</div>
                                     </Form.Group>
                                 </div>
                                 <div className="col-md-2">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Age</Form.Label>
+                                        <Form.Label>Age<RequiredField/></Form.Label>
                                         <Form.Control
                                             name="age"
                                             value={form.age}
@@ -118,7 +131,7 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-2">
                                     <div className="form-group mb-3">
-                                        <label htmlFor="relation">Relation</label><br />
+                                        <label htmlFor="relation">Relation<RequiredField/></label><br />
                                         <select 
                                         name="relation" 
                                         id="relation" 
@@ -128,7 +141,7 @@ const Profile = () => {
                                         >
                                         <option value="">Select relation</option>
                                         { relations.map((item, index) => (
-                                            <option key={index} value={item.relation_name}>{ item.relation_name }</option>
+                                            <option key={index} value={item.id}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                                         )) }
                                         </select>
                                         <div className="invalid-feedback">{ errors.relation }</div>
@@ -136,7 +149,7 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-3">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Relation Name</Form.Label>
+                                        <Form.Label>Relation Name<RequiredField/></Form.Label>
                                         <Form.Control
                                             name="relation_name"
                                             value={form.relation_name}
@@ -148,7 +161,7 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="state">State</label><br />
+                                        <label htmlFor="state">State<RequiredField/></label><br />
                                         <select 
                                             name="state" 
                                             id="state" 
@@ -157,15 +170,15 @@ const Profile = () => {
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select state</option>
-                                            { states.map((item, index) => (
-                                            <option value={item.state_code} key={index}>{item.state_name}</option>
+                                            { states.map((s, index) => (
+                                            <option value={s.state_code} key={index}>{ language === 'ta' ? s.state_lname : s.state_name}</option>
                                             ))}
                                         </select>
                                     </div>
                                 </div>
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="district">District</label><br />
+                                        <label htmlFor="district">District<RequiredField/></label><br />
                                         <select 
                                             name="district" 
                                             id="district" 
@@ -174,15 +187,15 @@ const Profile = () => {
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select District</option>
-                                            { districts.map((item, index) => (
-                                            <option value={item.district_code} key={index}>{item.district_name}</option>
+                                            { districts.filter((d) => parseInt(d.state) === parseInt(form.state)).map((d, index) => (
+                                            <option value={d.district_code} key={index}>{ language === 'ta' ? d.district_lname : d.district_name }</option>
                                             ))}
                                         </select>
                                     </div>
                                 </div>
                                 <div className="col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="taluk">Taluk</label><br />
+                                        <label htmlFor="taluk">Taluk<RequiredField/></label><br />
                                         <select 
                                             name="taluk" 
                                             id="taluk" 
@@ -191,15 +204,15 @@ const Profile = () => {
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         >
                                             <option value="">Select Taluk</option>
-                                            { taluks.map((item, index) => (
-                                            <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
+                                            { taluks.filter((t) => parseInt(t.district) === parseInt(form.district)).map((t, index) => (
+                                            <option value={t.taluk_code} key={index}>{ language === 'ta' ? t.taluk_lname : t.taluk_name }</option>
                                             ))}
                                         </select>
                                     </div>
                                 </div>
-                                <div className="col-md-4">
+                                <div className="col-md-6">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Address</Form.Label>
+                                        <Form.Label>Address<RequiredField /></Form.Label>
                                         <Form.Control
                                             name="address"
                                             value={form.address}
@@ -209,9 +222,9 @@ const Profile = () => {
                                         <div className="invalid-feedback">{ errors.address }</div>
                                     </Form.Group>
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-3">
                                     <Form.Group>
-                                        <Form.Label>Post Office</Form.Label>
+                                        <Form.Label>Post Office </Form.Label>
                                         <Form.Control
                                             type="text"
                                             name="post_office"
@@ -222,7 +235,7 @@ const Profile = () => {
                                 </div>
                                 <div className="col-md-2">
                                     <Form.Group className="mb-3">
-                                        <Form.Label>Pincode</Form.Label>
+                                        <Form.Label>Pincode <RequiredField /></Form.Label>
                                         <Form.Control
                                             type="text"
                                             name="pincode"
@@ -231,7 +244,7 @@ const Profile = () => {
                                         ></Form.Control>
                                     </Form.Group>
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-3">
                                     <Form.Group>
                                         <Form.Label>Mobile Number</Form.Label>
                                         <Form.Control
@@ -246,7 +259,7 @@ const Profile = () => {
                                         </div>
                                     </Form.Group>
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-3">
                                     <Form.Group>
                                         <Form.Label>Email Address</Form.Label>
                                         <Form.Control
@@ -259,7 +272,12 @@ const Profile = () => {
                                         <div className="invalid-feedback">{ errors.email_address }</div>
                                     </Form.Group>
                                 </div>
-                                <div className="col-md-12">
+                                <div className="col-md-12 mt-3">
+                                    <div className="form-group">
+                                        <input type="checkbox" className='mr-2'/>Is Active
+                                    </div>
+                                </div>
+                                <div className="col-md-12 mt-2">
                                     <Button
                                         variant="contained"
                                         color="success"

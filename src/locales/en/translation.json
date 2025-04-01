@@ -465,7 +465,8 @@
         "adv_email_required": "Please enter the Advocate E-Mail Address",
         "dob_required": "Please enter valid Date of Birth",
         "cnr_required": "Please enter the CNR Number",
-        "captcha_required":"Plase enter CAPTCHA code"
+        "captcha_required":"Plase enter CAPTCHA code",
+        "something_wrong": "Something went wrong. Please try later!"
     }
 }
   
