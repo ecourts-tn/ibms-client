@@ -2,11 +2,11 @@ import api from 'api'
 import React, {useState, useEffect} from 'react'
 import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import Loading from 'components/common/Loading'
-import DashboardCard from 'components/common/DashboardCard'
-import Calendar from 'components/common/Calendar'
-import PetitionList from 'components/common/PetitionList'
-import DynamicChart from 'components/common/DynamicChart'
+import Loading from 'components/utils/Loading'
+import DashboardCard from 'components/utils/DashboardCard'
+import Calendar from 'components/utils/Calendar'
+import PetitionList from 'components/utils/PetitionList'
+import DynamicChart from 'components/utils/DynamicChart'
 
 const Dashboard = () => {
 

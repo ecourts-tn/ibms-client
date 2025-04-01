@@ -11,8 +11,9 @@ import './style.css'
 import { SeatContext } from 'contexts/SeatContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import { Link } from 'react-router-dom'
+import { MasterContext } from 'contexts/MasterContext'
 
 const FilingSearch = () => {
 
@@ -26,10 +27,15 @@ const FilingSearch = () => {
         filing_year:'',
     })
     const {t} = useTranslation()
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {seats} = useContext(SeatContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
+    // const {seats} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
+    const {masters:{
+        states,
+        districts, 
+        seats
+    }} = useContext(MasterContext)
     const {language} = useContext(LanguageContext)
     const [loading, setLoading] = useState(false)
     const [errors, setErrors] = useState({})
@@ -177,7 +183,7 @@ const FilingSearch = () => {
                                                 className={`form-control ${errors.establishment ? 'is-invalid' : ''}`}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                             >
-                                                <option value="" disabled>{t('alerts.select_establishment')}</option>
+                                                <option value="">{t('alerts.select_establishment')}</option>
                                                 {establishments.filter(est=>parseInt(est.district) === parseInt(form.district)).map((estd, index)=>(
                                                     <option key={index} value={estd.establishment_code}>{language === 'ta' ? estd.establishment_lname: estd.establishment_name}</option>
                                                 ))}
@@ -262,118 +268,8 @@ const FilingSearch = () => {
                     </div>
                 </div>
                 { Object.keys(petitions).length > 0 && (
-                // <div className="row">
-                //     <div className="col-md-12 mt-5">
-                //         <h6 className="text-center text-danger"><strong>CASE DETAILS</strong></h6>
-                //         <table className="table table-bordered table-striped table-sm details-table">
-                //             <tbody>
-                //                 { petition.court_type.id === 2 && (
-                //                 <>
-                //                 <tr>
-                //                     <td>State</td>
-                //                     <td>{ petition.state.state_name }</td>
-                //                     <td>District</td>
-                //                     <td>{ petition.district.district_name }</td>
-                //                 </tr>
-                //                 <tr>
-                //                     <td>Establishment Name</td>
-                //                     <td>{ petition.establishment.establishment_name }</td>
-                //                     <td>Court Name</td>
-                //                     <td>{ petition.court.court_name }</td>
-                //                 </tr>
-                //                 </>
-                //                 )}
-                //                 <tr>
-                //                     <td>Filing Number</td>
-                //                     <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
-                //                     <td>Filing Date</td>
-                //                     <td>{ petition.filing_date }</td>
-                //                 </tr>
-                //                 <tr>
-                //                     <td>Registration Number</td>
-                //                     <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
-                //                     <td>Registration Date</td>
-                //                     <td>{  petition.date_of_registration }</td>
-                //                 </tr>
-                //                 {  petition.court_type.code === 2 && (
-                //                 <>
-                //                     <tr>
-                //                         <td>State</td>
-                //                         <td>{ petition.state.state_name}</td>
-                //                         <td>District</td>
-                //                         <td>{ petition.district.district_name}</td>
-                //                     </tr>
-                //                     <tr>
-                //                         <td>Establishment</td>
-                //                         <td>{ petition.establishment.establishment_name}</td>
-                //                         <td>Court</td>
-                //                         <td>{ petition.court.court_name}</td>
-                //                     </tr>
-                //                 </>
-                //                 )}
-                //                 {  petition.court_type.code === 1 && (
-                //                 <>
-                //                     <tr>
-                //                         <td>Court Type</td>
-                //                         <td>{ petition.court_type.name}</td>
-                //                         <td>Bench Type</td>
-                //                         <td>{ petition.bench_type.name}</td>
-                //                     </tr>
-                //                 </>
-                //                 )}
-                //             </tbody>
-                //         </table>
-                //         <h6 className="text-center text-danger"><strong>PETITIONER DETAILS</strong></h6>
-                //         <table className="table table-bordered">
-                //             <tbody>
-                //                 <tr>
-                //                     <td>
-                //                     { litigant.filter(l=>l.litigant_type ===1).map((p, index) => (
-                //                         <>
-                //                             <p>
-                //                                 <strong>{index+1}. {p.litigant_name}</strong><br/>
-                //                                 { p.address }
-                //                             </p>
-                //                         </>
-
-                //                     ))}
-                //                     </td>
-                //                 </tr>
-                //             </tbody>
-                //         </table>
-                //         <h6 className="text-center text-danger"><strong>RESPONDENT DETAILS</strong></h6>
-                //         <table className="table table-bordered">
-                //             <tbody>
-                //                 <tr>
-                //                     <td>
-                //                     { litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-                //                         <>
-                //                             <p><strong>{index+1}. {res.litigant_name} {res.designation}</strong><br/>
-                //                                 { `${res.police_station.station_name}, ${res.district.district_name}, ${res.address}`}
-                //                             </p>
-                //                         </>
-                //                     ))}
-                //                     </td>
-                //                 </tr>
-                //             </tbody>
-                //         </table>
-                //         { Object.keys(objection).length > 0 && (
-                //         <>
-                //         <h6 className="text-center text-danger"><strong>OBJECTIONS</strong></h6>
-                //         <table className="table table-bordered">
-                //             <tbody>
-                //                 <tr>
-                //                     <td>
-                                    
-                //                     </td>
-                //                 </tr>
-                //             </tbody>
-                //         </table>
-                //         </>)}
-                //     </div>
-                // </div>
                 <table className="table table-bordered table-striped mt-5">
-                    <thead>
+                    <thead className="bg-secondary">
                         <tr>
                             <th>Filing Number</th>
                             <th>Litigants</th>

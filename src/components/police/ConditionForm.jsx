@@ -2,8 +2,10 @@ import api from 'api'
 import React, {useState, useEffect} from 'react'
 import Button from '@mui/material/Button'
 import { useLocation } from 'react-router-dom'
-import WebcamCapture from 'components/common/WebCamCapture'
-import FingerPrintCapture from 'components/common/FingerPrintCapture'
+import WebcamCapture from 'components/utils/WebCamCapture'
+import FingerPrintCapture from 'components/utils/FingerPrintCapture'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const ConditionForm = () => {
     const {state} = useLocation()
@@ -36,6 +38,38 @@ const ConditionForm = () => {
         }
         fetchDetail()
     }, [])
+
+    const condition_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
+
+    const condition_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+
+    useEffect(() => {
+            const condition_date = flatpickr(".condition_date-date-picker", {
+                dateFormat: "d/m/Y",
+                // maxDate: "today",
+                defaultDate: form.condition_date ? condition_date_Display(new Date(form.condition_date)) : '',
+                onChange: (selectedDates) => {
+                    const formattedDate = selectedDates[0] ? condition_date_Backend(selectedDates[0]) : "";
+                    setForm({ ...form, condition_date: formattedDate });
+                },
+            });
+    
+            return () => {
+                if (condition_date && typeof condition_date.destroy === "function") {
+                    condition_date.destroy();
+                }
+            };
+        }, [form]);
 
     return (
         <div className="content-wrapper">
@@ -78,10 +112,16 @@ const ConditionForm = () => {
                                     <div className="col-sm-6">
                                         <input 
                                             type="date" 
-                                            className="form-control"
+                                            className="form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}` "
                                             name="condition_date"
-                                            value={form.condition_date}
+                                            value={form.condition_date ? form.condition_date : ''}
+                                            placeholder="DD/MM/YYYY"
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #ccc', 
+                                                padding: '8px',            
+                                            }}
                                         />
                                     </div>
                                 </div>

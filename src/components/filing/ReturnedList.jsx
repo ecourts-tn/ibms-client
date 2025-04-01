@@ -1,14 +1,14 @@
 import React, {useState, useEffect, useContext} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
-import ViewDocument from 'components/common/ViewDocument'
+import ViewDocument from 'components/utils/ViewDocument'
 import { formatDate, formatLitigant } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { returnedPetition } from 'services/petitionService'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 
 const ReturnedList = () => {
 
@@ -144,7 +144,7 @@ const ReturnedList = () => {
                             </div>
                         </div>
                         <table className="table table-striped table-bordered">
-                            <thead className="bg-secondary">
+                            <thead className="bg-info">
                                 <tr>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>

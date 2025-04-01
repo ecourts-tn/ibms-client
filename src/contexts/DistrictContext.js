@@ -21,9 +21,6 @@ export const DistrictProvider = ({children}) => {
             }
         }
         fetchDistricts();
-        return () => {
-            controller.abort()
-        }
     },[])
 
     const contextValue = useMemo(() => ({districts, setDistricts}), [districts])

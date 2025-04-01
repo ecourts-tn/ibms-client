@@ -11,17 +11,28 @@ import { TalukContext } from 'contexts/TalukContext'
 import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
+import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import ViewSurety from './ViewSurety'
+import { MasterContext } from 'contexts/MasterContext'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 
 const SuretyForm = () => {
 
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
-    const {taluks}    = useContext(TalukContext)
-    const {relations} = useContext(RelationContext)  
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
+    // const {taluks}    = useContext(TalukContext)
+    // const {relations} = useContext(RelationContext)  
+    const {language} = useContext(LanguageContext)
+    const { masters: {
+        states, 
+        districts, 
+        taluks, 
+        relations,
+        employments,
+        propertytypes
+    }} = useContext(MasterContext)
     const {t} = useTranslation()
     
     const initialState = {
@@ -131,12 +142,16 @@ const SuretyForm = () => {
 
     useEffect(()=> {
         const fecthSureties = async() => {
-            const efile_no = sessionStorage.getItem("efile_no")
-            const response = await api.get("case/surety/list/", {
-                params: {efile_no}
-            })
-            if(response.status === 200){
-                setSureties(response.data)
+            try{
+                const efile_no = sessionStorage.getItem("efile_no")
+                const response = await api.get("case/surety/list/", {
+                    params: {efile_no}
+                })
+                if(response.status === 200){
+                    setSureties(response.data)
+                }
+            }catch(error){
+                console.error(error)
             }
         }
         fecthSureties();
@@ -223,16 +238,6 @@ const SuretyForm = () => {
             }
         }
     }
-
-   
-
-    // const addBankAccount = () => {
-    //     setBankAccounts([...bankAccounts, account])
-    //     toast.success("Bank details added successfully", {
-    //         theme : "colored"
-    //     })
-    //     setAccount(initialAccount)
-    // }
 
     const addBankAccount = () => {
         if (
@@ -326,10 +331,10 @@ const SuretyForm = () => {
         }));
     };
     
-
+    console.log("employments:", employments)
 
     return (
-        <div className="container">
+        <div className="container-fluid">
              <Modal 
                 show={showModal} 
                 onHide={handleClose} 
@@ -355,12 +360,12 @@ const SuretyForm = () => {
                     <div className="col-md-12">
                         { Object.keys(sureties).length > 0 && (
                         <table className="table table-bordered">
-                            <thead className="bg-success">
+                            <thead className="bg-info">
                                 <tr>
                                     <th>#</th>
                                     <th>{t('surety_name')}</th>
                                     <th>{t('relationship_name')}</th>
-                                    <th>{t('aadhaar_number')}</th>
+                                    <th>{t('aadhar_number')}</th>
                                     <th>{t('mobile_number')}</th>
                                     <th>{t('address')}</th>
                                     <th>{t('action')}</th>
@@ -402,7 +407,7 @@ const SuretyForm = () => {
                         </table>
                         )}
                     </div>
-                    <div className="col-md-4">
+                    <div className="col-md-6">
                         <div className="form-group">
                             <label>{t('surety_name')}<RequiredField /></label>
                             <input 
@@ -418,23 +423,22 @@ const SuretyForm = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-3">
                         <div className="form-group">
                             <label htmlFor="">{t('relationship_type')} <RequiredField/></label>
                             <select 
                                 name="relation" 
-                                className={`form-control ${errors.relation ? 'is-invalid' : null }`}
+                                id="relation" 
+                                className={`form-control ${errors.relation ? 'is-invalid' : ''}`}
                                 value={surety.relation}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                            >
-                                <option value="">Select parentage</option>
-                                { relations.map((relation, index) => (
-                                <option key={index} value={relation.id}>{relation.relation_name}</option>
-                                ))}
+                                >
+                                <option value="">{t('alerts.select_parantage')}</option>
+                                { relations.map((item, index) => (
+                                    <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
+                                )) }
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.relation }
-                            </div>
+                            <div className="invalid-feedback">{ errors.relation }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -469,7 +473,7 @@ const SuretyForm = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-3">
                         <div className="form-group">
                             <label htmlFor="">{t('state')}<RequiredField /></label>
                             <select 
@@ -478,9 +482,9 @@ const SuretyForm = () => {
                                 value={surety.state}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select state</option>
-                                { states.map((state, index) => (
-                                <option key={index} value={state.state_code}>{state.state_name}</option>
+                                <option value="">{t('alerts.select_state')}</option>
+                                { states.map((item, index) => (
+                                <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -497,9 +501,9 @@ const SuretyForm = () => {
                                 value={surety.district}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select district</option>
-                                { districts.filter(d=>parseInt(d.state)===parseInt(surety.state)).map((district, index) => (
-                                <option value={district.district_code} key={index}>{district.district_name}</option>
+                                <option value="">{t('alerts.select_district')}</option>
+                                { districts.filter(district=>parseInt(district.state)===parseInt(surety.state)).map((item, index) => (
+                                <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -516,9 +520,9 @@ const SuretyForm = () => {
                                 value={surety.taluk}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             >
-                                <option value="">Select taluk</option>
-                                { taluks.filter(t=>parseInt(t.district)===parseInt(surety.district)).map((taluk, index) => (
-                                <option value={taluk.id} key={index}>{taluk.taluk_name}</option>
+                                <option value="">{t('alerts.select_taluk')}</option>
+                                { taluks.filter(taluk=>parseInt(taluk.district)===parseInt(surety.district)).map((item, index) => (
+                                <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">
@@ -557,7 +561,7 @@ const SuretyForm = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-3">
                         <div className="form-group">
                             <label htmlFor="">{t('mobile_number')}<RequiredField/></label>
                             <input 
@@ -612,8 +616,9 @@ const SuretyForm = () => {
                                 className={`form-control ${errors.property_type ? 'is-invalid' : null}`}
                             >
                                 <option value="">Select type</option>
-                                <option value="1">Own</option>
-                                <option value="2">Rental</option>
+                                {propertytypes.map((p, index) => (
+                                <option key={index} value={p.id}>{language === 'ta' ? p.type_lname : p.type_name}</option>
+                                ))}
                             </select>
                             <div className="invalid-feedback">
                                 { errors.property_type }
@@ -726,11 +731,9 @@ const SuretyForm = () => {
                                 className={`form-control ${errors.employment_type ? 'is-invalid' : null }`}
                             >
                                 <option value="">Select type</option>
-                                <option value="1">Employed</option>
-                                <option value="2">Self Employed</option>
-                                <option value="3">Business</option>
-                                <option value="4">Agriculture</option>
-                                <option value="5">Unemployed</option>
+                                { employments.map((e, index) => (
+                                <option key={index} value={e.id}>{language === 'ta' ? e.type_lname : e.type_name }</option>
+                                ))}
                             </select>
                             <div className="invalid-feedback">
                                 { errors.employment_type }
@@ -769,7 +772,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-3">
                                 <div className="form-group">
                                     <label htmlFor="">{t('state')}<RequiredField/></label>
                                     <select 
@@ -828,7 +831,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-3">
                                 <div className="form-group">
                                     <label>{t('service_years')}<RequiredField/></label>
                                     <input 
@@ -864,7 +867,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-5">
                                 <div className="form-group">
                                     <label>{t('income_tax_paid')}<RequiredField/></label>
                                     <input 
@@ -876,7 +879,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <label htmlFor="">{t('upload_document')}<RequiredField/></label>
                                 <input 
                                     type="file" 
@@ -956,7 +959,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label>{t('business_nature')}<RequiredField/></label>
                                     <input 
@@ -968,7 +971,7 @@ const SuretyForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label>{t('rent_paid')}<RequiredField/></label>
                                     <input 
@@ -1094,7 +1097,7 @@ const SuretyForm = () => {
                                             />
                                         </div>
                                     </div>
-                                    <div className="col-md-2">
+                                    <div className="col-md-3">
                                         <div className="form-group">
                                             <label htmlFor="">{t('account_number')}<RequiredField/></label>
                                             <input
@@ -1107,7 +1110,7 @@ const SuretyForm = () => {
                                             />
                                         </div>
                                     </div> 
-                                    <div className="col-md-2">
+                                    <div className="col-md-3">
                                         <div className="form-group">
                                             <label htmlFor="">{t('ifsc_code')}<RequiredField/></label>
                                             <input
@@ -1120,7 +1123,7 @@ const SuretyForm = () => {
                                             />
                                         </div>
                                     </div> 
-                                    <div className="col-md-2 mt-4 pt-2">
+                                    <div className="col-md-2">
                                         <Button
                                             variant='contained'
                                             color='primary'
@@ -1132,10 +1135,10 @@ const SuretyForm = () => {
                         </div>
                     </div>
                 </div>
-                <div className="card">
-                    <div className="card-body">
+                {/* <div className="card">
+                    <div className="card-body"> */}
                         <div className="row">
-                            <div className="col-md-2">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label>{t('acquaintance_duration')}<RequiredField/></label>
                                     <div className="input-group">
@@ -1166,7 +1169,7 @@ const SuretyForm = () => {
                                     </div>  
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label>{t('related_to_accused')}<RequiredField/></label>
                                     <div>
@@ -1195,7 +1198,7 @@ const SuretyForm = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-4">
                                 <div className="form-group">
                                     <label>{t('relation_details')}<RequiredField/></label>
                                     <input 
@@ -1210,7 +1213,7 @@ const SuretyForm = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-5">
+                            <div className="col-md-6">
                                 <div className="form-group">
                                     <label>{t('any_other_cases')}<RequiredField/></label>
                                     <textarea 
@@ -1225,7 +1228,7 @@ const SuretyForm = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-5">
+                            <div className="col-md-6">
                                 <div className="form-group">
                                     <label>{t('litigation_details')}<RequiredField/></label>
                                     <textarea 
@@ -1255,7 +1258,7 @@ const SuretyForm = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-md-2">
+                            <div className="col-md-3">
                                 <div className="form-group">
                                     <label>{t('surety_amount')}<RequiredField/></label>
                                     <input 
@@ -1339,23 +1342,6 @@ const SuretyForm = () => {
                                 </div>
                             </div>
                         </div>
-                        {/* <div className="row">
-                            <div className="col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="">Select document</label>
-                                    <select 
-                                        name="doucment" 
-                                        className="form-control"
-                                    >
-                                        <option value="">Select document</option>
-                                        <option value="photo">Photo</option>
-                                        <option value="signature">Signature</option>
-                                        <option value="aadhar_card">Aaadhar Card</option>
-                                        <option value="identity_proof">Identity Proof</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div> */}
                         <div className="row">
                             <div className="col-md-12 d-flex justify-content-center">
                                 <Button
@@ -1371,16 +1357,8 @@ const SuretyForm = () => {
                                 >{t('reset')}</Button>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div className="d-flex justify-content-end">
-                    <Button
-                        variant='contained'
-                        color='info'
-                    
-                        endIcon={<ArrowForward />}
-                    >{t('next')}</Button>
-                </div>
+                    {/* </div>
+                </div> */}
             </form>
         </div>
     )

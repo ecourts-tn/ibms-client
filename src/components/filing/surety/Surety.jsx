@@ -1,24 +1,25 @@
 import api from 'api';
-import * as Yup from 'yup'
-import React, { useState, useEffect,} from 'react';
+import React, { useState, useEffect, useContext,} from 'react';
 import Button from '@mui/material/Button'
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import ArrowBack  from '@mui/icons-material/ArrowBack';
-import SearchIcon from '@mui/icons-material/Search'
 import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/InitialInput';
-import PetitionSearch from 'components/common/PetitionSearch';
+import InitialInput from 'components/filing/common/InitialInput';
+import PetitionSearch from 'components/utils/PetitionSearch';
+import { LanguageContext } from 'contexts/LanguageContex';
+import { BaseContext } from 'contexts/BaseContext';
 
 
 const Surety = () => {
 
     const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
+    const {eFileNumber} = useContext(BaseContext)
     const[bail, setBail] = useState({})
     const[cases, setCases] = useState([])
-    const[eFileNumber, seteFileNumber] = useState('')
     const[isPetition, setIsPetition] = useState(false)
+    const[petitioners, setPetitioners] = useState([])
+    const[respondents, setRespondents] = useState([])
     const[petition, setPetition] = useState({
         judiciary: '',
         seat: '',
@@ -37,7 +38,7 @@ const Surety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted/`)
+                const response = await api.get(`case/filing/pending/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }
@@ -53,21 +54,23 @@ const Surety = () => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:eFileNumber}})
                 if(response.status === 200){
-                    const {petition:pet} = response.data
+                    const {petition:main, litigants} = response.data
                     setIsPetition(true)
-                    setBail(pet)
+                    setBail(main)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
                     setPetition({...petition,
-                        judiciary: pet.judiciary?.id,
-                        seat: pet.seat ? pet.seat?.seat_code : null,
-                        state: pet.state ? pet.state.state_code : null,
-                        district:pet.district ? pet.district.district_code : null,
-                        establishment: pet.establishment ? pet.establishment.establishment_code : null,
-                        court: pet.court ? pet.court.court_code : null,
+                        judiciary: main.judiciary?.id,
+                        seat: main.seat ? main.seat?.seat_code : null,
+                        state: main.state ? main.state.state_code : null,
+                        district:main.district ? main.district.district_code : null,
+                        establishment: main.establishment ? main.establishment.establishment_code : null,
+                        court: main.court ? main.court.court_code : null,
                         case_type: 6,
-                        reg_type: pet.reg_type.id,
-                        reg_number: pet.reg_number,
-                        reg_year: pet.reg_year,
-                        registration_date: pet.registration_date
+                        reg_type: main.reg_type.id,
+                        reg_number: main.reg_number,
+                        reg_year: main.reg_year,
+                        registration_date: main.registration_date
                     })
                 }
             }catch(error){
@@ -104,17 +107,69 @@ const Surety = () => {
     return(
         <>
             <ToastContainer />
-            <div className="container px-md-5">
+            <div className="container-fluid mt-3">
                 <PetitionSearch 
                     cases={cases}
-                    eFileNumber={eFileNumber}
-                    seteFileNumber={seteFileNumber}
                 />
                 <div className="row">
                     <div className="col-md-12">
                         { isPetition && (
-                        <>
+                        <React.Fragment>
                             <InitialInput petition={bail} />
+                            <table className="table table-bordered table-striped">
+                                <thead>
+                                    <tr className="bg-navy">
+                                        <td colSpan={7}><strong>{t('petitioner_details')}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th className="text-center">#</th>
+                                        <th>{t('petitioner_name')}</th>
+                                        <th>{t('father_name')}</th>
+                                        <th>{t('age')}</th>
+                                        <th>{t('accused_rank')}</th>
+                                        <th>{t('act')}</th>
+                                        <th>{t('section')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { petitioners.map((petitioner, index) => (
+                                    <tr key={index}>
+                                        <td>{ index+1}</td>
+                                        <td>{petitioner.litigant_name}</td>
+                                        <td>{petitioner.relation_name}</td>
+                                        <td>{petitioner.age}</td>
+                                        <td>{petitioner.rank}</td>
+                                        <td>{ petitioner.act}</td>
+                                        <td>{petitioner.section}</td>
+                                    </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            <table className="table table-bordered table-striped">
+                                <thead>
+                                    <tr className="bg-navy">
+                                        <td colSpan={6}><strong>{t('respondent_details')}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <th className='text-center'>#</th>
+                                        <th>{t('respondent_name')}</th>
+                                        <th>{t('designation')}</th>
+                                        <th>{t('police_station')}</th>
+                                        <th>{t('address')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { respondents.map((res, index) => (
+                                        <tr key={index}>
+                                            <td>{index+1}</td>
+                                            <td>{res.litigant_name}</td>
+                                            <td>{ language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</td>
+                                            <td>{ language === 'ta' ? res.police_station?.station_lname : res.police_station?.station_name }</td>
+                                            <td>{res.address}, { language === 'ta' ? res.district.district_lname : res.district.district_name }</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                             <div className="d-flex justify-content-center">
                                 <Button
                                     variant='contained'
@@ -124,7 +179,7 @@ const Surety = () => {
                                     Submit
                                 </Button>
                             </div>
-                        </>
+                        </React.Fragment>
                         )}
                     </div>
                 </div>

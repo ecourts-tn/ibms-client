@@ -4,9 +4,9 @@ import ReactTimeAgo from 'react-time-ago'
 import { Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
-import DashboardCard from 'components/common/DashboardCard'
-import Calendar from 'components/common/Calendar'
-import PetitionList from 'components/common/PetitionList'
+import DashboardCard from 'components/utils/DashboardCard'
+import Calendar from 'components/utils/Calendar'
+import PetitionList from 'components/utils/PetitionList'
 
 const Dashboard = () => {
 
@@ -96,7 +96,7 @@ const Dashboard = () => {
                             </div>
                             <div className="row">
                                 <div className="col-md-5">
-                                    <Calendar />
+                                    {/* <Calendar/> */}
                                 </div>
                                 <div className="col-md-7">
                                     <PetitionList 

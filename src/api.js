@@ -4,10 +4,12 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "./constants";
 // Create an instance of Axios
 axios.defaults.withCredentials = true;
 
-
 const api = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    //baseURL: process.env.REACT_APP_API_URL,
+    baseURL: "http://192.168.100.155:81/api/v1/"
 });
+
+let FRONTEND_SECRET = localStorage.getItem("frontendSecret") || process.env.REACT_APP_FRONTEND_SECRET;
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -28,10 +30,11 @@ const processQueue = (error, token = null) => {
 // Interceptor to attach the access token to every request
 api.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem(ACCESS_TOKEN);
+    const token = localStorage.getItem(ACCESS_TOKEN) || sessionStorage.getItem(ACCESS_TOKEN);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    config.headers["X-Frontend-Secret"] = FRONTEND_SECRET;
     return config;
   },
   (error) => {
@@ -57,7 +60,7 @@ api.interceptors.response.use(
         })
           .then(token => {
             originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            return axios(originalRequest);
+            return api(originalRequest);
           })
           .catch(err => {
             return Promise.reject(err);
@@ -67,7 +70,7 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = sessionStorage.getItem(REFRESH_TOKEN);
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN) || sessionStorage.getItem(REFRESH_TOKEN);
 
       // If there's no refresh token, reject with the error
       if (!refreshToken) {
@@ -88,8 +91,8 @@ api.interceptors.response.use(
           const newRefreshToken = response.data.refresh;
 
           // Store the new tokens
-          sessionStorage.setItem(ACCESS_TOKEN, newAccessToken);
-          sessionStorage.setItem(REFRESH_TOKEN, newRefreshToken);
+          localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+          localStorage.setItem(REFRESH_TOKEN, newRefreshToken);
 
           // Update the Authorization header for the original request
           api.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`;
@@ -98,7 +101,7 @@ api.interceptors.response.use(
           // Process the failed requests in the queue
           processQueue(null, newAccessToken);
 
-          return axios(originalRequest); // Retry the original request
+          return api(originalRequest); // Retry the original request
         }
       } catch (refreshError) {
         // If refresh fails, log out the user or handle appropriately
@@ -112,5 +115,24 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// export const refreshFrontendSecret = async () => {
+//   try {
+//       const response = await axios.get("auth/latest-secret/");
+
+//       if (response.status === 200) {
+//           FRONTEND_SECRET = response.data.secret;
+//           localStorage.setItem("frontendSecret", FRONTEND_SECRET);
+//       }
+//   } catch (error) {
+//       console.error("Failed to refresh frontend secret", error);
+//   }
+// };
+
+// //  Auto-refresh secret every 15 minutes
+// setInterval(refreshFrontendSecret, 15 * 60 * 1000); // 15 minutes
+
+// //  Fetch the latest secret on app startup
+// refreshFrontendSecret();
 
 export default api;

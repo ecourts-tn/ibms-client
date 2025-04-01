@@ -11,9 +11,10 @@ import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import Loading from 'components/common/Loading';
+import Loading from 'components/utils/Loading';
 import { Link } from 'react-router-dom';
 import { truncateChars } from 'utils';
+import { MasterContext } from 'contexts/MasterContext';
 
 const RegistrationSearch = () => {
     
@@ -27,12 +28,18 @@ const RegistrationSearch = () => {
         reg_number: '',
         reg_year: ''
     })
-    const {states} = useContext(StateContext)
-    const {districts} = useContext(DistrictContext)
+    // const {states} = useContext(StateContext)
+    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    const {seats} = useContext(SeatContext)
+    // const {seats} = useContext(SeatContext)
     const {language} = useContext(LanguageContext)
-    const {casetypes}   = useContext(CaseTypeContext)
+    // const {casetypes}   = useContext(CaseTypeContext)
+        const {masters:{
+            states,
+            districts, 
+            seats, 
+            casetypes
+        }} = useContext(MasterContext)
     const {t} = useTranslation()
     const[petition, setPetition] = useState({})
     const[errors, setErrors] = useState({})
@@ -230,7 +237,7 @@ const RegistrationSearch = () => {
                                 >
                                     <option value="">{t('alerts.select_case_type')}</option>
                                     { casetypes.map((type, index) => (
-                                    <option value={type.id} key={index}>{type.type_full_form}</option>
+                                    <option value={type.id} key={index}>{ language === 'ta' ? type.type_lfull_form : type.type_full_form}</option>
                                     ))}
                                 </select>
                                 <div className="invalid-feedback">
@@ -290,8 +297,7 @@ const RegistrationSearch = () => {
 
                 { isExist && (
                     <React.Fragment>
-                        <h1>welcome</h1>
-                        <table className="table table-bordered table-striped table-sm">
+                        <table className="table table-bordered table-striped table-sm mt-3">
                             <tbody>
                                 <tr>
                                     <td>{t('efile_number')}</td>
@@ -344,7 +350,7 @@ const RegistrationSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                        { petition.litigant.map((p, index) => (
+                                        { petition.litigant.filter((l) =>l.litigant_type ===1).map((p, index) => (
                                             <p key={index}>
                                                 <strong>{index+1}. {p.litigant_name}</strong><br/>
                                                 { p.address }
@@ -359,7 +365,7 @@ const RegistrationSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                    { petition.litigant.map((res, index) => (
+                                    { petition.litigant.filter((l)=>l.litigant_type===2).map((res, index) => (
                                         <React.Fragment>
                                             <p key={index}>
                                                 <strong>{index+1}. {res.litigant_name} { language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</strong><br/>
@@ -373,60 +379,8 @@ const RegistrationSearch = () => {
                                 </tr>
                             </tbody>
                         </table>
-                        { Object.keys(petition.objection).length > 0 && (
-                        <>
-                        <h6 className="text-center text-danger"><strong>Objections</strong></h6>
-                        <table className="table table-bordered table-striped">
-                            <thead className='bg-secondary'>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Objection Date</th>
-                                    <th>Remarks</th>
-                                    <th>Complaince Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { petition.objection.map((o, index) => (
-                                <tr>
-                                    <td>{index+1}</td>
-                                    <td>{o.objection_date}</td>
-                                    <td>{o.remarks}</td>
-                                    <td>{o.complaince_date}</td>
-                                </tr> 
-                                ))}
-                            </tbody>
-                        </table>
-                        </>
-                        )}
-                        { Object.keys(petition.proceedings).length > 0 && (
-                        <>
-                        <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
-                        <table className="table table-bordered table-striped">
-                            <thead className='bg-secondary'>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Business Date</th>
-                                    <th>Business</th>
-                                    <th>Next Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                { petition.proceedings.map((p, index) => (
-                                <tr>
-                                    <td>{index+1}</td>
-                                    <td>
-                                        <Link to={`/proceeding/detail/`} state={{efile_no:p.efile_no, id:p.id}}>{p.order_date}</Link>
-                                    </td>
-                                    <td>{ truncateChars(p.order_remarks, 100)}</td>
-                                    <td>{p.next_date}</td>
-                                </tr> 
-                                ))}
-                            </tbody>
-                        </table>
-                        </>
-                        )}
                     </React.Fragment>
-                    )}
+                )}
             </div>    
         </>
   )

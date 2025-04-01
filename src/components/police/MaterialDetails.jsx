@@ -1,250 +1,247 @@
-import React, {useState, useEffect} from 'react'
-import {toast, ToastContainer} from 'react-toastify'
+import React, { useState, useRef, useEffect } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import { IconButton, Button } from "@mui/material";
+import { Edit, Delete } from "@mui/icons-material";
+import "react-toastify/dist/ReactToastify.css";
 import * as Yup from 'yup'
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/commonvalidation/validations';
-import flatpickr from 'flatpickr';
-import "flatpickr/dist/flatpickr.min.css";
+import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 
-const MaterialDetails = ({materials, setMaterials}) => {
-    const initialState = {
-        material_name: '',
-        quantity:'',
-        quantity_nature:'',
-        is_produced: false,
-        produced_date: '',
-        reason: ''
-    }
-    const validationSchema = Yup.object({
-        material_name: Yup.string().required("Name is required"),
-        quantity: Yup.string().required("Quantity is required"),
-        quantity_nature: Yup.string().required("Nature is required"),
-        is_produced: Yup.boolean(),
-        produced_date: Yup.date().nullable().required("Produced date is required"),
-        reason: Yup.string().required("Reason is required") 
-    });
-    const[form, setForm] = useState(initialState)
-    const[errors, setErrors] = useState({})
 
-    const produced_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
+const MaterialDetails = ({ materials = [], setMaterials }) => {
+  // Define material state within the component
+  // const [material, setMaterial] = useState([]);
 
-    const produced_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
+  const [material, setMaterial] = useState({ material_name: '', quantity: '', quantity_nature: '', is_produced: '', produced_date: '', reason: '' });
 
-    useEffect(() => {
-        const produced_date = flatpickr(".produced_date-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            defaultDate: form.produced_date ? produced_date_Display(new Date(form.produced_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? produced_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, produced_date: formattedDate });
-            },
-        });
+  const initialState = {
+    material_name: "",
+    quantity: "",
+    quantity_nature: "",
+    is_produced: false,
+    produced_date: null, // Ensure initial value is null
+    reason: "",
+  };
+  const validationSchema = Yup.object({
+    material_name: Yup.string().required("Material Name is required"),
+    quantity: Yup.number().required("Quantity is required").positive("Must be positive"),
+    unit: Yup.string().required("Unit is required"),
+    supplier_details: Yup.string().required("Supplier Details are required"),
+});
 
-        return () => {
-            if (produced_date && typeof produced_date.destroy === "function") {
-                produced_date.destroy();
-            }
-        };
-    }, [form]);
+  const [form, setForm] = useState(initialState);
+  const [errors, setErrors] = useState({});
+  const [editIndex, setEditIndex] = useState(null);
 
-    const addMaterial = async(e) => {
-        e.preventDefault();
-        try{
-            await validationSchema.validate(form, {abortEarly:false})
-            setMaterials((prevMaterials) => [...prevMaterials, form])
-            setForm(initialState)
-            // try {
-            //     toast.success("Material details added successfully", { theme: "colored" });
-            // } catch (err) {
-            //     console.error("Toast error:", err);
-            // }
-        }catch(error){
-            if(error.inner){
-                const validationErrors = {}
-                error.inner.forEach((err) => {
-                    validationErrors[err.path] = err.message
-                })
-                setErrors(validationErrors)
-            }
-            console.error(error)
+  const materialNameRef = useRef(null);
+  const quantityRef = useRef(null);
+  const quantityNatureRef = useRef(null);
+
+
+  // Handle input change
+  // Handle input change
+const handleInputChange = (event) => {
+  const { name, value, type, checked } = event.target;
+
+  if (type === "radio") {
+    // If the input type is radio, only update the `is_produced` field
+    setMaterial((prevMaterial) => ({
+      ...prevMaterial,
+      [name]: checked ? value : false, // Set value if checked, otherwise false for "No"
+    }));
+  } else {
+    // For other fields, update normally
+    setMaterial((prevMaterial) => ({
+      ...prevMaterial,
+      [name]: value,
+    }));
+  }
+};
+
+
+  const handleAddMaterial = async () => {
+    try {
+        // Validate the form data using Yup
+        // await validationSchema.validate(material, { abortEarly: false });
+
+        // If validation succeeds, proceed with adding or updating material
+        if (editIndex !== null) {
+            // Update existing material
+            const updatedMaterials = [...materials];
+            updatedMaterials[editIndex] = material;
+            setMaterials(updatedMaterials);
+            setEditIndex(null);
+        } else {
+            // Add new material
+            setMaterials([...materials, material]);
         }
+
+        // Clear the form inputs
+        setMaterial({ material_name: '', quantity: '', quantity_nature: '', is_produced: '', produced_date: '', reason: '' });
+        // toast.success("Material details added successfully", { theme: "colored" });
+
+    } catch (error) {
+        if (error.inner) {
+            // Handle validation errors
+            const validationErrors = {};
+            error.inner.forEach((err) => {
+                validationErrors[err.path] = err.message;
+            });
+            setErrors(validationErrors); // Set errors state to display them on the form
+        }
+        console.error("Validation failed:", error);
     }
-    return (
-        <div className="card">
-            <ToastContainer />
-            <div className="card-header bg-secondary">
-                Material Details
-            </div>
-            <div className="card-body p-3">
-                <div className="row">
-                    <div className="col-md-12">
-                        { Object.keys(materials).length > 0 && (
-                            <MaterialList materials={materials} />
-                        )}
-                    </div>
-                    <div className="col-md-4">
-                        <div className="form-group">
-                            <label htmlFor="">Name of the material</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.material_name ? 'is-invalid' : ''}`} 
-                                name="material_name"
-                                value={form.material_name}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            />
-                            <div className="invalid-feedback">
-                                {errors.material_name}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-3">
-                        <div className="form-group">
-                            <label htmlFor="">Quantity of the material</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.quantity ? 'is-invalid' : ''}`}
-                                name="quantity"
-                                value={form.quantity}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            />
-                            <div className="invalid-feedback">
-                                { errors.quantity }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-5">
-                        <div className="form-group">
-                            <label htmlFor="">Nature of Quantity(Small/Commercial)</label>
-                            <input 
-                                type="text" 
-                                className={`form-control ${errors.quantity_nature ? 'is-invalid' : ''}`}
-                                name="quantity_nature"
-                                value={form.quantity_nature}
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            />
-                            <div className="invalid-feedback">
-                                { errors.quantity_nature }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-4">
-                        <div className="form-group row">
-                            <label htmlFor="" className="col-sm-8 mt-2">Whether material produced before competent court</label>
-                            <div className="col-md-4 mt-2">
-                                <div className="icheck-success d-inline mx-2">
-                                    <input 
-                                        type="radio" 
-                                        id="radioIsProduced1" 
-                                        name="is_produced" 
-                                        onChange={(e) => setForm({...form, [e.target.name] : true})} 
-                                        checked={form.is_produced === true}
-                                    />
-                                    <label htmlFor="radioIsProduced1">Yes</label>
-                                </div>
-                                <div className="icheck-danger d-inline mx-2">
-                                    <input 
-                                        type="radio" 
-                                        id="radioIsProduced2" 
-                                        name="is_produced" 
-                                        onChange={(e) => setForm({...form, [e.target.name] : false})} 
-                                        checked={form.is_produced === false}
-                                    />
-                                    <label htmlFor="radioIsProduced2">No</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-2">
-                        <div className="form-group">
-                            <label htmlFor="">Produced date</label>
-                            <input 
-                                type="date" 
-                                className={`form-control produced_date-date-picker ${errors.produced_date ? 'is-invalid' : ''}`}
-                                name="produced_date"
-                                value={form.produced_date}
-                                readOnly={form.is_produced === true ? false : true }
-                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                 placeholder="DD/MM/YYYY"
-                                style={{
-                                    backgroundColor: 'transparent',
-                                    border: '1px solid #ccc', // Optional: Adjust border
-                                    padding: '8px',            // Optional: Adjust padding
-                                }}
-                            />
-                            <div className="invalid-feedback">
-                                { errors.produced_date }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-6">
-                        <div className="form-group">
-                            <label htmlFor="">Reason</label>
-                            <textarea 
-                                name="reason"
-                                className={`form-control ${errors.reason ? 'is-invalid' : ''}`}
-                                value={form.reason}
-                                onChange={(e)=> setForm({...form, [e.target.name]: e.target.value})}
-                            ></textarea>
-                            <div className="invalid-feedback">
-                                { errors.reason }
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-md-2">
-                        <button 
-                            className="btn btn-success"
-                            onClick={addMaterial}
-                        >Add Material</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-}
+};
 
 
-const MaterialList = ({materials}) => {
-    return(
-        <table className="table table-bordered table-striped table-sm">
-            <thead className='bg-light'>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Nature</th>
-                    <th>Remarks</th>
-                    <th>Action</th>
-                </tr>
+  // Handle editing a material
+  const handleEdit = (index) => {
+    setMaterial(materials[index]);
+    setEditIndex(index);
+  };
+
+  // Handle deleting a material
+  const handleDelete = (index) => {
+    setMaterials(materials.filter((_, i) => i !== index));
+  };
+
+  useEffect(() => {
+    if (materialNameRef.current) {
+      materialNameRef.current.focus(); // Focus on material_name input field
+    }
+  }, []);
+
+  return (
+    <div className="container">
+      <ToastContainer />
+      <div className="card shadow-sm">
+        <div className="card-header bg-secondary text-white">Material Details</div>
+        <div className="card-body">
+          {/* Input Table */}
+          <table className="table table-bordered table-striped">
+            <thead className="bg-navy">
+              <tr>
+                <th>#</th>
+                <th>Material Name</th>
+                <th>Quantity</th>
+                <th>Nature of Quantity</th>
+                <th>Whether material produced before competent court</th>
+                <th>Produced Date</th>
+                <th>Reason</th>
+                <th>Action</th>
+              </tr>
             </thead>
             <tbody>
-                { materials.map((m, index)=> (
-                <tr key={index}>
-                    <td>{index+1}</td>
-                    <td>{m.material_name}</td>
-                    <td>{m.quantity}</td>
-                    <td>{m.quantity_nature}</td>
-                    <td>{m.reason}</td>
+              {materials.length > 0 ? (
+                materials.map((mat, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{mat.material_name}</td>
+                    <td>{mat.quantity}</td>
+                    <td>{mat.quantity_nature}</td>
+                    <td>{mat.is_produced ? "Yes" : "No"}</td>
+                    <td>{mat.produced_date || ""}</td>
+                    <td>{mat.reason}</td>
                     <td>
-                        <button className="btn btn-sm btn-info">Edit</button>
-                        <button className="btn btn-sm btn-danger ml-2">Delete</button>
+                      <IconButton color="primary" onClick={() => handleEdit(index)}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton color="secondary" onClick={() => handleDelete(index)}>
+                        <Delete />
+                      </IconButton>
                     </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    No Materials Added
+                  </td>
                 </tr>
-                ))}
+              )}
+              <tr>
+                <td></td>
+                <td>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.material_name ? "is-invalid" : ""}`}
+                    name="material_name"
+                    value={material.material_name}
+                    onChange={handleInputChange}
+                  />
+                  <div className="invalid-feedback">{errors.material_name}</div>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.quantity ? "is-invalid" : ""}`}
+                    name="quantity"
+                    value={material.quantity}
+                    onChange={handleInputChange}
+                  />
+                  <div className="invalid-feedback">{errors.quantity}</div>
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    className={`form-control ${errors.quantity_nature ? "is-invalid" : ""}`}
+                    name="quantity_nature"
+                    value={material.quantity_nature}
+                    onChange={handleInputChange}
+                  />
+                  <div className="invalid-feedback">{errors.quantity_nature}</div>
+                </td>
+                <td>
+                  <div className="form-check form-check-inline">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name="is_produced"
+                      onChange={() => setMaterial({ ...material, is_produced: true })}
+                      checked={material.is_produced === true}
+                    />
+                    Yes
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      type="radio"
+                      className="form-check-input"
+                      name="is_produced"
+                      onChange={() => setMaterial({ ...material, is_produced: false, produced_date: null })}
+                      checked={material.is_produced === false}
+                    />
+                    No
+                  </div>
+                </td>
+                <td>
+                  <input
+                    type="date"
+                    className="form-control"
+                    name="produced_date"
+                    value={material.produced_date || ""}
+                    onChange={handleInputChange}
+                    //disabled={!form.is_produced} // Disable if not produced
+                  />
+                </td>
+                <td>
+                  <textarea
+                    className="form-control"
+                    name="reason"
+                    value={material.reason}
+                    onChange={handleInputChange}
+                  ></textarea>
+                </td>
+                <td>
+                  <Button variant="contained" color="primary" onClick={handleAddMaterial}>
+                    {editIndex !== null ? "Update" : "Add"}
+                  </Button>
+                </td>
+              </tr>
             </tbody>
-        </table>
-    )
-}
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-export default MaterialDetails
+export default MaterialDetails;

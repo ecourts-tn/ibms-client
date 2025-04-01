@@ -52,5 +52,30 @@ export const truncateChars = (text, maxLength) => {
       return text.substring(0, maxLength) + "...";
     }
     return text;
+};
+
+export const encode_efile_number = (pk) => {
+    return btoa(pk); 
+};
+
+export const decode_file_number = (encodedPk) => {
+    return atob(encodedPk);
   };
 
+
+export const encryptData = (data) => {
+    if (typeof data === "undefined" || data === null) return ""; // Prevent null/undefined errors
+    const jsonData = typeof data === "object" ? JSON.stringify(data) : data;
+    return btoa(unescape(encodeURIComponent(jsonData)));
+};
+
+export const decryptData = (cipherText) => {
+    if (!cipherText) return ""; // Prevent null/undefined errors
+    let decoded;
+    try {
+        decoded = decodeURIComponent(escape(atob(cipherText)));
+        return JSON.parse(decoded); // Try parsing JSON
+    } catch (e) {
+        return decoded || ""; // Return as string if parsing fails
+    }
+};  

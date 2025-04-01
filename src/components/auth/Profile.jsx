@@ -1,16 +1,21 @@
-import React, {useState} from 'react'
+import React, {useContext, useState} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
-import { useAuth } from '../../hooks/useAuth'
 import { useTranslation } from 'react-i18next'
+import { AuthContext } from 'contexts/AuthContext'
+import api from 'api'
+import Loading from 'components/utils/Loading'
+
 
 const Profile = () => {
 
-    const{user} = useAuth()
-
+    const {user} = useContext(AuthContext)
     const initialState = {
-        mobile_number    : user.user.mobile,
-        email_address    : user.user.email,
-        username         : user.user.username
+        userlogin        : user?.userlogin,
+        mobile_number    : user?.mobile,
+        email_address    : user?.email,
+        username         : user?.username,
+        mobile_otp       : '',
+        email_otp        : ''
     }
     const {t} = useTranslation()
     const[form, setForm] = useState(initialState)
@@ -19,39 +24,114 @@ const Profile = () => {
     const[mobileOtp, setMobileOtp] = useState(false)
     const[changeEmail, setChangeEmail] = useState(false)
     const[emailOtp, setEmailOtp] = useState(false)
+    const[loading, setLoading] = useState(false)
 
-    const updateMobile = () => {
+    const updateMobile = (e) => {
+        e.preventDefault()
         setChangeMobile(true)
         setForm({...form, mobile_number: ''})
     }
     
-    const sendMobileOtp = () => {
+    const sendMobileOtp = (e) => {
+        e.preventDefault()
         if(form.mobile_number === ''){
             setErrors({...errors, mobile_number:"Please enter the mobile number"})
             return
         }
+        toast.success("OTP has sent to your mobile number", {theme:"colored"})
         setMobileOtp(true)
     }
 
-    const updateEmail = () => {
+    const verfiyMobileOtp = (e) => {
+        e.preventDefault()
+        if(parseInt(form.mobile_otp) === 123456){
+            toast.success("Mobile OTP has been verified successfully", {theme:"colored"})
+            setChangeMobile(false)
+            setMobileOtp(false)
+            setForm({...form, mobile_otp: ''})
+        }
+    }
+
+    const updateEmail = (e) => {
+        e.preventDefault()
         setChangeEmail(true)
         setForm({...form, email_address: ''})
     }
     
-    const sendEmailOtp = () => {
-        if(form.email_address === ''){
-            setErrors({...errors, email_address:"Please enter the email_address"})
-            return
+
+    const sendEmailOtp = async() => {
+        setLoading(true)
+        try{
+            const response = await api.post(`auth/email/verify/`, {email:form.email_address})
+            if(response.status === 200){
+                try{
+                    const response2 = await api.post("auth/email/otp/", {email: form.email_address})
+                    if(response2.status === 200){
+                        toast.success(t('alerts.email_otp_sent'),{theme:"colored"})
+                        setEmailOtp(true)
+                    }
+                }catch(err){
+                    console.log(err)
+                }
+            }
+        }catch(error){
+            console.log(error)
+            if(error.response?.status === 400 || error.response?.status === 409){
+                toast.error(error.response?.data.message, {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
         }
-        setEmailOtp(true)
     }
 
+    const verifyEmailOtp = async (e) => {
+        e.preventDefault()
+        try{
+            setLoading(true)
+            const response = await api.post("auth/email/otp/verify/", {
+                email: form.email_address,
+                otp: parseInt(form.email_otp)
+            })
+            if(response.status === 200){
+                toast.success(t('alerts.email_otp_verified'),{
+                    theme:"colored"
+                })
+                setChangeEmail(false)
+                setEmailOtp(false)
+            }
+        }catch(error){
+            if(error.response){
+                toast.error(error.response.data.message, {
+                    theme:"colored"
+                })
+            }
+            setEmailOtp(true)
+        }finally{
+            setLoading(false)
+        }
+    }
+
+
     const handleSubmit = async (e) => {
-        
+        e.preventDefault()
+        setLoading(true)
+        try{
+            const response = await api.post(`auth/user/profile/update/`, form)
+            if(response.status === 200){
+                toast.success("Profile updated successfully", {theme:"colored"})
+            }
+        }catch(error){
+            if(error.response){
+                toast.error(error.response.data.message, {theme:"colored"})
+            }
+        }finally{
+            setLoading(false)
+        }
     }
 
     return (
         <>
+            { loading && <Loading />}
             <ToastContainer />
             <div className="container-fluid px-5 my-4" style={{minHeight:'500px'}}>
                 <div className="row">
@@ -67,10 +147,10 @@ const Profile = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-4 d-flex justify-content-center profile">
-                        <div className="card" style={{width: '18rem'}}>
-                            <img src="/images/profile.jpg" alt="" />
-                            <div className="card-body text-center">
-                                <p className="card-text"><strong>{user.user.username}<br/>{user.user.mobile}<br/>{user.user.email}</strong></p>
+                        <div className="card">
+                            <div className="card-body">
+                                <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" />
+                                <p className='text-center mt-3'><strong>{user?.username.toUpperCase()}<br/>{user?.mobile}<br/>{user?.email}</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>
                             </div>
                         </div>
@@ -102,6 +182,7 @@ const Profile = () => {
                                             type="text" 
                                             className={`form-control ${errors.mobile_number ? 'is-invalid' : null}`}
                                             name="mobile_number"
+                                            placeholder={changeMobile ? "New mobile number" : ""}
                                             value={form.mobile_number}
                                             readOnly={changeMobile ? false : true}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
@@ -116,7 +197,7 @@ const Profile = () => {
                                         <button 
                                             className="btn btn-primary"
                                             onClick={updateMobile}
-                                        >Change</button>
+                                        >{t('change')}</button>
                                     </div>
                                 ):(
                                     <div className="col-md-2 mt-4 pt-2">
@@ -141,7 +222,7 @@ const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="col-md-1 mt-4 pt-2">
-                                            <button className="btn btn-success">{t('verify')}</button>
+                                            <button className="btn btn-success" onClick={verfiyMobileOtp}>{t('verify')}</button>
                                         </div>
                                     </>
                                 )}
@@ -154,6 +235,7 @@ const Profile = () => {
                                             type="text" 
                                             className={`form-control ${errors.email_address ? 'is-invalid' : null}`}
                                             name="email_address"
+                                            placeholder={changeMobile ? "New email address" : ""}
                                             value={form.email_address}
                                             readOnly={changeEmail ? false : true}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
@@ -168,7 +250,7 @@ const Profile = () => {
                                         <button 
                                             className="btn btn-primary"
                                             onClick={updateEmail}
-                                        >Change</button>
+                                        >{t('change')}</button>
                                     </div>
                                 ):(
                                     <div className="col-md-2 mt-4 pt-2">
@@ -182,7 +264,7 @@ const Profile = () => {
                                     <>
                                         <div className="col-md-2">
                                             <div className="form-group">
-                                                <label htmlFor="email_otp">{t('send_otp')}</label>
+                                                <label htmlFor="email_otp">OTP</label>
                                                 <input 
                                                     type="text" 
                                                     className="form-control"
@@ -193,7 +275,7 @@ const Profile = () => {
                                             </div>
                                         </div>
                                         <div className="col-md-1 mt-4 pt-2">
-                                            <button className="btn btn-success">{t('verify')}</button>
+                                            <button className="btn btn-success" onClick={verifyEmailOtp}>{t('verify')}</button>
                                         </div>
                                     </>
                                 )}
@@ -201,7 +283,7 @@ const Profile = () => {
                             <div className="row">
                                 <div className="col-md-12 mt-3">
                                     <div className="form-group">
-                                        <button className="btn btn-success">{t('update')}</button>
+                                        <button className="btn btn-success" onClick={handleSubmit}>{t('submit')}</button>
                                     </div>
                                 </div>
                             </div>

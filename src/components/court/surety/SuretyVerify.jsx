@@ -6,7 +6,7 @@ import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import CheckIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/CancelRounded'
-import ViewDocument from 'components/common/ViewDocument'
+import ViewDocument from 'components/utils/ViewDocument'
 
 const SuretyVerify = () => {
 

@@ -16,16 +16,16 @@ export default function MenuBar() {
   const [isAuth, setIsAuth] = useState(false);
   const navigate = useNavigate();
 
+  
   const handleLogout = async () => {
-    const response = await api.post('auth/logout/', {
-      refresh: sessionStorage.getItem(REFRESH_TOKEN),
-    });
-    if (response.status === 205) {
-      sessionStorage.clear();
-      setIsAuth(false);
-      toast.success(t('alerts.logged_out'), { theme: "colored" });
-      setTimeout(() => navigate('/'), 1000);
+    try {
+      await logout(); // Use logout from AuthContext
+      toast.success(t("alerts.logged_out"), { theme: "colored" });
+      navigate("/");
+    } catch (error) {
+      toast.error(t("alerts.logout_failed"), { theme: "colored" });
     }
+
   };
 
   if (!user) {

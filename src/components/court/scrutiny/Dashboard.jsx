@@ -35,9 +35,30 @@ const CaseScrutiny = () => {
         verification_date: null,
         complaince_date: null,
         remarks: '',
-        status:''
+        status:1
     }
     const[form, setForm] = useState(initialState)
+
+    const statusOptions = [
+        { status: 1, color: "success", icon: <CheckIcon />, label: t('approve') },
+        { status: 2, color: "warning", icon: <CancelIcon />, label: t('return') },
+        { status: 3, color: "error", icon: <CancelIcon />, label: "Reject" }
+    ];
+
+    const renderButton = (status, color, icon, label) => (
+        form.status === status && (
+          <div className="col-md-2 offset-5">
+            <Button
+              variant="contained"
+              color={color}
+              startIcon={icon}
+              onClick={handleSubmit}
+            >
+              {label}
+            </Button>
+          </div>
+        )
+    );
 
     useEffect(() => {
         async function fetchData(){
@@ -201,15 +222,25 @@ const CaseScrutiny = () => {
                                                 />
                                                 <label htmlFor="radioVerify1">{t('accept')}</label>
                                             </div>
+                                            <div className="icheck-warning d-inline mx-2">
+                                                <input 
+                                                    type="radio" 
+                                                    id="radioVerify2"
+                                                    name="status"
+                                                    onChange={(e) => setForm({...form, status:2 })}
+                                                    checked={form.status === 2 ? true : false }
+                                                />
+                                                <label htmlFor="radioVerify2">Return</label>
+                                            </div>
                                             <div className="icheck-danger d-inline mx-2">
                                                 <input 
                                                     type="radio" 
-                                                    id="radioVerify2" 
+                                                    id="radioVerify3" 
                                                     name="status" 
-                                                    onChange={(e) => setForm({...form, status:2})}
-                                                    checked={form.status === 2 ? true : false }
+                                                    onChange={(e) => setForm({...form, status:3})}
+                                                    checked={form.status === 3 ? true : false }
                                                 />
-                                                <label htmlFor="radioVerify2">{t('return')}</label>
+                                                <label htmlFor="radioVerify3">{'Reject'}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -227,7 +258,7 @@ const CaseScrutiny = () => {
                                     </div>
                                 </div>
                                 { form.status === 2 && (
-                                <>
+                                <React.Fragment>
                                     <div className="col-md-8 offset-2">
                                         <div className="form-group row">
                                             <label htmlFor="date" className="col-sm-3">{t('compliance_date')}</label>
@@ -254,27 +285,26 @@ const CaseScrutiny = () => {
                                             ></textarea>
                                         </div>
                                     </div>
-                                </>
+                                </React.Fragment>
                                 )}
-                                { form.status !== '' && form.status === 1 && (
-                                <div className="col-md-2 offset-5">
-                                    <Button
-                                        variant="contained"
-                                        color="success"
-                                        startIcon={<CheckIcon />}
-                                        onClick={handleSubmit}
-                                    >{t('approve')}</Button>
-                                </div>
+                                { form.status === 3 && (
+                                <React.Fragment>
+                                    <div className="col-md-8 offset-2">
+                                        <div className="form-group">
+                                            <label htmlFor="remarks">Reason for reject</label>
+                                            <textarea 
+                                                name="remarks" 
+                                                className="form-control" 
+                                                rows="2"
+                                                value={form.remarks}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            ></textarea>
+                                        </div>
+                                    </div>
+                                </React.Fragment>
                                 )}
-                                { form.status !== '' && form.status === 2 && (
-                                <div className="col-md-2 offset-5">
-                                    <Button
-                                        variant="contained"
-                                        color="error"
-                                        startIcon={<CancelIcon />}
-                                        onClick={handleSubmit}
-                                    >{t('return')}</Button>
-                                </div>
+                                {statusOptions.map((option) =>
+                                    renderButton(option.status, option.color, option.icon, option.label)
                                 )}
                             </div>
                             )}

@@ -1,17 +1,16 @@
 import React, {useState, useEffect, useContext} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
-import ViewDocument from 'components/common/ViewDocument'
+import ViewDocument from 'components/utils/ViewDocument'
 import { formatDate, formatLitigant } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { approvedPetition } from 'services/petitionService'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 
-const ApprovedList
- = () => {
+const ApprovedList = () => {
 
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(true)
@@ -32,19 +31,6 @@ const ApprovedList
         setSelectedDocument(null)
     }
 
-    // useEffect(() => {
-    //     async function fetchData(){
-    //         try{
-    //             const response = await api.get(`case/filing/submitted-list/`)
-    //             if(response.status === 200){
-    //                 setCases(response.data)
-    //             }
-    //         }catch(error){
-    //             console.log(error)
-    //         }
-    //     }
-    //     fetchData();
-    // }, [])
 
     useEffect(() => {
         const fetchPetition = async() => {
@@ -142,7 +128,7 @@ const ApprovedList
                             </div>
                         </div>
                         <table className="table table-striped table-bordered">
-                            <thead className="bg-secondary">
+                            <thead className="bg-info">
                                 <tr>
                                     <th>{t('sl_no')}</th>
                                     <th>{t('efile_number')}</th>
