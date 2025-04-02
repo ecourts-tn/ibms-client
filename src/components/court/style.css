@@ -1,14 +1,16 @@
 #accordion .card-header{
     background: #3498db;
     border: 1px solid #3498db!important;
+    padding: 0.5rem 1.25rem!important
 }
 
 #accordion .card-header a{
-    font-weight:bold;
-    font-size:16px;
+    font-weight:600;
+    /* font-size:15px; */
     color:#FAFAFA!important;
     text-decoration: none;
     display:block;
+    
 }
 
 .cause-list li {

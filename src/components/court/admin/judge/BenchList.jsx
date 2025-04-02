@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from 'api'
-import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 
-const JudgeList = () => {
+const BenchList = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
     const [judges, setJudges] = useState([])
@@ -28,20 +27,21 @@ const JudgeList = () => {
             <div className="container-fluid mt-3">
                 <div className="card card-outline card-primary">
                     <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
+                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Bench Detail</strong></h3>
                         <button 
                             className="btn btn-success btn-sm float-right"
-                            onClick={() => navigate('/court/admin/judge/')}
-                        >Add Judge</button>
+                            onClick={() => navigate('/court/admin/bench/')}
+                        >Add Bench</button>
                     </div>
                     <div className="card-body">
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="table-responsive">
-                                    <table className="table table-bordered table-striped table-sm">
+                                    <table className="table table-bordered table-striped">
                                         <thead className="bg-secondary">
                                             <tr>
                                                 <th>S. NO</th>
+                                                <th>State</th>
                                                 <th>Judge Name</th>
                                                 <th>Judge Name (Tamil)</th>
                                                 <th>JO Code</th>
@@ -52,6 +52,7 @@ const JudgeList = () => {
                                             { judges.map((j, index) => (
                                             <tr>
                                                 <td>{ index+1 }</td>
+                                                <td>{ j.state }</td>
                                                 <td>{ j.judge_name }</td>
                                                 <td>{ j.judge_lname }</td>
                                                 <td>{ j.jocode }</td>
@@ -72,4 +73,4 @@ const JudgeList = () => {
     )
 }
 
-export default JudgeList
+export default BenchList

@@ -88,43 +88,47 @@ const Login = () => {
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-  
+
     try {
-      await validationSchema.validate(form, { abortEarly: false });
-      const response = await api.post('auth/login/', form, { skipInterceptor: true });
+        await validationSchema.validate(form, { abortEarly: false });
+        const response = await api.post('auth/login/', form, { skipInterceptor: true });
+
         // Call the login function from AuthContext
-      await login(response.data, form.remember);
+        await login(response.data, form.remember);
         toast.success('Logged in successfully', { theme: 'colored' });
+
     } catch (error) {
-      if (error.inner) {
-        const newErrors = {};
-        error.inner.forEach((err) => {
-          newErrors[err.path] = err.message;
-        });
-        setErrors(newErrors);
-      } else if (error.response) {
-        const { status, data } = error.response;
-        switch (status) {
-          case 400:
-            toast.error(data.message, { theme: 'colored' });
-            break;
-          case 401:
-            toast.error(t('alerts.not_authorized'), { theme: 'colored' });
-            break;
-          case 403:
-            toast.error(t('alerts.not_activated'), { theme: 'colored' });
-            break;
-          case 404:
-            toast.error(data.message, { theme: 'colored' });
-            break;
-          default:
-            toast.error(error, { theme: 'colored' });
+        console.error("Error during login:", error); // Debugging log
+
+        if (error.inner) {
+            const newErrors = {};
+            error.inner.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            setErrors(newErrors);
+        } else if (error.response) {
+            const { status, data } = error.response;
+            switch (status) {
+                case 400:
+                case 404:
+                    toast.error(data.message, { theme: 'colored' });
+                    break;
+                case 401:
+                    toast.error(t?.('alerts.not_authorized') || "Not Authorized", { theme: 'colored' });
+                    break;
+                case 403:
+                    toast.error(t?.('alerts.not_activated') || "Account Not Activated", { theme: 'colored' });
+                    break;
+                default:
+                    console.error("Unexpected error:", error);
+                    toast.error(error.message || "An unexpected error occurred", { theme: 'colored' });
+            }
         }
-      }
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   return (
     <React.Fragment>

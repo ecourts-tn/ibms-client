@@ -31,7 +31,7 @@ const JudgePeriodForm = () => {
         judge_lname: '',
         jocode: '',
         joining_date: '',
-        releiving_date: '',
+        releiving_date: '0000-00-00',
         is_incharge: false
     }
     const [form, setForm] = useState(initialState)
@@ -46,7 +46,7 @@ const JudgePeriodForm = () => {
         judge_name: Yup.string().required(),
         judge_name: Yup.string().required(),
         joining_date: Yup.date().required(),
-        releiving_date: Yup.date().required(),
+        // releiving_date: Yup.date().required(),
         is_incharge: Yup.boolean().required()
     })
 
@@ -58,6 +58,7 @@ const JudgePeriodForm = () => {
         try{
             setLoading(true)
             const response = await api.post(`base/judge/search/`, {jocode: form.jocode})
+            console.log(response.data)
             if(response.status === 200){
                 setForm({
                     ...form,
@@ -108,62 +109,6 @@ const JudgePeriodForm = () => {
                         <div className="row">
                             <div className="col-md-6">
                                 <form>
-                                <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">{t('jocode')}</label>
-                                        <div className="col-sm-4">
-                                            <input 
-                                                type="text" 
-                                                className={`form-control ${errors.jocode ? 'is-invalid' : ''}`} 
-                                                name="jocode"
-                                                value={form.jocode}
-                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
-                                            />
-                                            <div className="invalid-feedback">
-                                                { errors.jocode }
-                                            </div>
-                                        </div>
-                                        <div className="col-md-4">
-                                            <Button
-                                                variant='contained'
-                                                color='primary'
-                                                onClick={searchJudicialOfficer}
-                                            >
-                                                Search
-                                            </Button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">{t('judge_name')}</label>
-                                        <div className="col-sm-8">
-                                            <input 
-                                                type="text" 
-                                                className={`form-control ${errors.judge_name ? 'is-invalid' : ''}`}
-                                                name="judge_name"
-                                                value={form.judge_name}
-                                                readOnly={true}
-                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                            />
-                                            <div className="invalid-feedback">
-                                                { errors.judge_name }
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">{t('judge_lname')}</label>
-                                        <div className="col-sm-8">
-                                            <input 
-                                                type="text" 
-                                                className={`form-control ${errors.judge_lname ? 'is-invalid' : ''}`}
-                                                name="judge_lname"
-                                                readOnly={true}
-                                                value={form.judge_lname}
-                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
-                                            />
-                                            <div className="invalid-feedback">
-                                                { errors.judge_lname }
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">{t('state')}</label>
                                         <div className="col-sm-8">
@@ -241,11 +186,65 @@ const JudgePeriodForm = () => {
                                         </div>
                                     </div>
                                     <div className="form-group row">
+                                        <label htmlFor="" className="col-sm-4">{t('jocode')}</label>
+                                        <div className="col-sm-4">
+                                            <input 
+                                                type="text" 
+                                                className={`form-control ${errors.jocode ? 'is-invalid' : ''}`} 
+                                                name="jocode"
+                                                value={form.jocode}
+                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                            />
+                                            <div className="invalid-feedback">
+                                                { errors.jocode }
+                                            </div>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <Button
+                                                variant='contained'
+                                                color='primary'
+                                                onClick={searchJudicialOfficer}
+                                            >
+                                                Search
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
+                                        <label htmlFor="" className="col-sm-4">{t('judge_name')}</label>
+                                        <div className="col-sm-8">
+                                            <input 
+                                                type="text" 
+                                                className={`form-control ${errors.judge_name ? 'is-invalid' : ''}`}
+                                                name="judge_name"
+                                                value={form.judge_name}
+                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            />
+                                            <div className="invalid-feedback">
+                                                { errors.judge_name }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
+                                        <label htmlFor="" className="col-sm-4">{t('judge_lname')}</label>
+                                        <div className="col-sm-8">
+                                            <input 
+                                                type="text" 
+                                                className={`form-control ${errors.judge_lname ? 'is-invalid' : ''}`}
+                                                name="judge_lname"
+                                                value={form.judge_lname}
+                                                onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                            />
+                                            <div className="invalid-feedback">
+                                                { errors.judge_lname }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">Joining Date</label>
                                         <div className="col-sm-8">
                                             <input 
                                                 type="date" 
-                                                className={`form-control ${errors.joining_date ? 'is-invalid' : ''}`} 
+                                                className={`form-control ${form.joining_date ? 'is-invalid' : ''}`} 
                                                 name="joining_date"
                                                 value={form.joining_date}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
@@ -260,7 +259,7 @@ const JudgePeriodForm = () => {
                                         <div className="col-sm-8">
                                             <input 
                                                 type="date" 
-                                                className={`form-control ${errors.releiving_date ? 'is-invalid' : ''}`}
+                                                className={`form-control ${form.releiving_date ? 'is-invalid' : ''}`}
                                                 name="releiving_date"
                                                 value={form.releiving_date}
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}

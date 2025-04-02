@@ -70,28 +70,34 @@ export default function MenuBar() {
                       <p>{t('dashboard')}</p>
                     </Link> 
                   </li>
-                  {/* <li className="nav-item">
+                  <li className="nav-item">
                     <a href="/#" className="nav-link">
                       <i className="nav-icon fas fa-table"></i>
-                      <p>Registration <i className="fas fa-angle-left right"></i></p>
+                      <p>Case Management <i className="fas fa-angle-left right"></i></p>
                     </a>
-                    <ul className="nav nav-treeview"> */}
+                    <ul className="nav nav-treeview">
                       <li className="nav-item">
                         <Link to="/court/case/scrutiny" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Case Scrutiny</p>
+                          <p>Scrutiny</p>
                         </Link>
                       </li>
                       <li className="nav-item">
                         <Link to="/court/case/registration" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Case Registration</p>
+                          <p>Registration</p>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/court/case/allocation" className="nav-link">
+                          <i className="far fa-circle nav-icon" />
+                          <p>Allocation</p>
                         </Link>
                       </li>
                       <li className="nav-item">
                         <Link to="/court/case/cause-list/post" className="nav-link">
                           <i className="far fa-circle nav-icon" />
-                          <p>Post Cases to Causelist</p>
+                          <p>Post to Causelist</p>
                         </Link>
                       </li>
                       <li className="nav-item">
@@ -100,28 +106,34 @@ export default function MenuBar() {
                           <p>Publish Causelist</p>
                         </Link>
                       </li>
-                    {/* </ul>
-                  </li> */}
-                  {/* <li className="nav-item">
+                    </ul>
+                  </li>
+                  <li className="nav-item">
                     <a href={void(0)} className="nav-link">
                       <i className="nav-icon fas fa-table" />
                       <p> Court Proceedings <i className="fas fa-angle-left right" /></p>
                     </a>
-                    <ul className="nav nav-treeview"> */}
+                    <ul className="nav nav-treeview">
                       <li className="nav-item">
                         <Link to="/court/case/proceeding" className="nav-link">
                           <i className="far fa-circle nav-icon" />
                           <p>Daily Proceedings</p>
                         </Link>
                       </li>
-                    {/* </ul>
-                  </li> */}
-                  {/* <li className="nav-item">
+                      <li className="nav-item">
+                        <Link to="/court/case/proceeding/modify" className="nav-link">
+                          <i className="far fa-circle nav-icon" />
+                          <p>Modify Business</p>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
+                  <li className="nav-item">
                     <a href="#" className="nav-link">
                       <i className="nav-icon fas fa-table" />
-                      <p> Orders <i className="fas fa-angle-left right" /></p>
+                      <p> Orders / Judgements <i className="fas fa-angle-left right" /></p>
                     </a>
-                    <ul className="nav nav-treeview"> */}
+                    <ul className="nav nav-treeview">
                       <li className="nav-item">
                         <Link to="/court/case/order/generate" className="nav-link">
                           <i className="nav-icon far fa-circle text-info" />
@@ -140,8 +152,40 @@ export default function MenuBar() {
                           <p>Order Status</p>
                         </Link>
                       </li>
-                    {/* </ul>
-                  </li> */}
+                    </ul>
+                  </li>
+                  <li className="nav-item">
+                    <a href="#" className="nav-link">
+                      <i className="nav-icon fas fa-table" />
+                      <p> Admin Menu<i className="fas fa-angle-left right" /></p>
+                    </a>
+                    <ul className="nav nav-treeview">
+                      <li className="nav-item">
+                        <Link to="/court/admin/judge/list" className="nav-link">
+                          <i className="nav-icon far fa-circle text-info" />
+                          <p>Judge</p>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/court/admin/judge/period/list" className="nav-link">
+                          <i className="nav-icon far fa-circle text-info" />
+                          <p>Judge Period</p>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/court/admin/bench/list" className="nav-link">
+                          <i className="nav-icon far fa-circle text-info" />
+                          <p>Bench</p>
+                        </Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="#" className="nav-link">
+                          <i className="nav-icon far fa-circle text-info" />
+                          <p>Bench Period</p>
+                        </Link>
+                      </li>
+                    </ul>
+                  </li>
                   <li className="nav-item">
                     <Link to="#" className="nav-link">
                       <i className="nav-icon far fa-circle text-info" />
@@ -166,12 +210,12 @@ export default function MenuBar() {
                       <p>Reports</p>
                     </Link>
                   </li>   
-                  {/* <li className="nav-item">
+                  <li className="nav-item">
                   <Link to="/auth/user/registration/" className="nav-link">
                     <i className="nav-icon far fa-circle text-info" />
                     <p>User Registration</p>
                   </Link>
-                </li>  */}
+                </li> 
                 </>
                 )}
                 { /* End - Court user menu */} 

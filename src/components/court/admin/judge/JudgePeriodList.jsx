@@ -1,18 +1,15 @@
 import React, {useState, useEffect, useContext} from 'react'
 import api from 'api'
-import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
-import { EstablishmentContext } from 'contexts/EstablishmentContext'
-import { CourtContext } from 'contexts/CourtContext'
 import {toast, ToastContainer} from 'react-toastify'
 import Loading from 'components/utils/Loading'
+import { useNavigate } from 'react-router-dom'
 
 const JudgePeriodList = () => {
 
     const {t} = useTranslation()
+    const navigate = useNavigate()
     const {language} = useContext(LanguageContext)
     const[periods, setPeriods] = useState([])
     const[loading, setLoading] = useState(false)
@@ -43,12 +40,16 @@ const JudgePeriodList = () => {
                 <div className="card card-outline card-primary">
                     <div className="card-header">
                         <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
+                        <button 
+                            className="btn btn-success btn-sm float-right"
+                            onClick={() => navigate('/court/admin/judge/period')}
+                        >Add Judge Period</button>
                     </div>
                     <div className="card-body">
                         <div className="row">
                             <div className="col-md-12">
                                 <table className="table table-bordered table-striped">
-                                    <thead>
+                                    <thead className='bg-secondary'>
                                         <tr>
                                             <th>S.No</th>
                                             <th>Judge Name</th>

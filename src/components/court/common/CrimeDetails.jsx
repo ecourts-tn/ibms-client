@@ -49,7 +49,7 @@ const CrimeDetails = ({crime}) => {
 
 
     return (
-        <table className="table table-bordered table-striped">
+        <table className="table table-bordered table-striped table-sm">
             <tbody>
                 <tr>
                     <td colSpan={4} className="bg-secondary"><strong>{t('fir_details')}</strong></td>

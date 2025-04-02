@@ -53,9 +53,9 @@ const PetitionerContainer = () => {
         }
     }
 
-    const editPetitioner = async(id) => {
+    const editPetitioner = async(litigant_id) => {
         try{
-            const response = await api.get(`litigant/${id}/read/`)
+            const response = await api.get(`litigant/${litigant_id}/read/`)
             setSelectedPetitioner(response.data)
         }catch(error){
             console.log(error)

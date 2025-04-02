@@ -26,7 +26,8 @@ export const MasterProvider = ({children}) => {
         countries:[],
         employments:[],
         propertytypes:[],
-        departments:[]
+        departments:[],
+        jdesignations:[]
     });
 
     useEffect(() => {
@@ -56,7 +57,8 @@ export const MasterProvider = ({children}) => {
                         countries: response.data.countries,
                         employments: response.data.employment,
                         propertytypes: response.data.property_type,
-                        departments: response.data.department
+                        departments: response.data.department,
+                        jdesignations: response.data.jdesignation
                     });
                 }
             }catch(error){

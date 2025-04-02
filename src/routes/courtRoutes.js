@@ -22,6 +22,12 @@ import GenerateOrder from "components/court/orders/GenerateOrder";
 import UploadOrder from "components/court/orders/UploadOrder";
 import BailBond from "components/court/orders/BailBond";
 import DepartmentRegistration from "components/auth/DepartmentRegistration";
+import AllocationPendingList from "components/court/allocation/AllocationPendingList";
+import CaseAllocation from "components/court/allocation/CaseAllocation";
+import ModifyBusiness from "components/court/proceeding/ModifyBusiness";
+import JudgePeriodList from "components/court/admin/judge/JudgePeriodList";
+import BenchList from "components/court/admin/judge/BenchList";
+import BenchForm from "components/court/admin/judge/BenchForm";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
@@ -29,10 +35,13 @@ const courtRoutes = [
     { path: "case/scrutiny/detail", component: <ScrutinyDashboard /> },
     { path: "case/registration", component: <RegistrationPendingList /> },
     { path: "case/registration/detail", component: <CaseRegistration /> },
+    { path: "case/allocation", component: <AllocationPendingList />},
+    { path: "case/allocation/detail", component: <CaseAllocation />},
     { path: "case/cause-list/post", component: <PostCauseList /> },
     { path: "case/cause-list/publish", component: <PublishCasueList /> },
     { path: "case/proceeding", component: <DailyProceedingsList /> },
     { path: "case/proceeding/detail", component: <DailyProceedings />},
+    { path: "case/proceeding/modify", component: <ModifyBusiness />},
     { path: "case/order/odt", component: <BailBond />},
     { path: "case/order/generate", component: <GenerateOrder />},
     { path: "case/order/upload", component: <UploadOrder />},
@@ -43,7 +52,10 @@ const courtRoutes = [
     { path: "admin/judge", component: <JudgeForm />},
     { path: "admin/judge/list", component: <JudgeList />},
     { path: "admin/judge/period", component: <JudgePeriodForm />},
-    { path: "auth/user/registration", element:<DepartmentRegistration />},
+    { path: "admin/judge/period/list", component: <JudgePeriodList />},
+    { path: "admin/bench/list", component: <BenchList />},
+    { path: "admin/bench", component: <BenchForm />},
+    { path: "auth/user/registration", component:<DepartmentRegistration />},
 
 ];
 
