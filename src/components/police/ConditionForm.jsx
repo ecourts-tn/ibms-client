@@ -43,7 +43,7 @@ const ConditionForm = () => {
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${day}-${month}-${year}`;
     };
 
     const condition_date_Backend = (date) => {
@@ -55,7 +55,7 @@ const ConditionForm = () => {
 
     useEffect(() => {
             const condition_date = flatpickr(".condition_date-date-picker", {
-                dateFormat: "d/m/Y",
+                dateFormat: "d-m-Y",
                 // maxDate: "today",
                 defaultDate: form.condition_date ? condition_date_Display(new Date(form.condition_date)) : '',
                 onChange: (selectedDates) => {
@@ -115,7 +115,7 @@ const ConditionForm = () => {
                                             className="form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}` "
                                             name="condition_date"
                                             value={form.condition_date ? form.condition_date : ''}
-                                            placeholder="DD/MM/YYYY"
+                                            placeholder="DD-MM-YYYY"
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
                                             style={{
                                                 backgroundColor: 'transparent',

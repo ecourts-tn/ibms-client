@@ -13,6 +13,8 @@ import Grounds from 'components/court/common/Grounds';
 import AdvocateDetails from 'components/court/common/AdvocateDetails';
 import DocumentList from 'components/court/common/DocumentList';
 import CrimeDetails from 'components/court/common/CrimeDetails';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const CaseRegistration = () => {
 
@@ -84,6 +86,70 @@ const CaseRegistration = () => {
         }
     }
 
+     const case_register_date_Display = (date) => {
+            const day = ("0" + date.getDate()).slice(-2);
+            const month = ("0" + (date.getMonth() + 1)).slice(-2);
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        };
+    
+        const case_register_date_Backend = (date) => {
+            const year = date.getFullYear();
+            const month = ("0" + (date.getMonth() + 1)).slice(-2);
+            const day = ("0" + date.getDate()).slice(-2);
+            return `${year}-${month}-${day}`;
+        };
+    
+        useEffect(() => {
+                const case_register_date = flatpickr(".case_register_date-date-picker", {
+                    dateFormat: "d-m-Y",
+                    // maxDate: "today",
+                    defaultDate: form.case_register_date ? case_register_date_Display(new Date(form.case_register_date)) : '',
+                    onChange: (selectedDates) => {
+                        const formattedDate = selectedDates[0] ? case_register_date_Backend(selectedDates[0]) : "";
+                        setForm({ ...form, case_register_date: formattedDate });
+                    },
+                });
+        
+                return () => {
+                    if (case_register_date && typeof case_register_date.destroy === "function") {
+                        case_register_date.destroy();
+                    }
+                };
+            }, [form]);
+
+            const case_hearing_date_Display = (date) => {
+                const day = ("0" + date.getDate()).slice(-2);
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            };
+        
+            const case_hearing_date_Backend = (date) => {
+                const year = date.getFullYear();
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const day = ("0" + date.getDate()).slice(-2);
+                return `${year}-${month}-${day}`;
+            };
+        
+            useEffect(() => {
+                    const case_hearing_date = flatpickr(".case_hearing_date-date-picker", {
+                        dateFormat: "d-m-Y",
+                        // maxDate: "today",
+                        defaultDate: form.case_hearing_date ? case_hearing_date_Display(new Date(form.case_hearing_date)) : '',
+                        onChange: (selectedDates) => {
+                            const formattedDate = selectedDates[0] ? case_hearing_date_Backend(selectedDates[0]) : "";
+                            setForm({ ...form, case_hearing_date: formattedDate });
+                        },
+                    });
+            
+                    return () => {
+                        if (case_hearing_date && typeof case_hearing_date.destroy === "function") {
+                            case_hearing_date.destroy();
+                        }
+                    };
+                }, [form]);
+
     return (
         <>
             <ToastContainer />
@@ -152,10 +218,16 @@ const CaseRegistration = () => {
                                                         <div className="col-sm-4">
                                                             <input 
                                                                 type="date" 
-                                                                className={`form-control ${errors.date_of_registration ? 'is-invalid' : null}`}
+                                                                className={`form-control case_register_date-date-picker ${errors.date_of_registration ? 'is-invalid' : null}`}
                                                                 name="date_of_registration"
-                                                                value={form.date_of_registration}
+                                                                value={form.date_of_registration ? form.date_of_registration : '' }
+                                                                placeholder="DD-MM-YYYY"
                                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                                                style={{
+                                                                    backgroundColor: 'transparent',
+                                                                    border: '1px solid #ccc', 
+                                                                    padding: '8px',            
+                                                                }}
                                                             />
                                                             <div className="invalid-feedback">
                                                                 { errors.date_of_registration }
@@ -167,10 +239,16 @@ const CaseRegistration = () => {
                                                         <div className="col-sm-4">
                                                             <input 
                                                                 type="date" 
-                                                                className={`form-control ${errors.first_hearing ? 'is-invalid' : null }`}
+                                                                className={`form-control case_hearing_date-date-picker ${errors.first_hearing ? 'is-invalid' : null }`}
                                                                 name="first_hearing"
-                                                                value={form.first_hearing}
+                                                                value={form.first_hearing ? form.first_hearing : ''}
+                                                                placeholder="DD-MM-YYYY"
                                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                                                style={{
+                                                                    backgroundColor: 'transparent',
+                                                                    border: '1px solid #ccc', 
+                                                                    padding: '8px',            
+                                                                }}
                                                             />
                                                             <div className="invalid-feedback">
                                                                 { errors.first_hearing }

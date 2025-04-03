@@ -16,6 +16,8 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { JudgeContext } from 'contexts/JudgeContext'
 import { useNavigate } from 'react-router-dom'
 import { MasterContext } from 'contexts/MasterContext'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const Proceeding = ({efile_no}) => {
     const {user} = useContext(AuthContext)
@@ -129,6 +131,38 @@ const Proceeding = ({efile_no}) => {
         }),
         order_remarks: Yup.string().required("Please enter the business remarks")
     })
+
+     const next_date_Display = (date) => {
+                        const day = ("0" + date.getDate()).slice(-2);
+                        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                        const year = date.getFullYear();
+                        return `${day}-${month}-${year}`;
+                    };
+                
+                    const next_date_Backend = (date) => {
+                        const year = date.getFullYear();
+                        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                        const day = ("0" + date.getDate()).slice(-2);
+                        return `${year}-${month}-${day}`;
+                    };
+                
+                    useEffect(() => {
+                            const next_date = flatpickr(".next_date-date-picker", {
+                                dateFormat: "d-m-Y",
+                                minDate: "today",
+                                defaultDate: form.next_date ? next_date_Display(new Date(form.next_date)) : '',
+                                onChange: (selectedDates) => {
+                                    const formattedDate = selectedDates[0] ? next_date_Backend(selectedDates[0]) : "";
+                                    setForm({ ...form, next_date: formattedDate });
+                                },
+                            });
+                    
+                            return () => {
+                                if (next_date && typeof next_date.destroy === "function") {
+                                    next_date.destroy();
+                                }
+                            };
+                        }, [form]);     
 
     // console.log(judge)
 
@@ -582,10 +616,16 @@ const Proceeding = ({efile_no}) => {
                                     <div className="col-sm-4">
                                         <input 
                                             type="date" 
-                                            className={`form-control ${errors.next_date ? 'is-invalid' : ''}`}
+                                            className={`form-control next_date-date-picker ${errors.next_date ? 'is-invalid' : ''}`}
                                             name="next_date"
-                                            value={form.next_date}
+                                            value={form.next_date ? form.next_date : ''}
+                                            placeholder="DD-MM-YYYY"
                                             onChange={(e) =>setForm({...form,[e.target.name]:e.target.value})}
+                                            style={{
+                                                backgroundColor: 'transparent',
+                                                border: '1px solid #ccc', 
+                                                padding: '8px',            
+                                            }}
                                         />
                                         <div className="invalid-feedback">
                                             { errors.next_date }

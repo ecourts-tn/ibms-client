@@ -104,7 +104,7 @@ const DepartmentRegistration = () => {
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${day}-${month}-${year}`;
     };
 
     const department_date_Backend = (date) => {
@@ -116,7 +116,7 @@ const DepartmentRegistration = () => {
 
     useEffect(() => {
             const date_of_birth = flatpickr(".date_of_birth-date-picker", {
-                dateFormat: "d/m/Y",
+                dateFormat: "d-m-Y",
                 maxDate: "today",
                 defaultDate: form.date_of_birth ? department_date_Display(new Date(form.date_of_birth)) : '',
                 onChange: (selectedDates) => {
@@ -341,7 +341,7 @@ const DepartmentRegistration = () => {
                                                     className={`form-control date_of_birth-date-picker ${errors.date_of_birth ? 'is-invalid' : ''}`}
                                                     name="date_of_birth"
                                                     value={form.date_of_birth ? form.date_of_birth : ''}
-                                                    placeholder="DD/MM/YYYY"
+                                                    placeholder="DD-MM-YYYY"
                                                     onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
                                                     style={{
                                                         backgroundColor: 'transparent',

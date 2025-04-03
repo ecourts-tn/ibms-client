@@ -16,6 +16,8 @@ import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DocumentList from 'components/court/common/DocumentList'
 import Loading from 'components/utils/Loading'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const CaseScrutiny = () => {
@@ -102,6 +104,70 @@ const CaseScrutiny = () => {
             setLoading(false)
         }
     }
+
+    const verification_date_Display = (date) => {
+                const day = ("0" + date.getDate()).slice(-2);
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const year = date.getFullYear();
+                return `${day}-${month}-${year}`;
+            };
+        
+            const verification_date_Backend = (date) => {
+                const year = date.getFullYear();
+                const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                const day = ("0" + date.getDate()).slice(-2);
+                return `${year}-${month}-${day}`;
+            };
+        
+            useEffect(() => {
+                    const verification_date = flatpickr(".verification_date-date-picker", {
+                        dateFormat: "d-m-Y",
+                        maxDate: "today",
+                        defaultDate: form.verification_date ? verification_date_Display(new Date(form.verification_date)) : '',
+                        onChange: (selectedDates) => {
+                            const formattedDate = selectedDates[0] ? verification_date_Backend(selectedDates[0]) : "";
+                            setForm({ ...form, verification_date: formattedDate });
+                        },
+                    });
+            
+                    return () => {
+                        if (verification_date && typeof verification_date.destroy === "function") {
+                            verification_date.destroy();
+                        }
+                    };
+                }, [form]);
+
+                const compliance_date_Display = (date) => {
+                    const day = ("0" + date.getDate()).slice(-2);
+                    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                    const year = date.getFullYear();
+                    return `${day}-${month}-${year}`;
+                };
+            
+                const compliance_date_Backend = (date) => {
+                    const year = date.getFullYear();
+                    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                    const day = ("0" + date.getDate()).slice(-2);
+                    return `${year}-${month}-${day}`;
+                };
+            
+                useEffect(() => {
+                        const compliance_date = flatpickr(".compliance_date-date-picker", {
+                            dateFormat: "d-m-Y",
+                            minDate: "today",
+                            defaultDate: form.compliance_date ? compliance_date_Display(new Date(form.compliance_date)) : '',
+                            onChange: (selectedDates) => {
+                                const formattedDate = selectedDates[0] ? compliance_date_Backend(selectedDates[0]) : "";
+                                setForm({ ...form, compliance_date: formattedDate });
+                            },
+                        });
+                
+                        return () => {
+                            if (compliance_date && typeof compliance_date.destroy === "function") {
+                                compliance_date.destroy();
+                            }
+                        };
+                    }, [form]);            
  
     // const handleSubmit = async () => {
     //     if(form.status === 1){
@@ -272,10 +338,16 @@ const CaseScrutiny = () => {
                                         <div className="col-sm-4">
                                             <input 
                                                 type="date" 
-                                                className="form-control" 
+                                                className="form-control verification_date-date-picker ${errors.objection_date ? 'is-invalid' : null}" 
                                                 name="verification_date"
-                                                value={form.verification_date}
+                                                value={form.verification_date ? form.verification_date : ''}
+                                                placeholder="DD-MM-YYYY"
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    border: '1px solid #ccc', 
+                                                    padding: '8px',            
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -288,10 +360,16 @@ const CaseScrutiny = () => {
                                             <div className="col-sm-4">
                                                 <input 
                                                     type="date" 
-                                                    className="form-control" 
+                                                    className="form-control compliance_date-date-picker ${errors.compliance_date ? 'is-invalid' : null}"  
                                                     name="complaince_date"
-                                                    value={form.complaince_date}
+                                                    value={form.complaince_date ? form.complaince_date : ''}
+                                                    placeholder="DD-MM-YYYY"
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    style={{
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid #ccc', 
+                                                        padding: '8px',            
+                                                    }}
                                                 />
                                             </div>
                                         </div>

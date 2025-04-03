@@ -24,8 +24,8 @@ const MaterialDetails = ({ materials = [], setMaterials }) => {
   const validationSchema = Yup.object({
     material_name: Yup.string().required("Material Name is required"),
     quantity: Yup.number().required("Quantity is required").positive("Must be positive"),
-    unit: Yup.string().required("Unit is required"),
-    supplier_details: Yup.string().required("Supplier Details are required"),
+    quantity_nature: Yup.string().required("Quantity Nature is required"),
+    reason: Yup.string().required("Reason Details are required"), 
 });
 
   const [form, setForm] = useState(initialState);
@@ -61,7 +61,7 @@ const handleInputChange = (event) => {
   const handleAddMaterial = async () => {
     try {
         // Validate the form data using Yup
-        // await validationSchema.validate(material, { abortEarly: false });
+        await validationSchema.validate(material, { abortEarly: false });
 
         // If validation succeeds, proceed with adding or updating material
         if (editIndex !== null) {
