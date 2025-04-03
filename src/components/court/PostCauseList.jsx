@@ -230,11 +230,7 @@ const PostCauseList = () => {
                                                                     padding: '8px',            // Optional: Adjust padding
                                                                 }}
                                                             />
-                                                            <div className="input-group-append">
-                                                                <span className="input-group-text">
-                                                                    <FaCalendarAlt /> {/* Calendar icon inside input */}
-                                                                </span>
-                                                            </div>
+                                                            
                                                         </div>
                                                     </td>
                                                     <td>

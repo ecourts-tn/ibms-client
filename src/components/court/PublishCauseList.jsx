@@ -24,7 +24,7 @@ const PublishCasueList = () => {
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${day}-${month}-${year}`;
     };
 
     const produced_date_Backend = (date) => {
@@ -36,7 +36,7 @@ const PublishCasueList = () => {
 
     useEffect(() => {
         const publish_date = flatpickr(".publish-date-date-picker", {
-            dateFormat: "d/m/Y",
+            dateFormat: "d-m-Y",
             minDate: "today",
             onChange: (selectedDates) => {
                 const formattedDate = selectedDates[0] ? produced_date_Backend(selectedDates[0]) : "";
@@ -131,11 +131,11 @@ const PublishCasueList = () => {
                                                 padding: '8px',
                                             }}
                                         />
-                                        <div className="input-group-append">
+                                        {/* <div className="input-group-append">
                                             <span className="input-group-text">
                                                 <FaCalendarAlt />
                                             </span>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="col-md-2">
                                         <Button

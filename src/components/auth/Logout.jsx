@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import { Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 
@@ -10,8 +10,11 @@ import { ACCESS_TOKEN, REFRESH_TOKEN } from "../../constants";
 
 
 const Logout = () => {
-
+    const navigate = useNavigate();
+    const hasRun = useRef(false);
     useEffect(() => {
+        if (hasRun.current) return; // Skip if already run
+        hasRun.current = true;
         const logout = async() => {
             const response = await api.post('api/auth/logout/', {
                 refresh: localStorage.getItem(REFRESH_TOKEN)
@@ -21,11 +24,11 @@ const Logout = () => {
                     theme:"colored"
                 })
                 localStorage.clear()
-                return <Navigate to="/" />
+                setTimeout(() => navigate('/'), 2000);
             }
         }
         logout();
-    }, [])
+    }, [navigate]);
 
     return (
         <>
@@ -43,4 +46,4 @@ const Logout = () => {
     )
 }
 
-export default Logout
+export default Logout;
