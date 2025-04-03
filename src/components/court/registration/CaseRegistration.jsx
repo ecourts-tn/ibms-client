@@ -151,129 +151,123 @@ const CaseRegistration = () => {
                 }, [form]);
 
     return (
-        <>
+        <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
             <ToastContainer />
-            <div className="content-wrapper">
-                <div className="container-fluid">
-                    <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
-                        <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('registration')}</strong></h3>
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('registration')}</strong></h3>
+            </div>
+            <div className="card-body">
+                <div>
+                    <ul className="nav nav-tabs" id="myTab" role="tablist">
+                        <li className="nav-item">
+                            <a className="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">{t('basic_details')}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="litigant-tab" data-toggle="tab" href="#litigant" role="tab" aria-controls="litigant" aria-selected="false">{t('litigants')}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="grounds-tab" data-toggle="tab" href="#grounds" role="tab" aria-controls="grounds" aria-selected="false">{t('ground')}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="previous-tab" data-toggle="tab" href="#previous" role="tab" aria-controls="previous" aria-selected="false">{t('previous_case_details')}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="advocate-tab" data-toggle="tab" href="#advocate" role="tab" aria-controls="advocate" aria-selected="false">{t('advocate_details')} & {t('documents')}</a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="registration-tab" data-toggle="tab" href="#registration" role="tab" aria-controls="registration" aria-selected="false">{t('registration')}</a>
+                        </li>
+                    </ul>
+                    <div className="tab-content" id="myTabContent">
+                        <div className="tab-pane fade show active mt-3" id="basic" role="tabpanel" aria-labelledby="basic-tab">
+                            <BasicDetails petition={petition} />
+                            <CrimeDetails crime={crime} />
                         </div>
-                        <div className="card-body">
-                            <div>
-                                <ul className="nav nav-tabs" id="myTab" role="tablist">
-                                    <li className="nav-item">
-                                        <a className="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">{t('basic_details')}</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" id="litigant-tab" data-toggle="tab" href="#litigant" role="tab" aria-controls="litigant" aria-selected="false">{t('litigants')}</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" id="grounds-tab" data-toggle="tab" href="#grounds" role="tab" aria-controls="grounds" aria-selected="false">{t('ground')}</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" id="previous-tab" data-toggle="tab" href="#previous" role="tab" aria-controls="previous" aria-selected="false">{t('previous_case_details')}</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" id="advocate-tab" data-toggle="tab" href="#advocate" role="tab" aria-controls="advocate" aria-selected="false">{t('advocate_details')} & {t('documents')}</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" id="registration-tab" data-toggle="tab" href="#registration" role="tab" aria-controls="registration" aria-selected="false">{t('registration')}</a>
-                                    </li>
-                                </ul>
-                                <div className="tab-content" id="myTabContent">
-                                    <div className="tab-pane fade show active mt-3" id="basic" role="tabpanel" aria-labelledby="basic-tab">
-                                        <BasicDetails petition={petition} />
-                                        <CrimeDetails crime={crime} />
-                                    </div>
-                                    <div className="tab-pane fade" id="litigant" role="tabpanel" aria-labelledby="litigant-tab">
-                                        <div className="my-3">
-                                            <Petitioner litigant={litigant} />
-                                            <Respondent litigant={litigant} />
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="grounds" role="tabpanel" aria-labelledby="grounds-tab">
-                                        <div className="my-2">
-                                            <Grounds grounds={grounds} />
-                                        </div>
-                                    </div>
-                                    <div className="tab-pane fade" id="previous" role="tabpanel" aria-labelledby="previous-tab">
+                        <div className="tab-pane fade" id="litigant" role="tabpanel" aria-labelledby="litigant-tab">
+                            <div className="my-3">
+                                <Petitioner litigant={litigant} />
+                                <Respondent litigant={litigant} />
+                            </div>
+                        </div>
+                        <div className="tab-pane fade" id="grounds" role="tabpanel" aria-labelledby="grounds-tab">
+                            <div className="my-2">
+                                <Grounds grounds={grounds} />
+                            </div>
+                        </div>
+                        <div className="tab-pane fade" id="previous" role="tabpanel" aria-labelledby="previous-tab">
 
-                                    </div>
-                                    <div className="tab-pane fade" id="advocate" role="tabpanel" aria-labelledby="advocate-tab">
-                                        <AdvocateDetails 
-                                            advocates={advocates} 
-                                            petition={petition}
-                                        />
-                                        <DocumentList 
-                                            documents={documents}
-                                        />
-                                    </div>
-                                    <div className="tab-pane fade" id="registration" role="tabpanel" aria-labelledby="registration-tab">
-                                        <form>
-                                            <div className="row mt-5">
-                                                <div className="col-md-6 offset-3">
-                                                    <div className="form-group row">
-                                                        <label htmlFor="date_of_registration" className="col-sm-3">{t('date_of_registration')}</label>
-                                                        <div className="col-sm-4">
-                                                            <input 
-                                                                type="date" 
-                                                                className={`form-control case_register_date-date-picker ${errors.date_of_registration ? 'is-invalid' : null}`}
-                                                                name="date_of_registration"
-                                                                value={form.date_of_registration ? form.date_of_registration : '' }
-                                                                placeholder="DD-MM-YYYY"
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
-                                                                style={{
-                                                                    backgroundColor: 'transparent',
-                                                                    border: '1px solid #ccc', 
-                                                                    padding: '8px',            
-                                                                }}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { errors.date_of_registration }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label htmlFor="first_hearing" className="col-sm-3">{t('date_of_hearing')}</label>
-                                                        <div className="col-sm-4">
-                                                            <input 
-                                                                type="date" 
-                                                                className={`form-control case_hearing_date-date-picker ${errors.first_hearing ? 'is-invalid' : null }`}
-                                                                name="first_hearing"
-                                                                value={form.first_hearing ? form.first_hearing : ''}
-                                                                placeholder="DD-MM-YYYY"
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                                                style={{
-                                                                    backgroundColor: 'transparent',
-                                                                    border: '1px solid #ccc', 
-                                                                    padding: '8px',            
-                                                                }}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { errors.first_hearing }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="col-md-4 offset-md-4">
-                                                    <Button 
-                                                        variant="contained" 
-                                                        color="success"
-                                                        onClick={handleSubmit}
-                                                    >{t('submit')}</Button>
+                        </div>
+                        <div className="tab-pane fade" id="advocate" role="tabpanel" aria-labelledby="advocate-tab">
+                            <AdvocateDetails 
+                                advocates={advocates} 
+                                petition={petition}
+                            />
+                            <DocumentList 
+                                documents={documents}
+                            />
+                        </div>
+                        <div className="tab-pane fade" id="registration" role="tabpanel" aria-labelledby="registration-tab">
+                            <form>
+                                <div className="row mt-5">
+                                    <div className="col-md-6 offset-3">
+                                        <div className="form-group row">
+                                            <label htmlFor="date_of_registration" className="col-sm-3">{t('date_of_registration')}</label>
+                                            <div className="col-sm-4">
+                                                <input 
+                                                    type="date" 
+                                                    className={`form-control case_register_date-date-picker ${errors.date_of_registration ? 'is-invalid' : null}`}
+                                                    name="date_of_registration"
+                                                    value={form.date_of_registration ? form.date_of_registration : '' }
+                                                    placeholder="DD-MM-YYYY"
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value })}
+                                                    style={{
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid #ccc', 
+                                                        padding: '8px',            
+                                                    }}
+                                                />
+                                                <div className="invalid-feedback">
+                                                    { errors.date_of_registration }
                                                 </div>
                                             </div>
-                                        </form>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label htmlFor="first_hearing" className="col-sm-3">{t('date_of_hearing')}</label>
+                                            <div className="col-sm-4">
+                                                <input 
+                                                    type="date" 
+                                                    className={`form-control case_hearing_date-date-picker ${errors.first_hearing ? 'is-invalid' : null }`}
+                                                    name="first_hearing"
+                                                    value={form.first_hearing ? form.first_hearing : ''}
+                                                    placeholder="DD-MM-YYYY"
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                                    style={{
+                                                        backgroundColor: 'transparent',
+                                                        border: '1px solid #ccc', 
+                                                        padding: '8px',            
+                                                    }}
+                                                />
+                                                <div className="invalid-feedback">
+                                                    { errors.first_hearing }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 offset-md-4">
+                                        <Button 
+                                            variant="contained" 
+                                            color="success"
+                                            onClick={handleSubmit}
+                                        >{t('submit')}</Button>
                                     </div>
                                 </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
-  )
+        </div>
+    )
 }
 
 export default CaseRegistration

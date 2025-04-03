@@ -391,641 +391,636 @@ const ResponseCreate = () => {
 
 
     return (
-        <>
-            <ToastContainer />
+        <React.Fragment>
             {state.efile_no && (
-                <div className="content-wrapper">
-                    <div className="container-fluid mt-3">
-                        <div className="card card-outline card-primary">
-                            <div className="card-header d-flex justify-content-between">
-                                <h3 className="card-title">
-                                    <i className="fas fa-edit mr-2"></i><strong>Police Response: </strong>
-                                </h3>
-                                <span className="text-primary"><strong>{state.efile_no}</strong></span>
-                            </div>
-                            <div className="card-body">
-                                <PetitionDetail 
-                                    petition={petition}
-                                    crime={crime}
-                                />
-                                <AccusedDetail 
-                                    accused={accused}
-                                />
-                                { crime.fir_no && crime.fir_year ? (
-                                    <React.Fragment>
-                                        <div className="card card-outline card-danger">
-                                            <div className="card-header">
-                                                <strong>Response</strong>
-                                            </div>
-                                            <div className="card-body">
-                                                <form onSubmit={handleSubmit}>
-                                                    <div className="row">
-
-                                                        <div className="col-md-2">
-                                                            <div className="form-group">
-                                                                <label htmlFor="csr_number">CSR Number</label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="csr_number"
-                                                                    value={form.csr_number}
-                                                                    onChange={(e) => handleNumberChange(e, setForm, form, 'csr_number')}
-                                                                
-                                                                />
-                                                                <div className="invalid-feedback">
-                                                                    {errors.csr_number}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-2">
-                                                            <div className="form-group">
-                                                                <label htmlFor="">Crime Number <RequiredField /></label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="crime_number"
-                                                                    value={form.crime_number}
-                                                                    readOnly={form.crime_number !== '' ? true : false}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-2">
-                                                            <div className="form-group">
-                                                                <label htmlFor="">Crime Year<RequiredField /></label>
-                                                                <input
-                                                                    type="text"
-                                                                    className="form-control"
-                                                                    name="crime_year"
-                                                                    value={form.crime_year}
-                                                                    readOnly={form.crime_year !== '' ? true : false}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-2">
-                                                            <label htmlFor="">Date of Arrest<RequiredField /></label>
-                                                            <div className="input-group mb-3">
-                                                                <input
-                                                                    type="date"
-                                                                    className={`form-control date_of_arrest-date-picker ${errors.date_of_arrest ? 'is-invalid' : ''}`}
-                                                                    name="date_of_arrest"
-                                                                    value={form.date_of_arrest ? form.date_of_arrest : ''}
-                                                                    placeholder="DD/MM/YYYY"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                    style={{
-                                                                        backgroundColor: 'transparent',
-                                                                        border: '1px solid #ccc', 
-                                                                        padding: '8px',            
-                                                                    }}
-                                                                />
-                                                                <div className="invalid-feedback">
-                                                                    {errors.date_of_arrest}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <FormGroup className='mb-3'>
-                                                                <FormLabel>Offences</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="offences"
-                                                                    value={form.offences}
-                                                                    className={`form-control ${errors.offences ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.offences}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <FormGroup className='mb-3'>
-                                                                <FormLabel>Name of the accused/suspected person(s)</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    name="accused_name"
-                                                                    value={form.accused_name}
-                                                                    className={`form-control ${errors.accused_name ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.accused_name}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <FormGroup className='mb-3'>
-                                                                <FormLabel>Specific Allegations /Overt Acts against the Petitioner(s)</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="specific_allegations"
-                                                                    className={`form-control ${errors.specific_allegations ? 'is-invalid' : null}`}
-                                                                    value={form.specific_allegations}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.specific_allegations}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <FormGroup className='mb-3'>
-                                                                <FormLabel>Materials & Circumstances against the Petitioner</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="materials_used"
-                                                                    className={`form-control ${errors.materials_used ? 'is-invalid' : null}`}
-                                                                    value={form.materials_used}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.materials_used}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-12">
-                                                            <div className="form-group row">
-                                                                <label className="col-sm-3">Injured discharged</label>
-                                                                <div className="col-sm-8">
-                                                                    <div className="icheck-success d-inline mx-2">
-                                                                        <input
-                                                                            type="radio"
-                                                                            id="radioDischarged1"
-                                                                            name="discharged"
-                                                                            onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
-                                                                            checked={parseInt(form.discharged) === 1 ? true : false}
-                                                                        />
-                                                                        <label htmlFor="radioDischarged1">Yes</label>
-                                                                    </div>
-                                                                    <div className="icheck-danger d-inline mx-2">
-                                                                        <input
-                                                                            type="radio"
-                                                                            id="radioDischarged2"
-                                                                            name="discharged"
-                                                                            onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
-                                                                            checked={parseInt(form.discharged) === 2 ? true : false} />
-                                                                        <label htmlFor="radioDischarged2">No</label>
-                                                                    </div>
-                                                                    <div className="icheck-primary d-inline mx-2">
-                                                                        <input
-                                                                            type="radio"
-                                                                            id="radioDischarged3"
-                                                                            name="discharged"
-                                                                            onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
-                                                                            checked={parseInt(form.discharged) === 3 ? true : false} />
-                                                                        <label htmlFor="radioDischarged3">Not Applicable</label>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            {parseInt(form.discharged) === 2 && (
-                                                                <>
-                                                                    <div className="form-group row">
-                                                                        <label htmlFor="" className="col-sm-3">Hospital Name</label>
-                                                                        <div className="col-sm-9">
-                                                                            <input
-                                                                                type="text"
-                                                                                className="form-control"
-                                                                                name="hospital_name"
-                                                                                value={form.hospital_name}
-                                                                                onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="form-group row">
-                                                                        <label htmlFor="" className="col-sm-3">Condition of Victim</label>
-                                                                        <div className="col-sm-9">
-                                                                            <input
-                                                                                type="text"
-                                                                                className="form-control"
-                                                                                name="victim_condition"
-                                                                                value={form.victim_condition}
-                                                                                onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="form-group row">
-                                                                        <label htmlFor="" className="col-sm-3">Particulars of Injury</label>
-                                                                        <div className="col-sm-9">
-                                                                            <FormControl
-                                                                                as="textarea"
-                                                                                rows={2}
-                                                                                name="injury_particulars"
-                                                                                value={form.injury_particulars}
-                                                                                onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                            ></FormControl>
-                                                                        </div>
-                                                                    </div>
-                                                                </>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-sm-3">Material seized?</label>
-                                                        <div className="col-sm-8">
-                                                            <div className="icheck-success d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radioseized1"
-                                                                    name="is_material_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
-                                                                    checked={parseInt(form.is_material_seized) === 1 ? true : false}
-                                                                />
-                                                                <label htmlFor="radioseized1">Yes</label>
-                                                            </div>
-                                                            <div className="icheck-danger d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radioseized2"
-                                                                    name="is_material_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
-                                                                    checked={parseInt(form.is_material_seized) === 2 ? true : false} />
-                                                                <label htmlFor="radioseized2">No</label>
-                                                            </div>
-                                                            <div className="icheck-primary d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radioseized3"
-                                                                    name="is_material_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
-                                                                    checked={parseInt(form.is_material_seized) === 3 ? true : false} />
-                                                                <label htmlFor="radioseized3">Not Applicable</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {parseInt(form.is_material_seized) === 1 && (
-                                                        <MaterialDetails materials={materials} setMaterials={setMaterials} />
-                                                    )}
-                                                    <div className="form-group row">
-                                                        <label className="col-sm-3">Vechicle seized?</label>
-                                                        <div className="col-sm-8">
-                                                            <div className="icheck-success d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radiovehicleseized1"
-                                                                    name="is_vehicle_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
-                                                                    checked={parseInt(form.is_vehicle_seized) === 1 ? true : false}
-                                                                />
-                                                                <label htmlFor="radiovehicleseized1">Yes</label>
-                                                            </div>
-                                                            <div className="icheck-danger d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radiovehicleseized2"
-                                                                    name="is_vehicle_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
-                                                                    checked={parseInt(form.is_vehicle_seized) === 2 ? true : false} />
-                                                                <label htmlFor="radiovehicleseized2">No</label>
-                                                            </div>
-                                                            <div className="icheck-primary d-inline mx-2">
-                                                                <input
-                                                                    type="radio"
-                                                                    id="radiovehicleseized3"
-                                                                    name="is_vehicle_seized"
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
-                                                                    checked={parseInt(form.is_vehicle_seized) === 3 ? true : false} />
-                                                                <label htmlFor="radioseized3">Not Applicable</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {parseInt(form.is_vehicle_seized) === 1 && (
-                                                        <VehicleDetails
-                                                            vehicles={vehicles}
-                                                            setVehicles={setVehicles}
-                                                        />
-                                                    )}
-                                                    <div className="row">
-                                                        <div className="col-md-3">
-                                                            <div className="form-group">
-                                                                <label htmlFor="">Stage of Investigation / Trial</label>
-                                                                <select
-                                                                    name="investigation_stage"
-                                                                    value={form.investigation_stage}
-                                                                    className={`form-control ${errors.investigation_stage ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    <option value="1">Pending Investigation</option>
-                                                                    <option value="2">Chargesheet filed</option>
-                                                                </select>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.investigation_stage}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-md-3">
-                                                            <div className="form-group">
-                                                                <label htmlFor="" style={{ width: '380px', }} >Limitation date for filing Charge Sheet(As per Act)</label>
-                                                                <input type="date" className={`form-control limitation_date-date-picker ${errors.limitation_date ? 'is-invalid' : ''}`}
-                                                                    name="limitation_date"
-                                                                    value={form.limitation_date}
-                                                                    // readOnly={form.is_produced === true ? false : true }
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                    placeholder="DD/MM/YYYY"
-                                                                    style={{
-                                                                        backgroundColor: 'transparent',
-                                                                        border: '1px solid #ccc', 
-                                                                        padding: '8px',            
-                                                                    }}
-
-                                                                />
-                                                                <div className="invalid-feedback">
-                                                                    {errors.limitation_date}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    {parseInt(form.investigation_stage) === 2 && (
-                                                        <div className="row mt-3">
-                                                            <div className="col-md-2">
-                                                                <FormGroup className="mb-3">
-                                                                    <label htmlFor="">CNR Number</label>
-                                                                    <FormControl
-                                                                        name="cnr_number"
-                                                                        className={`form-control ${errors.cnr_number ? 'is-invalid' : ''}`}
-                                                                        value={form.cnr_number}
-                                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                    ></FormControl>
-                                                                    <div className="invalid-feedback">
-                                                                        {errors.cnr_number}
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </div>
-                                                            <div className="col-md-3">
-                                                                <FormGroup className="mb-3">
-                                                                    <label htmlFor="court">Court</label>
-                                                                    <select
-                                                                        name="court"
-                                                                        className={`form-control ${errors.court ? 'is-invalid' : ''}`}
-                                                                        value={form.court}
-                                                                        onChange={handleCourtChange}
-                                                                    >
-                                                                        <option value="">Select Court</option>
-                                                                        {courts.length > 0 ? (
-                                                                            courts.map((court) => (
-                                                                                <option key={court.court_code} value={court.court_code}>
-                                                                                    {language === 'ta' ? court.court_lname : court.court_name}
-                                                                                </option>
-                                                                            ))
-                                                                        ) : (
-                                                                            <option value="">No courts available</option>
-                                                                        )}
-                                                                    </select>
-                                                                    <div className="invalid-feedback">{errors.court}</div>
-                                                                </FormGroup>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <FormGroup className="mb-3">
-                                                                    <label htmlFor="">Stage of the Case</label>
-                                                                    <FormControl
-                                                                        name="case_stage"
-                                                                        className={`form-control ${errors.case_stage ? 'is-invalid' : ''}`}
-                                                                        value={form.case_stage}
-                                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                    ></FormControl>
-                                                                    <div className="invalid-feedback">
-                                                                        {errors.case_stage}
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <FormGroup className="mb-3">
-                                                                    <label htmlFor="">Next Hearing Date</label>
-                                                                    <FormControl
-                                                                        type="date"
-                                                                        className={`form-control next_hearing-date-picker ${errors.next_hearing ? 'is-invalid' : ''}`}
-                                                                        name="next_hearing"
-                                                                        value={form.next_hearing ? form.next_hearing : ''}
-                                                                        placeholder="DD/MM/YYYY"
-                                                                        onChange={(e) => setForm({ ...form, next_hearing: e.target.value })}
-                                                                        style={{
-                                                                            backgroundColor: 'transparent',
-                                                                            border: '1px solid #ccc', 
-                                                                            padding: '8px',            
-                                                                        }}
-                                                                    ></FormControl>
-                                                                    <div className="invalid-feedback">
-                                                                        {errors.next_hearing}
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </div>
-                                                            <div className="col-md-2">
-                                                                <FormGroup className="mb-3">
-                                                                    <label htmlFor="">No. Of. Witness</label>
-                                                                    <FormControl
-                                                                        type="number"
-                                                                        name="no_of_witness"
-                                                                        className={`form-control ${errors.no_of_witness ? 'is-invalid' : ''}`}
-                                                                        value={form.no_of_witness}
-                                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                    ></FormControl>
-                                                                    <div className="invalid-feedback">
-                                                                        {errors.no_of_witness}
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                    <div className="row">
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Antecedents/Previous Cases against the Petitioner(s)</FormLabel>
-                                                                <textarea
-                                                                    name="previous_case"
-                                                                    value={form.previous_case}
-                                                                    className={`form-control ${errors.previous_case ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></textarea>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.previous_case}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Details of Previous Bail Applications</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="previous_bail"
-                                                                    className={`form-control ${errors.previous_bail ? 'is-invalid' : null}`}
-                                                                    value={form.previous_bail}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.previous_bail}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Status of other accused</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="other_accused_status"
-                                                                    value={form.other_accused_status}
-                                                                    className={`form-control ${errors.other_accused_status ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.other_accused_status}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Why Bail/AB Should Not be Granted</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="reason_not_given"
-                                                                    className={`form-control ${errors.reason_not_given ? 'is-invalid' : null}`}
-                                                                    value={form.reason_not_given}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.reason_not_given}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Any other Information</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="other_information"
-                                                                    className={`form-control ${errors.other_information ? 'is-invalid' : null}`}
-                                                                    value={form.other_information}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.other_information}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-4">
-                                                            <FormGroup className="mb-3">
-                                                                <FormLabel>Court Details: FIR/ Committal/Trial/ Appellate</FormLabel>
-                                                                <FormControl
-                                                                    as="textarea"
-                                                                    rows={2}
-                                                                    name="court_details"
-                                                                    value={form.court_details}
-                                                                    className={`form-control ${errors.court_details ? 'is-invalid' : null}`}
-                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
-                                                                <div className="invalid-feedback">
-                                                                    {errors.court_details}
-                                                                </div>
-                                                            </FormGroup>
-                                                        </div>
-                                                        <div className="col-md-12">
-                                                            <Document
-                                                                documents={documents}
-                                                                setDocuments={setDocuments}
-                                                                addDocument={addDocument}
-                                                                deleteDocument={deleteDocument}
-                                                            />
-                                                        </div>
-                                                        <div className="col-md-12">
-                                                            <Button
-                                                                variant='contained'
-                                                                color="success"
-                                                                type='submit'
-                                                            >Submit</Button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </React.Fragment>
-                                ) : (
-                                    <React.Fragment>
-                                        <LinkFIR 
-                                            setFirTagged={setFirTagged}
-                                            efileNumber={petition.efile_no}
-                                        />
-                                        <div className="card card-outline card-info">
-                                            <div className="card-header"><strong>Tag FIR</strong></div>
-                                            <div className="card-body">
-                                                <div className="row">
-                                                    <div className="col-md-12">
-                                                        <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <Form.Group className="mb-3">
-                                                            <Form.Label>FIR Number<RequiredField /></Form.Label>
-                                                            <Form.Control
-                                                                type="text"
-                                                                name="crime_number"
-                                                                className={`${searchErrors.crime_number ? 'is-invalid' : ''}`}
-                                                                value={searchForm.crime_number}
-                                                                onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                            ></Form.Control>
-                                                            <div className="invalid-feedback">{searchErrors.crime_number}</div>
-                                                        </Form.Group>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <Form.Group>
-                                                            <Form.Label>Year<RequiredField /></Form.Label>
-                                                            <Form.Control
-                                                                type="text"
-                                                                name="year"
-                                                                className={`${searchErrors.year ? 'is-invalid' : ''}`}
-                                                                value={searchForm.year}
-                                                                onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                            ></Form.Control>
-                                                            <div className="invalid-feedback">{searchErrors.year}</div>
-                                                        </Form.Group>
-                                                    </div>
-                                                    <div className="col-md-1 mt-4 pt-2">
-                                                        <Form.Group>
-                                                            <Button
-                                                                variant="contained"
-                                                                onClick={handleSearch}
-                                                            ><i className="fa fa-search mr-2"></i>Search</Button>
-                                                        </Form.Group>
-                                                    </div>
-                                                    <div className="col-md-3 mt-4 pt-2">
-                                                        {showAdditionalFields && (
-                                                            <FIRDetails 
-                                                                setFirTagged={setFirTagged}
-                                                                efile_no = {petition.efile_no}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-md-12">
-                                                        { notFound && (
-                                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                                <span><strong>{t('errors.fir_not_found')}</strong> </span>
-                                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </React.Fragment>
-                                )}
-
-                            </div>
-                        </div>
-                    </div>
+            <div className="card card-outline card-primary">
+                {loading && <Loading />}
+                <ToastContainer />
+                <div className="card-header d-flex justify-content-between">
+                    <h3 className="card-title">
+                        <i className="fas fa-edit mr-2"></i><strong>Police Response: </strong>
+                    </h3>
+                    <span className="text-primary"><strong>{state.efile_no}</strong></span>
                 </div>
-            )}
+                <div className="card-body">
+                    <PetitionDetail 
+                        petition={petition}
+                        crime={crime}
+                    />
+                    <AccusedDetail 
+                        accused={accused}
+                    />
+                    { crime.fir_no && crime.fir_year ? (
+                        <React.Fragment>
+                            <div className="card card-outline card-danger">
+                                <div className="card-header">
+                                    <strong>Response</strong>
+                                </div>
+                                <div className="card-body">
+                                    <form onSubmit={handleSubmit}>
+                                        <div className="row">
 
-            {loading && <Loading />}
-        </>
+                                            <div className="col-md-2">
+                                                <div className="form-group">
+                                                    <label htmlFor="csr_number">CSR Number</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="csr_number"
+                                                        value={form.csr_number}
+                                                        onChange={(e) => handleNumberChange(e, setForm, form, 'csr_number')}
+                                                    
+                                                    />
+                                                    <div className="invalid-feedback">
+                                                        {errors.csr_number}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-2">
+                                                <div className="form-group">
+                                                    <label htmlFor="">Crime Number <RequiredField /></label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="crime_number"
+                                                        value={form.crime_number}
+                                                        readOnly={form.crime_number !== '' ? true : false}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-2">
+                                                <div className="form-group">
+                                                    <label htmlFor="">Crime Year<RequiredField /></label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        name="crime_year"
+                                                        value={form.crime_year}
+                                                        readOnly={form.crime_year !== '' ? true : false}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-md-2">
+                                                <label htmlFor="">Date of Arrest<RequiredField /></label>
+                                                <div className="input-group mb-3">
+                                                    <input
+                                                        type="date"
+                                                        className={`form-control date_of_arrest-date-picker ${errors.date_of_arrest ? 'is-invalid' : ''}`}
+                                                        name="date_of_arrest"
+                                                        value={form.date_of_arrest ? form.date_of_arrest : ''}
+                                                        placeholder="DD/MM/YYYY"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', 
+                                                            padding: '8px',            
+                                                        }}
+                                                    />
+                                                    <div className="invalid-feedback">
+                                                        {errors.date_of_arrest}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <FormGroup className='mb-3'>
+                                                    <FormLabel>Offences</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="offences"
+                                                        value={form.offences}
+                                                        className={`form-control ${errors.offences ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.offences}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <FormGroup className='mb-3'>
+                                                    <FormLabel>Name of the accused/suspected person(s)</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        name="accused_name"
+                                                        value={form.accused_name}
+                                                        className={`form-control ${errors.accused_name ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.accused_name}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <FormGroup className='mb-3'>
+                                                    <FormLabel>Specific Allegations /Overt Acts against the Petitioner(s)</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="specific_allegations"
+                                                        className={`form-control ${errors.specific_allegations ? 'is-invalid' : null}`}
+                                                        value={form.specific_allegations}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.specific_allegations}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-6">
+                                                <FormGroup className='mb-3'>
+                                                    <FormLabel>Materials & Circumstances against the Petitioner</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="materials_used"
+                                                        className={`form-control ${errors.materials_used ? 'is-invalid' : null}`}
+                                                        value={form.materials_used}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.materials_used}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <div className="form-group row">
+                                                    <label className="col-sm-3">Injured discharged</label>
+                                                    <div className="col-sm-8">
+                                                        <div className="icheck-success d-inline mx-2">
+                                                            <input
+                                                                type="radio"
+                                                                id="radioDischarged1"
+                                                                name="discharged"
+                                                                onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
+                                                                checked={parseInt(form.discharged) === 1 ? true : false}
+                                                            />
+                                                            <label htmlFor="radioDischarged1">Yes</label>
+                                                        </div>
+                                                        <div className="icheck-danger d-inline mx-2">
+                                                            <input
+                                                                type="radio"
+                                                                id="radioDischarged2"
+                                                                name="discharged"
+                                                                onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
+                                                                checked={parseInt(form.discharged) === 2 ? true : false} />
+                                                            <label htmlFor="radioDischarged2">No</label>
+                                                        </div>
+                                                        <div className="icheck-primary d-inline mx-2">
+                                                            <input
+                                                                type="radio"
+                                                                id="radioDischarged3"
+                                                                name="discharged"
+                                                                onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
+                                                                checked={parseInt(form.discharged) === 3 ? true : false} />
+                                                            <label htmlFor="radioDischarged3">Not Applicable</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {parseInt(form.discharged) === 2 && (
+                                                    <>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="" className="col-sm-3">Hospital Name</label>
+                                                            <div className="col-sm-9">
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    name="hospital_name"
+                                                                    value={form.hospital_name}
+                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="" className="col-sm-3">Condition of Victim</label>
+                                                            <div className="col-sm-9">
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    name="victim_condition"
+                                                                    value={form.victim_condition}
+                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label htmlFor="" className="col-sm-3">Particulars of Injury</label>
+                                                            <div className="col-sm-9">
+                                                                <FormControl
+                                                                    as="textarea"
+                                                                    rows={2}
+                                                                    name="injury_particulars"
+                                                                    value={form.injury_particulars}
+                                                                    onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                                ></FormControl>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-sm-3">Material seized?</label>
+                                            <div className="col-sm-8">
+                                                <div className="icheck-success d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radioseized1"
+                                                        name="is_material_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
+                                                        checked={parseInt(form.is_material_seized) === 1 ? true : false}
+                                                    />
+                                                    <label htmlFor="radioseized1">Yes</label>
+                                                </div>
+                                                <div className="icheck-danger d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radioseized2"
+                                                        name="is_material_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
+                                                        checked={parseInt(form.is_material_seized) === 2 ? true : false} />
+                                                    <label htmlFor="radioseized2">No</label>
+                                                </div>
+                                                <div className="icheck-primary d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radioseized3"
+                                                        name="is_material_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
+                                                        checked={parseInt(form.is_material_seized) === 3 ? true : false} />
+                                                    <label htmlFor="radioseized3">Not Applicable</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {parseInt(form.is_material_seized) === 1 && (
+                                            <MaterialDetails materials={materials} setMaterials={setMaterials} />
+                                        )}
+                                        <div className="form-group row">
+                                            <label className="col-sm-3">Vechicle seized?</label>
+                                            <div className="col-sm-8">
+                                                <div className="icheck-success d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radiovehicleseized1"
+                                                        name="is_vehicle_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 1 })}
+                                                        checked={parseInt(form.is_vehicle_seized) === 1 ? true : false}
+                                                    />
+                                                    <label htmlFor="radiovehicleseized1">Yes</label>
+                                                </div>
+                                                <div className="icheck-danger d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radiovehicleseized2"
+                                                        name="is_vehicle_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 2 })}
+                                                        checked={parseInt(form.is_vehicle_seized) === 2 ? true : false} />
+                                                    <label htmlFor="radiovehicleseized2">No</label>
+                                                </div>
+                                                <div className="icheck-primary d-inline mx-2">
+                                                    <input
+                                                        type="radio"
+                                                        id="radiovehicleseized3"
+                                                        name="is_vehicle_seized"
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: 3 })}
+                                                        checked={parseInt(form.is_vehicle_seized) === 3 ? true : false} />
+                                                    <label htmlFor="radioseized3">Not Applicable</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {parseInt(form.is_vehicle_seized) === 1 && (
+                                            <VehicleDetails
+                                                vehicles={vehicles}
+                                                setVehicles={setVehicles}
+                                            />
+                                        )}
+                                        <div className="row">
+                                            <div className="col-md-3">
+                                                <div className="form-group">
+                                                    <label htmlFor="">Stage of Investigation / Trial</label>
+                                                    <select
+                                                        name="investigation_stage"
+                                                        value={form.investigation_stage}
+                                                        className={`form-control ${errors.investigation_stage ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    >
+                                                        <option value="">Select</option>
+                                                        <option value="1">Pending Investigation</option>
+                                                        <option value="2">Chargesheet filed</option>
+                                                    </select>
+                                                    <div className="invalid-feedback">
+                                                        {errors.investigation_stage}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-md-3">
+                                                <div className="form-group">
+                                                    <label htmlFor="" style={{ width: '380px', }} >Limitation date for filing Charge Sheet(As per Act)</label>
+                                                    <input type="date" className={`form-control limitation_date-date-picker ${errors.limitation_date ? 'is-invalid' : ''}`}
+                                                        name="limitation_date"
+                                                        value={form.limitation_date}
+                                                        // readOnly={form.is_produced === true ? false : true }
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                        placeholder="DD/MM/YYYY"
+                                                        style={{
+                                                            backgroundColor: 'transparent',
+                                                            border: '1px solid #ccc', 
+                                                            padding: '8px',            
+                                                        }}
+
+                                                    />
+                                                    <div className="invalid-feedback">
+                                                        {errors.limitation_date}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {parseInt(form.investigation_stage) === 2 && (
+                                            <div className="row mt-3">
+                                                <div className="col-md-2">
+                                                    <FormGroup className="mb-3">
+                                                        <label htmlFor="">CNR Number</label>
+                                                        <FormControl
+                                                            name="cnr_number"
+                                                            className={`form-control ${errors.cnr_number ? 'is-invalid' : ''}`}
+                                                            value={form.cnr_number}
+                                                            onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                        ></FormControl>
+                                                        <div className="invalid-feedback">
+                                                            {errors.cnr_number}
+                                                        </div>
+                                                    </FormGroup>
+                                                </div>
+                                                <div className="col-md-3">
+                                                    <FormGroup className="mb-3">
+                                                        <label htmlFor="court">Court</label>
+                                                        <select
+                                                            name="court"
+                                                            className={`form-control ${errors.court ? 'is-invalid' : ''}`}
+                                                            value={form.court}
+                                                            onChange={handleCourtChange}
+                                                        >
+                                                            <option value="">Select Court</option>
+                                                            {courts.length > 0 ? (
+                                                                courts.map((court) => (
+                                                                    <option key={court.court_code} value={court.court_code}>
+                                                                        {language === 'ta' ? court.court_lname : court.court_name}
+                                                                    </option>
+                                                                ))
+                                                            ) : (
+                                                                <option value="">No courts available</option>
+                                                            )}
+                                                        </select>
+                                                        <div className="invalid-feedback">{errors.court}</div>
+                                                    </FormGroup>
+                                                </div>
+                                                <div className="col-md-2">
+                                                    <FormGroup className="mb-3">
+                                                        <label htmlFor="">Stage of the Case</label>
+                                                        <FormControl
+                                                            name="case_stage"
+                                                            className={`form-control ${errors.case_stage ? 'is-invalid' : ''}`}
+                                                            value={form.case_stage}
+                                                            onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                        ></FormControl>
+                                                        <div className="invalid-feedback">
+                                                            {errors.case_stage}
+                                                        </div>
+                                                    </FormGroup>
+                                                </div>
+                                                <div className="col-md-2">
+                                                    <FormGroup className="mb-3">
+                                                        <label htmlFor="">Next Hearing Date</label>
+                                                        <FormControl
+                                                            type="date"
+                                                            className={`form-control next_hearing-date-picker ${errors.next_hearing ? 'is-invalid' : ''}`}
+                                                            name="next_hearing"
+                                                            value={form.next_hearing ? form.next_hearing : ''}
+                                                            placeholder="DD/MM/YYYY"
+                                                            onChange={(e) => setForm({ ...form, next_hearing: e.target.value })}
+                                                            style={{
+                                                                backgroundColor: 'transparent',
+                                                                border: '1px solid #ccc', 
+                                                                padding: '8px',            
+                                                            }}
+                                                        ></FormControl>
+                                                        <div className="invalid-feedback">
+                                                            {errors.next_hearing}
+                                                        </div>
+                                                    </FormGroup>
+                                                </div>
+                                                <div className="col-md-2">
+                                                    <FormGroup className="mb-3">
+                                                        <label htmlFor="">No. Of. Witness</label>
+                                                        <FormControl
+                                                            type="number"
+                                                            name="no_of_witness"
+                                                            className={`form-control ${errors.no_of_witness ? 'is-invalid' : ''}`}
+                                                            value={form.no_of_witness}
+                                                            onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                        ></FormControl>
+                                                        <div className="invalid-feedback">
+                                                            {errors.no_of_witness}
+                                                        </div>
+                                                    </FormGroup>
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="row">
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Antecedents/Previous Cases against the Petitioner(s)</FormLabel>
+                                                    <textarea
+                                                        name="previous_case"
+                                                        value={form.previous_case}
+                                                        className={`form-control ${errors.previous_case ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></textarea>
+                                                    <div className="invalid-feedback">
+                                                        {errors.previous_case}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Details of Previous Bail Applications</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="previous_bail"
+                                                        className={`form-control ${errors.previous_bail ? 'is-invalid' : null}`}
+                                                        value={form.previous_bail}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.previous_bail}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Status of other accused</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="other_accused_status"
+                                                        value={form.other_accused_status}
+                                                        className={`form-control ${errors.other_accused_status ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.other_accused_status}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Why Bail/AB Should Not be Granted</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="reason_not_given"
+                                                        className={`form-control ${errors.reason_not_given ? 'is-invalid' : null}`}
+                                                        value={form.reason_not_given}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.reason_not_given}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Any other Information</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="other_information"
+                                                        className={`form-control ${errors.other_information ? 'is-invalid' : null}`}
+                                                        value={form.other_information}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.other_information}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-4">
+                                                <FormGroup className="mb-3">
+                                                    <FormLabel>Court Details: FIR/ Committal/Trial/ Appellate</FormLabel>
+                                                    <FormControl
+                                                        as="textarea"
+                                                        rows={2}
+                                                        name="court_details"
+                                                        value={form.court_details}
+                                                        className={`form-control ${errors.court_details ? 'is-invalid' : null}`}
+                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                                    ></FormControl>
+                                                    <div className="invalid-feedback">
+                                                        {errors.court_details}
+                                                    </div>
+                                                </FormGroup>
+                                            </div>
+                                            <div className="col-md-12">
+                                                <Document
+                                                    documents={documents}
+                                                    setDocuments={setDocuments}
+                                                    addDocument={addDocument}
+                                                    deleteDocument={deleteDocument}
+                                                />
+                                            </div>
+                                            <div className="col-md-12">
+                                                <Button
+                                                    variant='contained'
+                                                    color="success"
+                                                    type='submit'
+                                                >Submit</Button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </React.Fragment>
+                    ) : (
+                        <React.Fragment>
+                            <LinkFIR 
+                                setFirTagged={setFirTagged}
+                                efileNumber={petition.efile_no}
+                            />
+                            <div className="card card-outline card-info">
+                                <div className="card-header"><strong>Tag FIR</strong></div>
+                                <div className="card-body">
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
+                                        </div>
+                                        <div className="col-md-2">
+                                            <Form.Group className="mb-3">
+                                                <Form.Label>FIR Number<RequiredField /></Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="crime_number"
+                                                    className={`${searchErrors.crime_number ? 'is-invalid' : ''}`}
+                                                    value={searchForm.crime_number}
+                                                    onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
+                                                ></Form.Control>
+                                                <div className="invalid-feedback">{searchErrors.crime_number}</div>
+                                            </Form.Group>
+                                        </div>
+                                        <div className="col-md-2">
+                                            <Form.Group>
+                                                <Form.Label>Year<RequiredField /></Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="year"
+                                                    className={`${searchErrors.year ? 'is-invalid' : ''}`}
+                                                    value={searchForm.year}
+                                                    onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
+                                                ></Form.Control>
+                                                <div className="invalid-feedback">{searchErrors.year}</div>
+                                            </Form.Group>
+                                        </div>
+                                        <div className="col-md-1 mt-4 pt-2">
+                                            <Form.Group>
+                                                <Button
+                                                    variant="contained"
+                                                    onClick={handleSearch}
+                                                ><i className="fa fa-search mr-2"></i>Search</Button>
+                                            </Form.Group>
+                                        </div>
+                                        <div className="col-md-3 mt-4 pt-2">
+                                            {showAdditionalFields && (
+                                                <FIRDetails 
+                                                    setFirTagged={setFirTagged}
+                                                    efile_no = {petition.efile_no}
+                                                />
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-md-12">
+                                            { notFound && (
+                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                    <span><strong>{t('errors.fir_not_found')}</strong> </span>
+                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </React.Fragment>
+                    )}
+
+                </div>
+            </div>
+            )}
+        </React.Fragment>
     )
 }
 
