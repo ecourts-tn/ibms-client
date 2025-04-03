@@ -9,7 +9,6 @@ import ResponseDetails from 'components/police/ResponseDetails'
 import ConditionList from 'components/police/ConditionList'
 import ConditionForm from 'components/police/ConditionForm'
 import PetitionFiling from 'components/police/PetitionFiling'
-import RequestCustody from 'components/police/RequestCustody'
 import PoliceProfile from 'components/police/Profile'
 
 
@@ -67,13 +66,6 @@ export const policeRoutes = [
         element:(
             <PrivateRoute>
                 <PetitionFiling />
-            </PrivateRoute>
-        )
-    },
-    {   path:"request/custody",
-        element:(
-            <PrivateRoute>
-                <RequestCustody />
             </PrivateRoute>
         )
     },

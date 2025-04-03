@@ -52,7 +52,7 @@ const FIRDetails = ({setFirTagged}) => {
     }, []);
 
 
-    const tagFir = async() => {
+    const linkFIR = async() => {
         try{
             const data = {
                 efile_no: efileNumber,
@@ -181,7 +181,7 @@ const FIRDetails = ({setFirTagged}) => {
                                 </div>
                             </Modal.Body>
                             <Modal.Footer className="d-flex justify-content-between">
-                                <Button variant="contained" color="success" onClick={() => tagFir()}>Tag FIR </Button>
+                                <Button variant="contained" color="success" onClick={() => linkFIR()}>Tag FIR </Button>
                                 <Button variant="contained" onClick={handleClose}>
                                     {t('close')}
                                 </Button>

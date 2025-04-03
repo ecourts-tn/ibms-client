@@ -6,7 +6,7 @@ const Petitioner = ({litigant}) => {
     return (
         <>
             { litigant.filter(l=>l.litigant_type===1).map((p, index) => (
-            <table className="table table-bordered table-striped mb-2" key={index}>
+            <table className="table table-bordered table-striped mb-2 table-sm" key={index}>
                 <thead className="bg-info">
                     <tr>
                         <th colSpan={4}><strong>{t('petitioner')} - { index+1 }. {p.litigant_name}</strong></th>

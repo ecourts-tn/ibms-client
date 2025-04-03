@@ -111,11 +111,11 @@ const handleInputChange = (event) => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container-fluid p-0">
       <ToastContainer />
       <div className="card shadow-sm">
-        <div className="card-header bg-secondary text-white">Material Details</div>
-        <div className="card-body">
+        {/* <div className="card-header bg-secondary text-white">Material Details</div> */}
+        <div className="card-body p-1">
           {/* Input Table */}
           <table className="table table-bordered table-striped">
             <thead className="bg-navy">
@@ -123,8 +123,8 @@ const handleInputChange = (event) => {
                 <th>#</th>
                 <th>Material Name</th>
                 <th>Quantity</th>
-                <th>Nature of Quantity</th>
-                <th>Whether material produced before competent court</th>
+                <th>Nature</th>
+                <th>Material&nbsp;produced?</th>
                 <th>Produced Date</th>
                 <th>Reason</th>
                 <th>Action</th>
@@ -159,8 +159,7 @@ const handleInputChange = (event) => {
                 </tr>
               )}
               <tr>
-                <td></td>
-                <td>
+                <td colSpan={2}>
                   <input
                     type="text"
                     className={`form-control ${errors.material_name ? "is-invalid" : ""}`}
@@ -228,6 +227,7 @@ const handleInputChange = (event) => {
                     name="reason"
                     value={material.reason}
                     onChange={handleInputChange}
+                    rows={1}
                   ></textarea>
                 </td>
                 <td>
