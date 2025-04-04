@@ -19,6 +19,7 @@ import { IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 import { GroupContext } from 'contexts/GroupContext';
 import { MasterContext } from 'contexts/MasterContext';
+import {encryptData, decryptData} from 'utils';
 // import bcrypt from 'bcryptjs';  
 
 const Login = () => {
@@ -95,7 +96,11 @@ const Login = () => {
 
         // Call the login function from AuthContext
         await login(response.data, form.remember);
-        toast.success('Logged in successfully', { theme: 'colored' });
+        // const encrypted = encryptData(response);
+        // console.log("Encrypted:", encrypted);
+        // const decrypted = decryptData(encrypted, response);
+        // console.log("Decrypted:", decrypted);
+        // toast.success('Logged in successfully', { theme: 'colored' });
 
     } catch (error) {
         console.error("Error during login:", error); // Debugging log

@@ -1,5 +1,5 @@
 import api from 'api';
-import * as Yup from 'yup'
+import * as Yup from 'yup' 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
