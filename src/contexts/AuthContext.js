@@ -79,9 +79,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem(ACCESS_TOKEN);
     localStorage.removeItem(REFRESH_TOKEN);
     localStorage.removeItem("user");
-    sessionStorage.removeItem(ACCESS_TOKEN);
-    sessionStorage.removeItem(REFRESH_TOKEN);
-    sessionStorage.removeItem("user");
+    sessionStorage.clear();
     setIsAuth(false);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];

@@ -4,50 +4,66 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 
 const DateChange = () => {
-    const [today, setToday] = useState(sessionStorage.getItem("today") || '');
-    const [date, setDate] = useState(sessionStorage.getItem("today") || '');
-    const [buttonClicked, setButtonClicked] = useState(false);
- 
-    // Handler to save the selected date to sessionStorage
-    const handleDateChange = () => {
-        sessionStorage.setItem("today", today);
-        setDate(today); // Update the displayed date
-        setButtonClicked(true); // Enlarge the button when clicked
+    // Get stored date or use the current date as default
+    const getCurrentDate = () => {
+        let storedDate = sessionStorage.getItem("today");
+    
+        if (!storedDate) {
+            const today = new Date();
+            storedDate = today.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+            sessionStorage.setItem("today", storedDate);
+        }
+    
+        return new Date(storedDate);
     };
 
-    // Format the date for display (DD/MM/YYYY)
+    const [today, setToday] = useState(getCurrentDate());
+    const [date, setDate] = useState(getCurrentDate());
+    const [buttonClicked, setButtonClicked] = useState(false);
+
+    // Format date for display (DD-MM-YYYY)
     const change_date_display = (date) => {
+        if (!date) return "";
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
         return `${day}-${month}-${year}`;
     };
 
-    // Format the date for backend (YYYY-MM-DD)
+    // Format date for backend (YYYY-MM-DD)
     const change_date_backend = (date) => {
+        if (!date) return "";
         const year = date.getFullYear();
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const day = ("0" + date.getDate()).slice(-2);
         return `${year}-${month}-${day}`;
     };
 
-    // Initializing flatpickr on component mount and clean up on unmount
+    // Handler to save the selected date to sessionStorage
+    const handleDateChange = () => {
+        sessionStorage.setItem("today", change_date_backend(today));
+        setDate(today); // Update displayed date
+        setButtonClicked(true); // Add button effect
+    };
+
+    // Initialize flatpickr on mount and cleanup on unmount
     useEffect(() => {
-        const change_date = flatpickr(".change_date-date-picker", {
-            dateFormat: "d-m-Y", // Date format for display
-            defaultDate: today ? change_date_display(new Date(today)) : '',
+        const datepicker = flatpickr(".change_date-date-picker", {
+            dateFormat: "d-m-Y",
+            defaultDate: today, // Set default date correctly
             onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? change_date_backend(selectedDates[0]) : '';
-                setToday(formattedDate);
+                if (selectedDates.length > 0) {
+                    setToday(selectedDates[0]);
+                }
             },
         });
 
         return () => {
-            if (change_date && typeof change_date.destroy === "function") {
-                change_date.destroy();
+            if (datepicker && typeof datepicker.destroy === "function") {
+                datepicker.destroy();
             }
         };
-    }, [today]); // Reinitialize when `today` state changes
+    }, [today]);
 
     return (
         <ul className="navbar-nav">
@@ -55,18 +71,20 @@ const DateChange = () => {
                 <input 
                     type="text"
                     className="form-control change_date-date-picker"
-                    value={today ? change_date_display(new Date(today)) : ''}
+                    value={change_date_display(today)}
                     placeholder="DD-MM-YYYY"
-                    onChange={(e) => setToday(e.target.value)} 
+                    readOnly
                     style={{
                         backgroundColor: 'transparent',
                         border: '1px solid #ccc',
                         padding: '8px',
+                        width: '150px',
+                        cursor: 'pointer',
                     }}
                 />
                 <div className="input-group-append">
                     <button 
-                        className={`btn btn-primary ${buttonClicked}`} 
+                        className={`btn btn-primary ${buttonClicked ? "btn-enlarged" : ""}`} 
                         type="button" 
                         onClick={handleDateChange}
                     >
@@ -74,11 +92,6 @@ const DateChange = () => {
                     </button>
                 </div>
             </div>
-            {date && (
-                <h5 className="ml-5 pt-2 single-line-text">
-                    <strong>Today: <span className="text-navy blinking ml-1">{change_date_display(new Date(date))}</span></strong>
-                </h5>
-            )}
         </ul>
     );
 };

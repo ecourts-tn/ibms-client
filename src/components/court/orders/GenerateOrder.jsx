@@ -129,10 +129,10 @@ const GenerateOrder = () => {
 
 
     return (
-        <div className="content-wrapper">
+        // <div className="content-wrapper">
+            <div className="container-fluid mt-3">
             <ToastContainer />
             {loading && <Loading />}
-            <div className="container-fluid mt-3">
                 <div className="card card-outline card-primary">
                     <div className="card-header">
                         <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('genrate_order')}</strong></h3>
@@ -230,7 +230,7 @@ const GenerateOrder = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        // </div>
     );
 };
 

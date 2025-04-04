@@ -170,14 +170,19 @@ const CaseScrutiny = () => {
                     }, [form]);            
  
     return (
-        <>
+        <div className="card card-outline card-primary mt-3">
             <ToastContainer/>
             {loading && <Loading />}
-            <div className="content-wrapper">
-                <div className="container-fluid">
-                    <div className="card card-outline card-primary mt-3">
-                        <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('case_scrutiny')} - {state.efile_no} </strong></h3>
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('case_scrutiny')} - {state.efile_no} </strong></h3>
+            </div>
+            <div className="card-body p-2">
+                <div id="accordion">
+                    <div className="card m-1">
+                        <div className="card-header" id="headingOne">
+                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" href="/#">
+                                {t('basic_details')}
+                            </a>
                         </div>
                         <div className="card-body p-2">
                             <div id="accordion">
@@ -390,22 +395,164 @@ const CaseScrutiny = () => {
                                     renderButton(option.status, option.color, option.icon, option.label)
                                 )}
                             </div>
-                            )}
-                            { petition.is_verified && (
-                            <div className="row">
-                                <div className="col-md-12 d-flex justify-content-center mt-3">
-                                    <p className="text-success">
-                                        <CheckIcon /><span className="text-bold">Case verified at {petition.created_at}</span>
-                                    </p>
-                                </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingFour">
+                            <a data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" href="/#">
+                                {t('advocate_details')} & {t('documents')}
+                            </a>
+                        </div>
+                        <div id="collapseFour" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <AdvocateDetails 
+                                    advocates={advocates} 
+                                    petition={petition}
+                                />
+                                <DocumentList documents={documents} />
                             </div>
-                            )}
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingFive">
+                            <a data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive" href="/#">
+                                {t('payment_details')}
+                            </a>
+                        </div>
+                        <div id="collapseFive" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <FeesDetails fees={fees}/>
+                            </div>
                         </div>
                     </div>
                 </div>
+                { !petition.is_verified && (
+                <div className="row my-3">
+                    <div className="col-md-8 offset-2">
+                        <div className="form-group row mt-4">
+                            <label htmlFor="verify" className="col-sm-3">{t('verify')}</label>
+                            <div className="col-sm-9">
+                                <div className="icheck-success d-inline mx-2">
+                                    <input 
+                                        type="radio" 
+                                        id="radioVerify1" 
+                                        name="status" 
+                                        onChange={(e) => setForm({...form, status:1})}
+                                        checked={form.status === 1 ? true : false}
+
+                                    />
+                                    <label htmlFor="radioVerify1">{t('accept')}</label>
+                                </div>
+                                <div className="icheck-warning d-inline mx-2">
+                                    <input 
+                                        type="radio" 
+                                        id="radioVerify2"
+                                        name="status"
+                                        onChange={(e) => setForm({...form, status:2 })}
+                                        checked={form.status === 2 ? true : false }
+                                    />
+                                    <label htmlFor="radioVerify2">Return</label>
+                                </div>
+                                <div className="icheck-danger d-inline mx-2">
+                                    <input 
+                                        type="radio" 
+                                        id="radioVerify3" 
+                                        name="status" 
+                                        onChange={(e) => setForm({...form, status:3})}
+                                        checked={form.status === 3 ? true : false }
+                                    />
+                                    <label htmlFor="radioVerify3">{'Reject'}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="date" className="col-sm-3">{form.status === 2 ? t('objection_date') : t('verification_date')}</label>
+                            <div className="col-sm-4">
+                                <input 
+                                    type="date" 
+                                    className="form-control verification_date-date-picker ${errors.objection_date ? 'is-invalid' : null}" 
+                                    name="verification_date"
+                                    value={form.verification_date ? form.verification_date : ''}
+                                    placeholder="DD-MM-YYYY"
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid #ccc', 
+                                        padding: '8px',            
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    { form.status === 2 && (
+                    <React.Fragment>
+                        <div className="col-md-8 offset-2">
+                            <div className="form-group row">
+                                <label htmlFor="date" className="col-sm-3">{t('compliance_date')}</label>
+                                <div className="col-sm-4">
+                                    <input 
+                                        type="date" 
+                                        className="form-control compliance_date-date-picker ${errors.compliance_date ? 'is-invalid' : null}"  
+                                        name="complaince_date"
+                                        value={form.complaince_date ? form.complaince_date : ''}
+                                        placeholder="DD-MM-YYYY"
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            border: '1px solid #ccc', 
+                                            padding: '8px',            
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-8 offset-2">
+                            <div className="form-group">
+                                <label htmlFor="remarks">{t('remarks')}</label>
+                                <textarea 
+                                    name="remarks" 
+                                    className="form-control" 
+                                    rows="2"
+                                    value={form.remarks}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                ></textarea>
+                            </div>
+                        </div>
+                    </React.Fragment>
+                    )}
+                    { form.status === 3 && (
+                    <React.Fragment>
+                        <div className="col-md-8 offset-2">
+                            <div className="form-group">
+                                <label htmlFor="remarks">Reason for reject</label>
+                                <textarea 
+                                    name="remarks" 
+                                    className="form-control" 
+                                    rows="2"
+                                    value={form.remarks}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                ></textarea>
+                            </div>
+                        </div>
+                    </React.Fragment>
+                    )}
+                    {statusOptions.map((option) =>
+                        renderButton(option.status, option.color, option.icon, option.label)
+                    )}
+                </div>
+                )}
+                { petition.is_verified && (
+                <div className="row">
+                    <div className="col-md-12 d-flex justify-content-center mt-3">
+                        <p className="text-success">
+                            <CheckIcon /><span className="text-bold">Case verified at {petition.created_at}</span>
+                        </p>
+                    </div>
+                </div>
+                )}
             </div>
-        </>
-  )
+        </div>
+    )
 }
 
 export default CaseScrutiny

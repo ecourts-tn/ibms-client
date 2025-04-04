@@ -72,152 +72,148 @@ const ConditionForm = () => {
         }, [form]);
 
     return (
-        <div className="content-wrapper">
-            <div className="container-fluid mt-3">
-                <div className="card card-outline card-primary">
-                    <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Condition</strong></h3>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Crime Number</label>
-                                    <div className="col-sm-6">
-                                        <input 
-                                            type="text"
-                                            name="crime_number" 
-                                            className="form-control"
-                                            value={form.crime_number}
-                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                        />
-                                    </div>
+        <div className="card card-outline card-primary">
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Condition</strong></h3>
+            </div>
+            <div className="card-body">
+                <div className="row">
+                    <div className="col-md-6">
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Crime Number</label>
+                            <div className="col-sm-6">
+                                <input 
+                                    type="text"
+                                    name="crime_number" 
+                                    className="form-control"
+                                    value={form.crime_number}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Accused Name</label>
+                            <div className="col-sm-6">
+                                <select 
+                                    name="accused"
+                                    className="form-control"
+                                >
+                                    <option value="">Select accused</option>
+                                    { accused.map((a, index) => (
+                                    <option key={index} value={a.litigant_id}>{a.litigant_name}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Condition Date</label>
+                            <div className="col-sm-6">
+                                <input 
+                                    type="date" 
+                                    className="form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}` "
+                                    name="condition_date"
+                                    value={form.condition_date ? form.condition_date : ''}
+                                    placeholder="DD-MM-YYYY"
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid #ccc', 
+                                        padding: '8px',            
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Condition Time</label>
+                            <div className="col-sm-6">
+                                <input 
+                                    type="text" 
+                                    className="form-control"
+                                    name="condition_time"
+                                    value={form.condition_time}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Remarks</label>
+                            <div className="col-sm-6">
+                                <textarea 
+                                    rows={3} 
+                                    className="form-control"
+                                    name="remarks"
+                                    value={form.remarks}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}  
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-3">Accused Present?</label>
+                            <div className="col-sm-6">
+                                <div class="icheck-primary d-inline">
+                                    <input 
+                                        type="checkbox" 
+                                        id="isPresentCheckbox" 
+                                        name="is_present"
+                                        value={form.is_present} 
+                                        checked={form.is_present}
+                                        onChange={(e) => setForm({...form, [e.target.name]: !form.is_present})}
+                                    />
+                                    <label for="isPresentCheckbox">
+                                    </label>
                                 </div>
+                            </div>
+                        </div>
+                        { form.is_present && (
+                            <React.Fragment>
                                 <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Accused Name</label>
-                                    <div className="col-sm-6">
-                                        <select 
-                                            name="accused"
-                                            className="form-control"
-                                        >
-                                            <option value="">Select accused</option>
-                                            { accused.map((a, index) => (
-                                            <option key={index} value={a.litigant_id}>{a.litigant_name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Condition Date</label>
-                                    <div className="col-sm-6">
-                                        <input 
-                                            type="date" 
-                                            className="form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}` "
-                                            name="condition_date"
-                                            value={form.condition_date ? form.condition_date : ''}
-                                            placeholder="DD-MM-YYYY"
-                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                            style={{
-                                                backgroundColor: 'transparent',
-                                                border: '1px solid #ccc', 
-                                                padding: '8px',            
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Condition Time</label>
-                                    <div className="col-sm-6">
-                                        <input 
-                                            type="text" 
-                                            className="form-control"
-                                            name="condition_time"
-                                            value={form.condition_time}
-                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                        />
-                                    </div>
-                                </div>
-                                <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Remarks</label>
-                                    <div className="col-sm-6">
-                                        <textarea 
-                                            rows={3} 
-                                            className="form-control"
-                                            name="remarks"
-                                            value={form.remarks}
-                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}  
-                                        ></textarea>
-                                    </div>
-                                </div>
-                                <div className="form-group row">
-                                    <label htmlFor="" className="col-sm-3">Accused Present?</label>
+                                    <label htmlFor="" className="col-sm-3">Capture Fingerprint</label>
                                     <div className="col-sm-6">
                                         <div class="icheck-primary d-inline">
                                             <input 
                                                 type="checkbox" 
-                                                id="isPresentCheckbox" 
-                                                name="is_present"
-                                                value={form.is_present} 
-                                                checked={form.is_present}
-                                                onChange={(e) => setForm({...form, [e.target.name]: !form.is_present})}
+                                                id="fingerprintCheckbox" 
+                                                name="is_fingerprint"
+                                                value={form.is_fingerprint} 
+                                                checked={form.is_fingerprint}
+                                                onChange={(e) => setForm({...form, [e.target.name]: !form.is_fingerprint})}
                                             />
-                                            <label for="isPresentCheckbox">
+                                            <label for="fingerprintCheckbox">
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                                { form.is_present && (
-                                    <React.Fragment>
-                                        <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Capture Fingerprint</label>
-                                            <div className="col-sm-6">
-                                                <div class="icheck-primary d-inline">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        id="fingerprintCheckbox" 
-                                                        name="is_fingerprint"
-                                                        value={form.is_fingerprint} 
-                                                        checked={form.is_fingerprint}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: !form.is_fingerprint})}
-                                                    />
-                                                    <label for="fingerprintCheckbox">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        { form.is_fingerprint && (
-                                            <FingerPrintCapture />
-                                        )}
-                                        <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Capture Photo</label>
-                                            <div className="col-sm-6">
-                                                <div class="icheck-primary d-inline">
-                                                    <input 
-                                                        type="checkbox" 
-                                                        id="photoCheckbox" 
-                                                        name="is_photo"
-                                                        value={form.is_photo} 
-                                                        checked={form.is_photo}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: !form.is_photo})}
-                                                    />
-                                                    <label for="photoCheckbox">
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        { form.is_photo && (
-                                            <WebcamCapture />
-                                        )}
-                                    </React.Fragment>
-                                )}                              
+                                { form.is_fingerprint && (
+                                    <FingerPrintCapture />
+                                )}
                                 <div className="form-group row">
+                                    <label htmlFor="" className="col-sm-3">Capture Photo</label>
                                     <div className="col-sm-6">
-                                        <Button
-                                            variant='contained'
-                                            color='success'
-                                        >Submit</Button>
+                                        <div class="icheck-primary d-inline">
+                                            <input 
+                                                type="checkbox" 
+                                                id="photoCheckbox" 
+                                                name="is_photo"
+                                                value={form.is_photo} 
+                                                checked={form.is_photo}
+                                                onChange={(e) => setForm({...form, [e.target.name]: !form.is_photo})}
+                                            />
+                                            <label for="photoCheckbox">
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
+                                { form.is_photo && (
+                                    <WebcamCapture />
+                                )}
+                            </React.Fragment>
+                        )}                              
+                        <div className="form-group row">
+                            <div className="col-sm-6">
+                                <Button
+                                    variant='contained'
+                                    color='success'
+                                >Submit</Button>
                             </div>
                         </div>
                     </div>

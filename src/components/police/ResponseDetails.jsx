@@ -60,27 +60,24 @@ const ResponseDetails = () => {
 
 
     return (
-        <div className="content-wrapper">
-            <div className="container-fluid mt-3">
-                <div className="card card-outline card-primary">
-                    <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Police Response</strong></h3>
-                    </div>
-                    <div className="card-body">
-                        <PetitionDetail 
-                            petition={petition}
-                            crime={crime}
-                        />
-                        <AccusedDetail 
-                            accused={accused}
-                        />
-                        <ResponseList 
-                            response={response}
-                        />    
-                    </div>
-                </div>
-            </div>  
-        </div>          
+        <div className="card card-outline card-primary">
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Police Response</strong></h3>
+            </div>
+            <div className="card-body">
+                <PetitionDetail 
+                    petition={petition}
+                    crime={crime}
+                />
+                <AccusedDetail 
+                    accused={accused}
+                />
+                <ResponseList 
+                    response={response}
+                />    
+            </div>
+        </div>
+     
   )
 }
 

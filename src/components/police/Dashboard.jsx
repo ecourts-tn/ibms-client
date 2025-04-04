@@ -48,76 +48,72 @@ const Dashboard = () => {
     },[])
 
     return (
-        <>
+        <React.Fragment>
             <ToastContainer />
-            <div className="content-wrapper">
+            <div className="content-header">
                 <div className="container-fluid">
-                    <div className="content-header">
-                        <div className="container-fluid">
-                            <div className="row mb-2">
-                                <div className="col-sm-6">
-                                    <h3 className="m-0"><strong>{t('dashboard')}</strong></h3>
-                                </div>
-                                <div className="col-sm-6">
-                                    <ol className="breadcrumb float-sm-right">
-                                        <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
-                                        <li className="breadcrumb-item active">{t('dashboard')}</li>
-                                    </ol>
-                                </div>
-                            </div>
+                    <div className="row mb-2">
+                        <div className="col-sm-6">
+                            <h3 className="m-0"><strong>{t('dashboard')}</strong></h3>
+                        </div>
+                        <div className="col-sm-6">
+                            <ol className="breadcrumb float-sm-right">
+                                <li className="breadcrumb-item"><a href="#">{t('home')}</a></li>
+                                <li className="breadcrumb-item active">{t('dashboard')}</li>
+                            </ol>
                         </div>
                     </div>
-                    <section className="content">
-                        <div className="container-fluid">
-                            <div className="row">
-                                <DashboardCard
-                                    color={'bg-info'}
-                                    count={count.response_pending}
-                                    title="Pending Response"
-                                    icon={'ion-bag'}
-                                    url="/police/response/pending"
-                                />
-                                    <DashboardCard 
-                                    color={'bg-success'}
-                                    count={count.response_submitted}
-                                    title="Submitted Response"
-                                    icon={'ion-bag'}
-                                    url="/police/response/submitted"
-                                />
-                                <DashboardCard 
-                                    color={'bg-warning'}
-                                    count={count.case_pending}
-                                    title="Pending Cases"
-                                    icon={'ion-bag'}
-                                    url="#"
-                                />
-                                <DashboardCard 
-                                    color={'bg-danger'}
-                                    count={count.case_disposed}
-                                    title="Disposed Cases"
-                                    icon={'ion-bag'}
-                                    url="#"
-                                />
-                            </div>
-                            <div className="row">
-                                <div className="col-md-5">
-                                    <Calendar 
-                                        upcoming={calendar}    
-                                    /> 
-                                </div>
-                                <div className="col-md-7">
-                                    <PetitionList 
-                                        cases={cases}
-                                        title="Pending Response"
-                                        url={`/police/response/detail/`}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                 </div>
             </div>
-        </>
+            <section className="content">
+                <div className="container-fluid">
+                    <div className="row">
+                        <DashboardCard
+                            color={'bg-info'}
+                            count={count.response_pending}
+                            title="Pending Response"
+                            icon={'ion-bag'}
+                            url="/police/response/pending"
+                        />
+                            <DashboardCard 
+                            color={'bg-success'}
+                            count={count.response_submitted}
+                            title="Submitted Response"
+                            icon={'ion-bag'}
+                            url="/police/response/submitted"
+                        />
+                        <DashboardCard 
+                            color={'bg-warning'}
+                            count={count.case_pending}
+                            title="Pending Cases"
+                            icon={'ion-bag'}
+                            url="#"
+                        />
+                        <DashboardCard 
+                            color={'bg-danger'}
+                            count={count.case_disposed}
+                            title="Disposed Cases"
+                            icon={'ion-bag'}
+                            url="#"
+                        />
+                    </div>
+                    <div className="row">
+                        <div className="col-md-5">
+                            <Calendar 
+                                upcoming={calendar}    
+                            /> 
+                        </div>
+                        <div className="col-md-7">
+                            <PetitionList 
+                                cases={cases}
+                                title="Pending Response"
+                                url={`/police/response/detail/`}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </React.Fragment>
   )
 }
 

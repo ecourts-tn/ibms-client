@@ -124,14 +124,19 @@ const CaseAllocation = () => {
     }
  
     return (
-        <>
+        <div className="card card-outline card-primary mt-3">
             <ToastContainer/>
             {loading && <Loading />}
-            <div className="content-wrapper">
-                <div className="container-fluid">
-                    <div className="card card-outline card-primary mt-3">
-                        <div className="card-header">
-                            <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('case_allocation')} - {state.efile_no} </strong></h3>
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('case_allocation')} - {state.efile_no} </strong></h3>
+            </div>
+            <div className="card-body p-2">
+                <div id="accordion">
+                    <div className="card m-1">
+                        <div className="card-header" id="headingOne">
+                            <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne" href="/#">
+                                {t('basic_details')}
+                            </a>
                         </div>
                         <div className="card-body p-2">
                             <div id="accordion">
@@ -267,13 +272,100 @@ const CaseAllocation = () => {
                                         </div>
                                     </div>
                                 </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingThree">
+                            <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" href="/#">
+                                {t('ground')} & {t('previous_case_details')}
+                            </a>
+                        </div>
+                        <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <Grounds grounds={grounds} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingFour">
+                            <a data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" href="/#">
+                                {t('advocate_details')} & {t('documents')}
+                            </a>
+                        </div>
+                        <div id="collapseFour" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <AdvocateDetails 
+                                    advocates={advocates} 
+                                    petition={petition}
+                                />
+                                <DocumentList documents={documents} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingFive">
+                            <a data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive" href="/#">
+                                {t('payment_details')}
+                            </a>
+                        </div>
+                        <div id="collapseFive" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <FeesDetails fees={fees}/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="row my-4">
+                    <div className="col-md-8 offset-md-2">
+                        { user.seat?.seat_code && (
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-2">Select Bench</label>
+                            <div className="col-md-6">
+                                <select name="bench" className="form-control">
+                                    
+                                </select>
+                            </div>
+                        </div>
+                        )}
+                        { user.court?.court_code && (
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-2">Select Court</label>
+                            <div className="col-md-6">
+                                <select name="bench" className="form-control">
+                                    <option value="">Select Court</option>
+                                    { courts.filter((c) => c.establishment === user.establishment?.establishment_code).map((c, index) => (
+                                        <option key={index} value={c.court_code}>{ language === 'ta' ? c.court_lname : c.court_name }</option>
+                                    ))}  
+                                </select>
+                            </div>
+                        </div>
+                        )}
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-2">Allocation Date</label>
+                            <div className="col-md-3">
+                                <input 
+                                    type="date" 
+                                    name="allocation_date"
+                                    value={form.allocation_date}
+                                    className="form-control" 
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <div className="col-sm-2 offset-md-2">
+                                <button 
+                                    className="btn btn-success"
+                                    onClick={handleSubmit}
+                                >Submit</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </>
-  )
+            </div>
+        </div>
+    )
 }
 
 export default CaseAllocation
