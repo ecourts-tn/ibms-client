@@ -151,69 +151,44 @@ const JudgeForm = () => {
 
 
     return (
-        <div className="content-wrapper">
+        <div className="card card-outline card-primary">
             { loading && <Loading />}
             <ToastContainer />
-            <div className="container-fluid mt-3">
-                <div className="card card-outline card-primary">
-                    <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
-                        <button 
-                            className="btn btn-primary btn-sm float-right"
-                            onClick={() => navigate('/court/admin/judge/list/')}
-                        >Judges List</button>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <form>
-                                    <div className="form-group row mt-2 mb-3">
-                                        <div className="col-sm-4"></div>
-                                        <div className="col-md-8">
-                                            <div className="icheck-success d-inline mx-2">
-                                            <input 
-                                                type="radio" 
-                                                name="judiciary" 
-                                                id="judiciaryHC" 
-                                                checked={parseInt(form.judiciary) === 1 }
-                                                onChange={(e) => setForm({...form, [e.target.name] : 1})} 
-                                            />
-                                            <label htmlFor="judiciaryHC">High Court</label>
-                                            </div>
-                                            <div className="icheck-success d-inline mx-2">
-                                            <input 
-                                                type="radio" 
-                                                id="judiciaryDC" 
-                                                name="judiciary" 
-                                                value={form.judiciary}
-                                                checked={ parseInt(form.judiciary) === 2 } 
-                                                onChange={(e) => setForm({...form, [e.target.name] : 2})}
-                                            />
-                                            <label htmlFor="judiciaryDC">District Judiciary</label>
-                                            </div>
-                                        </div>
+            <div className="card-header">
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
+                <button 
+                    className="btn btn-primary btn-sm float-right"
+                    onClick={() => navigate('/court/admin/judge/list/')}
+                >Judges List</button>
+            </div>
+            <div className="card-body">
+                <div className="row">
+                    <div className="col-md-6">
+                        <form>
+                            <div className="form-group row mt-2 mb-3">
+                                <div className="col-sm-4"></div>
+                                <div className="col-md-8">
+                                    <div className="icheck-success d-inline mx-2">
+                                    <input 
+                                        type="radio" 
+                                        name="judiciary" 
+                                        id="judiciaryHC" 
+                                        checked={parseInt(form.judiciary) === 1 }
+                                        onChange={(e) => setForm({...form, [e.target.name] : 1})} 
+                                    />
+                                    <label htmlFor="judiciaryHC">High Court</label>
                                     </div>
-                                    { parseInt(form.judiciary) === 2 && (
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">{t('state')}<RequiredField /></label>
-                                        <div className="col-sm-8">
-                                            <select 
-                                                name="state" 
-                                                className={`form-control ${errors.state ? 'is-invalid' : ''}`}
-                                                value={form.state}
-                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                            >
-                                                <option value="">{t('alerts.select_state')}</option>
-                                                {states.map((s, index) => (
-                                                <option key={index} value={s.state_code}>{ language === 'ta' ? s.state_lname : s.state_name }</option>    
-                                                ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                { errors.state }
-                                            </div>
-                                        </div>
+                                    <div className="icheck-success d-inline mx-2">
+                                    <input 
+                                        type="radio" 
+                                        id="judiciaryDC" 
+                                        name="judiciary" 
+                                        value={form.judiciary}
+                                        checked={ parseInt(form.judiciary) === 2 } 
+                                        onChange={(e) => setForm({...form, [e.target.name] : 2})}
+                                    />
+                                    <label htmlFor="judiciaryDC">District Judiciary</label>
                                     </div>
-                                    )}
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">{t('judge_name')} <RequiredField /></label>
                                         <div className="col-sm-8">
@@ -360,9 +335,164 @@ const JudgeForm = () => {
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
-                        </div>
+                            { parseInt(form.judiciary) === 2 && (
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">{t('state')}<RequiredField /></label>
+                                <div className="col-sm-8">
+                                    <select 
+                                        name="state" 
+                                        className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+                                        value={form.state}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    >
+                                        <option value="">{t('alerts.select_state')}</option>
+                                        {states.map((s, index) => (
+                                        <option key={index} value={s.state_code}>{ language === 'ta' ? s.state_lname : s.state_name }</option>    
+                                        ))}
+                                    </select>
+                                    <div className="invalid-feedback">
+                                        { errors.state }
+                                    </div>
+                                </div>
+                            </div>
+                            )}
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">{t('judge_name')} <RequiredField /></label>
+                                <div className="col-sm-8">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control ${errors.judge_name ? 'is-invalid' : ''}`}
+                                        name="judge_name"
+                                        value={form.judge_name}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.judge_name }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">{t('judge_lname')}<RequiredField /></label>
+                                <div className="col-sm-8">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control ${errors.judge_lname ? 'is-invalid' : ''}`}
+                                        name="judge_lname"
+                                        value={form.judge_lname}
+                                        onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.judge_lname }
+                                    </div>
+                                </div>
+                            </div>
+                            { parseInt(form.judiciary) === 1 && (
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">Judge Short Name<RequiredField/></label>
+                                <div className="col-sm-8">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control ${errors.judge_sname ? 'is-invalid' : ''}`}
+                                        name="judge_sname"
+                                        value={form.judge_sname}
+                                        onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.judge_sname }
+                                    </div>
+                                </div>
+                            </div>    
+                            )}
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">{ parseInt(form.judiciary) === 1 ? 'Honble ' : ''}Judge Code <RequiredField /></label>
+                                <div className="col-md-3">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control ${errors.state_code ? 'is-invalid' : ''}`}
+                                        name="state_code"
+                                        value={form.state_code}
+                                        readOnly={true}
+                                        onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.state_code }
+                                    </div>
+                                </div>
+                                <div className="col-sm-4">
+                                    <input 
+                                        type="text" 
+                                        className={`form-control ${errors.jocode ? 'is-invalid' : ''}`}
+                                        name="jocode"
+                                        value={form.jocode}
+                                        onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.jocode }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">{t('designation')}<RequiredField /></label>
+                                <div className="col-sm-8">
+                                    <select 
+                                        name="designation" 
+                                        className={`form-control ${errors.designation ? 'is-invalid' : ''}`}
+                                        value={form.designation}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    >
+                                        <option value="">Select Designation</option>
+                                        {jdesignations.map((d, index) => (
+                                        <option key={index} value={d.id}>{ language === 'ta' ? d.designation_lname : d.designation_name }</option>    
+                                        ))}
+                                    </select>
+                                    <div className="invalid-feedback">
+                                        { errors.designation }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
+                                <div className="col-sm-8">
+                                    <input 
+                                        type="date" 
+                                        className={`form-control ${errors.joining_date ? 'is-invalid' : ''}`} 
+                                        name="joining_date"
+                                        value={form.joining_date}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.joining_date }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-sm-4">Releiving Date</label>
+                                <div className="col-sm-8">
+                                    <input 
+                                        type="date" 
+                                        className={`form-control ${errors.releiving_date ? 'is-invalid' : ''}`}
+                                        name="releiving_date"
+                                        value={form.releiving_date}
+                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    />
+                                    <div className="invalid-feedback">
+                                        { errors.releiving_date }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <div className="col-sm-4"></div>
+                                <div className="col-sm-4">
+                                    <Button
+                                        variant='contained'
+                                        color='success'
+                                        onClick={handleSubmit}
+                                    >{t('submit')}</Button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -17,10 +17,11 @@ div > a.list-group-item {
 }
 
 .blinking {
-  animation: smooth-blink 1.5s infinite;
-  background: lightcoral;
+  /* animation: smooth-blink 1.5s infinite; */
+  background: #76d7c4;
   padding: 3px 15px;
   border-radius: 20px;
+  border:1px solid grey;
 }
 
 @keyframes smooth-blink {
@@ -38,5 +39,3 @@ div > a.list-group-item {
   overflow: visible;
   text-overflow: ellipsis;
 }
-
-
