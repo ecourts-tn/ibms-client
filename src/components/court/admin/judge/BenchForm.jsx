@@ -272,7 +272,7 @@ const BenchForm = () => {
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="" className="col-sm-4">Bench Name (Tamil)<RequiredField /></label>

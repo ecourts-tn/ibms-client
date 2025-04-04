@@ -335,7 +335,7 @@ const JudgeForm = () => {
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                             { parseInt(form.judiciary) === 2 && (
                             <div className="form-group row">

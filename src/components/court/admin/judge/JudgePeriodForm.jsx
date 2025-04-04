@@ -362,7 +362,7 @@ const JudgePeriodForm = () => {
                                             >{t('submit')}</Button>
                                         </div>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                             <div className="form-group row">
                                 <label htmlFor="" className="col-sm-4">{t('judge_name')}</label>
