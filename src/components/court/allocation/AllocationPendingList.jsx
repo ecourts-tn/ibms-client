@@ -82,6 +82,7 @@ const AllocationPendingList = () => {
                                     </select>
                                 </div>
                             </div>
+
                             <ul className="todo-list" data-widget="todo-list">
                                 { currentCases.map((c, index) => (
                                     <li key={index}>
@@ -93,9 +94,15 @@ const AllocationPendingList = () => {
                                             <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
                                             <label htmlFor="todoCheck1" />
                                         </div>
-                                        
                                         <span className="text mr-3">
-                                            <Link to={`/court/case/allocation/detail/`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                            <Link to={`/court/case/allocation/detail/`} state={{efile_no: c.petition.efile_number}}>
+                                                {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
+                                                    `${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`
+                                                ) : null}
+                                            </Link>
+                                            <span className="text-success ml-2">
+                                                {`(${c.petition.efile_number})`}
+                                            </span>
                                         </span>
                                         { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2">{index+1}. {l.litigant_name}</span>

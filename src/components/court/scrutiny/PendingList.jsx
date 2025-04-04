@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
+import { formatDate } from 'utils';
 
 const PendingList = () => {
     const [cases, setCases] = useState([]);
@@ -81,9 +82,50 @@ const PendingList = () => {
                                     </select>
                                 </div>
                             </div>
+                            <table className="table table-bordered table-striped">
+                                <thead className="bg-secondary">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{t('efile_number')}</th>
+                                        <th>{t('filing_date')}</th>
+                                        <th>{t('case_type')}</th>
+                                        <th>{t('litigants')}</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentCases.map((c, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td style={{fontWeight:600}}>
+                                            <Link to={`/court/case/scrutiny/detail`} state={{ efile_no: c.petition.efile_number }}>
+                                                {c.petition.efile_number}
+                                            </Link>
+                                        </td>
+                                        <td>
+                                            {formatDate(c.petition?.efile_date)}
+                                        </td>
+                                        <td>
+                                            { language === 'ta' ? c.petition.case_type?.type_lfull_form : c.petition.case_type?.type_full_form}
+                                        </td>
+                                        <td>
+                                            { c.petition.pet_name }
+                                                <span className="mx-2 text-danger">Vs</span>
+                                            { c.petition.res_name }
+                                        </td>
+                                        <td>
+                                            <small className="badge badge-success">
+                                                <i className="far fa-clock" />
+                                                <ReactTimeAgo date={c.petition.created_at} locale="en-US" />
+                                            </small>
+                                        </td>
+                                    </tr>    
+                                    ))}
+                                </tbody>
+                            </table>
 
                             {/* List of cases */}
-                            <ul className="todo-list" data-widget="todo-list">
+                            {/* <ul className="todo-list" data-widget="todo-list">
                                 {currentCases.map((c, index) => (
                                     <li key={index}>
                                         <span className="handle">
@@ -119,7 +161,7 @@ const PendingList = () => {
                                         </div>
                                     </li>
                                 ))}
-                            </ul>
+                            </ul> */}
                         </div>
                         <div className="card-footer">
                             {/* Pagination Controls */}

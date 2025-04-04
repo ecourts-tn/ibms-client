@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import Button from "react-bootstrap/Button";
 import { StepContext } from "contexts/StepContext";
 import { BaseContext } from "contexts/BaseContext";
+import { decrypt } from "components/utils/crypto";
 
 
 const FilingLayout = ({routes, title}) => {
@@ -103,7 +104,7 @@ const FilingLayout = ({routes, title}) => {
                             <div className="card-header" style={{ backgroundColor: "#076280", color: "#FAFAFA", borderRadius: 0 }}>
                                 <div className="d-flex justify-content-between font-weight-bold">
                                     <span>{t(headerTitle)}</span>
-                                    <span>{ efileNumber ? efileNumber : null }</span>
+                                    <span>{ efileNumber ? decrypt(efileNumber) : null }</span>
                                 </div>
                             </div>
                             <div className="card-body p-2">

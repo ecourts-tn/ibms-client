@@ -160,39 +160,52 @@ const CaseRegistration = () => {
                 <div>
                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                         <li className="nav-item">
-                            <a className="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">{t('basic_details')}</a>
+                            <a className="nav-link active" id="basic-tab" data-toggle="tab" href="#basic" role="tab" aria-controls="basic" aria-selected="true">
+                                {t('basic_details')}
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" id="litigant-tab" data-toggle="tab" href="#litigant" role="tab" aria-controls="litigant" aria-selected="false">{t('litigants')}</a>
+                            <a className="nav-link" id="litigant-tab" data-toggle="tab" href="#litigant" role="tab" aria-controls="litigant" aria-selected="false">
+                                {t('litigants')}
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" id="grounds-tab" data-toggle="tab" href="#grounds" role="tab" aria-controls="grounds" aria-selected="false">{t('ground')}</a>
+                            <a className="nav-link" id="grounds-tab" data-toggle="tab" href="#grounds" role="tab" aria-controls="grounds" aria-selected="false">
+                                {t('ground')}
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" id="previous-tab" data-toggle="tab" href="#previous" role="tab" aria-controls="previous" aria-selected="false">{t('previous_case_details')}</a>
+                            <a className="nav-link" id="previous-tab" data-toggle="tab" href="#previous" role="tab" aria-controls="previous" aria-selected="false">
+                                {t('previous_case_details')}
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" id="advocate-tab" data-toggle="tab" href="#advocate" role="tab" aria-controls="advocate" aria-selected="false">{t('advocate_details')} & {t('documents')}</a>
+                            <a className="nav-link" id="advocate-tab" data-toggle="tab" href="#advocate" role="tab" aria-controls="advocate" aria-selected="false">
+                                {t('advocate_details')} 
+                            </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" id="registration-tab" data-toggle="tab" href="#registration" role="tab" aria-controls="registration" aria-selected="false">{t('registration')}</a>
+                            <a className="nav-link" id="document-tab" data-toggle="tab" href="#document" role="tab" aria-controls="advocate" aria-selected="false">
+                                {t('document')}
+                            </a>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" id="registration-tab" data-toggle="tab" href="#registration" role="tab" aria-controls="registration" aria-selected="false">
+                                {t('registration')}
+                            </a>
                         </li>
                     </ul>
-                    <div className="tab-content" id="myTabContent">
+                    <div className="tab-content mt-4" id="myTabContent">
                         <div className="tab-pane fade show active mt-3" id="basic" role="tabpanel" aria-labelledby="basic-tab">
                             <BasicDetails petition={petition} />
                             <CrimeDetails crime={crime} />
                         </div>
                         <div className="tab-pane fade" id="litigant" role="tabpanel" aria-labelledby="litigant-tab">
-                            <div className="my-3">
-                                <Petitioner litigant={litigant} />
-                                <Respondent litigant={litigant} />
-                            </div>
+                            <Petitioner litigant={litigant} />
+                            <Respondent litigant={litigant} />
                         </div>
                         <div className="tab-pane fade" id="grounds" role="tabpanel" aria-labelledby="grounds-tab">
-                            <div className="my-2">
-                                <Grounds grounds={grounds} />
-                            </div>
+                            <Grounds grounds={grounds} />
                         </div>
                         <div className="tab-pane fade" id="previous" role="tabpanel" aria-labelledby="previous-tab">
 
@@ -202,6 +215,8 @@ const CaseRegistration = () => {
                                 advocates={advocates} 
                                 petition={petition}
                             />
+                        </div>
+                        <div className="tab-pane fade" id="document" role="tabpanel" aria-labelledby="document-tab">
                             <DocumentList 
                                 documents={documents}
                             />

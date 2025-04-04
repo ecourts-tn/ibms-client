@@ -19,6 +19,7 @@ import FIRDetails from 'components/utils/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
 import { MasterContext } from 'contexts/MasterContext';
+import { encrypt, decrypt } from 'components/utils/crypto';
 
 
 const Initial = () => {
@@ -81,7 +82,7 @@ const Initial = () => {
     useEffect(() => {
         const getPetitionDetail = async() => {
             try{
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no: decrypt(efileNumber)}})
                 if(response.status === 200){
                     const petition = response.data.petition
                     setPetition({...petition, 
@@ -307,7 +308,7 @@ const Initial = () => {
             const response = await api.post("case/filing/create/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                setEfileNumber(efile_no)
+                setEfileNumber(encrypt(efile_no))
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
