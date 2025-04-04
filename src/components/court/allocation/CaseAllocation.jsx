@@ -19,6 +19,8 @@ import Loading from 'components/utils/Loading'
 import { CourtContext } from 'contexts/CourtContext'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { AuthContext } from 'contexts/AuthContext'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 
 const CaseAllocation = () => {
@@ -48,6 +50,37 @@ const CaseAllocation = () => {
     }
     const[form, setForm] = useState(initialState)
 
+    const allocation_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+    
+    const allocation_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+    
+    useEffect(() => {
+        const allocation_date = flatpickr(".allocation_date-date-picker", {
+            dateFormat: "d-m-Y",
+            // maxDate: "today",
+            defaultDate: form.allocation_date ? allocation_date_Display(new Date(form.allocation_date)) : '',
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? allocation_date_Backend(selectedDates[0]) : "";
+                setForm({ ...form, allocation_date: formattedDate });
+            },
+        });
+
+        return () => {
+            if (allocation_date && typeof allocation_date.destroy === "function") {
+                allocation_date.destroy();
+            }
+        };
+    }, [form]);
 
     useEffect(() => {
         async function fetchPetitionDetail(){
@@ -132,12 +165,24 @@ const CaseAllocation = () => {
                                 <div className="card m-1">
                                     <div className="card-header" id="headingThree">
                                         <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" href="/#">
-                                            {t('ground')} & {t('previous_case_details')}
+                                            {t('ground')}
                                         </a>
                                     </div>
                                     <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
                                         <div className="card-body p-2">
                                             <Grounds grounds={grounds} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="card m-1">
+                                    <div className="card-header" id="headingThree1">
+                                        <a data-toggle="collapse" data-target="#collapseThree1" aria-expanded="false" aria-controls="collapseThree1" href="/#">
+                                            {t('previous_case_details')}
+                                        </a>
+                                    </div>
+                                    <div id="collapseThree1" className="collapse" aria-labelledby="headingThree1" data-parent="#accordion">
+                                        <div className="card-body p-2">
+                                            {/* <Grounds grounds={grounds} /> */}
                                         </div>
                                     </div>
                                 </div>
@@ -201,9 +246,15 @@ const CaseAllocation = () => {
                                             <input 
                                                 type="date" 
                                                 name="allocation_date"
-                                                value={form.allocation_date}
-                                                className="form-control" 
+                                                value={form.allocation_date ? form.allocation_date : ''}
+                                                className="form-control allocation_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}" 
+                                                placeholder="DD-MM-YYYY"
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    border: '1px solid #ccc', 
+                                                    padding: '8px',            
+                                                }}
                                             />
                                         </div>
                                     </div>

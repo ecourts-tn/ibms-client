@@ -9,6 +9,8 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { MasterContext } from 'contexts/MasterContext'
 import { RequiredField } from 'utils'
 import Loading from 'components/utils/Loading'
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";
 
 const JudgeForm = () => {
 
@@ -56,8 +58,70 @@ const JudgeForm = () => {
         });
     }, [form.judiciary, form.state]);
 
+    const joining_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+    
+    const joining_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+    
+    useEffect(() => {
+        const joining_date = flatpickr(".joining_date-date-picker", {
+            dateFormat: "d-m-Y",
+            maxDate: "today",
+            defaultDate: form.joining_date ? joining_date_Display(new Date(form.joining_date)) : '',
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? joining_date_Backend(selectedDates[0]) : "";
+                setForm({ ...form, joining_date: formattedDate });
+            },
+        });
 
+        return () => {
+            if (joining_date && typeof joining_date.destroy === "function") {
+                joining_date.destroy();
+            }
+        };
+    }, [form]);
 
+    const releiving_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+    
+    const releiving_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
+    
+    useEffect(() => {
+        const releiving_date = flatpickr(".releiving_date-date-picker", {
+            dateFormat: "d-m-Y",
+            // maxDate: "today",
+            defaultDate: form.releiving_date ? releiving_date_Display(new Date(form.releiving_date)) : '',
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? releiving_date_Backend(selectedDates[0]) : "";
+                setForm({ ...form, releiving_date: formattedDate });
+            },
+        });
+
+        return () => {
+            if (releiving_date && typeof releiving_date.destroy === "function") {
+                releiving_date.destroy();
+            }
+        };
+    }, [form]);
+    
     const handleSubmit =  async(e) => {
         e.preventDefault();
         try{
@@ -246,13 +310,19 @@ const JudgeForm = () => {
                                     </div>
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
-                                        <div className="col-sm-8">
+                                        <div className="col-sm-3">
                                             <input 
                                                 type="date" 
-                                                className={`form-control ${errors.joining_date ? 'is-invalid' : ''}`} 
+                                                className={`form-control joining_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}`} 
                                                 name="joining_date"
-                                                value={form.joining_date}
+                                                value={form.joining_date ? form.joining_date : ''}
+                                                placeholder="DD-MM-YYYY"
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    border: '1px solid #ccc', 
+                                                    padding: '8px',            
+                                                }}
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.joining_date }
@@ -261,13 +331,19 @@ const JudgeForm = () => {
                                     </div>
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">Releiving Date</label>
-                                        <div className="col-sm-8">
+                                        <div className="col-sm-3">
                                             <input 
                                                 type="date" 
-                                                className={`form-control ${errors.releiving_date ? 'is-invalid' : ''}`}
+                                                className={`form-control releiving_date-date-picker ${errors.releiving_date ? 'is-invalid' : ''}`}
                                                 name="releiving_date"
-                                                value={form.releiving_date}
+                                                value={form.releiving_date ? form.joining_date : ''}
+                                                placeholder="DD-MM-YYYY"
                                                 onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    border: '1px solid #ccc', 
+                                                    padding: '8px',            
+                                                }}
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.releiving_date }

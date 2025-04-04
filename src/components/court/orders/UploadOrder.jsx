@@ -31,6 +31,7 @@ const UploadOrder = () => {
     const [loading, setLoading] = useState(false);
     const [showYearDropdown, setShowYearDropdown] = useState(false); // State to control dropdown visibility
     const currentYear = new Date().getFullYear(); // Get the current year
+    const [showDocumentUpload, setShowDocumentUpload] = useState(false);
 
     const validationSchema = Yup.object({
         case_type: Yup.string().required(),
@@ -58,45 +59,61 @@ const UploadOrder = () => {
     // Function to handle case_year input (typing validation)
     const handleYearChange = (e) => {
         const value = e.target.value;
+        
         // Allow only numbers and limit to 4 digits
         if (/^[0-9]*$/.test(value) && value.length <= 4) {
             setForm({ ...form, case_year: value });
-
-            // Check if the year entered is a future year and display an error message
+    
+            if (value.length === 4) {
+                // If user types a full year, hide dropdown unless the year is invalid
+                if (parseInt(value) >= 1900 && parseInt(value) <= currentYear) {
+                    setShowYearDropdown(false);
+                } else {
+                    setShowYearDropdown(true);
+                }
+            } else {
+                setShowYearDropdown(true);
+            }
+    
+            // Display error for future years
             if (value && parseInt(value) > currentYear) {
                 setErrors((prevErrors) => ({
                     ...prevErrors,
-                    case_year: `Year cannot be greater than ${currentYear}`, // Error message for future year
+                    case_year: `Year cannot be greater than ${currentYear}`,
                 }));
             } else {
                 setErrors((prevErrors) => {
-                    const { case_year, ...rest } = prevErrors; // Remove the error if year is valid
+                    const { case_year, ...rest } = prevErrors;
                     return rest;
                 });
             }
-
-            setShowYearDropdown(true); // Show the dropdown while typing
         }
     };
-
-    // Function to handle selecting a year from the dropdown
+    
     const handleYearSelect = (year) => {
         setForm({ ...form, case_year: year });
-        setShowYearDropdown(false); // Hide the dropdown after selection
+        setShowYearDropdown(false); // Hide dropdown after selection
     };
-
-    // Filter the years based on the input value
+    
     const filteredYears = [];
     for (let year = currentYear; year >= 1900; year--) {
         filteredYears.push(year);
     }
 
+// Ensure filtering only happens when `form.case_year` is not empty
+const filteredResults = form.case_year
+    ? filteredYears.filter((y) =>
+          y.toString().startsWith(form.case_year)
+      )
+    : filteredYears;
+    
     const handleSearch = async () => {
         try {
             setLoading(true);
             const response = await api.post(``, form);
             if (response.status === 200) {
                 setOrders(response.data);
+                setShowDocumentUpload(true);
             }
         } catch (error) {
             console.log(error);
@@ -209,7 +226,7 @@ const UploadOrder = () => {
                                             >
                                                 <option value="">{t('alerts.select_case_type')}</option>
                                                 {casetypes.map((t, index) => (
-                                                    <option key={index} value={t.type_code}>
+                                                    <option key={index} value={t.id}>
                                                         {language === 'ta' ? t.type_lfull_form : t.type_full_form}
                                                     </option>
                                                 ))}
@@ -226,6 +243,7 @@ const UploadOrder = () => {
                                                 name="case_number"
                                                 value={form.case_number}
                                                 onChange={handleCaseNumberChange}
+                                                placeholder="Case Number"
                                             />
                                             <div className="invalid-feedback">{errors.case_number}</div>
                                         </div>
@@ -240,15 +258,16 @@ const UploadOrder = () => {
                                                 value={form.case_year}
                                                 onChange={handleYearChange}
                                                 placeholder="Enter Year"
+                                                autoComplete="off"
                                             />
                                             <div className="invalid-feedback">{errors.case_year}</div>
-                                            {showYearDropdown && form.case_year && (
-                                                <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc' }}>
+                                            {showYearDropdown && filteredResults.length > 0 && (
+                                                <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc',cursor: 'pointer', }}>
                                                     {filteredYears.map((year) => (
                                                         <li
                                                             key={year}
                                                             className="list-group-item"
-                                                            style={{ cursor: 'pointer' }}
+                                                            // style={{ cursor: 'pointer' }}
                                                             onClick={() => handleYearSelect(year)}
                                                         >
                                                             {year}
@@ -259,10 +278,15 @@ const UploadOrder = () => {
                                         </div>
                                     </div>
                                     <div className="form-group row">
-                                        <Button variant="contained" color="primary" type="button" onClick={handleSearch}>
-                                            {t('search')}
-                                        </Button>
+                                        <div className="col-sm-4"></div> {/* Empty space to align with input */}
+                                        <div className="col-sm-8">
+                                            <Button variant="contained" color="primary" type="button" onClick={handleSearch}>
+                                                {t('search')}
+                                            </Button>
+                                        </div>
                                     </div>
+                                    {/* {showDocumentUpload && ( */}
+                                    <>
                                     <div className="form-group row">
                                         <label htmlFor="" className="col-sm-4">Select document</label>
                                         <div className="col-md-8">
@@ -276,10 +300,15 @@ const UploadOrder = () => {
                                         </div>
                                     </div>
                                     <div className="form-group row">
-                                        <Button variant="contained" color="success" type="submit">
-                                            {t('submit')}
-                                        </Button>
+                                        <div className="col-sm-4"></div> {/* Empty space to align with input */}
+                                        <div className="col-sm-8">
+                                            <Button variant="contained" color="success" type="submit">
+                                                {t('submit')}
+                                            </Button>
+                                        </div>
                                     </div>
+                                    </>
+                                    {/* )} */}
                                 </form>
                             </div>
                         </div>
