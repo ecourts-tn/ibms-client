@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { submittedPetition } from 'services/petitionService'
 import Loading from 'components/utils/Loading'
+import PdfDownloadButton from 'components/utils/PdfDownloadButton'
+import { Button } from '@mui/material'
 
 const SubmittedList = () => {
 
@@ -242,6 +244,9 @@ const SubmittedList = () => {
                                     </td>
                                     <td>
                                         <Link to="/filing/generate/pdf" state={{efile_no:item.petition.efile_number}}>{t('download')}</Link>
+                                        {/* <PdfDownloadButton
+                                            state={{efile_no:item.petition.efile_number}}
+                                        /> */}
                                     </td>
                                 </tr>
                                 ))}

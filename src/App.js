@@ -13,6 +13,7 @@ import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
 import { FilingRoutes } from 'routes/filingRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
+import EncryptionDemo from 'components/EncryptionDemo';
 
 function App() {
 
@@ -57,6 +58,7 @@ function App() {
               <Route path='registration' element={<DepartmentRegistration/>}>
 
               </Route>
+              <Route path="enc" element={<EncryptionDemo />} />
             </Routes>
           </AppProvider>
         </AuthProvider>

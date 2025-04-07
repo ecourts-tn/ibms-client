@@ -202,13 +202,13 @@ const CaseScrutiny = () => {
                             <div className="card-body p-2">
                                 <Petitioner litigant={litigant} />
                                 <Respondent litigant={litigant} />
-                                </div>
+                            </div>
                         </div>
                     </div>
                     <div className="card m-1">
                         <div className="card-header" id="headingThree">
                             <a data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" href="/#">
-                                {t('ground')} & {t('previous_case_details')}
+                                {t('ground')}
                             </a>
                         </div>
                         <div id="collapseThree" className="collapse" aria-labelledby="headingThree" data-parent="#accordion">
@@ -220,26 +220,49 @@ const CaseScrutiny = () => {
                     <div className="card m-1">
                         <div className="card-header" id="headingFour">
                             <a data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" href="/#">
-                                {t('advocate_details')} & {t('documents')}
+                                {t('previous_case_details')}
                             </a>
                         </div>
                         <div id="collapseFour" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
                             <div className="card-body p-2">
-                                <AdvocateDetails 
-                                    advocates={advocates} 
-                                    petition={petition}
-                                />
-                                <DocumentList documents={documents} />
+                                
                             </div>
                         </div>
                     </div>
                     <div className="card m-1">
                         <div className="card-header" id="headingFive">
                             <a data-toggle="collapse" data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive" href="/#">
+                                {t('advocate_details')}
+                            </a>
+                        </div>
+                        <div id="collapseFive" className="collapse" aria-labelledby="headingFive" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <AdvocateDetails 
+                                    advocates={advocates} 
+                                    petition={petition}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingSix">
+                            <a data-toggle="collapse" data-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix" href="/#">
+                                {t('documents')}
+                            </a>
+                        </div>
+                        <div id="collapseSix" className="collapse" aria-labelledby="headingSix" data-parent="#accordion">
+                            <div className="card-body p-2">
+                                <DocumentList documents={documents} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="card m-1">
+                        <div className="card-header" id="headingSeven">
+                            <a data-toggle="collapse" data-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven" href="/#">
                                 {t('payment_details')}
                             </a>
                         </div>
-                        <div id="collapseFive" className="collapse" aria-labelledby="headingFour" data-parent="#accordion">
+                        <div id="collapseSeven" className="collapse" aria-labelledby="headingSeven" data-parent="#accordion">
                             <div className="card-body p-2">
                                 <FeesDetails fees={fees}/>
                             </div>

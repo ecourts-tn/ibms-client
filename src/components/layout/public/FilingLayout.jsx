@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import Button from "react-bootstrap/Button";
 import { StepContext } from "contexts/StepContext";
 import { BaseContext } from "contexts/BaseContext";
-import { decryptData, encryptData } from "utils";
+import { decrypt } from "components/utils/crypto";
 
 
 const FilingLayout = ({routes, title}) => {
@@ -18,12 +18,6 @@ const FilingLayout = ({routes, title}) => {
     const [nextDisabled, setNextDisabled] = useState(true);
     const {efileNumber} = useContext(BaseContext)
 
-    // const originalData = "Hello World"; // Test data
-    const encryptedData = encryptData(efileNumber);
-    console.log("Encrypted eFileNumber:", encryptedData);
-
-    const decryptedData = decryptData(encryptedData);
-    console.log("Decrypted eFileNumber:", decryptedData);
 
     // Extract base path from the current location or default to "bail"
     const pathSegments = location.pathname.split('/');
@@ -111,7 +105,7 @@ const FilingLayout = ({routes, title}) => {
                             <div className="card-header" style={{ backgroundColor: "#076280", color: "#FAFAFA", borderRadius: 0 }}>
                                 <div className="d-flex justify-content-between font-weight-bold">
                                     <span>{t(headerTitle)}</span>
-                                    <span>{ efileNumber ? decryptData(efileNumber) : null }</span>
+                                    <span>{ efileNumber ? decrypt(efileNumber) : null }</span>
                                 </div>
                             </div>
                             <div className="card-body p-2">

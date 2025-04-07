@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import Loading from 'components/utils/Loading'
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next'; 
+import { formatDate } from 'utils'
 
 const RegistrationPendingList = () => {
     const[cases, setCases] = useState([])
@@ -82,7 +83,41 @@ const RegistrationPendingList = () => {
                                     </select>
                                 </div>
                             </div>
-                            <ul className="todo-list" data-widget="todo-list">
+                            <table className="table table-bordered table-striped">
+                                <thead className="bg-secondary">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{t('filing_number')}</th>
+                                        <th>{t('efile_number')}</th>
+                                        <th>{t('filing_date')}</th>
+                                        <th>{t('litigants')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {currentCases.map((c, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>
+                                            <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>
+                                                {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
+                                                    `${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`
+                                                ) : null}
+                                            </Link>
+                                        </td>
+                                        <td>{c.petition.efile_number}</td>
+                                        <td>
+                                            {formatDate(c.petition?.efile_date)}
+                                        </td>
+                                        <td>
+                                            { c.petition.pet_name }
+                                                <span className="mx-2 text-danger">Vs</span>
+                                            { c.petition.res_name }
+                                        </td>
+                                    </tr>    
+                                    ))}
+                                </tbody>
+                            </table>
+                            {/* <ul className="todo-list" data-widget="todo-list">
                                 { currentCases.map((c, index) => (
                                     <li key={index}>
                                         <span className="handle">
@@ -93,9 +128,15 @@ const RegistrationPendingList = () => {
                                             <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
                                             <label htmlFor="todoCheck1" />
                                         </div>
-                                        
                                         <span className="text mr-3">
-                                            <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>{ c.petition.efile_number }</Link>
+                                            <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>
+                                                {c.petition?.filing_type?.type_name && c.petition?.filing_number && c.petition?.filing_year ? (
+                                                    `${c.petition.filing_type.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`
+                                                ) : null}
+                                            </Link>
+                                            <span className="text-success ml-2">
+                                                {`(${c.petition.efile_number})`}
+                                            </span>
                                         </span>
                                         { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2">{index+1}. {l.litigant_name}</span>
@@ -111,7 +152,7 @@ const RegistrationPendingList = () => {
                                         </div>
                                     </li>
                                 ))}
-                            </ul>
+                            </ul> */}
                         </div>
                         <div className="card-footer">
                             {/* Pagination Controls */}
