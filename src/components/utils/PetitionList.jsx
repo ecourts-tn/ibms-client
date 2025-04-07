@@ -162,24 +162,9 @@ const PetitionList = ({ cases, title, url }) => {
                             </div>
 
                             <div>
-                                {c.litigants
-                                    .filter((l) => parseInt(l.litigant_type) === 1)
-                                    .map((l, index) => (
-                                        <span key={index}>
-                                            {index + 1}. {l.litigant_name}
-                                        </span>
-                                    ))}
+                                {c.petition?.pet_name}
                                 <span className="text-danger mx-2">Vs</span>
-                                {c.litigants
-                                    .filter((l) => parseInt(l.litigant_type) === 2)
-                                    .map((l, index) => (
-                                        <span key={index}>
-                                            {index + 1}. {l.litigant_name}{' '}
-                                            {language === 'ta'
-                                                ? l.designation?.designation_lname
-                                                : l.designation?.designation_name}
-                                        </span>
-                                    ))}
+                                {c.petition?.res_name}
                             </div>
                         </div>
                     );

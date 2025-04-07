@@ -12,13 +12,13 @@ const Header = () => {
   const { isAuth, user, logout } = useContext(AuthContext); // Consume AuthContext
   const navigate = useNavigate();
   const { t } = useTranslation();
-
   const handleHomeClick = (event) => {
     if (isAuth) {
       event.preventDefault(); // Prevent navigation if authenticated
     }
   };
 
+  console.log("User authenticated:", isAuth)
 
   const handleLogout = async () => {
     try {

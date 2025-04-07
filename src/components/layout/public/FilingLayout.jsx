@@ -1,11 +1,10 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import { PrivateRoute } from "hooks/PrivateRoute";
 import { Outlet, useLocation, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Button from "react-bootstrap/Button";
 import { StepContext } from "contexts/StepContext";
 import { BaseContext } from "contexts/BaseContext";
-import { decrypt } from "components/utils/crypto";
 
 
 const FilingLayout = ({routes, title}) => {
@@ -16,12 +15,27 @@ const FilingLayout = ({routes, title}) => {
     const location = useLocation();
     const { t } = useTranslation();
     const [nextDisabled, setNextDisabled] = useState(true);
-    const {efileNumber} = useContext(BaseContext)
-
+    const {efileNumber, clearEfileNumber} = useContext(BaseContext)
 
     // Extract base path from the current location or default to "bail"
     const pathSegments = location.pathname.split('/');
     const basePath = pathSegments[2] || 'bail';
+
+    console.log("base path", basePath)
+
+     // ⏪ Store previous basePath
+    const prevBasePath = useRef(basePath);
+
+    // 🔄 Clear efileNumber if basePath changes
+    useEffect(() => {
+        if (prevBasePath.current !== basePath) {
+        console.log("Base path changed. Clearing efileNumber...");
+        console.log(efileNumber)
+        clearEfileNumber();
+        console.log(efileNumber)
+        prevBasePath.current = basePath;
+        }
+    }, [basePath]);
 
     // Find the current step index
     const currentIndex = routes.findIndex((step) =>
@@ -105,7 +119,7 @@ const FilingLayout = ({routes, title}) => {
                             <div className="card-header" style={{ backgroundColor: "#076280", color: "#FAFAFA", borderRadius: 0 }}>
                                 <div className="d-flex justify-content-between font-weight-bold">
                                     <span>{t(headerTitle)}</span>
-                                    <span>{ efileNumber ? decrypt(efileNumber) : null }</span>
+                                    <span>{ efileNumber }</span>
                                 </div>
                             </div>
                             <div className="card-body p-2">

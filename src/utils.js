@@ -62,63 +62,13 @@ export const encode_efile_number = (pk) => {
 
 export const decode_file_number = (encodedPk) => {
     return atob(encodedPk);
+};
+
+export const getDistrictName = (district, lang) => {
+    if (!district) return;
+    return lang === 'ta' ? district.district_lname || '' : district.district_name || '';
   };
+  
 
 
-  const SECRET_KEY = CryptoJS.enc.Hex.parse("7a8b9c10d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1");
-  const IV = CryptoJS.enc.Hex.parse("1234567890abcdef1234567890abcdef");
-
-  console.log("🔑 SECRET_KEY:", SECRET_KEY.toString());
-console.log("🔑 IV:", IV.toString());
-
-// 🔹 AES-256 Encryption Function
-export const encryptData = (data) => {
-    if (!data) {
-        console.error("❌ Encryption failed: Data is empty or undefined");
-        return "";
-    }
-
-    const jsonData = typeof data === "object" ? JSON.stringify(data) : data;
-
-    try {
-        const encrypted = CryptoJS.AES.encrypt(jsonData, SECRET_KEY, {
-            iv: IV,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-        }).toString();
-
-        console.log("🔐 Successfully Encrypted Data:", encrypted);
-        return encrypted;
-    } catch (e) {
-        console.error("❌ Encryption Error:", e);
-        return "";
-    }
-};
-
-
-// 🔹 AES-256 Decryption Function
-export const decryptData = (cipherText) => {
-    if (!cipherText || typeof cipherText !== "string") {
-        console.error("❌ Decryption failed: Ciphertext is invalid or empty");
-        return "";
-    }
-
-    console.log("🛠️ Ciphertext Before Decryption:", cipherText);
-
-    try {
-        const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY, {
-            iv: IV,
-            mode: CryptoJS.mode.CBC,
-            padding: CryptoJS.pad.Pkcs7
-        });
-
-        const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-        console.log("🔍 Raw Decrypted Data:", decryptedData);
-
-        return decryptedData ? JSON.parse(decryptedData) : decryptedData;
-    } catch (e) {
-        console.error("❌ Decryption failed:", e);
-        return "";
-    }
-};
 

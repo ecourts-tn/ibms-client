@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
     // Fetch user info
     try {
-      const response = await api.post(`auth/user/info/`);
+      const response = await api.get(`auth/user/info/`);
       if (response.status === 200) {
         console.log("User info fetched successfully:", response.data);
         setUser(response.data);

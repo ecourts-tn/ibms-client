@@ -21,46 +21,42 @@ const Home = () => {
         }
     },[isAuth])
 
-    console.log(document.cookie)
-
-    return (
-        <>
-            <Container fluid className="px-5" style={{minHeight:'600px'}}>
-                <Row className='pt-4'>
-                    <Col md={3} className="">
-                        <ToastContainer />
-                        { !isAuth ? <Login /> : <Login />}  
-                    </Col>
-                    <Col md={8}>
-                        <div className="ml-md-5">
-                            <h2 className="section-heading">{t('title')}</h2>
-                            <p className="text-justify">{t('description')}</p>
-                            <strong>{t('benefits')}</strong> 
-                            <ol style={{lineHeight: '1.5rem'}} className="bebefits">
-                                <li><strong>{t('benefit_1')}</strong>
-                                    <ul>
-                                        <li><strong>{t('benefit_1_sub_1')}</strong>{t('benefit_1_sub_1_desc')}</li>
-                                        <li><strong>{t('benefit_1_sub_2')}</strong>{t('benefit_1_sub_2_desc')}</li>
-                                    </ul>
-                                </li>
-                                <li><strong>{t('benefit_2')}</strong>
-                                    <ul>
-                                        <li><strong>{t('benefit_2_sub_1')}</strong>{t('benefit_2_sub_1_desc')}</li>
-                                        <li><strong>{t('benefit_2_sub_2')}</strong>{t('benefit_2_sub_2_desc')}</li>
-                                        <li><strong>{t('benefit_2_sub_3')}</strong>{t('benefit_2_sub_3_desc')}</li>
-                                    </ul>
-                                </li>
-                                <li><strong>{t('benefit_3')}</strong>
-                                    <ul>
-                                        <li><strong>{t('benefit_3_sub_1')}</strong>{t('benefit_3_sub_1_desc')}</li>
-                                    </ul>
-                                </li>
-                            </ol>
-                        </div>
-                    </Col>
-                </Row>
-            </Container>
-        </>
+     return (
+        <Container fluid className="px-5" style={{minHeight:'600px'}}>
+            <Row className='pt-4'>
+                <Col md={3} className="">
+                    <ToastContainer />
+                    { !isAuth ? <Login /> : <Login />}  
+                </Col>
+                <Col md={8}>
+                    <div className="ml-md-5">
+                        <h2 className="section-heading">{t('title')}</h2>
+                        <p className="text-justify">{t('description')}</p>
+                        <strong>{t('benefits')}</strong> 
+                        <ol style={{lineHeight: '1.5rem'}} className="bebefits">
+                            <li><strong>{t('benefit_1')}</strong>
+                                <ul>
+                                    <li><strong>{t('benefit_1_sub_1')}</strong>{t('benefit_1_sub_1_desc')}</li>
+                                    <li><strong>{t('benefit_1_sub_2')}</strong>{t('benefit_1_sub_2_desc')}</li>
+                                </ul>
+                            </li>
+                            <li><strong>{t('benefit_2')}</strong>
+                                <ul>
+                                    <li><strong>{t('benefit_2_sub_1')}</strong>{t('benefit_2_sub_1_desc')}</li>
+                                    <li><strong>{t('benefit_2_sub_2')}</strong>{t('benefit_2_sub_2_desc')}</li>
+                                    <li><strong>{t('benefit_2_sub_3')}</strong>{t('benefit_2_sub_3_desc')}</li>
+                                </ul>
+                            </li>
+                            <li><strong>{t('benefit_3')}</strong>
+                                <ul>
+                                    <li><strong>{t('benefit_3_sub_1')}</strong>{t('benefit_3_sub_1_desc')}</li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </div>
+                </Col>
+            </Row>
+        </Container>
     )
 }
 

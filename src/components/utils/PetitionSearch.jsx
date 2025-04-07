@@ -14,12 +14,13 @@ const PetitionSearch = ({cases, mainNumber, setMainNumber}) => {
 
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    // const {seats} = useContext(SeatContext)
-    // const {casetypes} = useContext(CaseTypeContext)
-    const {masters: {states, districts, seats, casetypes}} = useContext(MasterContext)
+    const {masters: {
+        states, 
+        districts, 
+        seats, 
+        casetypes
+    }} = useContext(MasterContext)
 
     const [searchType, setSearchType] = useState(1)
     const [loading, setLoading] = useState(false)

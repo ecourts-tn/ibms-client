@@ -1,6 +1,6 @@
 import api from 'api';
 import * as Yup from 'yup'
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
 import InitialInput from '../common/InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
@@ -8,7 +8,6 @@ import PetitionSearch from 'components/utils/PetitionSearch';
 import ConditionDetail from './ConditionDetail';
 import PassportDetail from './PassportDetail';
 import PropertyDetail from './PropertyDetail';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
