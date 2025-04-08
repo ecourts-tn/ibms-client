@@ -33,7 +33,7 @@ const DischargeSurety = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/submitted/`)
+                const response = await api.get(`case/filing/approved/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }

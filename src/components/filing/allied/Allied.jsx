@@ -81,7 +81,7 @@ const Allied = () => {
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get(`case/filing/pending/`)
+                const response = await api.get(`case/filing/approved/`)
                 if(response.status === 200){
                     setCases(response.data)
                 }

@@ -7,9 +7,7 @@ import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { submittedPetition } from 'services/petitionService'
 import Loading from 'components/utils/Loading'
-import PdfDownloadButton from 'components/utils/PdfDownloadButton'
 import ListFilter from 'components/utils/ListFilter'
 import Pagination from 'components/utils/Pagination'
 
@@ -21,16 +19,11 @@ const SubmittedList = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const[selectedDocument, setSelectedDocument] = useState(null)
-    const [page, setPage] = useState(2);
-    const [pageSize, setPageSize] = useState(2);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [count, setCount] = useState(0);
     const [search, setSearch] = useState("");
         
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10) // Default items per page
-    const [totalItems, setTotalItems] = useState(0)
-
 
     const handleShow = (document) => {
         setSelectedDocument(document)
@@ -42,6 +35,7 @@ const SubmittedList = () => {
     useEffect(() => {
         const fetchPetition = async() => {
             try{
+                setLoading(true)
                 const response = await api.get(`case/filing/submitted/`, {
                     params: {
                         page,
@@ -51,7 +45,6 @@ const SubmittedList = () => {
                 })
                 setCases(response.data.results)
                 setCount(response.data.count);
-                setTotalItems(response.length) 
             }catch(error){
                 console.log(error)
             }finally{
@@ -99,6 +92,7 @@ const SubmittedList = () => {
                             setSearch={setSearch}
                             pageSize={pageSize}
                             setPageSize={setPageSize}
+                            count={count}
                         />
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
@@ -205,27 +199,6 @@ const SubmittedList = () => {
                                 ))}
                             </tbody>
                         </table>
-                        {/* Pagination Controls */}
-                        {/* <div className="d-flex justify-content-between mt-3">
-                            <div className="pagination">
-                                <ul className="pagination">
-                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
-                                    </li>
-                                    {pageNumbers.map(number => (
-                                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                            <button className="page-link" onClick={() => paginate(number)}>{number}</button>
-                                        </li>
-                                    ))}
-                                    <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="page-info">
-                                <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredPetitions.length} {t('entries')}</span>
-                            </div>
-                        </div> */}
                         <Pagination 
                             page={page}
                             setPage={setPage}

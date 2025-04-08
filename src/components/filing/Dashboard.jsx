@@ -48,75 +48,68 @@ const Dashboard = () => {
     },[])
 
     return (
-        <>
-            <ToastContainer />
-            <div className="container-fluid" style={{minHeight:'600px'}}>
-                <div className="container-fluid">
-                    <div className="row mb-2">
-                        <div className="col-sm-12">
-                            <nav aria-label="breadcrumb" className="mt-2 mb-1">
-                                <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><a href="#/">{t('home')}</a></li>
-                                    <li className="breadcrumb-item active"  aria-current="page">{t('dashboard')}</li>
-                                </ol>
-                            </nav>
-                        </div>
+        <div className="container-fluid">
+            <ToastContainer /> { loading && <Loading />}
+            <div className="container-fluid">
+                <div className="row mb-2">
+                    <div className="col-sm-12">
+                        <nav aria-label="breadcrumb" className="mt-2 mb-1">
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item"><a href="#/">{t('home')}</a></li>
+                                <li className="breadcrumb-item active"  aria-current="page">{t('dashboard')}</li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
-                { loading && <Loading />}
-                <section className="content">
-                    <div className="container-fluid">
-                        <div className="row">
-                            <DashboardCard 
-                                color={'bg-info'}
-                                count={count.draft}
-                                title={t('draft_petition')}
-                                icon={'ion-bag'}
-                                url={`/filing/draft`}
-                            />
-                            <DashboardCard 
-                                color={'bg-success'}
-                                count={count.submitted}
-                                title={t('submitted_petition')}
-                                icon={'ion-stats-bars'}
-                                url={`/filing/submitted`}
-                            />
-                            <DashboardCard 
-                                color={'bg-warning'}
-                                count={count.approved}
-                                title={t('approved_petition')}
-                                icon={'ion-person-add'}
-                                url={`/filing/approved`}
-                            />
-                            <DashboardCard 
-                                color={'bg-danger'}
-                                count={count.returned}
-                                title={t('returned_petition')}
-                                icon={'ion-pie-graph'}
-                                url={`/filing/returned`}
-                            />
-                        </div>
-                        <div className="row">
-                            <div className="col-md-5">
-                                {/* <DynamicChart /> */}
-                                <Calendar 
-                                    upcoming={calendar}
-                                />
-                            </div>
-                            <div className="col-md-7">
-                                <PetitionList 
-                                    cases={cases} 
-                                    title={t('my_petition')}
-                                    url={`/filing/detail/`}
-                                />
-                            </div>
-                            <div className="col-md-12">
-                            </div>
-                        </div>
+                <div className="row">
+                    <DashboardCard 
+                        color={'bg-info'}
+                        count={count.draft}
+                        title={t('draft_petition')}
+                        icon={'ion-bag'}
+                        url={`/filing/draft`}
+                    />
+                    <DashboardCard 
+                        color={'bg-success'}
+                        count={count.submitted}
+                        title={t('submitted_petition')}
+                        icon={'ion-stats-bars'}
+                        url={`/filing/submitted`}
+                    />
+                    <DashboardCard 
+                        color={'bg-warning'}
+                        count={count.approved}
+                        title={t('approved_petition')}
+                        icon={'ion-person-add'}
+                        url={`/filing/approved`}
+                    />
+                    <DashboardCard 
+                        color={'bg-danger'}
+                        count={count.returned}
+                        title={t('returned_petition')}
+                        icon={'ion-pie-graph'}
+                        url={`/filing/returned`}
+                    />
+                </div>
+                <div className="row">
+                    <div className="col-md-5">
+                        {/* <DynamicChart /> */}
+                        <Calendar 
+                            upcoming={calendar}
+                        />
                     </div>
-                </section>
+                    <div className="col-md-7">
+                        <PetitionList 
+                            cases={cases} 
+                            title={t('my_petition')}
+                            url={`/filing/detail/`}
+                        />
+                    </div>
+                    <div className="col-md-12">
+                    </div>
+                </div>
             </div>
-        </>
+        </div>
     )
 }
 

@@ -12,6 +12,8 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import Loading from 'components/utils/Loading'
 import { pendingPetition } from 'services/petitionService'
 import { BaseContext } from 'contexts/BaseContext'
+import ListFilter from 'components/utils/ListFilter'
+import Pagination from 'components/utils/Pagination'
 
 
 const DraftList = () => {
@@ -30,9 +32,10 @@ const DraftList = () => {
     const {setEfileNumber, clearEfileNumber} = useContext(BaseContext)
     
     // Pagination state
-    const [currentPage, setCurrentPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10) // Default items per page
-    const [totalItems, setTotalItems] = useState(0)
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState("");
     
     const handleShow = (document) => {
         console.log(document)
@@ -42,58 +45,30 @@ const DraftList = () => {
     const handleClose = () => {
         setSelectedDocument(null)
     }
-    
+
     useEffect(() => {
         const fetchPetition = async() => {
             try{
                 setLoading(true)
-                const response = await pendingPetition()
-                // if (response.status === 200) {
-                    setCases(response)
-                    setTotalItems(response.length) 
-                // }
+                const response = await api.get(`case/filing/pending/`, {
+                    params: {
+                        page,
+                        page_size: pageSize,
+                        search,
+                      },
+                })
+                setCases(response.data.results)
+                setCount(response.data.count);
             }catch(error){
                 console.log(error)
             }finally{
                 setLoading(false)
             }
         }
-        fetchPetition();
-    }, [])
+        fetchPetition()
+    }, [page, pageSize, search])
 
-    // Filter petitions based on search term (efile_number or crime_number/year)
-    const filteredPetitions = cases.filter(item => {
-        const efileMatch = item.petition.efile_number.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        // Concatenate crime number and year into a single string for search
-        const crimeNumberYear = `${item.crime?.fir_number}/${item.crime?.fir_year}`;
-        const crimeMatch = crimeNumberYear.toLowerCase().includes(searchTerm.toLowerCase());
 
-        const caseNumber = `${item.petition.reg_type?.type_name}/${item.petition.reg_number}/${item.petition.reg_year}` ;
-        const caseMatch = caseNumber.toLowerCase().includes(searchTerm.toLowerCase());
-
-        return efileMatch || crimeMatch || caseMatch;
-    })
-
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentPetitions = filteredPetitions.slice(indexOfFirstItem, indexOfLastItem)
-
-    // Handle page change
-    const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-    // Handle items per page change
-    const handleItemsPerPageChange = (event) => {
-        setItemsPerPage(Number(event.target.value)) // Update items per page
-        setCurrentPage(1) // Reset to the first page whenever the items per page change
-    }
-
-    // Calculate total number of pages
-    const pageNumbers = []
-    for (let i = 1; i <= Math.ceil(filteredPetitions.length / itemsPerPage); i++) {
-        pageNumbers.push(i)
-    }
 
     const handleEdit = (petition) => {
         if (!window.confirm("Are you sure you want to edit the petition?")) {
@@ -143,31 +118,12 @@ const DraftList = () => {
 
     return (
         <React.Fragment>
-            <ToastContainer />
-            <Modal 
-                    show={showError} 
-                    onHide={handleErrorClose} 
-                    backdrop="static"
-                    keyboard={false}
-                    size="xl"
-                >
-                    <Modal.Header closeButton>
-                        <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <ul>
-                        { errors.map((error, index) => (
-                            <li key={index} className='text-danger'><strong>{error}</strong></li>
-                        ))}
-                        </ul>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="contained" onClick={handleErrorClose}>
-                            {t('close')}
-                        </Button>
-                    </Modal.Footer>
-            </Modal>
-            {loading && <Loading />}
+            <ToastContainer />  {loading && <Loading />}
+            <ValidateSubmission 
+                showError={showError}
+                handleErrorClose={handleErrorClose}
+                errors={errors}
+            />
             { selectedDocument && (
                 <ViewDocument 
                     url={`${config.docUrl}${selectedDocument.document}`}
@@ -187,56 +143,32 @@ const DraftList = () => {
                             </ol>
                         </nav>
                         <h3 className='pb-2'><strong>{t('draft_petition')}</strong></h3>
-                        <div className="row mb-3">
-                            <label className="mr-2">{t('Search')}:</label>
-                            <div className="col-md-3">
-                                {/* Search Box */}
-                                <div className="d-flex align-items-center">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder={t('Search Case or Efile or Crime number')}
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)} // Handle search input change
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="col-md-1">
-                                <div className="d-flex align-items-center">
-                                    <label className="mr-2">{t('Filter')}:</label>
-                                    <select 
-                                        className="form-control" 
-                                        value={itemsPerPage} 
-                                        onChange={handleItemsPerPageChange}
-                                    >
-                                        <option value={10}>10</option>
-                                        <option value={15}>15</option>
-                                        <option value={25}>25</option>
-                                        <option value={50}>50</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        <ListFilter 
+                            search={search}
+                            setSearch={setSearch}
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            count={count}
+                        />
                         <div>
                             {/* Desktop Table View */}
                             <div className="d-none d-md-block">
                                 <table className="table table-striped table-bordered">
-                                <thead className="bg-info">
-                                    <tr className="text-center">
-                                    <th>{t("sl_no")}</th>
-                                    <th>{t("efile_number")}</th>
-                                    <th>{t("court")}</th>
-                                    <th>{t("litigants")}</th>
-                                    <th>{t("documents")}</th>
-                                    <th>{t("payment")}</th>
-                                    <th>{t("action")}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {currentPetitions.map((item, index) => (
+                                    <thead className="bg-info">
+                                        <tr className="text-center">
+                                        <th>{t("sl_no")}</th>
+                                        <th>{t("efile_number")}</th>
+                                        <th>{t("court")}</th>
+                                        <th>{t("litigants")}</th>
+                                        <th>{t("documents")}</th>
+                                        <th>{t("payment")}</th>
+                                        <th>{t("action")}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {cases.map((item, index) => (
                                     <tr key={index}>
-                                        <td>{index + 1 + indexOfFirstItem}</td>
+                                        <td>{index + 1}</td>
                                         <td>
                                         <Link
                                             to="/filing/detail"
@@ -288,11 +220,11 @@ const DraftList = () => {
                                         </td>
                                     </tr>
                                     ))}
-                                </tbody>
-                                </table>
+                                    </tbody>
+                                </table> 
                             </div>
                             <div className="d-md-none">
-                                {currentPetitions.map((item, index) => (
+                                {cases.map((item, index) => (
                                 <div key={index} className="card mb-3 border shadow-sm">
                                     <div className="card-header bg-info">
                                         <span className="">
@@ -343,28 +275,12 @@ const DraftList = () => {
                                 ))}
                             </div>
                         </div>
-
-                        {/* Pagination Controls */}
-                        <div className="d-flex justify-content-between mt-3">
-                            <div className="pagination">
-                                <ul className="pagination">
-                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
-                                    </li>
-                                    {pageNumbers.map(number => (
-                                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                            <button className="page-link" onClick={() => paginate(number)}>{number}</button>
-                                        </li>
-                                    ))}
-                                    <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="page-info">
-                                <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredPetitions.length} {t('entries')}</span>
-                            </div>
-                        </div>
+                        <Pagination
+                            page={page}
+                            setPage={setPage}
+                            count={count}
+                            pageSize={pageSize}
+                        />
                     </div>
                 </div>
             </div>
@@ -373,3 +289,35 @@ const DraftList = () => {
 }
 
 export default DraftList
+
+
+
+const ValidateSubmission = ({showError, handleErrorClose, errors}) => {
+
+    const {t} = useTranslation()
+    return(
+        <Modal 
+                show={showError} 
+                onHide={handleErrorClose} 
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <ul>
+                    { errors.map((error, index) => (
+                        <li key={index} className='text-danger'><strong>{error}</strong></li>
+                    ))}
+                    </ul>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="contained" onClick={handleErrorClose}>
+                        {t('close')}
+                    </Button>
+                </Modal.Footer>
+        </Modal>
+    )
+}
