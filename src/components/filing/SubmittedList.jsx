@@ -111,25 +111,21 @@ const SubmittedList = () => {
                                 { cases.map((item, index) => (
                                 <tr>
                                     <td>{ index+1 }</td>
-                                    {/* <td>
-                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
-                                            <strong>{ item.petition.efile_number }</strong>
-                                        </Link>
-                                        <span style={{display:'block'}}>{t('efile_date')}: { formatDate(item.petition.efile_date) }</span>
-                                    </td> */}
                                     <td>
-                                        <Link 
-                                            to="/filing/detail" 
-                                            state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
-                                        >
-                                            {/* {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
-                                                <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
-                                            ) : null}
-                                            <br /> */}
-                                            {item.petition?.efile_number ? (
+                                        <React.Fragment>
+                                            <Link 
+                                                to="/filing/detail" 
+                                                state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
+                                            >{item.petition?.efile_number ? (
                                                 <strong>{item.petition.efile_number}</strong>
                                             ) : null}
-                                        </Link>
+                                            </Link> <br/>
+                                            {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
+                                                <span className="text-success">
+                                                    <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
+                                                </span>
+                                            ) : null}
+                                        </React.Fragment>
                                         {item.petition?.efile_date ? (
                                             <span style={{ display: "block" }}>
                                                 {t('efile_date')}: {formatDate(item.petition.efile_date)}
@@ -155,8 +151,11 @@ const SubmittedList = () => {
                                         </span>
                                         )}
                                     </td>
-                                    <td className="text-center">
-                                        { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
+                                    <td className="">
+                                        { item.petition.pet_name }
+                                        <span className="text-danger mx-2">Vs</span> <br/>
+                                        { item.petition.res_name }
+                                        {/* { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
                                         ))
                                         }
@@ -165,7 +164,7 @@ const SubmittedList = () => {
                                             <span className="text ml-2" key={index}>
                                                 {index+1}. {l.litigant_name} { language === 'ta' ? l.designation?.designation_lname : l.designation?.designation_name }</span>
                                         ))
-                                        }
+                                        } */}
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (

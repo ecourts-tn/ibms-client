@@ -26,15 +26,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   const [petition, setPetition] = useState({})
   const {language} = useContext(LanguageContext)
-  // const {states} = useContext(StateContext)
-  // const {districts} = useContext(DistrictContext)
-  // const {taluks} = useContext(TalukContext)
-  // const {relations} = useContext(RelationContext)
-  // const {prisons} = useContext(PrisonContext)
-  // const {proofs} = useContext(ProofContext)
-  // const {countries} = useContext(CountryContext)
-  // const {genders} = useContext(GenderContext)
-  // const {nationalities} = useContext(NationalityContext)
   const { 
           masters: { 
               states, districts, taluks, relations, prisons, proofs, 
@@ -257,8 +248,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
    return formIsValid;
 
   };
-
-  console.log(sessionStorage.getItem('petitioner'))
 
   return (
     <>
@@ -687,7 +676,6 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                       <div className="invalid-feedback">{ errors.prison}</div>
                     </div>
                 </div>  
-            { console.log(location.pathname)}
               <div className="col-md-4 mt-2">
                 <div className="form-group">
                   <label>{t('accused_surrender')}<RequiredField /></label><br />

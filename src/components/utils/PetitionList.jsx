@@ -1,71 +1,44 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
+import ListFilter from 'components/utils/ListFilter';
+import Pagination from 'components/utils/Pagination';
+import api from 'api';
+import Loading from 'components/utils/Loading';
 
-const PetitionList = ({ cases, title, url }) => {
+const PetitionList = ({ endpoint, title, url }) => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
+    const [cases, setCases] = useState([])
     const [petitions, setPetitions] = useState([])
-
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
-    const [searchQuery, setSearchQuery] = useState(''); // State for search input
-
-    // Filter cases based on search query
-    const filteredCases = cases.filter((c) => {
-        const efileNumber = c.petition?.efile_number?.toLowerCase() || '';
-        const regType = c.petition?.reg_type?.type_name || '';
-        const regNumber = c.petition?.reg_number || '';
-        const regYear = c.petition?.reg_year ? c.petition.reg_year.toString() : ''; // Convert to string if not null
-
-        // Combine the values
-        const caseNumber = `${regType}/${regNumber}/${regYear}`.toLowerCase();
-
-        const crimeNumber = c.crime_number?.toLowerCase() || '';
-
-        const query = searchQuery.toLowerCase();
-
-        return (
-            efileNumber.includes(query) ||
-            caseNumber.includes(query) ||
-            crimeNumber.includes(query)
-        );
-    });
-
-    // Pagination calculation
-    const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-
-    // Slice the cases for the current page
-    const currentCases = filteredCases.slice(startIndex, endIndex);
-
-    // Handlers
-    const paginate = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false)
+    
+    useEffect(() => {
+        const fetchPetition = async() => {
+            try{
+                setLoading(true)
+                const response = await api.get(endpoint, {
+                    params: {
+                        page,
+                        page_size: pageSize,
+                        search,
+                      },
+                })
+                setCases(response.data.results)
+                setCount(response.data.count);
+            }catch(error){
+                console.log(error)
+            }finally{
+                setLoading(false)
+            }
         }
-    };
-
-    const handleItemsPerPageChange = (e) => {
-        const newItemsPerPage = parseInt(e.target.value);
-        setItemsPerPage(newItemsPerPage);
-        setCurrentPage(1); // Reset to the first page
-    };
-
-    const generatePageNumbers = () => {
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i);
-        }
-        return pageNumbers;
-    };
-
-    // Data range display
-    const indexOfFirstItem = startIndex + 1;
-    const indexOfLastItem = Math.min(endIndex, filteredCases.length);
+        fetchPetition()
+    }, [page, pageSize, search])
 
     const getStatusBadge = (status, isReturned, regType, regNumber, regYear, underObjection, isDisposed) => {
         if (regType && regNumber && regYear) {
@@ -85,41 +58,28 @@ const PetitionList = ({ cases, title, url }) => {
         }
     };
 
-    // Handle search input change
-    const handleSearchChange = (e) => {
-        setSearchQuery(e.target.value);
-        setCurrentPage(1); // Reset to the first page when search changes
-    };
+    
 
     return (
         <div className="card" style={{ minHeight: '500px' }}>
+            { loading && <Loading />}
             <div className="card-header bg-secondary d-flex justify-content-between align-items-center">
                 <h3 className="card-title">
                     <i className="ion ion-clipboard mr-1" />
                     <strong>{title}</strong>
                 </h3>
-                {/* Search Box */}
-                <div className="d-flex align-items-center">
-                    {/* Search Label */}
-                    <label htmlFor="" className="mr-2">{t('Search')}</label>
-
-                    {/* Search Box */}
-                    <div style={{ width: '300px' }}>
-                        <input
-                            type="text"
-                            className="form-control"
-                            placeholder={t('Search by Efile no or Case no or Crime no')}
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
-                </div>
             </div>
 
-            <div className="card-body p-1" style={{ height: '650px', overflowY: 'scroll' }}>
-
+            <div className="card-body p-2" style={{ height: '650px', overflowY: 'scroll' }}>
                 {/* Display cases */}
-                {currentCases.map((c, index) => {
+                <ListFilter 
+                    search={search}
+                    setSearch={setSearch}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    count={count}
+                />
+                {cases.map((c, index) => {
                     const statusBadge = getStatusBadge(
                         c.status,
                         c.is_returned,
@@ -131,7 +91,7 @@ const PetitionList = ({ cases, title, url }) => {
                     );
 
                     return (
-                        <div key={index} style={{ background: '#f2f3f4', padding: '10px', margin: '5px 3px' }}>
+                        <div key={index} style={{ background: '#f2f3f4', padding: '10px', margin: '5px 3px', border:"1px solid lightgrey" }}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div>
                                     <Link to={url} state={{ efile_no: c.petition.efile_number }}>
@@ -139,16 +99,16 @@ const PetitionList = ({ cases, title, url }) => {
                                         {c.petition?.efile_number ? (
                                             <strong>{c.petition.efile_number}</strong>
                                         ) : null}
-                                       {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year && (
-                                            <>
-                                                <span style={{ margin: '0 5px' }}>  </span>
-                                                <strong style={{ color: '#228e3a' }}> 
-                                                    ( {`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`} )
-                                                </strong>
-                                            </>
-                                        )}
 
                                     </Link>
+                                    {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year && (
+                                        <>
+                                            <span style={{ margin: '0 5px' }}>  </span>
+                                            <strong style={{ color: '#228e3a' }}> 
+                                                ( {`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`} )
+                                            </strong>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className="d-flex justify-content-end align-items-center">
@@ -169,52 +129,12 @@ const PetitionList = ({ cases, title, url }) => {
                         </div>
                     );
                 })}
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="card-footer d-flex justify-content-between align-items-center">
-                <div>
-                    <label htmlFor="itemsPerPage" className="mr-2">{t('Items per page')}:</label>
-                    <select
-                        id="itemsPerPage"
-                        value={itemsPerPage}
-                        onChange={handleItemsPerPageChange}
-                        className="form-control d-inline-block"
-                        style={{ width: '100px' }}
-                    >
-                        <option value="10">10</option>
-                        <option value="15">15</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                    </select>
-                </div>
-                <div>
-                    <ul className="pagination mb-0">
-                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => paginate(currentPage - 1)}>
-                                {t('Previous')}
-                            </button>
-                        </li>
-                        {generatePageNumbers().map((page) => (
-                            <li key={page} className={`page-item ${currentPage === page ? 'active' : ''}`}>
-                                <button className="page-link" onClick={() => paginate(page)}>
-                                    {page}
-                                </button>
-                            </li>
-                        ))}
-                        <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                            <button className="page-link" onClick={() => paginate(currentPage + 1)}>
-                                {t('Next')}
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-                <div className="page-info">
-                    <span>
-                        {t('Showing')} {indexOfFirstItem} {t('to')} {indexOfLastItem} {t('of')} {filteredCases.length}{' '}
-                        {t('entries')}
-                    </span>
-                </div>
+                <Pagination 
+                    page={page}
+                    setPage={setPage}
+                    count={count}
+                    pageSize={pageSize}
+                />
             </div>
         </div>
     );

@@ -11,7 +11,7 @@ import Pleadings from "components/Pleadings";
 import { PetitionerContainer, RespondentContainer, 
     EFile } from "components";
 import PreviousCaseContainer from "components/filing/history/PreviousCaseContainer";
-import { InitialInput, AccusedDetails, IntevenePetitioner } from "components/filing/intervene";
+import { InitialInput, Accused, IntevenePetitioner } from "components/filing/intervene";
 import { Surety, SuretyForm, DischargeSurety, SuretyDetails } from "components/filing/surety";
 import Payment from "components/filing/common/Payment";
 import Allied from "components/filing/allied/Allied";
@@ -60,7 +60,7 @@ const pleadingRoutes = [
 const interveneRoutes = [
     { id: 1, path: "initial-input", component: <InitialInput />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <IntevenePetitioner />, name:"petitioners" },
-    { id: 3, path: "accused", component: <AccusedDetails />, name:"accused_details" },
+    { id: 3, path: "accused", component: <Accused />, name:"accused_details" },
     { id: 4, path: "respondent", component: <RespondentContainer />, name:"respondents" },
     { id: 5, path: "ground", component: <Grounds />, name:"ground" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },

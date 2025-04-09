@@ -36,6 +36,7 @@ const Initial = () => {
     const {fir, setFir, setAccused, setFirId, efileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
     const {updateStep} = useContext(StepContext)
+    const {setEfileNumber} = useContext(BaseContext)
 
     const { t } = useTranslation()
 
@@ -306,11 +307,12 @@ const Initial = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", petition)
+            const response = efileNumber ?
+            await api.put("case/filing/", {...petition, efile_no:efileNumber}) :
+            await api.post("case/filing/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                sessionStorage.setItem("efile_no", efile_no)
-                sessionStorage.setItem("petition", JSON.stringify(response.data))
+                setEfileNumber(efile_no)
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })

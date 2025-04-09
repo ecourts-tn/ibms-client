@@ -100,7 +100,8 @@ const Dashboard = () => {
                     </div>
                     <div className="col-md-7">
                         <PetitionList 
-                            cases={cases} 
+                            cases={cases}
+                            endpoint="case/dashboard/petitions/"
                             title={t('my_petition')}
                             url={`/filing/detail/`}
                         />

@@ -11,7 +11,7 @@ const ListFilter = ({setSearch, pageSize, setPageSize}) => {
 
     return (
         <div className="row d-flex justify-content-between">
-            <div className="col-md-3">
+            <div className="col-md-4">
                 <div className="form-group row no-gutters">
                     <div className="col-md-3">
                         <select 
@@ -22,10 +22,10 @@ const ListFilter = ({setSearch, pageSize, setPageSize}) => {
                             {[10, 25, 50, 75, 100].map(size => <option key={size} value={size}>{size}</option>)}
                         </select>
                     </div>
-                    <label htmlFor="" className="col-sm-8 m-1">entries per page</label>
+                    <label htmlFor="" className="col-sm-6 m-1">entries per page</label>
                 </div>
             </div>
-            <div className="col-md-3">
+            <div className="col-md-4">
                 <div class="input-group mb-3">
                     <input 
                         type="text" 

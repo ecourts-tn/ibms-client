@@ -8,8 +8,8 @@ import { BaseContext } from 'contexts/BaseContext'
 
 const PetitionerContainer = () => {
     const {efileNumber} = useContext(BaseContext)
-    const[petitioners, setPetitioners] = useState([])
-    const[selectedPetitioner, setSelectedPetitioner] = useState(null)
+    const [petitioners, setPetitioners] = useState([])
+    const [selectedPetitioner, setSelectedPetitioner] = useState(null)
     const {t} = useTranslation()
     
     
