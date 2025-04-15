@@ -165,6 +165,8 @@ const Initial = () => {
         case_type: Yup.string().required('errors.case_type_required'),
         bail_type: Yup.string().required(t('errors.bail_required')),
         complaint_type: Yup.string().required(t('errors.complaint_required')),
+        // fir_number: Yup.string()
+        //     .matches().nullable()
     })
 
     const FirValidationSchema = Yup.object({
@@ -172,8 +174,72 @@ const Initial = () => {
         district: Yup.string().required(t('errors.district_required')),
         pdistrict: Yup.string().required(t('errors.police_district_required')),
         police_station: Yup.string().required(t('errors.police_station_required')),
-        fir_number: Yup.string().required(t('errors.fir_number_required')),
-        fir_year: Yup.string().required(t('errors.fir_year_required')),
+        fir_number: Yup.string()
+            .required(t('errors.fir_number_required'))
+            .matches(/^\d{1,5}$/, 'Only digits allowed max 5'),
+        fir_year: Yup.string()
+            .required(t('errors.year_required'))
+            .matches(/^\d{4}$/, t('errors.invalid_year_format')) // Must be 4 digits
+            .test(
+                'is-not-future',
+                t('errors.future_year_not_allowed'), // e.g., "Year cannot be in the future"
+                (value) => {
+                const currentYear = new Date().getFullYear();
+                return value && parseInt(value, 10) <= currentYear;
+                }
+            ),
+    })
+    const CaseValidationSchema = Yup.object({
+        state: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.establishment_required'))
+            }
+        }),
+        court: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.court_required'))
+            }
+        }),
+        cnr_number: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 1){
+                return schema.required().matches(/^TN[A-Z]{2}[0-9][A-F0-9]\d{6}\d{4}$/, "Enter valid CNR Number")
+            }
+        }),
+        cis_case_type: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.police_station_required'))
+            }
+        }),
+        case_number: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.case_number_required'))
+                .matches(/^\d{1,5}$/, 'Only digits allowed max 5')
+            }
+        }),
+        case_year: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.year_required'))
+                .matches(/^\d{4}$/, t('errors.invalid_year_format')) // Must be 4 digits
+                .test(
+                    'is-not-future',
+                    t('errors.future_year_not_allowed'), // e.g., "Year cannot be in the future"
+                    (value) => {
+                    const currentYear = new Date().getFullYear();
+                    return value && parseInt(value, 10) <= currentYear;
+                    }
+                )
+            }
+        }),
     })
 
     const handleCheckPending = async(e) => {
@@ -271,6 +337,7 @@ const Initial = () => {
     const handleCaseSearch = async() => {
         try{
             setLoading(true)
+            await CaseValidationSchema.validate(petition, {abortEarly:false})
             const response = await api.get(`external/ecourt/case-detail`, {params:
                 {
                     establishment:petition.establishment,
@@ -288,6 +355,15 @@ const Initial = () => {
                 setAccused(accused)
             }
         }catch(error){
+            console.log(error)
+            console.log(error.inner)
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
             if(error.response){
                 if(error.response.status === 500){
                     toast.error("Internal server error", {
@@ -475,7 +551,12 @@ const Initial = () => {
                             name="fir_number"
                             className={`${errors.fir_number ? 'is-invalid': ''}`}
                             value={petition.fir_number}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 5) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Crime Number'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.fir_number }</div>
@@ -487,7 +568,12 @@ const Initial = () => {
                             name="fir_year"
                             className={`${errors.fir_year ? 'is-invalid' : ''}`}
                             value={petition.fir_year}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 4) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Year'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.fir_year }</div>
@@ -553,7 +639,7 @@ const Initial = () => {
                     <div className="col-md-2">
                         <Button 
                             variant="info"
-                            onClick={ handleSearch }
+                            onClick={ handleCaseSearch }
                         ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
                     </div>
                 </div>
@@ -713,7 +799,12 @@ const Initial = () => {
                             name="case_number"
                             value={petition.case_number}
                             className={`${errors.case_number ? 'is-invalid' : ''}`}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 5) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Case Number'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.case_number }</div>
@@ -723,7 +814,12 @@ const Initial = () => {
                             name="case_year"
                             value={petition.case_year}
                             className={`${errors.case_year ? 'is-invalid' : ''}`}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 4) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Year'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.case_year }</div>   
@@ -899,7 +995,7 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_case_type')}</option>
-                            { casetypes.filter((c) => c.id === 1 || c.id === 2).map((c, index) => (
+                            { casetypes.filter((c) => c.id === 1 || c.id === 2 ).map((c, index) => (
                             <option key={index} value={c.id}>{ language === 'ta' ? c.type_lfull_form : c.type_full_form }</option>
                             ))}
                         </select>

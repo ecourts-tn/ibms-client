@@ -1,18 +1,4 @@
 
-// Validate Email using Regular Expression
-// Email validation function
-// export const validateEmail = (email_address) => {
-//     if (!email_address) {
-//         return ''; // No error if the email is empty
-//     }
-
-//     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-//     if (!emailPattern.test(email_address)) {
-//         return 'Invalid email address'; // Return error if email doesn't match the pattern
-//     }
-//     return ''; // Return empty string if valid
-// };
-
 
 export const validateEmail = (fieldName, value) => {
     let errorMessage = '';
@@ -74,7 +60,7 @@ export const validateMobile = (mobile_number) => {
     if (!mobile_number) return 'Mobile number is required';
     if (mobile_number.length !== 10) return 'Mobile number must be 10 digits';
     return ''; // ''; return empty string if valid
-  };
+};
 
 // Validate Mobile Number (for example, valid if it's 10 digits)
 export const handleMobileChange = (e, setField, field, fieldName) => {

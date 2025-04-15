@@ -1,6 +1,6 @@
 import api from 'api';
 import React, { useState, useEffect, useContext } from 'react';
-import InitialInput from 'components/filing/common/InitialInput';
+import InitialInput from 'components/filing/InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
 import PetitionSearch from 'components/utils/PetitionSearch';
 import { useTranslation } from 'react-i18next';

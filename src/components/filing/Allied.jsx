@@ -2,7 +2,7 @@ import api from 'api';
 import * as Yup from 'yup'
 import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
-import InitialInput from '../common/InitialInput';
+import InitialInput from './InitialInput';
 import { toast, ToastContainer } from 'react-toastify';
 import PetitionSearch from 'components/utils/PetitionSearch';
 import ConditionDetail from './ConditionDetail';

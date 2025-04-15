@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { MasterContext } from 'contexts/MasterContext';
 import PetitionList from './PetitionList';
+import { AuthContext } from 'contexts/AuthContext';
 
 const PetitionFiling = () => {
 
@@ -26,6 +27,7 @@ const PetitionFiling = () => {
         relations,
         designations
     }} = useContext(MasterContext)
+    const { user } = useContext(AuthContext)
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const [searchForm, setSearchForm] = useState({
@@ -115,6 +117,16 @@ const PetitionFiling = () => {
             [name]: errorMessage,  // Set the error message for the specific field
         }));
     };
+
+    useEffect(() => {
+        if(user){
+            setSearchForm({...searchForm,
+                state: user.district?.state,
+                district: user.district?.district_code,
+                police_station: user.police_station?.cctns_code
+            })
+        }
+    }, [user])
 
     const handleSearch = async(e) => {
         e.preventDefault()
@@ -344,7 +356,6 @@ const PetitionFiling = () => {
                                     <div className="row">
                                         <div className="col-md-10 offset-1">
                                             <form action="">
-                                                { parseInt(searchForm.search_type) === 1 && (
                                                 <div className="row">
                                                     <div className="col-md-3">
                                                         <label htmlFor="state">State <RequiredField /></label>
@@ -353,6 +364,7 @@ const PetitionFiling = () => {
                                                             id="state" 
                                                             className={ `form-control ${errors.state ? 'is-invalid': ''}`}
                                                             value={searchForm.state}
+                                                            disabled={searchForm.state ? true : false }
                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}    
                                                         >
                                                         <option value="">Select state</option>
@@ -372,6 +384,7 @@ const PetitionFiling = () => {
                                                                 id="district" 
                                                                 className={`form-control ${errors.district ? 'is-invalid' : ''}`}
                                                                 value={searchForm.district} 
+                                                                disabled={ searchForm.district ? true : false }
                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
                                                             >
                                                                 <option value="">Select district</option>
@@ -384,167 +397,133 @@ const PetitionFiling = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="col-md-5">
-                                                    <div className="form-group">
-                                                        <label htmlFor="police_station">Police Station Name<RequiredField /></label><br />
-                                                        <select 
-                                                            name="police_station" 
-                                                            id="police_station" 
-                                                            className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
-                                                            value={searchForm.police_station}
-                                                            onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                        >
-                                                            <option value="">Select station</option>
-                                                            { policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(searchForm.district)).map((item, index) => (
-                                                                <option key={index} value={item.cctns_code}>{ item.station_name}</option>
-                                                            ))}
-                                                        </select>
-                                                        <div className="invalid-feedback">{ errors.police_station }</div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 offset-md-3">
-                                                        <div className="form-group">
-                                                            <label htmlFor="case_number">Crime Number<RequiredField /></label>
-                                                            <input 
-                                                                type="text" 
-                                                                className={`form-control ${searchErrors.crime_number ? 'is-invalid' : ''}`} 
-                                                                name="crime_number"
-                                                                value={searchForm.crime_number}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { searchErrors.crime_number }
+                                                    { parseInt(searchForm.search_type) === 1 && (
+                                                        <React.Fragment>
+                                                            <div className="col-md-5">
+                                                                <div className="form-group">
+                                                                <label htmlFor="police_station">Police Station Name<RequiredField /></label><br />
+                                                                <select 
+                                                                    name="police_station" 
+                                                                    id="police_station" 
+                                                                    className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
+                                                                    value={searchForm.police_station}
+                                                                    disabled={searchForm.police_station ? true : false }
+                                                                    onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                >
+                                                                    <option value="">Select station</option>
+                                                                    { policeStations.filter(p=>parseInt(p.revenue_district) === parseInt(searchForm.district)).map((item, index) => (
+                                                                        <option key={index} value={item.cctns_code}>{ item.station_name}</option>
+                                                                    ))}
+                                                                </select>
+                                                                <div className="invalid-feedback">{ errors.police_station }</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <div className="form-group">
-                                                            <label htmlFor="crime_year">Crime Year<RequiredField /></label>
-                                                            <input 
-                                                                type="text" 
-                                                                className={`form-control ${searchErrors.crime_year ? 'is-invalid' : ''}`}
-                                                                name="crime_year"
-                                                                value={searchForm.crime_year}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { searchErrors.crime_year }
+                                                            <div className="col-md-3 offset-md-3">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="case_number">Crime Number<RequiredField /></label>
+                                                                    <input 
+                                                                        type="text" 
+                                                                        className={`form-control ${searchErrors.crime_number ? 'is-invalid' : ''}`} 
+                                                                        name="crime_number"
+                                                                        value={searchForm.crime_number}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                    />
+                                                                    <div className="invalid-feedback">
+                                                                        { searchErrors.crime_number }
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    </div>
+                                                            <div className="col-md-2">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="crime_year">Crime Year<RequiredField /></label>
+                                                                    <input 
+                                                                        type="text" 
+                                                                        className={`form-control ${searchErrors.crime_year ? 'is-invalid' : ''}`}
+                                                                        name="crime_year"
+                                                                        value={searchForm.crime_year}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                    />
+                                                                    <div className="invalid-feedback">
+                                                                        { searchErrors.crime_year }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </React.Fragment>
+                                                    )}
+                                                    { parseInt(searchForm.search_type) === 2 && (
+                                                        <React.Fragment>
+                                                            <div className="col-md-5">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="establishment">Establishment Name<RequiredField /></label>
+                                                                    <select 
+                                                                        name="establishment" 
+                                                                        id="establishment" 
+                                                                        className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
+                                                                        value={searchForm.establishment}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]:e.target.value})}
+                                                                    >
+                                                                        <option value="">Select Establishment</option>
+                                                                        {
+                                                                            establishments.filter(e=>parseInt(e.district) === parseInt(searchForm.district)).map((item, index) => (
+                                                                                <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
+                                                                            ))
+                                                                        }
+                                                                    </select>
+                                                                    <div className="invalid-feedback">
+                                                                        { errors.establishment }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-4 offset-md-2">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="case_type">Case Type<RequiredField /></label>
+                                                                    <select 
+                                                                        name="case_type" 
+                                                                        className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
+                                                                        value={searchForm.case_type}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                    >
+                                                                        <option value="">Select Case Type</option>
+                                                                        <option value="1">Bail Petition</option>
+                                                                    </select>
+                                                                    <div className="invalid-feedback">
+                                                                        { searchErrors.case_type }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-2">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="case_number">Case Number<RequiredField /></label>
+                                                                    <input 
+                                                                        type="text" 
+                                                                        className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
+                                                                        name="case_number"
+                                                                        value={searchForm.case_number}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                    />
+                                                                    <div className="invalid-feedback">
+                                                                        { searchErrors.case_number }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="col-md-2">
+                                                                <div className="form-group">
+                                                                    <label htmlFor="case_year">Year<RequiredField /></label>
+                                                                    <input 
+                                                                        type="text" 
+                                                                        className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
+                                                                        name="case_year"
+                                                                        value={searchForm.case_year}
+                                                                        onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                                    />
+                                                                    <div className="invalid-feedback">
+                                                                        { searchErrors.case_year }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </React.Fragment>
+                                                    )}
                                                 </div>
-                                                )}
-                                                { parseInt(searchForm.search_type) === 2 && (
-                                                <div className="row">
-                                                    <div className="col-md-3">
-                                                        <label htmlFor="state">State<RequiredField /></label>
-                                                        <select 
-                                                            name="state" 
-                                                            id="state" 
-                                                            className={ `form-control ${errors.state ? 'is-invalid': ''}`}
-                                                            value={searchForm.state}
-                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}    
-                                                        >
-                                                        <option value="">Select state</option>
-                                                        { states.map((item, index) => (
-                                                            <option key={index} value={item.state_code }>{ item.state_name }</option>
-                                                        ))}
-                                                        </select>
-                                                        <div className="invalid-feedback">
-                                                            { errors.state }
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-4">
-                                                        <div className="form-group">
-                                                            <label htmlFor="district">District<RequiredField /></label><br />
-                                                            <select 
-                                                                name="district" 
-                                                                id="district" 
-                                                                className={`form-control ${errors.district ? 'is-invalid' : ''}`}
-                                                                value={searchForm.district} 
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            >
-                                                                <option value="">Select district</option>
-                                                                { districts.filter(d=>parseInt(d.state)===parseInt(searchForm.state)).map((item, index) => (
-                                                                <option key={index} value={item.district_code }>{ item.district_name }</option>
-                                                                ))}
-                                                            </select>
-                                                            <div className="invalid-feedback">
-                                                                { errors.district }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-5">
-                                                        <div className="form-group">
-                                                            <label htmlFor="establishment">Establishment Name<RequiredField /></label>
-                                                            <select 
-                                                                name="establishment" 
-                                                                id="establishment" 
-                                                                className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
-                                                                value={searchForm.establishment}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]:e.target.value})}
-                                                            >
-                                                                <option value="">Select Establishment</option>
-                                                                {
-                                                                    establishments.filter(e=>parseInt(e.district) === parseInt(searchForm.district)).map((item, index) => (
-                                                                        <option value={item.establishment_code} key={index}>{item.establishment_name}</option>
-                                                                    ))
-                                                                }
-                                                            </select>
-                                                            <div className="invalid-feedback">
-                                                                { errors.establishment }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-3 offset-md-3">
-                                                        <div className="form-group">
-                                                            <label htmlFor="case_type">Case Type<RequiredField /></label>
-                                                            <select 
-                                                                name="case_type" 
-                                                                className={`form-control ${searchErrors.case_type ? 'is-invalid' : ''}`} 
-                                                                value={searchForm.case_type}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            >
-                                                                <option value="">Select Case Type</option>
-                                                                <option value="1">Bail Petition</option>
-                                                            </select>
-                                                            <div className="invalid-feedback">
-                                                                { searchErrors.case_type }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <div className="form-group">
-                                                            <label htmlFor="case_number">Case Number<RequiredField /></label>
-                                                            <input 
-                                                                type="text" 
-                                                                className={`form-control ${searchErrors.case_number ? 'is-invalid' : ''}`} 
-                                                                name="case_number"
-                                                                value={searchForm.case_number}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { searchErrors.case_number }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-md-2">
-                                                        <div className="form-group">
-                                                            <label htmlFor="case_year">Year<RequiredField /></label>
-                                                            <input 
-                                                                type="text" 
-                                                                className={`form-control ${searchErrors.case_year ? 'is-invalid' : ''}`}
-                                                                name="case_year"
-                                                                value={searchForm.case_year}
-                                                                onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
-                                                            />
-                                                            <div className="invalid-feedback">
-                                                                { searchErrors.case_year }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                )}
                                                 <div className="row">
                                                     <div className="col-md-12 d-flex justify-content-center">
                                                         <Button

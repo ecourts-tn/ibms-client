@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { BaseContext } from 'contexts/BaseContext'
 
-const EFileDetails = () => {
+const DraftDetail = () => {
 
     const[petition, setPetition] = useState({})
     const[litigants, setLitigants] = useState([])
@@ -170,4 +170,4 @@ const EFileDetails = () => {
     )
 }
 
-export default EFileDetails
+export default DraftDetail

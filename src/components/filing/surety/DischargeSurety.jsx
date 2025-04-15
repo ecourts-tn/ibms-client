@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/common/InitialInput';
+import InitialInput from 'components/filing/InitialInput';
 import PetitionSearch from 'components/utils/PetitionSearch';
 import { BaseContext } from 'contexts/BaseContext';
 

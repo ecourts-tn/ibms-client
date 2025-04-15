@@ -6,17 +6,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useState, useEffect } from 'react'
 import { RequiredField } from 'utils';
 import * as Yup from 'yup'
-import { RelationContext } from 'contexts/RelationContext';
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { TalukContext } from 'contexts/TalukContext';
-import { PrisonContext } from 'contexts/PrisonContext';
-import { ProofContext } from 'contexts/ProofContext';
-import { CountryContext } from 'contexts/CountryContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { GenderContext } from 'contexts/GenderContext';
-import { NationalityContext } from 'contexts/NationalityContext';
 import { useLocation } from 'react-router-dom';
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import { MasterContext } from 'contexts/MasterContext';
@@ -26,12 +17,10 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   const [petition, setPetition] = useState({})
   const {language} = useContext(LanguageContext)
-  const { 
-          masters: { 
-              states, districts, taluks, relations, prisons, proofs, 
-              countries, genders, nationalities
-          }
-      } = useContext(MasterContext);
+  const { masters: { 
+          states, districts, taluks, relations, prisons, proofs, 
+          countries, genders, nationalities
+      }} = useContext(MasterContext);
   const location = useLocation()
   const {t} = useTranslation()
   const[alternateAddress, setAlternateAddress] = useState(false)
@@ -86,13 +75,17 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     gender: Yup.string().required(t('errors.gender_required')),
     relation: Yup.string().required(t('errors.relation_required')),
     relation_name: Yup.string().required(t('errors.relation_name_required')),
-    age: Yup.number()
+    age: Yup.string()
       .required(t('errors.age_required'))
-      .typeError(t('errors.numeric')),
+      .matches(/^\d{2}$/, 'Age must be exactly 2 digits'),
     rank: Yup.string().required(t('errors.rank_required')),
-    gender: Yup.string().required(t('errors.gender_required')),
     address: Yup.string().required(t('errors.address_required')),
-    mobile_number: Yup.number().required(t('errors.mobile_required')),
+    mobile_number: Yup.string()
+      .required(t('errors.mobile_required'))
+      .matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
+    email_address: Yup.string()
+      .email(t('enter valid email address')) // You can also directly write the message like: 'Invalid email format'
+      .nullable(), // If it's optional
     proof_number: Yup.string().required(t('errors.identity_proof_required')),
     act: Yup.string().required(t('errors.act_required')),
     section: Yup.string().required(t('errors.section_required')),
@@ -115,26 +108,11 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     //   .nullable(),
   });
 
-  const handleChange = (e) => {
-      const { name, value } = e.target;
 
-      // Update form state
-      setLitigant((prevForm) => ({
-          ...prevForm,
-          [name]: value,  // Dynamically update the field
-      }));
-
-      // Validate the field and update errors
-      const errorMessage = validateEmail(name, value);  // Validate the email field
-      setErrors((prevErrors) => ({
-          ...prevErrors,
-          [name]: errorMessage,  // Set the error message for the specific field
-      }));
-  };
 
   useEffect(() => { 
+      const api_id = sessionStorage.getItem("api_id")
       const fetchFIR = async () => {
-          const api_id = sessionStorage.getItem("api_id")
           try {
               const response = await api.post("external/police/fir-detail/", { id: api_id });
               if (response.status === 200) {
@@ -150,7 +128,9 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
               console.error("Error fetching FIR details:", error);
           }
       };
-      fetchFIR();
+      if(api_id){
+        fetchFIR();
+      }
   }, []);
 
 
@@ -185,67 +165,18 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrors({});
-    let formIsValid = true;
-    let newErrors = {};
     try {
       await validationSchema.validate(litigant, { abortEarly: false });
       addPetitioner(litigant);
     } catch (error) {
-      // console.log(error);
       if (error.inner) {
         const newErrors = {};
         error.inner.forEach((err) => {
           newErrors[err.path] = err.message;
         });
         setErrors(newErrors);
-      } else {
-        console.error("Unexpected validation error:", error);
-        toast.error("Validation failed. Please check your input.", { theme: "colored" });
-      }
-      if (error.response) {
-        toast.error(error.response, { theme: "colored" });
-      }
+      } 
     }
-
-    // const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
-    // if (mobileError) {
-    //   newErrors.mobile_number = mobileError;
-    //   formIsValid = false;
-    // }
-
-    
-    // const ageError = handleAgeChange({ target: { value: litigant.age } }, setLitigant, litigant);
-    // if (ageError) {
-    //   newErrors.age = ageError;
-    //   formIsValid = false;
-    // }
-
-    const pincodeError = handlePincodeChange({ target: { value: litigant.pincode } }, setLitigant, litigant);
-    if([pincodeError]) {
-      newErrors.pincode = pincodeError;
-      formIsValid = false;
-    }
-
-   // Validate the litigant_name
-   const nameError = handleNameChange({ target: { value: litigant.litigant_name } }, setLitigant, litigant);
-   if (nameError) {
-       newErrors.litigant_name = nameError;
-       formIsValid = false;
-   }
-
-   // Validate the relation_name
-   const relationNameError = handleNameChange({ target: { value: litigant.relation_name } }, setLitigant, litigant);
-   if (relationNameError) {
-       newErrors.relation_name = relationNameError;
-       formIsValid = false;
-   }
-
-   if (!formIsValid) {
-       setErrors(newErrors); // Update the errors state
-   }
-
-   return formIsValid;
 
   };
 
@@ -296,17 +227,22 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   ></Form.Control>
                 )}
                 { litigant.litigant === 'o' && (
-                  <select 
-                    name="gender" 
-                    value={litigant.gender} 
-                    className="form-control"
-                    onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
-                  >
-                    <option value="">{t('alerts.select_gender')}</option>
-                    { genders.map((g, index) => (
-                      <option value={g.name} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
-                    ))}
-                  </select>
+                  <React.Fragment>
+                    <select 
+                      name="gender" 
+                      value={litigant.gender} 
+                      className={`form-control ${errors.gender ? 'is-invalid' : ''}`}
+                      onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
+                    >
+                      <option value="">{t('alerts.select_gender')}</option>
+                      { genders.map((g, index) => (
+                        <option value={g.gender_name} key={index}>{language === 'ta' ? g.gender_lname : g.gender_name }</option>
+                      ))}
+                    </select>
+                    <div className="invalid-feedback">
+                      { errors.gender }
+                    </div>
+                  </React.Fragment>
                 )}
               </Form.Group>
             </div>
@@ -590,8 +526,12 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   name="mobile_number"
                   className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                   value={litigant.mobile_number}
-                  onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
-                  // onChange={(e) => handleMobileChange(e, setLitigant, litigant)}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 10) {
+                      setLitigant({...litigant, [e.target.name]: value});
+                    }
+                  }}
                 ></Form.Control>
                 <div className="invalid-feedback">
                   { errors.mobile_number}
@@ -606,7 +546,9 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
                   name="email_address"
                   value={litigant.email_address}
                   className={`${errors.email_address ? 'is-invalid' : ''}`}
-                  onChange={handleChange}
+                  onChange={(e) => setLitigant({
+                    ...litigant, [e.target.name]: e.target.value
+                  })}
                   // onBlur={handleBlur}
                 ></Form.Control>
                 {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
