@@ -14,6 +14,7 @@ import { pendingPetition } from 'services/petitionService'
 import { BaseContext } from 'contexts/BaseContext'
 import ListFilter from 'components/utils/ListFilter'
 import Pagination from 'components/utils/Pagination'
+import { useLocalizedNames } from 'hooks/useLocalizedNames'
 
 
 const DraftList = () => {
@@ -45,6 +46,12 @@ const DraftList = () => {
     const handleClose = () => {
         setSelectedDocument(null)
     }
+
+    const {
+        getCourtName,
+        getDistrictName,
+        getSeatName
+    } = useLocalizedNames()
 
     useEffect(() => {
         const fetchPetition = async() => {
@@ -181,22 +188,15 @@ const DraftList = () => {
                                         </span>
                                         </td>
                                         <td>
-                                            {item.petition?.judiciary.id === 1 ? (
-                                                <span>{language === "ta" ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}</span>
-                                            ) : (
-                                                <>
-                                                <span>{language === "ta" ? item.petition.court?.court_lname : item.petition.court?.court_name}</span><br />
-                                                {/* <span>{language === "ta" ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name}</span><br /> */}
-                                                {/* <span>{language === "ta" ? item.petition.district?.district_lname : item.petition.district?.district_name}</span> */}
-                                                </>
+                                            { item.petition.judiciary.id== 2 && (
+                                                `${getCourtName(item.petition.court)}, ${getDistrictName(item.petition.district)}`
+                                            )}
+                                            { item.petition.judiciary.id === 1 && (
+                                                `${getSeatName(item.petition.seat)}`
                                             )}
                                         </td>
-                                        <td>{item.petition.pet_name} <span className='text-danger mx-2'>Vs</span>{item.petition.res_name}
-                                        {/* {item.litigants.map((l, idx) => (
-                                            <span key={idx} className="d-block">
-                                            {l.litigant_type === 1 ? "Petitioner: " : "Respondent: "} {l.litigant_name}
-                                            </span>
-                                        ))} */}
+                                        <td>
+                                            {item.petition.pet_name} <span className='text-danger mx-2'>Vs</span>{item.petition.res_name}
                                         </td>
                                         <td>
                                         {item.document.map((d, idx) => (
@@ -211,12 +211,14 @@ const DraftList = () => {
                                         ))}
                                         </td>
                                         <td>
-                                        <Button variant="outlined" color="primary" onClick={() => handleEdit(item.petition)}>
-                                            <i className="fa fa-pencil-alt mr-1"></i>{t("edit")}
-                                        </Button>
-                                        <Button variant="outlined" color="success" className="ml-1" onClick={() => handleSubmit(item.petition.efile_number)}>
-                                            <i className="fa fa-upload mr-1"></i>{t("submit")}
-                                        </Button>
+                                            <div className="d-flex justify-content-start align-items-center">
+                                                <Button variant="contained" color="primary" onClick={() => handleEdit(item.petition)}>
+                                                    <i></i>{t("edit")}
+                                                </Button>
+                                                <Button variant="contained" color="success" className="ml-1" onClick={() => handleSubmit(item.petition.efile_number)}>
+                                                    <i className=""></i>{t("submit")}
+                                                </Button>
+                                            </div>
                                         </td>
                                     </tr>
                                     ))}
@@ -262,12 +264,12 @@ const DraftList = () => {
                                         ))}
                                     </p>
 
-                                    <div className="d-flex justify-content-start">
+                                    <div className="d-flex justify-content-between">
                                         <Button variant="outlined" color="primary" onClick={() => handleEdit(item.petition)} className="mr-2">
-                                        <i className="fa fa-pencil-alt mr-1"></i>{t("edit")}
+                                            <i className="fa fa-pencil-alt mr-1"></i>{t("edit")}
                                         </Button>
                                         <Button variant="outlined" color="success" onClick={() => handleSubmit(item.petition.efile_number)}>
-                                        <i className="fa fa-upload mr-1"></i>{t("submit")}
+                                            <i className="fa fa-upload mr-1"></i>{t("submit")}
                                         </Button>
                                     </div>
                                     </div>

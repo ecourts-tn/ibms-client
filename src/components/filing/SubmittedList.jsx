@@ -2,7 +2,7 @@ import React, {useState, useEffect, useContext} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import ViewDocument from 'components/utils/ViewDocument'
-import { formatDate, formatLitigant } from 'utils'
+import { formatDate, formatLitigant, getDistrictName } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +10,7 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import Loading from 'components/utils/Loading'
 import ListFilter from 'components/utils/ListFilter'
 import Pagination from 'components/utils/Pagination'
+import { useLocalizedNames } from 'hooks/useLocalizedNames'
 
 const SubmittedList = () => {
 
@@ -23,6 +24,12 @@ const SubmittedList = () => {
     const [pageSize, setPageSize] = useState(10);
     const [count, setCount] = useState(0);
     const [search, setSearch] = useState("");
+
+    const {
+        getCourtName,
+        getDistrictName,
+        getSeatName
+    } = useLocalizedNames()
         
 
     const handleShow = (document) => {
@@ -132,39 +139,18 @@ const SubmittedList = () => {
                                             </span>
                                         ) : null}
                                     </td>
-                                    {/* <td>
-                                        {item.petition.filing_type ? `${item.petition.filing_type?.type_name}/${item.petition.filing_number}/${item.petition.filing_year}` : null}
-                                    </td> */}
                                     <td>
                                         { item.petition.judiciary.id== 2 && (
-                                            <span>
-                                                { 
-                                                    language === 'ta' ? 
-                                                        `${item.petition.court?.court_lname}, ${item.petition.district?.district_lname}` : 
-                                                        `${item.petition.court?.court_name}, ${item.petition.district?.district_name}`
-                                                }
-                                            </span>
+                                            `${getCourtName(item.petition.court)}, ${getDistrictName(item.petition.district)}`
                                         )}
                                         { item.petition.judiciary.id === 1 && (
-                                        <span>
-                                            { language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}
-                                        </span>
+                                            `${getSeatName(item.petition.seat)}`
                                         )}
                                     </td>
                                     <td className="">
                                         { item.petition.pet_name }
-                                        <span className="text-danger mx-2">Vs</span> <br/>
+                                            <span className="text-danger mx-2">Vs</span> <br/>
                                         { item.petition.res_name }
-                                        {/* { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
-                                        ))
-                                        }
-                                        <span className="text text-danger ml-2">Vs</span> <br/>
-                                        { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>
-                                                {index+1}. {l.litigant_name} { language === 'ta' ? l.designation?.designation_lname : l.designation?.designation_name }</span>
-                                        ))
-                                        } */}
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (

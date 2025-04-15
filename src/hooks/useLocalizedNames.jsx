@@ -19,7 +19,7 @@ const getEstablishmentName = (establishment) => {
     return language === 'ta' ? establishment.establishment_lname || '' : establishment.establishment_name || '';
 }
 
-const getCourttName = (court) => {
+const getCourtName = (court) => {
     if (!court) return '';
     return language === 'ta' ? court.court_lname || '' : court.court_name || '';
 }
@@ -27,6 +27,11 @@ const getCourttName = (court) => {
 const getJudiciaryName = (judiciary) => {
     if (!judiciary) return '';
     return language === 'ta' ? judiciary.judiciary_lname || '' : judiciary.judiciary_name || '';
+}
+
+const getSeatName = (seat) => {
+    if (!seat) return '';
+    return language === 'ta' ? seat.seat_lname || '' : seat.seat_name || '';
 }
 
 const getFilingNumber = (number, year) => {
@@ -56,8 +61,9 @@ return {
     getStateName,
     getDistrictName,
     getEstablishmentName,
-    getCourttName,
+    getCourtName,
     getJudiciaryName,
+    getSeatName,
     getFilingNumber,
     getRegistrationNumber
   };

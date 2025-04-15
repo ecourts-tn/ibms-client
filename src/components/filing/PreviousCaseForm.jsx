@@ -1,10 +1,12 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
+import { BaseContext } from 'contexts/BaseContext'
+import { useLocalizedNames } from 'hooks/useLocalizedNames'
 
 
 const PreviousCaseForm = () => {
@@ -20,6 +22,7 @@ const PreviousCaseForm = () => {
         prev_is_pending: 2,
         prev_disposal_date: ''
     }
+    const {efileNumber} = useContext(BaseContext)
     
     const currentYear = new Date().getFullYear(); // Get the current year
 
@@ -36,11 +39,20 @@ const PreviousCaseForm = () => {
     const[history, setHistory] = useState([])
     const {t} = useTranslation()
 
+    const { 
+        getStateName, 
+        getDistrictName,
+        getEstablishmentName,
+        getCourttName,
+        getSeatName,
+        getFilingNumber,
+        getRegistrationNumber 
+    } = useLocalizedNames()
+
     useEffect(() => {
-        const efile_no = sessionStorage.getItem("efile_no")
-        async function fetchData(){
+        async function fetchPreviousHistory(){
             try{
-                const response = await api.post('case/crime/history/',{efile_no})
+                const response = await api.post('case/crime/history/',{efile_no: efileNumber})
                 if(response.status === 200){
                     setHistory(response.data)
                 }
@@ -48,8 +60,12 @@ const PreviousCaseForm = () => {
                 console.log(error)
             }
         }
-        fetchData();
+        if(efileNumber){
+            fetchPreviousHistory();
+        }
+    },[efileNumber])
 
+    useEffect(() => {
         const datePicker = flatpickr(".date-picker", {
             dateFormat: "m/d/Y", // Date format after selection (mm/dd/yyyy)
             onChange: (selectedDates) => {
@@ -67,10 +83,7 @@ const PreviousCaseForm = () => {
                 datePicker.destroy();
             }
         };
-            
-
-
-    },[])
+    })
 
     const formatDate = (date) => {
         const month = ("0" + (date.getMonth() + 1)).slice(-2); // Get month and format to 2 digits
@@ -110,7 +123,7 @@ const PreviousCaseForm = () => {
 
     const handleSubmit = async (e) => {
         try{
-            petition.efile_no = sessionStorage.getItem("efile_no")
+            petition.efile_no = efileNumber
             const response = await api.put(`case/filing/update/`, petition)
             if(response.status === 200){
                 toast.success("Previous case details updated successfully", {
@@ -124,7 +137,7 @@ const PreviousCaseForm = () => {
     }
 
     return (
-        <>
+        <div>
             <ToastContainer />
             <div className="row">
                 <div className="col-md-12">
@@ -135,34 +148,39 @@ const PreviousCaseForm = () => {
                                 <td colSpan={4} className="text-white"><strong>{index+1}. {h.petition.efile_number}</strong></td>
                             </tr>
                             <tr>
-                                <td colSpan={2}><strong className='text-danger'>FIR Details</strong></td>
-                                <td colSpan={2}><strong className='text-danger'>Filing Details</strong></td>
+                                <td colSpan={4}><strong className='text-danger'>FIR Details</strong></td>
                             </tr>
                             <tr>
-                                <td><strong>Crime&nbsp;Number</strong></td>
-                                <td>{`${h.crime.fir_number}/${h.crime.fir_year}`}</td>
-                                <td><strong>eFile&nbsp;Number</strong></td>
+                                <td><strong>{t('crime_number')}</strong></td>
+                                <td>{`${h.petition.fir_number}/${h.petition.fir_year}`}</td>
+                                <td> <strong>{t('police_station')}</strong></td>
+                                <td>{h.petition.police_station?.station_name}, { getDistrictName(h.petition.district)}</td>
+                            </tr>
+                            <tr>
+                                <td colSpan={4}><strong className='text-danger'>Filing Details</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>{t('efile_number')}</strong></td>
                                 <td>{h.petition.efile_number}</td>
-                            </tr>
-                            <tr>
-                                <td> <strong>Police&nbsp;Station</strong></td>
-                                <td>{h.crime.police_station?.station_name}, {h.crime.district?.district_name}</td>
-                                <td><strong>eFile&nbsp;Date</strong></td> 
+                                <td><strong>{t('efile_date')}</strong></td> 
                                 <td>{h.petition.efile_date}</td>
                             </tr>
                             <tr>
-                                <td colSpan={2}></td>
-                                <td><strong>Jurisdiction&nbsp;Court</strong></td>
-                                <td>{h.petition.court?.court_name}, {h.petition.establishment?.establishment_name}, {h.petition.district?.district_name}, {h.petition.state?.state_name}</td>
+                                <td><strong>{t('filing_number')}</strong></td>
+                                <td>{ getFilingNumber(h.petition.filing_number,h.petition.filing_year)}</td>
+                                <td><strong>{t('registration_number')}</strong></td>
+                                <td>{ getRegistrationNumber(h.petition.reg_type, h.petition.reg_number, h.petition.reg_year)}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>{t('jurisdiction_court')}</strong></td>
+                                { h.petition.judiciary?.id === 1 ? (
+                                    <td colSpan={3}>{ getSeatName(h.petition.seat)}</td>
+                                ) : (
+                                    <td colSpan={3}>{ getCourttName(h.petition.court)}, { getEstablishmentName(h.petition.establishment)}, {getDistrictName(h.petition.district)}, {getStateName(h.petition.state)}</td>
+                                )}
                             </tr>
                             <tr>
                                 <td colSpan={4}><strong className="text-danger">Business/Order&nbsp;Details</strong></td>
-                            </tr>
-                            <tr>
-                                <td><strong>Filing&nbsp;Number</strong></td>
-                                <td>{h.petition.is_verified ? `${h.petition.filing_type?.type_name}/${h.petition.filing_number}/${h.petition.filing_year}` : ''}</td>
-                                <td><strong>Registration&nbsp;Number</strong></td>
-                                <td></td>
                             </tr>
                             <tr>
                                 <td><strong>Status</strong></td>
@@ -248,18 +266,6 @@ const PreviousCaseForm = () => {
                         />
                     </div>
                 </div>
-                {/* <div className="col-md-3">
-                    <div className="form-group">
-                        <label htmlFor="">{t('disp_next_date')}</label>
-                        <input 
-                            type="date" 
-                            name="prev_disposal_date" 
-                            className="form-control"
-                            value={petition.prev_disposal_date}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
-                        />
-                    </div>
-                </div> */}
                 <div className="col-md-3">
                     <div className="form-group">
                         <label htmlFor="">{t('disp_next_date')}</label>
@@ -360,7 +366,7 @@ const PreviousCaseForm = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

@@ -18,14 +18,9 @@ const BenchForm = () => {
     const {language} = useContext(LanguageContext)
     const navigate = useNavigate()
     const initialState = {
-        judiciary: 1,
-        state: '',
-        judge_name: '',
-        judge_lname: '',
-        judge_sname:'',
-        state_code: '',
-        jocode: '',
-        designation:'',
+        bench_code: '',
+        bench_name: '',
+        bench_lname: '',
         joining_date:null,
         releiving_date:null
     }
@@ -34,20 +29,18 @@ const BenchForm = () => {
     const [errors, setErrors] = useState({})
     const[loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
-        // state: Yup.string().required(),
-        judge_name: Yup.string().required(),
-        judge_lname: Yup.string().required(),
-        jocode:Yup.string().required()
+        bench_code: Yup.string().required(),
+        bench_name: Yup.string().required(),
     })
     const [selectedJudges, setSelectedJudges] = useState([]);
 
     const handleJudgeSelection = (e) => {
         if (e.target.type === "checkbox") {
-            const judgeId = parseInt(e.target.id.split("-")[1]); // Extract index
+            const jocode = e.target.id.split("-")[1]; // Extract index
             if (e.target.checked) {
-                setSelectedJudges((prev) => [...prev, judges[judgeId].id]); 
+                setSelectedJudges((prev) => [...prev, jocode]); 
             } else {
-                setSelectedJudges((prev) => prev.filter(id => id !== judges[judgeId].id));
+                setSelectedJudges((prev) => prev.filter(id => id !== jocode));
             }
         }
     };
@@ -140,10 +133,9 @@ const BenchForm = () => {
             // form.jocode = `${form.state_code}${form.jocode}`
             const updatedForm = { 
                 ...form, 
-                selected_judges: selectedJudges 
+                judges: selectedJudges 
             };
-            console.log("Submitting Data: ", updatedForm);
-            const response = await api.post("base/judge/", updatedForm);
+            const response = await api.post("base/bench/", updatedForm);
             if(response.status === 201){
                 toast.success("Judge details added successfully", {
                     theme:"colored"
@@ -211,6 +203,21 @@ const BenchForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
+                            <label htmlFor="" className="col-sm-4">Bench Name (Tamil)</label>
+                            <div className="col-sm-8">
+                                <input 
+                                    type="text" 
+                                    className={`form-control ${errors.bench_lname ? 'is-invalid' : ''}`}
+                                    name="bench_lname"
+                                    value={form.bench_lname}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                />
+                                <div className="invalid-feedback">
+                                    { errors.bench_lname }
+                                </div>
+                            </div>
+                        </div>
+                        <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
                             <div className="col-sm-8">
                                 <input 
@@ -257,7 +264,7 @@ const BenchForm = () => {
                             <div className="col-md-8" onChange={handleJudgeSelection}>
                                 { judges.filter((j) => j.judiciary === 1).map((j, index) => (
                                     <div key={index} className="d-flex align-items-center">
-                                        <input type="checkbox" id={`judge-${index}`} />
+                                        <input type="checkbox" id={`judge-${j.jocode}`} />
                                         <span htmlFor={`judge-${index}`} className="ml-2">{j.judge_name} - {j.designation}</span>
                                     </div>
                                 ))}

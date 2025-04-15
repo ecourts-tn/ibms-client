@@ -6,7 +6,7 @@ const PreviousCaseHistory = ({petition, setPetition}) => {
     const {t} = useTranslation()
 
     return (
-        <div className="container">
+        <div className="container-fluid">
             <PreviousCaseForm 
                 petition={petition}
                 setPetition={setPetition}

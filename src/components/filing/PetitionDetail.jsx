@@ -24,7 +24,7 @@ const PetitionDetail = () => {
         getStateName, 
         getDistrictName,
         getEstablishmentName,
-        getCourttName,
+        getCourtName,
         getJudiciaryName,
         getFilingNumber,
         getRegistrationNumber
@@ -97,7 +97,7 @@ const PetitionDetail = () => {
                                         <td>{t("establishment")}</td>
                                         <td>{ getEstablishmentName(petition.establishment)}</td>
                                         <td>{t("court")}</td>
-                                        <td>{ getCourttName(petition.court)}</td>
+                                        <td>{ getCourtName(petition.court)}</td>
                                         </tr>
                                     </>
                                     )}

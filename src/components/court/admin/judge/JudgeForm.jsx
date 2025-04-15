@@ -188,7 +188,28 @@ const JudgeForm = () => {
                                     <label htmlFor="judiciaryDC">District Judiciary</label>
                                 </div>
                             </div>
-                        </div>    
+                        </div> 
+                        { parseInt(form.judiciary) === 2 && (
+                        <div className="form-group row">
+                            <label htmlFor="" className="col-sm-4">{t('state')} <RequiredField /></label>
+                            <div className="col-sm-8">
+                                <select
+                                    className={`form-control ${errors.state ? 'is-invalid' : ''}`}
+                                    name="state"
+                                    value={form.state}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                >
+                                    <option value="">Select state</option>
+                                    { states.map((s, index) => (
+                                    <option key={index} value={s.state_code}>{s.state_name}</option>
+                                    ))}
+                                </select>
+                                <div className="invalid-feedback">
+                                    { errors.state }
+                                </div>
+                            </div>
+                        </div> 
+                        )}  
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">{t('judge_name')} <RequiredField /></label>
                             <div className="col-sm-8">

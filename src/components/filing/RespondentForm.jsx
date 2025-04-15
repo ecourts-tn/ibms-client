@@ -208,7 +208,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <select 
                             name="police_station" 
                             id="police_station" 
-                            disabled={litigant.police_station !== null}
+                            disabled={litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}

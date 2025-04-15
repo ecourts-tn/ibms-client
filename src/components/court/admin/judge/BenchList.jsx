@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next'
 const BenchList = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
-    const [judges, setJudges] = useState([])
+    const [benchs, setBenchs] = useState([])
 
     useEffect(() => {
         async function fetchData(){
             try{
-                const response = await api.get("base/judge/")
+                const response = await api.get("base/bench/")
                 if(response.status === 200){
-                    setJudges(response.data)
+                    setBenchs(response.data)
                 }
             }catch(err){
                 console.log(err)
@@ -38,22 +38,27 @@ const BenchList = () => {
                             <table className="table table-bordered table-striped">
                                 <thead className="bg-secondary">
                                     <tr>
-                                        <th>S. NO</th>
-                                        <th>State</th>
-                                        <th>Judge Name</th>
-                                        <th>Judge Name (Tamil)</th>
-                                        <th>JO Code</th>
+                                        <th>Bench code</th>
+                                        <th>Bench Name</th>
+                                        <th>Bench Name (Tamil)</th>
+                                        <th>Judges</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    { judges.map((j, index) => (
+                                    { benchs.map((b, index) => (
                                     <tr>
-                                        <td>{ index+1 }</td>
-                                        <td>{ j.state }</td>
-                                        <td>{ j.judge_name }</td>
-                                        <td>{ j.judge_lname }</td>
-                                        <td>{ j.jocode }</td>
+                                        <td>{ b.bench_code }</td>
+                                        <td>{ b.bench_name }</td>
+                                        <td>{ b.bench_lname }</td>
+                                        <td>
+                                            <strong>
+                                            { b.judges
+                                                .map(j => j.judge.judge_sname.toUpperCase())
+                                                .join(', ')
+                                            }   
+                                            </strong>
+                                        </td>
                                         <td>
                                             <Link to="/" className='btn btn-primary btn-sm px-2'>Edit</Link>
                                         </td>
