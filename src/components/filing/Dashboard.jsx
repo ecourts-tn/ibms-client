@@ -6,7 +6,7 @@ import Loading from 'components/utils/Loading'
 import DashboardCard from 'components/utils/DashboardCard'
 import Calendar from 'components/utils/Calendar'
 import PetitionList from 'components/utils/PetitionList'
-import DynamicChart from 'components/utils/DynamicChart'
+import MyCalendar from 'components/utils/MyCalendar'
 
 const Dashboard = () => {
 
@@ -93,10 +93,7 @@ const Dashboard = () => {
                 </div>
                 <div className="row">
                     <div className="col-md-5">
-                        {/* <DynamicChart /> */}
-                        <Calendar 
-                            upcoming={calendar}
-                        />
+                        <MyCalendar />
                     </div>
                     <div className="col-md-7">
                         <PetitionList 

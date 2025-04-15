@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 // import GroundsList from './GroundsList'
 // import GroundsForm from './GroundsForm'
-import api from '../../api'
+import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { toast, ToastContainer } from 'react-toastify'
-import Loading from 'components/common/Loading'
+import Loading from 'components/utils/Loading'
 import * as Yup from 'yup'
 import Button from 'react-bootstrap/Button';
 import Editor from 'react-simple-wysiwyg';
 import { CreateMarkup } from 'utils'
+import { BaseContext } from 'contexts/BaseContext'
 
 const Grounds = () => {
 
@@ -16,13 +17,13 @@ const Grounds = () => {
     const[isUpdate, setIsUpdate] = useState(false)
     const[selectedGround, setSelectedGround] = useState(null)
     const[loading, setLoading] = useState(false)
+    const {efileNumber} = useContext(BaseContext)
     const {t} = useTranslation()
     
     useEffect(() => {
         const fecthGrounds = async() => {
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
-                const response = await api.get("case/ground/", {params:{efile_no}})
+                const response = await api.get("case/ground/", {params:{efile_no:efileNumber}})
                 if(response.status === 200){
                     setGrounds(response.data)
                 }
@@ -37,7 +38,7 @@ const Grounds = () => {
         try{
             setLoading(true)
             if(!isUpdate){
-                ground.efile_no = sessionStorage.getItem("efile_no")
+                ground.efile_no = efileNumber
                 const response = await api.post(`case/ground/`, ground)
                 if(response.status === 201){
                     setGrounds(grounds => [...grounds, ground])

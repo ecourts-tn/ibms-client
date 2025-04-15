@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react'
 import RespondentForm from './RespondentForm'
 import RespondentList from './RespondentList'
 import {toast, ToastContainer} from 'react-toastify'
-import api from '../../../../api'
+import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { BaseContext } from 'contexts/BaseContext'
 
-const RespondentContainer = () => {
+const Respondent = () => {
 
     const {efileNumber} = useContext(BaseContext)
     const[respondents, setRespondents] = useState([])
@@ -39,8 +39,8 @@ const RespondentContainer = () => {
             const response = await api.post(`litigant/create/`, litigant)
             if(response.status === 201){
                 setRespondents(respondents => [...respondents, litigant])
-                toast.success(t('alerts.respondent_added').replace('{respondent}', response.data.litigant_id), {
-                theme:"colored"
+                toast.success(t('alerts.respondent_added'), {
+                    theme:"colored"
                 })
             }
         }catch(error){
@@ -66,7 +66,7 @@ const RespondentContainer = () => {
             if(window.confirm("Are you sure want to delete the litigant")){
                 const response = await api.delete(`litigant/${respondent.litigant_id}/delete/`)
                 setRespondents(newRespondents)
-                toast.error(t('alerts.respondent_deleted').replace('{respondent}', respondent.litigant_id), {
+                toast.error(t('alerts.respondent_deleted'), {
                     theme: "colored"
                 })
             }
@@ -92,4 +92,4 @@ const RespondentContainer = () => {
     )
 }
 
-export default RespondentContainer
+export default Respondent

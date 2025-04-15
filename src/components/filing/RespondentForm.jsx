@@ -63,10 +63,10 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 if(response.status === 200){
                     const petition = response.data.petition
                     setLitigant({...litigant, 
-                        state: petition.state?.state_code,
-                        district: petition.district?.district_code,
+                        state: petition.state?.state_code || '',
+                        district: petition.district?.district_code || '',
                         // pdistrict: petition.pdistrict?.district_code,
-                        police_station: petition.police_station?.cctns_code,
+                        police_station: petition.police_station?.cctns_code || '',
                     })
                 }else{
                     setLitigant(initialState)
@@ -161,6 +161,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 </div>
             </div>    
             )}
+            { console.log('litigant', litigant)}
             { respondentPolice && (
              <React.Fragment>
                 <div className="form-group row">

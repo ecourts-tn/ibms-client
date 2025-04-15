@@ -5,14 +5,14 @@ import Button from '@mui/material/Button';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import EFileDetails from 'components/filing/common/EFileDetails';
+import EFileDetails from 'components/filing/DraftDetail';
 import { ModelClose } from 'utils';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
 import { BaseContext } from 'contexts/BaseContext';
 
 
-const EFile = () => {
+const Declaration = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false)
   const[errors, setErrors] = useState([])
@@ -199,4 +199,4 @@ const handleSubmit = async () => {
   );
 };
 
-export default EFile;
+export default Declaration;

@@ -5,40 +5,38 @@ import { PrivateRoute } from "hooks/PrivateRoute";
 import FilingLayout from "components/layout/public/FilingLayout";
 import { Logout, Profile, ChangePassword } from "components/auth";
 import { Dashboard, DraftList, SubmittedList, PdfGenerator, 
-    ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds,
-    Document, Initial } from "components/filing";
+    ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds,PreviousCaseHistory,
+    Petitioner, Respondent, Document, Initial, Declaration } from "components/filing";
 import Pleadings from "components/Pleadings";
-import { PetitionerContainer, RespondentContainer, 
-    EFile } from "components";
-import PreviousCaseContainer from "components/filing/history/PreviousCaseContainer";
 import { InitialInput, Accused, IntevenePetitioner } from "components/filing/intervene";
 import { Surety, SuretyForm, DischargeSurety, SuretyDetails } from "components/filing/surety";
-import Payment from "components/filing/common/Payment";
-import Allied from "components/filing/allied/Allied";
+import Payment from "components/filing/Payment";
+import Allied from "components/filing/Allied";
+import ListedPetition from "components/filing/ListedPetition";
 
 
 const bailRoutes = [
     { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
-    { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
+    { id: 2, path: "petitioner", component: <Petitioner />, name:"petitioners" },
+    { id: 3, path: "respondent", component: <Respondent />, name:"respondents" },
     { id: 4, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 5, path: "previous-history", component: <PreviousCaseContainer />, name:"previous_case_details" },
+    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name:"previous_case_details" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <EFile />, name:"efile" },
+    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 const abailRoutes = [
     { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <PetitionerContainer />, name:"petitioners" },
-    { id: 3, path: "respondent", component: <RespondentContainer />, name:"respondents" },
+    { id: 2, path: "petitioner", component: <Petitioner />, name:"petitioners" },
+    { id: 3, path: "respondent", component: <Respondent />, name:"respondents" },
     { id: 4, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 5, path: "previous-history", component: <PreviousCaseContainer />, name:"previous_case_details" },
+    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name:"previous_case_details" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <EFile />, name:"efile" },
+    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 const alliedRoutes = [
@@ -47,26 +45,26 @@ const alliedRoutes = [
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
-    { id: 6, path: "efile", component: <EFile />, name:"efile" },
+    { id: 6, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 const pleadingRoutes = [
     { id: 1, path: "", component: <Pleadings />, name:"main_case_detail"},
     { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "document", component: <Document />, name:"upload_document" },
-    { id: 4, path: "efile", component: <EFile />, name:"efile" },
+    { id: 4, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 const interveneRoutes = [
     { id: 1, path: "initial-input", component: <InitialInput />, name:"basic_details"},
     { id: 2, path: "petitioner", component: <IntevenePetitioner />, name:"petitioners" },
     { id: 3, path: "accused", component: <Accused />, name:"accused_details" },
-    { id: 4, path: "respondent", component: <RespondentContainer />, name:"respondents" },
+    { id: 4, path: "respondent", component: <Respondent />, name:"respondents" },
     { id: 5, path: "ground", component: <Grounds />, name:"ground" },
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <EFile />, name:"efile" },
+    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 
@@ -77,7 +75,7 @@ const suretyRoutes = [
     { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 5, path: "document", component: <Document />, name:"upload_document" },
     { id: 6, path: "payment", component: <Payment />, name:"payment" },
-    { id: 7, path: "efile", component: <EFile />, name:"efile" },
+    { id: 7, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 const dischargeRoutes = [
@@ -87,7 +85,7 @@ const dischargeRoutes = [
     { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 5, path: "document", component: <Document />, name:"upload_document" },
     { id: 6, path: "payment", component: <Payment />, name:"payment" },
-    { id: 7, path: "efile", component: <EFile />, name:"efile" },
+    { id: 7, path: "efile", component: <Declaration />, name:"efile" },
 ];
 
 
@@ -139,6 +137,7 @@ export const FilingRoutes = () => {
                 { path: "auth/logout", element: <Logout /> },
                 { path: "auth/profile", element: <Profile /> },
                 { path: "auth/change-password", element: <ChangePassword /> },
+                { path: "filing/cases/", element:<ListedPetition />}
             ].map(({ path, element, private: isPrivate = true }, index) => (
                 <Route key={index} path={path} element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} />
             ))}

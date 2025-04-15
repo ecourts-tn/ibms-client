@@ -6,7 +6,7 @@ import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { BaseContext } from 'contexts/BaseContext'
 
-const PetitionerContainer = () => {
+const Petitioner = () => {
     const {efileNumber} = useContext(BaseContext)
     const [petitioners, setPetitioners] = useState([])
     const [selectedPetitioner, setSelectedPetitioner] = useState(null)
@@ -43,8 +43,8 @@ const PetitionerContainer = () => {
                 })
                 if(response.status === 201){
                     setPetitioners(petitioners => [...petitioners, litigant])
-                    toast.success(t('alerts.petitioner_added').replace('{petitioner}', response.data.litigant_id), {
-                    theme:"colored"
+                    toast.success(t('alerts.petitioner_added'), {
+                        theme:"colored"
                     })
                 }
             }catch(error){
@@ -72,7 +72,7 @@ const PetitionerContainer = () => {
                 const response = await api.delete(`litigant/${petitioner.litigant_id}/delete/`)
                 // if(response.status === 204){
                     setPetitioners(newPetitioners)
-                    toast.error(t('alerts.petitioner_deleted').replace('{petitioner}', petitioner.litigant_id), {
+                    toast.error(t('alerts.petitioner_deleted'), {
                         theme: "colored"
                     }) 
                 // }
@@ -98,4 +98,4 @@ const PetitionerContainer = () => {
     )
 }
 
-export default PetitionerContainer
+export default Petitioner

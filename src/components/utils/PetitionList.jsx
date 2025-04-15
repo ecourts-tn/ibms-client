@@ -61,16 +61,16 @@ const PetitionList = ({ endpoint, title, url }) => {
     
 
     return (
-        <div className="card" style={{ minHeight: '500px' }}>
+        <div className="card">
             { loading && <Loading />}
-            <div className="card-header bg-secondary d-flex justify-content-between align-items-center">
+            <div className="card-header bg-primary d-flex justify-content-between align-items-center">
                 <h3 className="card-title">
                     <i className="ion ion-clipboard mr-1" />
                     <strong>{title}</strong>
                 </h3>
             </div>
 
-            <div className="card-body p-2" style={{ height: '650px', overflowY: 'scroll' }}>
+            <div className="card-body p-2" style={{ height: '390px', overflowY: 'scroll' }}>
                 {/* Display cases */}
                 <ListFilter 
                     search={search}

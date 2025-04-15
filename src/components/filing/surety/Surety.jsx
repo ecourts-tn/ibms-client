@@ -4,7 +4,7 @@ import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useTranslation } from 'react-i18next';
-import InitialInput from 'components/filing/common/InitialInput';
+import InitialInput from 'components/filing/InitialInput';
 import PetitionSearch from 'components/utils/PetitionSearch';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { BaseContext } from 'contexts/BaseContext';
@@ -40,8 +40,9 @@ const Surety = () => {
         async function fetchData(){
             try{
                 const response = await api.get(`case/filing/approved/`)
+                console.log(response.data)
                 if(response.status === 200){
-                    setCases(response.data)
+                    setCases(response.data.results)
                 }
             }catch(error){
                 console.log(error)

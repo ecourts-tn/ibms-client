@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import PreviousCaseForm from './PreviousCaseForm'
 import { useTranslation } from 'react-i18next'
 
-const PreviousCaseContainer = ({petition, setPetition}) => {
+const PreviousCaseHistory = ({petition, setPetition}) => {
     const {t} = useTranslation()
 
     return (
@@ -15,4 +15,4 @@ const PreviousCaseContainer = ({petition, setPetition}) => {
     )
 }
 
-export default PreviousCaseContainer
+export default PreviousCaseHistory
