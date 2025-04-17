@@ -163,11 +163,11 @@ const PostCauseList = () => {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="table-responsive">
-                            <table className="table table-bordered table-striped">
-                                <thead className="bg-secondary">
+                            <table className="table table-bordered">
+                                <thead className="bg-info">
                                     <tr>
                                         <th>S. NO</th>
-                                        <th>{t('Case Number or efile_number')}</th>
+                                        <th>{t('Case Number')}</th>
                                         <th>{t('Crime Number/Year')}</th>
                                         <th>{t('Petitioners')}</th>
                                         <th>{t('Hearing Date')}</th>
@@ -179,23 +179,19 @@ const PostCauseList = () => {
                                         <tr key={index}>
                                             <td>{index + 1 + indexOfFirstItem}</td>
                                             <td>
-                                                <Link 
-                                                    to="/court/case/scrutiny/detail" 
-                                                    state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
-                                                >
-                                                    {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
-                                                        <strong>{`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`}</strong>
-                                                    ) : null}
-                                                    <br />
-                                                    {c.petition?.efile_number ? (
-                                                        <strong>{c.petition.efile_number}</strong>
-                                                    ) : null}
-                                                </Link>
-                                                {c.petition?.efile_date ? (
-                                                    <span style={{ display: "block" }}>
-                                                        {t('efile_date')}: {formatDate(c.petition.efile_date)}
+                                                <React.Fragment>
+                                                    <span className="text-success text-bold d-block">
+                                                        {`(${c.petition?.reg_type?.type_name}/${c.petition?.reg_number}/${c.petition?.reg_year})`}
                                                     </span>
-                                                ) : null}
+                                                    <Link 
+                                                        to="#" 
+                                                        state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
+                                                    >
+                                                        {c.petition?.efile_number ? (
+                                                            <strong>{c.petition.cino}</strong>
+                                                        ) : null}
+                                                    </Link>
+                                                </React.Fragment>
                                             </td>
                                             <td>
                                                 {c.petition?.fir_number} / {c.petition?.fir_year}<br />
@@ -204,15 +200,9 @@ const PostCauseList = () => {
                                                 )}
                                             </td>
                                             <td className="text-center">
-                                                {c.litigants.filter(l => l.litigant_type === 1).map((l, idx) => (
-                                                    <span key={idx}>{l.litigant_name}</span>
-                                                ))}
-                                                <br />
-                                                <span className="text text-danger">Vs</span>
-                                                <br />
-                                                {c.litigants.filter(l => l.litigant_type === 2).map((l, idx) => (
-                                                    <span key={idx}>{l.litigant_name} {l.designation?.designation_name}</span>
-                                                ))}
+                                                { c.petition.pet_name }
+                                                    <span className="mx-2 text-danger">Vs</span>
+                                                { c.petition.res_name}
                                             </td>
                                             <td>
                                                 <div className="input-group date-input">

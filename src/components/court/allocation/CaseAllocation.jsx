@@ -1,17 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import api from '../../../api'
+import api from 'api'
 import '../style.css'
-import Button from '@mui/material/Button'
-import CheckIcon from '@mui/icons-material/CheckCircleRounded'
-import CancelIcon from '@mui/icons-material/CancelRounded'
 import BasicDetails from 'components/court/common/BasicDetails'
 import Petitioner from 'components/court/common/Petitioner'
 import Respondent from 'components/court/common/Respondent'
 import Grounds from 'components/court/common/Grounds'
 import AdvocateDetails from 'components/court/common/AdvocateDetails'
 import FeesDetails from 'components/court/common/FeesDetails'
-import CrimeDetails from 'components/court/common/CrimeDetails'
 import { toast, ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DocumentList from 'components/court/common/DocumentList'
@@ -21,6 +17,7 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { AuthContext } from 'contexts/AuthContext'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
+import { MasterContext } from 'contexts/MasterContext'
 
 
 const CaseAllocation = () => {
@@ -29,24 +26,24 @@ const CaseAllocation = () => {
     const navigate = useNavigate()
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-
-    const[petition, setPetition] = useState({})
-    const[crime, setCrime] = useState({})
-    const[litigant, setLitigant] = useState([])
-    const[grounds, setGrounds] = useState([])
-    const[advocates, setAdvocates] = useState([])
-    const[documents, setDocuments] = useState([])
-    const[fees, setFees] = useState([])
-    const[loading, setLoading] = useState(false)
+    const { masters: { benches }} = useContext(MasterContext)
+    const [petition, setPetition] = useState({})
+    const [crime, setCrime] = useState({})
+    const [litigant, setLitigant] = useState([])
+    const [grounds, setGrounds] = useState([])
+    const [advocates, setAdvocates] = useState([])
+    const [documents, setDocuments] = useState([])
+    const [fees, setFees] = useState([])
+    const [loading, setLoading] = useState(false)
     const {courts} = useContext(CourtContext)
     const {user} = useContext(AuthContext)
 
 
     const initialState = {
-        verification_date: null,
-        complaince_date: null,
-        remarks: '',
-        status:1
+        judiciary: '',
+        bench: '',
+        court: '',
+        allocation_date: '',
     }
     const[form, setForm] = useState(initialState)
 
@@ -107,13 +104,13 @@ const CaseAllocation = () => {
         try{
             setLoading(true)
             form.efile_no = state.efile_no
-            const response = await api.post(`court/case/scrutiny/`, form)
+            const response = await api.post(`court/case/allocation/`, form)
             if(response.status === 200){
-                toast.success("Petition scrutinized successfully", {
+                toast.success("Case allocated successfully", {
                     theme:"colored"
                 })
                 setTimeout(() => {
-                    navigate("/court/case/scrutiny")
+                    navigate("/court/case/allocation")
                 }, 1000)
             }
         }catch(error){
@@ -122,6 +119,14 @@ const CaseAllocation = () => {
             setLoading(false)
         }
     }
+
+    useEffect(()=> {
+        if(petition){
+            setForm({...form,
+                judiciary: petition.judiciary?.id || ''
+            })
+        }
+    }, [petition])
  
     return (
         <div className="card card-outline card-primary mt-3">
@@ -214,21 +219,34 @@ const CaseAllocation = () => {
                 </div>
                 <div className="row my-4">
                     <div className="col-md-8 offset-md-2">
-                        { user.seat?.seat_code && (
+                        { petition.judiciary?.id === 1 && (
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-2">Select Bench</label>
                             <div className="col-md-6">
-                                <select name="bench" className="form-control">
-                                    
+                                <select 
+                                    name="bench" 
+                                    className="form-control"
+                                    value={form.bench}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                >
+                                    <option value="">Select bench</option>
+                                    { benches.map((b, index) => (
+                                    <option key={index} value={b.bench_code}>{ b.bench_name }</option>    
+                                    ))}
                                 </select>
                             </div>
                         </div>
                         )}
-                        { user.court?.court_code && (
+                        { (petition.judiciary?.id === 2 || petition.judiciary?.id === 3) && (
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-2">Select Court</label>
                             <div className="col-md-6">
-                                <select name="bench" className="form-control">
+                                <select 
+                                    name="court" 
+                                    className="form-control"
+                                    value={form.court}
+                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                >
                                     <option value="">Select Court</option>
                                     { courts.filter((c) => c.establishment === user.establishment?.establishment_code).map((c, index) => (
                                         <option key={index} value={c.court_code}>{ language === 'ta' ? c.court_lname : c.court_name }</option>

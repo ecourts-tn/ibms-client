@@ -83,7 +83,7 @@ const Allied = () => {
             try{
                 const response = await api.get(`case/filing/approved/`)
                 if(response.status === 200){
-                    setCases(response.data)
+                    setCases(response.data.results)
                 }
             }catch(error){
                 console.log(error)

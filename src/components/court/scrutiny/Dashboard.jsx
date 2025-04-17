@@ -69,6 +69,7 @@ const CaseScrutiny = () => {
             try{
                 const response = await api.post("court/petition/detail/", {efile_no:state.efile_no})
                 if(response.status === 200){
+                    console.log(response.data)
                     const { petition, litigants, grounds, advocates, fees, crime, documents} = response.data
                     setPetition(petition)
                     setLitigant(litigants)

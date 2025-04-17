@@ -26,9 +26,9 @@ const Respondent = ({litigant}) => {
                     </tr>
                     <tr>
                         <td>{t('district')}</td>
-                        <td>{ language === 'ta' ? res.district.district_lname : res.district.district_name }</td>
+                        <td>{ language === 'ta' ? res.district?.district_lname : res.district?.district_name }</td>
                         <td>{t('police_station')}</td>
-                        <td>{ language === 'ta' ? res.police_station.station_lname : res.police_station.station_name }</td>
+                        <td>{ language === 'ta' ? res.police_station?.station_lname : res.police_station?.station_name }</td>
                     </tr>
                 </tbody>
             </table>

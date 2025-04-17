@@ -5,6 +5,7 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import {toast, ToastContainer} from 'react-toastify'
 import Loading from 'components/utils/Loading'
 import { useNavigate } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
 
 const JudgePeriodList = () => {
 
@@ -18,7 +19,7 @@ const JudgePeriodList = () => {
         async function fetchJudgePeriod(){
             try{
                 setLoading(true)
-                const response = await api.get(``)
+                const response = await api.get(`base/judge-period/`)
                 if(response.status === 200){
                     setPeriods(response.data)
                 }
@@ -37,35 +38,49 @@ const JudgePeriodList = () => {
             <ToastContainer />
             { loading && <Loading />}
             <div className="card-header">
-                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
-                <button 
-                    className="btn btn-success btn-sm float-right"
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_period')}</strong></h3>
+                <Button 
+                    className="btn-sm float-right"
+                    variant="success"
                     onClick={() => navigate('/court/admin/judge/period')}
-                >Add Judge Period</button>
+                > <i className="fa fa-plus mr-1"></i>
+                    Add New</Button>
             </div>
             <div className="card-body">
                 <div className="row">
                     <div className="col-md-12">
-                        <table className="table table-bordered table-striped">
-                            <thead className='bg-secondary'>
+                        <table className="table table-bordered table-striped table-sm">
+                            <thead className='bg-info'>
                                 <tr>
                                     <th>S.No</th>
-                                    <th>Judge Name</th>
                                     <th>Jocode</th>
+                                    <th>Judge Name</th>
+                                    <th>District</th>
                                     <th>Court</th>
                                     <th>Joining Date</th>
                                     <th>Releiving Date</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 { periods.map((p, index) => (
                                 <tr>
                                     <td>{index+1}</td>
-                                    <td>{p.judge_name}</td>
                                     <td>{p.jocode}</td>
-                                    <td>{p.court}</td>
+                                    <td>{p.judge?.judge_name || ''}</td>
+                                    <td>{` ${p.district?.district_name || ''}`}</td>
+                                    <td>{` ${p.court?.court_name || ''}`}</td>
                                     <td>{p.joining_date}</td>
                                     <td>{p.releiving_date}</td>
+                                    <td>
+                                        <Button
+                                            variant='primary'
+                                            className="btn-sm"
+                                            onClick={() => {}}
+                                        >
+                                            <i className="fa fa-pencil-alt"></i>
+                                        </Button>
+                                    </td>
                                 </tr>
                                 ))}
                             </tbody>

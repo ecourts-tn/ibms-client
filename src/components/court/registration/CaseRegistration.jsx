@@ -101,19 +101,19 @@ const CaseRegistration = () => {
         };
     
         useEffect(() => {
-                const case_register_date = flatpickr(".case_register_date-date-picker", {
+                const date_of_registration = flatpickr(".case_register_date-date-picker", {
                     dateFormat: "d-m-Y",
                     // maxDate: "today",
-                    defaultDate: form.case_register_date ? case_register_date_Display(new Date(form.case_register_date)) : '',
+                    defaultDate: form.date_of_registration ? case_register_date_Display(new Date(form.date_of_registration)) : '',
                     onChange: (selectedDates) => {
                         const formattedDate = selectedDates[0] ? case_register_date_Backend(selectedDates[0]) : "";
-                        setForm({ ...form, case_register_date: formattedDate });
+                        setForm({ ...form, date_of_registration: formattedDate });
                     },
                 });
         
                 return () => {
-                    if (case_register_date && typeof case_register_date.destroy === "function") {
-                        case_register_date.destroy();
+                    if (date_of_registration && typeof date_of_registration.destroy === "function") {
+                        date_of_registration.destroy();
                     }
                 };
             }, [form]);
@@ -133,19 +133,19 @@ const CaseRegistration = () => {
             };
         
             useEffect(() => {
-                    const case_hearing_date = flatpickr(".case_hearing_date-date-picker", {
+                    const first_hearing = flatpickr(".case_hearing_date-date-picker", {
                         dateFormat: "d-m-Y",
                         // maxDate: "today",
-                        defaultDate: form.case_hearing_date ? case_hearing_date_Display(new Date(form.case_hearing_date)) : '',
+                        defaultDate: form.first_hearing ? case_hearing_date_Display(new Date(form.first_hearing)) : '',
                         onChange: (selectedDates) => {
                             const formattedDate = selectedDates[0] ? case_hearing_date_Backend(selectedDates[0]) : "";
-                            setForm({ ...form, case_hearing_date: formattedDate });
+                            setForm({ ...form, first_hearing: formattedDate });
                         },
                     });
             
                     return () => {
-                        if (case_hearing_date && typeof case_hearing_date.destroy === "function") {
-                            case_hearing_date.destroy();
+                        if (first_hearing && typeof first_hearing.destroy === "function") {
+                            first_hearing.destroy();
                         }
                     };
                 }, [form]);

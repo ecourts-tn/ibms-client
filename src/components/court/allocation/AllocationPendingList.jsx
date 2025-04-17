@@ -19,7 +19,7 @@ const AllocationPendingList = () => {
         const fecthCases = async() =>{
             try{
                 setLoading(true)
-                const response = await api.get("court/registration/pending/")
+                const response = await api.get("court/allocation/pending/")
                 if(response.status === 200){
                     setCases(response.data)
                     setTotalItems(response.data.length);
@@ -101,7 +101,7 @@ const AllocationPendingList = () => {
                                                 ) : null}
                                             </Link>
                                             <span className="text-success ml-2">
-                                                {`(${c.petition.efile_number})`}
+                                                {`(${c.petition.cino})`}
                                             </span>
                                         </span>
                                         { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (

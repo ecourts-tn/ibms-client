@@ -2,7 +2,6 @@ import React, {useState, useEffect, useContext} from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from 'api'
 import * as Yup from 'yup'
-import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
@@ -12,6 +11,8 @@ import Loading from 'components/utils/Loading'
 import { MasterContext } from 'contexts/MasterContext'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
+import { Button } from 'react-bootstrap'
+import { AuthContext } from 'contexts/AuthContext'
 
 const JudgePeriodForm = () => {
 
@@ -24,6 +25,7 @@ const JudgePeriodForm = () => {
     }} = useContext(MasterContext)
     const {establishments} = useContext(EstablishmentContext)
     const {courts} = useContext(CourtContext)
+    const { user } = useContext(AuthContext)
     const initialState = {
         state: '',
         district: '',
@@ -116,6 +118,17 @@ const JudgePeriodForm = () => {
         };
     }, [form]);
 
+    useEffect(() => {
+        if(user){
+            setForm({...form,
+                state: user.state || '',
+                district: user.district?.district_code || '',
+                establishment: user.establishment?.establishment_code || '',
+                court: user.court?.court_code || '',
+            })
+        }
+    },[])
+
     const searchJudicialOfficer = async() => {
         if(form.jocode === '' || form.jocode === null){
             toast.error("Please enter the correct J.O Code", {theme:"colored"})
@@ -162,11 +175,13 @@ const JudgePeriodForm = () => {
             <ToastContainer />
             { loading && <Loading />}
             <div className="card-header">
-                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_details')}</strong></h3>
-                <button 
-                    className="btn btn-primary btn-sm float-right"
+                <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('judge_period')}</strong></h3>
+                <Button 
+                    className="btn-sm float-right"
+                    variant="primary"
                     onClick={() => navigate('/court/admin/judge/period/list/')}
-                >Judges Period List</button>
+                > <i className="fa fa-list mr-1"></i>
+                    View List</Button>
             </div>
             <div className="card-body">
                 <div className="row">
@@ -185,11 +200,11 @@ const JudgePeriodForm = () => {
                                     { errors.jocode }
                                 </div>
                             </div>
-                            <div className="col-sm-2">
+                            <div className="col-sm-3">
                                 <button 
-                                    className="btn btn-primary"
+                                    className="btn btn-info"
                                     onClick={searchJudicialOfficer}
-                                >
+                                > <i className="fa fa-search mr-1"></i>
                                     Search
                                 </button>
                             </div>
@@ -347,7 +362,7 @@ const JudgePeriodForm = () => {
                         <div className="form-group row">
                             <div className="col-sm-4"></div>
                             <div className="col-md-6">
-                                <div class="icheck-primary d-inline">
+                                <div className="icheck-primary d-inline">
                                     <input 
                                         type="checkbox" 
                                         id="isInchargeCheckbox" 
@@ -356,7 +371,7 @@ const JudgePeriodForm = () => {
                                         checked={form.is_incharge}
                                         onChange={(e) => setForm({...form, [e.target.name]: !form.is_incharge})}
                                     />
-                                    <label for="isInchargeCheckbox">Incharge?
+                                    <label htmlFor="isInchargeCheckbox">Incharge?
                                     </label>
                                 </div>
                             </div>
@@ -365,8 +380,7 @@ const JudgePeriodForm = () => {
                             <div className="col-sm-4"></div>
                             <div className="col-sm-4">
                                 <Button
-                                    variant='contained'
-                                    color='success'
+                                    variant='success'
                                     onClick={handleSubmit}
                                 >{t('submit')}</Button>
                             </div>

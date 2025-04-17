@@ -94,74 +94,44 @@ const PendingList = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentCases.map((c, index) => (
-                                    <tr>
-                                        <td>{index+1}</td>
-                                        <td style={{fontWeight:600}}>
-                                            <Link to={`/court/case/scrutiny/detail`} state={{ efile_no: c.petition.efile_number }}>
-                                                {c.petition.efile_number}
-                                            </Link>
-                                        </td>
-                                        <td>
-                                            {formatDate(c.petition?.efile_date)}
-                                        </td>
-                                        <td>
-                                            { language === 'ta' ? c.petition.case_type?.type_lfull_form : c.petition.case_type?.type_full_form}
-                                        </td>
-                                        <td>
-                                            { c.petition.pet_name }
-                                                <span className="mx-2 text-danger">Vs</span>
-                                            { c.petition.res_name }
-                                        </td>
-                                        <td>
-                                            <small className="badge badge-success">
-                                                <i className="far fa-clock" />
-                                                <ReactTimeAgo date={c.petition.created_at} locale="en-US" />
-                                            </small>
-                                        </td>
-                                    </tr>    
-                                    ))}
+                                    { Object.keys(currentCases).length > 0 ? (
+                                        currentCases.map((c, index) => (
+                                        <tr>
+                                            <td>{index+1}</td>
+                                            <td style={{fontWeight:600}}>
+                                                <Link to={`/court/case/scrutiny/detail`} state={{ efile_no: c.petition.efile_number }}>
+                                                    {c.petition.efile_number}
+                                                </Link>
+                                            </td>
+                                            <td>
+                                                {formatDate(c.petition?.efile_date)}
+                                            </td>
+                                            <td>
+                                                { language === 'ta' ? c.petition.case_type?.type_lfull_form : c.petition.case_type?.type_full_form}
+                                            </td>
+                                            <td>
+                                                { c.petition.pet_name }
+                                                    <span className="mx-2 text-danger">Vs</span>
+                                                { c.petition.res_name }
+                                            </td>
+                                            <td>
+                                                <small className="badge badge-success">
+                                                    <i className="far fa-clock" />
+                                                    <ReactTimeAgo date={c.petition.created_at} locale="en-US" />
+                                                </small>
+                                            </td>
+                                        </tr>    
+                                        ))
+
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={6} className='text-center'>
+                                                <span className='text-danger'>All cases have been reviewed — none pending for scrutiny</span>    
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
-
-                            {/* List of cases */}
-                            {/* <ul className="todo-list" data-widget="todo-list">
-                                {currentCases.map((c, index) => (
-                                    <li key={index}>
-                                        <span className="handle">
-                                            <i className="fas fa-ellipsis-v" />
-                                            <i className="fas fa-ellipsis-v" />
-                                        </span>
-                                        <div className="icheck-primary d-inline ml-2">
-                                            <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
-                                            <label htmlFor="todoCheck1" />
-                                        </div>
-
-                                        <span className="text mr-3">
-                                            <Link to={`/court/case/scrutiny/detail`} state={{ efile_no: c.petition.efile_number }}>
-                                                {c.petition.efile_number}
-                                            </Link>
-                                        </span>
-                                        {c.litigants.filter((l) => l.litigant_type === 1).map((l, index) => (
-                                            <span className="text ml-2" key={index}>
-                                                {index + 1}. {l.litigant_name}
-                                            </span>
-                                        ))}
-                                        <span className="text text-danger">Vs</span>
-                                        {c.litigants.filter((l) => l.litigant_type === 2).map((l, index) => (
-                                            <span className="text ml-2" key={index}>
-                                                {index + 1}. {l.litigant_name} {l.designation?.designation_name}
-                                            </span>
-                                        ))}
-                                        <div className="float-right">
-                                            <small className="badge badge-success">
-                                                <i className="far fa-clock" />
-                                                <ReactTimeAgo date={c.petition.created_at} locale="en-US" />
-                                            </small>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul> */}
                         </div>
                         <div className="card-footer">
                             {/* Pagination Controls */}

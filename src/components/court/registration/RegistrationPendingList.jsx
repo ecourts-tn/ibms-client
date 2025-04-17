@@ -99,9 +99,7 @@ const RegistrationPendingList = () => {
                                         <td>{index+1}</td>
                                         <td>
                                             <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>
-                                                {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
-                                                    `${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`
-                                                ) : null}
+                                                {c.petition?.cino}
                                             </Link>
                                         </td>
                                         <td>{c.petition.efile_number}</td>
