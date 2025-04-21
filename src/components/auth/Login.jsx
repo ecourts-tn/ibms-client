@@ -203,11 +203,11 @@ const Login = () => {
                       onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                     >
                       <option value="">{t('alerts.select_usertype')}</option>
-                      {groups
-                        .filter((g) => g.id !== 1 && g.id !== 2)
-                        .map((g, index) => (
-                          <option key={index} value={g.id}>
-                            {language === 'ta' ? g.name : g.name}
+                      {departments
+                        .filter((d) => d.display)
+                        .map((d, index) => (
+                          <option key={index} value={d.id}>
+                            {language === 'ta' ? d.department_lname : d.department_name }
                           </option>
                         ))}
                     </select>

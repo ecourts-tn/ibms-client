@@ -48,7 +48,7 @@ const ApprovedList = () => {
                         page,
                         page_size: pageSize,
                         search,
-                      },
+                    },
                 })
                 setCases(response.data.results)
                 setCount(response.data.count);

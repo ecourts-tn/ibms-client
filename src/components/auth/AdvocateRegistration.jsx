@@ -1,7 +1,7 @@
 import api from 'api'
 import * as Yup from 'yup'
 import { RequiredField } from 'utils'
-import React, { useEffect, useState} from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { toast, ToastContainer } from 'react-toastify'
@@ -23,6 +23,8 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
+import { MasterContext } from 'contexts/MasterContext'
+import { LanguageContext } from 'contexts/LanguageContex'
 
 
 
@@ -57,6 +59,7 @@ const AdvocateRegistration = () => {
         gender: 1,
         date_of_birth: '',
         litigation_place: 1,
+        state: '',
         district: '',
         police_station:'',
         prison:'',
@@ -75,14 +78,18 @@ const AdvocateRegistration = () => {
         address: '',
         notary_order: ''
     }
-    const[districts, setDistricts] = useState([])
+    const initialProfile = {
+        
+    }
+    const { masters: {states, districts, genders }} = useContext(MasterContext)
+    const { language } = useContext(LanguageContext)
     const [form, setForm] = useState(initialState)
-    const[errors, setErrors] = useState(initialState)
-    const[mobileOtp, setMobileOtp] = useState(false)
-    const[emailOtp, setEmailOtp] = useState(false)
-    const[loading, setLoading] = useState(false)
-    const[mobileVerified, setMobileVerified] = useState(false)
-    const[emailVerified, setEmailVerified]   = useState(false)
+    const [errors, setErrors] = useState(initialState)
+    const [mobileOtp, setMobileOtp] = useState(false)
+    const [emailOtp, setEmailOtp] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [mobileVerified, setMobileVerified] = useState(false)
+    const [emailVerified, setEmailVerified]   = useState(false)
     const [showPassword, setShowPassword] = useState(false); 
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
@@ -571,9 +578,9 @@ const AdvocateRegistration = () => {
                                             <RadioGroup
                                                 row
                                                 aria-labelledby="usertype-radios"
-                                                name="user_type"
-                                                value={form.user_type}
-                                                onChange={(e) => setForm({...form, user_type:e.target.value})}
+                                                name="group"
+                                                value={form.group}
+                                                onChange={(e) => setForm({...form, group:e.target.value})}
                                             >
                                                 <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
                                                 <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
@@ -582,7 +589,7 @@ const AdvocateRegistration = () => {
                                     </div>
                                     <div className="col-md-9 offset-md-2">
                                         <div className="form-group row md-3">
-                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.group) === 1 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
                                             <div className="col-sm-8">
                                                 <input 
                                                     type="text" 
@@ -608,9 +615,9 @@ const AdvocateRegistration = () => {
                                                         value={form.gender}
                                                         onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                                     >
-                                                        <FormControlLabel value={1} control={<Radio />} label={t('male')} />
-                                                        <FormControlLabel value={2} control={<Radio />} label={t('female')} />
-                                                        <FormControlLabel value={3} control={<Radio />} label={t('other')} />
+                                                        { genders.map((g, index) => (
+                                                            <FormControlLabel value={g.id} control={<Radio />} label={ language === 'ta' ? g.gender_lname : g.gender_name} />
+                                                        ))}
                                                     </RadioGroup>
                                                     <div className="invalid-feedback">
                                                         { errors.gender }
@@ -658,26 +665,44 @@ const AdvocateRegistration = () => {
                                             </div>
                                         </div>
                                         { parseInt(form.litigation_place) === 2 && (
-                                            
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
-                                                <div className="col-sm-6">
-                                                    <select 
-                                                        name="district" 
-                                                        id="district" 
-                                                        className="form-control"
-                                                        value={form.district}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="">Select District</option>
-                                                        { districts.map((item, index) => (
-                                                            <option value={item.district_code} key={index}>{item.district_name}</option>
-                                                        ))}
-                                                    </select>
+                                            <React.Fragment>
+                                                <div className="form-group row mb-3">
+                                                    <label htmlFor="state" className='col-form-label col-sm-3'>{t('state')}<RequiredField/></label>
+                                                    <div className="col-sm-6">
+                                                        <select 
+                                                            name="state" 
+                                                            id="state" 
+                                                            className="form-control"
+                                                            value={form.state}
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        >
+                                                            <option value="">Select State</option>
+                                                            { states.map((s, index) => (
+                                                                <option value={s.state_code} key={index}>{language === 'ta' ? s.state_lname : s.state_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                <div className="form-group row mb-3">
+                                                    <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
+                                                    <div className="col-sm-6">
+                                                        <select 
+                                                            name="district" 
+                                                            id="district" 
+                                                            className="form-control"
+                                                            value={form.district}
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        >
+                                                            <option value="">Select District</option>
+                                                            { districts.filter((d) => parseInt(d.state) === parseInt(form.state)).map((item, index) => (
+                                                                <option value={item.district_code} key={index}>{item.district_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
                                         )}
-                                        { parseInt(form.user_type) === 1 && (
+                                        { parseInt(form.group) === 1 && (
                                         <>
                                             <div className="form-group row mb-3">
                                                 <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>

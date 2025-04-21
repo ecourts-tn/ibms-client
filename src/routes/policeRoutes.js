@@ -51,7 +51,7 @@ export const policeRoutes = [
     {   path:"condition",
         element:(
             <PrivateRoute>
-                <ConditionList />
+                <ConditionForm />
             </PrivateRoute>
         )
     },
