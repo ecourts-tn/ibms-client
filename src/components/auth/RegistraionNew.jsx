@@ -40,7 +40,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const AdvocateRegistration = () => {
+const RegistrationNew = () => {
 
     const navigate = useNavigate();
 
@@ -116,69 +116,13 @@ const AdvocateRegistration = () => {
         }));
     };
 
-    const appointment_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
 
-    const appointment_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
     
-    useEffect(() => {
-        const appointment_date = flatpickr(".appointment_date-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            defaultDate: form.appointment_date ? appointment_date_Display(new Date(form.appointment_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? appointment_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, appointment_date: formattedDate });
-            },
-        });
 
-        return () => {
-            if (appointment_date && typeof appointment_date.destroy === "function") {
-                appointment_date.destroy();
-            }
-        };
-    }, [form]);
 
-    const date_of_birth_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
 
-    const date_of_birth_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
     
-    useEffect(() => {
-        const date_of_birth = flatpickr(".date_of_birth-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            defaultDate: form.date_of_birth ? date_of_birth_Display(new Date(form.date_of_birth)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? date_of_birth_Backend(selectedDates[0]) : "";
-                setForm({ ...form, date_of_birth: formattedDate });
-            },
-        });
 
-        return () => {
-            if (date_of_birth && typeof date_of_birth.destroy === "function") {
-                date_of_birth.destroy();
-            }
-        };
-    }, [form]);
 
     const handlePasswordChange = (e) => {
         const { name, value } = e.target;
@@ -626,167 +570,120 @@ const AdvocateRegistration = () => {
                                             </div>
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">{t('gender')}<RequiredField/></label>
+                                            <label className="col-form-label col-sm-3">{t('mobile_number')}<RequiredField/></label>
                                             <div className="col-sm-4">
-                                                <FormControl>
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="gender-radios"
-                                                        name="gender"
-                                                        value={form.gender}
-                                                        onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
-                                                    >
-                                                        { genders.map((g, index) => (
-                                                            <FormControlLabel value={g.id} control={<Radio />} label={ language === 'ta' ? g.gender_lname : g.gender_name} />
-                                                        ))}
-                                                    </RadioGroup>
+                                                <FormControl className="mb-3" fullWidth>
+                                                    <input 
+                                                        type="text" 
+                                                        name="mobile" 
+                                                        className={`form-control ${errors.mobile ? 'is-invalid' : null }`}
+                                                        value={form.mobile}
+                                                        onChange={(e) => handleMobileChange(e, setForm, form, 'mobile')}
+                                                        // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    />
                                                     <div className="invalid-feedback">
-                                                        { errors.gender }
+                                                        { errors.mobile }
                                                     </div>
                                                 </FormControl>
-                                            </div> 
+                                            </div>
+                                            { !mobileVerified && (
+                                                <div className="col-sm-2">
+                                                    <Button 
+                                                        variant="contained"
+                                                        color="primary" 
+                                                        onClick={sendMobileOTP}
+                                                    >
+                                                        {t('send_otp')}</Button>
+                                                </div>
+
+                                            )}
+                                            {/* { mobileLoading && (<Spinner variant="primary"/>)} */}
+                                            { isMobileOtpSent && !mobileVerified && (
+                                                <div className="col-sm-3">
+                                                    <div className="row">
+                                                        <div className="col-sm-6">
+                                                            <input 
+                                                                type="password" 
+                                                                name="mobileOtp" 
+                                                                className="form-control" 
+                                                                value={mobileOtp}
+                                                                onChange={(e) => setMobileOtp(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="col-md-6">
+                                                            <Button 
+                                                                variant="contained"
+                                                                color="success"
+                                                                onClick={() => verifyMobile(mobileOtp)}
+                                                            >
+                                                            {t('verify')}</Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            { mobileVerified && (
+                                                <p className="mt-2">
+                                                    <CheckCircleRoundedIcon color="success"/>
+                                                    <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
+                                                </p>
+                                            )}
                                         </div>
                                         <div className="form-group row mb-3">
-                                            <div className="col-sm-3">
-                                                <label htmlFor="">{t('date_of_birth')}<RequiredField/></label>
-                                            </div>
-                                            <div className="col-sm-3">
+                                            <label className="col-form-label col-sm-3">{t('email_address')}<RequiredField/></label>
+                                            <div className="col-sm-4">
                                                 <input 
-                                                    type="text" 
-                                                    className={`form-control date_of_birth-date-picker ${errors.date_of_birth ? 'is-invalid' : ''}`}
-                                                    name="date_of_birth"
-                                                    value={form.date_of_birth ? form.date_of_birth : ''}
-                                                    placeholder="DD/MM/YYYY"
-                                                    onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
-                                                    style={{
-                                                        backgroundColor: 'transparent',
-                                                        border: '1px solid #ccc', // Optional: Adjust border
-                                                        padding: '8px',            // Optional: Adjust padding
-                                                    }}
+                                                    type="email" 
+                                                    name="email" 
+                                                    className={`form-control ${errors.email ? 'is-invalid' : null}`}
+                                                    value={form.email}
+                                                    onChange={handleChange}
+                                                    // onBlur={() => handleBlur(form, setErrors)}
+                                                    // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 />
                                                 <div className="invalid-feedback">
-                                                    { errors.date_of_birth}
+                                                    { errors.email }
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="" className="col-sm-3 col-form-label">{t('place_of_practice')}<RequiredField/></label>
-                                            <div className="col-sm-9">
-                                                <FormControl>
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="litigation-place-radios"
-                                                        name="litigation_place"
-                                                        value={form.litigation_place}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                            { !emailVerified && (
+                                                <div className="col-sm-2">
+                                                    <Button 
+                                                        variant="contained" 
+                                                        color="primary" 
+                                                        onClick={sendEmailOTP}
                                                     >
-                                                        <FormControlLabel value={1} control={<Radio />} label={t('high_court')} />
-                                                        <FormControlLabel value={2} control={<Radio />} label={t('district_court')} />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                            </div>
-                                        </div>
-                                        { parseInt(form.litigation_place) === 2 && (
-                                            <React.Fragment>
-                                                <div className="form-group row mb-3">
-                                                    <label htmlFor="state" className='col-form-label col-sm-3'>{t('state')}<RequiredField/></label>
-                                                    <div className="col-sm-6">
-                                                        <select 
-                                                            name="state" 
-                                                            id="state" 
-                                                            className="form-control"
-                                                            value={form.state}
-                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                        >
-                                                            <option value="">Select State</option>
-                                                            { states.map((s, index) => (
-                                                                <option value={s.state_code} key={index}>{language === 'ta' ? s.state_lname : s.state_name}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
+                                                        {t('send_otp')}</Button>
                                                 </div>
-                                                <div className="form-group row mb-3">
-                                                    <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
-                                                    <div className="col-sm-6">
-                                                        <select 
-                                                            name="district" 
-                                                            id="district" 
-                                                            className="form-control"
-                                                            value={form.district}
-                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                        >
-                                                            <option value="">Select District</option>
-                                                            { districts.filter((d) => parseInt(d.state) === parseInt(form.state)).map((item, index) => (
-                                                                <option value={item.district_code} key={index}>{item.district_name}</option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                            </React.Fragment>
-                                        )}
-                                        { parseInt(form.roles[0]) === 10 && (
-                                        <>
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>
-                                                <div className="col-sm-3">
-                                                    <input
-                                                        type='text'
-                                                        name="adv_reg"
-                                                        value={form.adv_reg}
-                                                        onChange={handleEnrolmentno}
-                                                        className={`form-control ${errors.adv_reg ? 'is-invalid' : 'adv_reg'}`}
-                                                        placeholder='MS/----/----'
-                                                    />
-                                                    {errors.adv_reg && <div className="invalid-feedback">{errors.adv_reg}</div>} {/* Show error message */}
-                                                </div>
-                                            </div>
-                                            
-                                            <div className="form-group row">
-                                                <label htmlFor="" className="col-sm-3">{t('notary')}<RequiredField/></label>
-                                                <div className="col-md-9">
-                                                <FormControl>
-                                                    <RadioGroup
-                                                        row
-                                                        aria-labelledby="notary-radios"
-                                                        name="is_notary"
-                                                        value={form.is_notary}
-                                                        onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
-                                                    >
-                                                        <FormControlLabel value={true} control={<Radio />} label={t('yes')} />
-                                                        <FormControlLabel value={false} control={<Radio />} label={t('no')} />
-                                                    </RadioGroup>
-                                                </FormControl>
-                                                </div>
-                                            </div>
-                                            { form.is_notary === "true" && (
-                                            <div className="form-group row">
-                                                <div className="col-sm-3">
-                                                    <label htmlFor="">{t('appointment_date')}<RequiredField/></label>
-                                                </div>
-                                                <div className="col-sm-3">
-                                                    <input 
-                                                        type="date"     
-                                                        name="appointment_date" 
-                                                        className={`form-control appointment_date-date-picker ${errors.appointment_date ? 'is-invalid' : ''}`}
-                                                        value={form.appointment_date ? form.appointment_date : ''}
-                                                        placeholder="DD/MM/YYYY"
-                                                        onChange={(e) => setForm({ ...form, appointment_date: e.target.value })}
-                                                        style={{
-                                                            backgroundColor: 'transparent',
-                                                            border: '1px solid #ccc', // Optional: Adjust border
-                                                            padding: '8px',            // Optional: Adjust padding
-                                                        }}
-                                                    />
-                                                    <div className="invalid-feedback">
-                                                    { errors.appointment_date}
-                                                </div>
-                                                </div>
-                                                
-                                            </div>
                                             )}
-                                        </>    
-                                        )}
-                                        
+                                            {/* { emailLoading && (<Spinner variant="primary"/>)} */}
+                                            { isEmailOtpSent  && !emailVerified && (
+                                                <div className="col-sm-3">
+                                                    <div className="row">
+                                                        <div className="col-sm-6">
+                                                            <input  
+                                                                type="password" 
+                                                                name="emailOtp" 
+                                                                className="form-control" 
+                                                                value={emailOtp}
+                                                                onChange={(e) => setEmailOtp(e.target.value)}
+                                                            />
+                                                        </div>
+                                                        <div className="col-md-6">
+                                                            <Button 
+                                                                variant="contained" 
+                                                                color="success"
+                                                                onClick={() => verifyEmail(emailOtp)}
+                                                            >{t('verify')}</Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            { emailVerified && (
+                                            <p className="mt-2">
+                                                <CheckCircleRoundedIcon color="success"/>
+                                                <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
+                                            </p>
+                                            )}
+                                        </div>                                       
                                         <div className="form-group row">
                                             <label className="col-form-label col-sm-3 pt-0">{t('password')}<RequiredField/></label>
                                             <div className="col-sm-6">
@@ -909,256 +806,6 @@ const AdvocateRegistration = () => {
                                                 </FormControl>
                                             </div>
                                         </div>
-                                        <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">{t('mobile_number')}<RequiredField/></label>
-                                            <div className="col-sm-4">
-                                                <FormControl className="mb-3" fullWidth>
-                                                    <input 
-                                                        type="text" 
-                                                        name="mobile" 
-                                                        className={`form-control ${errors.mobile ? 'is-invalid' : null }`}
-                                                        value={form.mobile}
-                                                        onChange={(e) => handleMobileChange(e, setForm, form, 'mobile')}
-                                                        // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                    />
-                                                    <div className="invalid-feedback">
-                                                        { errors.mobile }
-                                                    </div>
-                                                </FormControl>
-                                            </div>
-                                            { !mobileVerified && (
-                                                <div className="col-sm-2">
-                                                    <Button 
-                                                        variant="contained"
-                                                        color="primary" 
-                                                        onClick={sendMobileOTP}
-                                                    >
-                                                        {t('send_otp')}</Button>
-                                                </div>
-
-                                            )}
-                                            {/* { mobileLoading && (<Spinner variant="primary"/>)} */}
-                                            { isMobileOtpSent && !mobileVerified && (
-                                                <div className="col-sm-3">
-                                                    <div className="row">
-                                                        <div className="col-sm-6">
-                                                            <input 
-                                                                type="password" 
-                                                                name="mobileOtp" 
-                                                                className="form-control" 
-                                                                value={mobileOtp}
-                                                                onChange={(e) => setMobileOtp(e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <Button 
-                                                                variant="contained"
-                                                                color="success"
-                                                                onClick={() => verifyMobile(mobileOtp)}
-                                                            >
-                                                            {t('verify')}</Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            { mobileVerified && (
-                                                <p className="mt-2">
-                                                    <CheckCircleRoundedIcon color="success"/>
-                                                    <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="form-group row mb-3">
-                                            <label className="col-form-label col-sm-3">{t('email_address')}<RequiredField/></label>
-                                            <div className="col-sm-4">
-                                                <input 
-                                                    type="email" 
-                                                    name="email" 
-                                                    className={`form-control ${errors.email ? 'is-invalid' : null}`}
-                                                    value={form.email}
-                                                    onChange={handleChange}
-                                                    // onBlur={() => handleBlur(form, setErrors)}
-                                                    // onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                />
-                                                <div className="invalid-feedback">
-                                                    { errors.email }
-                                                </div>
-                                            </div>
-                                            { !emailVerified && (
-                                                <div className="col-sm-2">
-                                                    <Button 
-                                                        variant="contained" 
-                                                        color="primary" 
-                                                        onClick={sendEmailOTP}
-                                                    >
-                                                        {t('send_otp')}</Button>
-                                                </div>
-                                            )}
-                                            {/* { emailLoading && (<Spinner variant="primary"/>)} */}
-                                            { isEmailOtpSent  && !emailVerified && (
-                                                <div className="col-sm-3">
-                                                    <div className="row">
-                                                        <div className="col-sm-6">
-                                                            <input  
-                                                                type="password" 
-                                                                name="emailOtp" 
-                                                                className="form-control" 
-                                                                value={emailOtp}
-                                                                onChange={(e) => setEmailOtp(e.target.value)}
-                                                            />
-                                                        </div>
-                                                        <div className="col-md-6">
-                                                            <Button 
-                                                                variant="contained" 
-                                                                color="success"
-                                                                onClick={() => verifyEmail(emailOtp)}
-                                                            >{t('verify')}</Button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            { emailVerified && (
-                                            <p className="mt-2">
-                                                <CheckCircleRoundedIcon color="success"/>
-                                                <span className="text-success ml-1"><strong>{t('otp_verified')}</strong></span>
-                                            </p>
-                                            )}
-                                        </div>
-                                        <div className="form-group row">
-                                            <label htmlFor="address" className="col form-label col-sm 3">{t('address')}</label>
-                                            <div className="col-sm-9">
-                                                <textarea 
-                                                    name="address"
-                                                    className="form-control"
-                                                    value={form.address}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                ></textarea>
-                                            </div>
-                                        </div>
-                                        { form.is_notary === "true" && (
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="" className='col-form-label col-sm-3'>{t('notary_order')}<RequiredField/></label>
-                                            <div className="col-sm-9">
-                                                <Button
-                                                    component="label"
-                                                    role={undefined}
-                                                    variant="contained"
-                                                    tabIndex={-1}
-                                                    color="warning"
-                                                    startIcon={<CloudUploadIcon />}
-                                                    >
-                                                    {t('upload_notary_order')}
-                                                    <VisuallyHiddenInput 
-                                                        type="file"
-                                                        name="notary_order"
-                                                        onChange={(e) => handleFileChange(e, 'notary_order')}
-                                                        accept=".pdf"
-                                                    />
-                                                </Button>
-                                                {/* Display selected file name */}
-                                                {form.notary_order && form.notary_order.name && (
-                                                    <span className="mx-2">{form.notary_order.name}</span>
-                                                )}
-                                                {/* Display error message if any */}
-                                                {errors.notary_order && (
-                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
-                                                        {errors.notary_order}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        )}
-                                                
-                                        <div className="form-group row mb-3">
-                                                <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
-                                                <div className="col-sm-9">
-                                                    <Button
-                                                        component="label"
-                                                        role={undefined}
-                                                        variant="contained"
-                                                        tabIndex={-1}
-                                                        color="warning"
-                                                        startIcon={<CloudUploadIcon />}
-                                                        >
-                                                        {t('upload_bar_certificate')}
-                                                        <VisuallyHiddenInput 
-                                                            type="file"
-                                                            name="reg_certificate"
-                                                            accept=".pdf" // Only PDF accepted
-                                                            onChange={(e) => handleFileChange(e, 'reg_certificate')}
-                                                        />
-                                                    </Button>
-                                                    {/* Display selected file name */}
-                                                    {form.reg_certificate && form.reg_certificate.name && (
-                                                        <span className="mx-2">{form.reg_certificate.name}</span>
-                                                    )}
-                                                    {/* Display error message if any */}
-                                                    {errors.reg_certificate && (
-                                                        <div className="invalid-feedback" style={{ display: 'block' }}>
-                                                            {errors.reg_certificate}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                        </div>
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}<RequiredField/></label>
-                                            <div className="col-sm-9">
-                                                <Button
-                                                    component="label"
-                                                    role={undefined}
-                                                    variant="contained"
-                                                    color="warning"
-                                                    tabIndex={-1}
-                                                    startIcon={<CloudUploadIcon />}
-                                                    >
-                                                    {t('upload_photo')}
-                                                    <VisuallyHiddenInput 
-                                                        type="file" 
-                                                        name="profile_photo"
-                                                        accept="image/*" // Allow image files
-                                                        onChange={(e) => handleFileChange(e, 'profile_photo')}
-                                                    />
-                                                </Button>
-                                                {/* Display selected file name */}
-                                                {form.profile_photo && form.profile_photo.name && (
-                                                    <span className="mx-2">{form.profile_photo.name}</span>
-                                                )}
-                                                {/* Display error message if any */}
-                                                {errors.profile_photo && (
-                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
-                                                        {errors.profile_photo}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="form-group row mb-3">
-                                            <label htmlFor="address_proof" className='col-form-label col-sm-3'>{t('identity_proof')}<RequiredField/></label>
-                                            <div className="col-sm-9">
-                                                <Button
-                                                    component="label"
-                                                    role={undefined}
-                                                    variant="contained"
-                                                    color="warning"
-                                                    tabIndex={-1}
-                                                    startIcon={<CloudUploadIcon />}
-                                                    >
-                                                    {t('upload_proof')}
-                                                    <VisuallyHiddenInput 
-                                                        type="file"
-                                                        name="identity_proof"
-                                                        onChange={(e) => handleFileChange(e, 'identity_proof')}  
-                                                        accept=".pdf, image/*" 
-                                                    />
-                                                </Button>
-                                                <span className="mx-2">{form.identity_proof && form.identity_proof.name}</span>
-                                                {errors.identity_proof && (
-                                                    <div className="invalid-feedback" style={{ display: 'block' }}>
-                                                        {errors.identity_proof}
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        
                                         <div className="d-flex justify-content-center">
                                             <Button
                                                 variant="contained"
@@ -1180,4 +827,4 @@ const AdvocateRegistration = () => {
     )
 }
 
-export default AdvocateRegistration
+export default RegistrationNew

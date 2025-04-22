@@ -11,11 +11,14 @@ import NotFound from "components/layout/public/NotFound";
 import ResetPassword from "components/auth/ResetPassword";
 import { PetitionDetail } from "components/filing";
 import ResetPasswordConfirm from "components/auth/ResetPasswordConfirm";
+import RegistrationNew from "components/auth/RegistraionNew";
+import { Profile } from "components/auth";
 
 
 export const publicRoutes = [
     { path: "/", element: <Home /> },
-    { path: "auth/registration", element:<AdvocateRegistration />},
+    { path: "auth/registration", element:<RegistrationNew />},
+    { path: "profile/", element:<Profile />},
     { path: "auth/reset-password", element: <ResetPassword /> },
     { path: "auth/reset-password/confirm/:uid/:token", element: <ResetPasswordConfirm /> },
     { path: "filing/detail", element: <PetitionDetail /> },
