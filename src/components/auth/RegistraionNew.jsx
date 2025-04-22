@@ -555,7 +555,7 @@ const RegistrationNew = () => {
                                     <div className="col-md-9 offset-md-2">
                                         <div className="form-group row md-3">
                                             <label htmlFor="" className="col-sm-3">{ parseInt(form.roles[0]) === 10 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
-                                            <div className="col-sm-8">
+                                            <div className="col-sm-6">
                                                 <input 
                                                     type="text" 
                                                     name="username" 
