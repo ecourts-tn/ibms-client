@@ -13,12 +13,12 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { MasterContext } from 'contexts/MasterContext'
 import { LanguageContext } from 'contexts/LanguageContex'
+import config from 'config'
 
 const VisuallyHiddenInput = styled('input')({
     clip: 'rect(0 0 0 0)',
@@ -39,6 +39,7 @@ const Profile = () => {
         roles: [10],
         username: '',
         is_notary: false,
+        appointment_date:'',
         adv_reg: '',
         gender: 1,
         date_of_birth: '',
@@ -335,14 +336,56 @@ const Profile = () => {
         }
     }
 
+    useEffect(() => {
+        const fetchProfile = async() => {
+            try{
+                setLoading(true)
+                const response = await api.get(`auth/user/profile/`)
+                if(response.status === 200){
+                    const data = response.data
+                    setForm({
+                        ...form,
+                        username: data.user?.username,
+                        is_notary: data.profile?.is_notary,
+                        adv_reg: data.profile?.adv_reg,
+                        gender: data.profile?.gender,
+                        date_of_birth: data.profile?.date_of_birth,
+                        litigation_place: data.profile?.litigation_place,
+                        state: data.user?.state,
+                        district: data.user?.district,
+                        mobile:data.user?.mobile,
+                        email:data.user?.email,
+                        address: data.profile.address,
+                        profile_photo: data.profile?.profile_photo || '',
+                        identity_proof: data.profile?.identity_proof || '',
+                        reg_certificate: data.profile?.reg_certificate || '',
+                        notary_order: data.profile?.notary_order || ''
+                    })
+                }
+            }catch(error){
+                console.log(error)
+            }finally{
+                setLoading(false)
+            }
+        }
+        fetchProfile();
+    },[])
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
         try{
-            const response = await api.post(`auth/user/profile/update/`, form)
+            const response = await api.put(`auth/user/profile/`, form,{
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            })
             if(response.status === 200){
                 toast.success("Profile updated successfully", {theme:"colored"})
+                const user = JSON.parse(sessionStorage.getItem("user"));
+                const updatedUser = { ...user, is_complete: true };
+                sessionStorage.setItem("user", JSON.stringify(updatedUser));
             }
         }catch(error){
             if(error.response){
@@ -373,7 +416,11 @@ const Profile = () => {
                     <div className="col-md-4 d-flex justify-content-center profile">
                         <div className="card">
                             <div className="card-body">
-                                <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" />
+                                { form.profile_photo ? (
+                                    <img src={`${config.docUrl}${form.profile_photo}`}/>
+                                ) : (
+                                    <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" />
+                                )}
                                 <p className='text-center mt-3'><strong>{user?.username.toUpperCase()}<br/>{user?.mobile}<br/>{user?.email}</strong></p>
                                 <button className="btn btn-primary">Change Profile Picture</button>
                             </div>
@@ -382,7 +429,7 @@ const Profile = () => {
                     <div className="col-md-8">
                         {/* <form method='post'> */}
                             <div className="form-group row mb-3">
-                                <label htmlFor="username" className="col-sm-2">{t('username')}</label>
+                                <label htmlFor="username" className="col-sm-3">{t('username')}</label>
                                 <div className="col-md-4">
                                     <input 
                                         type="text" 
@@ -395,7 +442,9 @@ const Profile = () => {
                                         { errors.old_password }
                                     </div>
                                 </div>
-                                <label htmlFor="" className="col-sm-2 col-form-label">{t('gender')}<RequiredField/></label>
+                            </div>
+                            <div className="form-group row mb-3">
+                                <label htmlFor="" className="col-sm-3 col-form-label">{t('gender')}<RequiredField/></label>
                                 <div className="col-sm-4">
                                     <FormControl>
                                         <RadioGroup
@@ -416,7 +465,7 @@ const Profile = () => {
                                 </div> 
                             </div>
                             <div className="form-group row mb-3">
-                                <div className="col-sm-2">
+                                <div className="col-sm-3">
                                     <label htmlFor="">{t('date_of_birth')}<RequiredField/></label>
                                 </div>
                                 <div className="col-sm-3">
@@ -437,6 +486,8 @@ const Profile = () => {
                                         { errors.date_of_birth}
                                     </div>
                                 </div>
+                            </div>
+                            <div className="form-group row mb-3">
                                 <label htmlFor="" className="col-sm-3 col-form-label">{t('place_of_practice')}<RequiredField/></label>
                                 <div className="col-sm-4">
                                     <FormControl>
@@ -557,24 +608,25 @@ const Profile = () => {
                                     <div className="col-md-3">
                                         <input 
                                             type="text" 
-                                            className={`form-control ${errors.mobile_number ? 'is-invalid' : null}`}
-                                            name="mobile_number"
+                                            className={`form-control ${errors.mobile ? 'is-invalid' : null}`}
+                                            name="mobile"
                                             placeholder={changeMobile ? "New mobile number" : ""}
-                                            value={form.mobile_number}
+                                            value={form.mobile}
                                             readOnly={changeMobile ? false : true}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         />
                                         <div className="invalid-feedback">
-                                            { errors.mobile_number }
+                                            { errors.mobile }
                                         </div>
                                     </div>
                                     { changeMobile === false ? (
-                                        <div className="col-md-1">
-                                            <button 
-                                                className="btn btn-primary"
-                                                onClick={updateMobile}
-                                            >{t('change')}</button>
-                                        </div>
+                                        // <div className="col-md-1">
+                                        //     <button 
+                                        //         className="btn btn-primary"
+                                        //         onClick={updateMobile}
+                                        //     >{t('change')}</button>
+                                        // </div>
+                                        <></>
                                     ):(
                                         <div className="col-md-2">
                                             <button 
@@ -605,28 +657,29 @@ const Profile = () => {
                                     )}
                                 </div>
                                 <div className="form-group row mb-3">
-                                    <label htmlFor="email_address" className='col-sm-3'>{t('email_address')}</label>
+                                    <label htmlFor="email" className='col-sm-3'>{t('email_address')}</label>
                                     <div className="col-md-3">
                                         <input 
                                             type="text" 
-                                            className={`form-control ${errors.email_address ? 'is-invalid' : null}`}
-                                            name="email_address"
+                                            className={`form-control ${errors.email ? 'is-invalid' : null}`}
+                                            name="email"
                                             placeholder={changeMobile ? "New email address" : ""}
-                                            value={form.email_address}
+                                            value={form.email}
                                             readOnly={changeEmail ? false : true}
                                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         />
                                         <div className="invalid-feedback">
-                                            { errors.email_address}
+                                            { errors.email}
                                         </div>
                                     </div>        
                                     { changeEmail === false ? (
-                                        <div className="col-md-1">
-                                            <button 
-                                                className="btn btn-primary"
-                                                onClick={updateEmail}
-                                            >{t('change')}</button>
-                                        </div>
+                                        // <div className="col-md-1">
+                                        //     <button 
+                                        //         className="btn btn-primary"
+                                        //         onClick={updateEmail}
+                                        //     >{t('change')}</button>
+                                        // </div>
+                                        <></>
                                     ):(
                                         <div className="col-md-2">
                                             <button 
@@ -671,7 +724,7 @@ const Profile = () => {
                             { form.is_notary && (
                                 <div className="form-group row mb-3">
                                     <label htmlFor="" className='col-form-label col-sm-3'>{t('notary_order')}<RequiredField/></label>
-                                    <div className="col-sm-9">
+                                    <div className="col-sm-4">
                                         <Button
                                             component="label"
                                             role={undefined}
@@ -699,11 +752,16 @@ const Profile = () => {
                                             </div>
                                         )}
                                     </div>
+                                    <div className="col-md-3">
+                                    { form.notary_order && (
+                                        <a href={`${config.docUrl}${form.notary_order}`} target="_blank">Notary Order</a>
+                                    )}
+                                </div>
                                 </div>
                             )}
                             <div className="form-group row mb-3">
                                 <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
-                                <div className="col-sm-9">
+                                <div className="col-sm-4">
                                     <Button
                                         component="label"
                                         role={undefined}
@@ -731,10 +789,15 @@ const Profile = () => {
                                         </div>
                                     )}
                                 </div>
+                                <div className="col-md-3">
+                                    { form.reg_certificate && (
+                                        <a href={`${config.docUrl}${form.reg_certificate}`} target="_blank">Bar Certificate</a>
+                                    )}
+                                </div>
                             </div>
                             <div className="form-group row mb-3">
                                 <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}<RequiredField/></label>
-                                <div className="col-sm-9">
+                                <div className="col-sm-4">
                                     <Button
                                         component="label"
                                         role={undefined}
@@ -762,10 +825,15 @@ const Profile = () => {
                                         </div>
                                     )}
                                 </div>
+                                <div className="col-md-3">
+                                    { form.profile_photo && (
+                                        <a href={`${config.docUrl}${form.profile_photo}`} target="_blank">Profile Photo</a>
+                                    )}
+                                </div>
                             </div>
                             <div className="form-group row mb-3">
                                 <label htmlFor="address_proof" className='col-form-label col-sm-3'>{t('identity_proof')}<RequiredField/></label>
-                                <div className="col-sm-9">
+                                <div className="col-sm-4">
                                     <Button
                                         component="label"
                                         role={undefined}
@@ -787,6 +855,11 @@ const Profile = () => {
                                         <div className="invalid-feedback" style={{ display: 'block' }}>
                                             {errors.identity_proof}
                                         </div>
+                                    )}
+                                </div>
+                                <div className="col-md-3">
+                                    { form.identity_proof && (
+                                        <a href={`${config.docUrl}${form.identity_proof}`} target="_blank">Identity Proof</a>
                                     )}
                                 </div>
                             </div>

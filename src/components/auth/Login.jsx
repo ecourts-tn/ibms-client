@@ -36,7 +36,7 @@ const Login = () => {
   const [is2FA, setIs2FA] = useState(false)
   const [otp, setOtp] = useState('')
   const [form, setForm] = useState({
-    usertype: '',
+    department: '',
     username: '',
     password: '',
     captcha: '',
@@ -44,7 +44,7 @@ const Login = () => {
   });
 
   const validationSchema = Yup.object({
-    usertype: Yup.string().required(t('errors.usertype_required')),
+    department: Yup.string().required(t('errors.usertype_required')),
     username: Yup.string().required(t('errors.username_required')),
     password: Yup.string().required(t('errors.password_required')),
     captcha: Yup.string().required(t('errors.captcha_required')),
@@ -179,17 +179,17 @@ const Login = () => {
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
                     className="d-flex justify-content-center"
-                    value={form.usertype}
-                    onChange={(e) => setForm({ ...form, usertype: e.target.value })}
+                    value={form.department}
+                    onChange={(e) => setForm({ ...form, department: e.target.value })}
                   >
-                    <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
-                    <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
+                    <FormControlLabel value={4} control={<Radio />} label={t('advocate')} />
+                    <FormControlLabel value={5} control={<Radio />} label={t('litigant')} />
                   </RadioGroup>
                   <p
                     className="text-danger mb-3 text-center"
                     style={{ marginTop: '-15px', fontSize: '14px', fontWeight: 'bold' }}
                   >
-                    {errors.usertype}
+                    {errors.department}
                   </p>
                 </div>
               )}
@@ -198,7 +198,7 @@ const Login = () => {
                   <div className="form-group">
                     <label htmlFor="">{t('usertype')}</label>
                     <select
-                      name="usertype"
+                      name="department"
                       className="form-control"
                       onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                     >

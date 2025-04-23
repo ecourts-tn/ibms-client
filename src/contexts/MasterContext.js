@@ -28,7 +28,8 @@ export const MasterProvider = ({children}) => {
         propertytypes:[],
         departments:[],
         jdesignations:[],
-        benches: []
+        benches: [],
+        roles: []
     });
 
     useEffect(() => {
@@ -60,7 +61,8 @@ export const MasterProvider = ({children}) => {
                         propertytypes: response.data.property_type,
                         departments: response.data.department,
                         jdesignations: response.data.jdesignation,
-                        benches: response.data.benches
+                        benches: response.data.benches,
+                        roles: response.data.roles
                     });
                 }
             }catch(error){

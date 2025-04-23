@@ -55,22 +55,10 @@ const RegistrationNew = () => {
         department: 4,
         roles: [10],
         username: '',
-        is_notary: false,
-        adv_reg: '',
-        gender: 1,
-        date_of_birth: '',
-        litigation_place: 1,
-        state: '',
-        district: '',
         password:'',
         confirm_password:'',
         mobile:'',
         email:'',
-        address: '',
-        profile_photo:'',
-        identity_proof: '',
-        reg_certificate: '',
-        notary_order: ''
     }
 
     const { masters: {states, districts, genders, departments }} = useContext(MasterContext)
@@ -89,9 +77,6 @@ const RegistrationNew = () => {
 
     const validationSchema = Yup.object({
         username: Yup.string().required(t('errors.username_required')),
-        date_of_birth: Yup.string().required(t('errors.dob_required')),
-        litigation_place: Yup.string().required(),
-        gender: Yup.string().required(),
         password: Yup.string().required(t('errors.password_required')),
         confirm_password: Yup.string().required(t('errors.cpassword_required')).oneOf([Yup.ref('password'), null], 'Passwords must match'),
         mobile: Yup.number().required(t('errors.mobile_required')).typeError(t('errors.numeric')),

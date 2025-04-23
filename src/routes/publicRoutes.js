@@ -18,7 +18,6 @@ import { Profile } from "components/auth";
 export const publicRoutes = [
     { path: "/", element: <Home /> },
     { path: "auth/registration", element:<RegistrationNew />},
-    { path: "profile/", element:<Profile />},
     { path: "auth/reset-password", element: <ResetPassword /> },
     { path: "auth/reset-password/confirm/:uid/:token", element: <ResetPasswordConfirm /> },
     { path: "filing/detail", element: <PetitionDetail /> },
