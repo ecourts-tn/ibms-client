@@ -59,7 +59,7 @@ export default function MenuBar() {
           { user && (
           <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             {/* Start - Court user menu */}
-            { parseInt(user.role) === 1 && (
+            { parseInt(user.department) === 1 && (
             <>
               <li className="nav-item menu-open">
                 <Link to="/court/dashboard" className="nav-link active">
@@ -211,7 +211,7 @@ export default function MenuBar() {
             )}
             { /* End - Court user menu */} 
             { /* Start - Police user menu */}
-            { parseInt(user.role) === 2 && (
+            { parseInt(user.department) === 2 && (
             <>
               <li className="nav-item menu-open">
                 <Link to="/police/dashboard" className="nav-link active">
@@ -253,7 +253,7 @@ export default function MenuBar() {
             )}
             { /* End - Police user menu */}
             { /* Start - Prison user menu */}
-            { parseInt(user.role) === 3 && (
+            { parseInt(user.department) === 3 && (
               <>
                 <li className="nav-item menu-open">
                   <Link to="/prison/dashboard" className="nav-link active">
@@ -275,7 +275,7 @@ export default function MenuBar() {
               </>
             )}
             {/** End - Prison user menu */}
-            { parseInt(user.group) === 9 && (
+            { parseInt(user.department) === 2 && (
               <>
                 <li className="nav-item menu-open">
                   <Link to="/prosecution/dashboard" className="nav-link active">

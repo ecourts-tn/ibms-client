@@ -13,7 +13,6 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { MasterContext } from 'contexts/MasterContext'
@@ -36,10 +35,8 @@ const Profile = () => {
 
     const {user} = useContext(AuthContext)
     const initialState = {
-        roles: [10],
         username: '',
         is_notary: false,
-        appointment_date:'',
         adv_reg: '',
         gender: 1,
         date_of_birth: '',
@@ -542,7 +539,7 @@ const Profile = () => {
                                     </div>
                                 </React.Fragment>
                             )}
-                            { true && (
+                            { user?.department === 4 && (
                             <React.Fragment>
                                 <div className="form-group row mb-3">
                                     <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>
@@ -759,6 +756,7 @@ const Profile = () => {
                                 </div>
                                 </div>
                             )}
+                            { user?.department === 4 && (
                             <div className="form-group row mb-3">
                                 <label htmlFor="bar_certificate" className='col-form-label col-sm-3'>{t('bar_certificate')}<RequiredField/></label>
                                 <div className="col-sm-4">
@@ -795,6 +793,8 @@ const Profile = () => {
                                     )}
                                 </div>
                             </div>
+
+                            )}
                             <div className="form-group row mb-3">
                                 <label htmlFor="photo" className='col-form-label col-sm-3'>{t('upload_photo')}<RequiredField/></label>
                                 <div className="col-sm-4">

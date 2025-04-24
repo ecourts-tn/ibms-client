@@ -1,7 +1,7 @@
 import api from 'api'
 import * as Yup from 'yup'
 import { RequiredField } from 'utils'
-import React, { useContext, useEffect, useState} from 'react'
+import React, { useContext, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { toast, ToastContainer } from 'react-toastify'
@@ -14,12 +14,10 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { useTranslation } from 'react-i18next'
 import Loading from 'components/utils/Loading'
-import { handleMobileChange, validateMobile, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
-import flatpickr from 'flatpickr';
+import { handleMobileChange, validateEmail, handleNameChange} from 'components/validation/validations';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
@@ -28,22 +26,9 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { ModelClose } from 'utils'
 
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
-
 const RegistrationNew = () => {
 
     const navigate = useNavigate();
-
     const[user, setUser] =  useState([])
     const [show, setShow] = useState(false);
     const {t} = useTranslation()
@@ -52,8 +37,7 @@ const RegistrationNew = () => {
         navigate("/")
     }
     const initialState = {
-        department: 4,
-        roles: [10],
+        department: '',
         username: '',
         password:'',
         confirm_password:'',
@@ -61,9 +45,8 @@ const RegistrationNew = () => {
         email:'',
     }
 
-    const { masters: {states, districts, genders, departments }} = useContext(MasterContext)
-    const { language } = useContext(LanguageContext)
-    const [form, setForm] = useState(initialState)
+    const { masters: {departments }} = useContext(MasterContext)
+     const [form, setForm] = useState(initialState)
     const [errors, setErrors] = useState(initialState)
     const [isMobileOtpSent, setIsMobileOtpSent] = useState(false)
     const [mobileOtp, setMobileOtp] = useState(null)
@@ -100,14 +83,6 @@ const RegistrationNew = () => {
             [name]: errorMessage,  // Set the error message for the specific field
         }));
     };
-
-
-    
-
-
-
-    
-
 
     const handlePasswordChange = (e) => {
         const { name, value } = e.target;
@@ -208,80 +183,6 @@ const RegistrationNew = () => {
         }
     };
 
-    const handleFileChange = (e, fileType) => {
-        const file = e.target.files[0]; // Get the first file
-        if (!file) return; // If no file is selected, return early
-    
-        let errorMessage = '';
-    
-        // PDF Validation (for notary_order and reg_certificate)
-        if (fileType === 'notary_order' || fileType === 'reg_certificate') {
-            // Validate file type (only PDF)
-            if (file.type !== 'application/pdf') {
-                errorMessage = 'Only PDF files are allowed for Notary Order and Bar Certificate.';
-            }
-    
-            // Validate file size (max 5MB for PDF)
-            if (file.size > 5 * 1024 * 1024) { // 5MB in bytes
-                errorMessage = errorMessage || 'File size must be less than 5MB.';
-            }
-        }
-    
-        // Image Validation (for profile_photo)
-        else if (fileType === 'profile_photo') {
-            // Validate file type (only images allowed)
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            if (!allowedImageTypes.includes(file.type)) {
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed for Profile Photo.';
-            }
-    
-            // Validate file size (max 3MB for image)
-            if (file.size > 3 * 1024 * 1024) { // 3MB in bytes
-                errorMessage = errorMessage || 'Image size must be less than 3MB.';
-            }
-        }
-
-        else if (fileType === 'identity_proof') {
-            // Check for allowed file types (PDF or Image)
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            if (file.type === 'application/pdf') {
-                // If it's a PDF, no need to check further for image types
-                if (file.size > 5 * 1024 * 1024) { // 5MB for PDF size limit
-                    errorMessage = errorMessage || 'File size must be less than 5MB.';
-                }
-            } else if (!allowedImageTypes.includes(file.type)) {
-                // If it's not a valid image type
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed for Identity Proof.';
-            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
-                // Validate file size (max 3MB for image)
-                errorMessage = errorMessage || 'Image size must be less than 3MB.';
-            }
-        }
-    
-        // If there's an error, show it
-        if (errorMessage) {
-            setErrors({
-                ...errors,
-                [fileType]: errorMessage,
-            });
-            return; // Stop further execution if file type or size is invalid
-        }
-    
-        // If validation passes, update the form with the file data
-        setForm({
-            ...form,
-            [fileType]: {
-                name: file.name, // Display the file name
-                file: file, // Store the actual file
-            },
-        });
-    
-        // Clear any previous errors for this file type
-        setErrors({
-            ...errors,
-            [fileType]: '',
-        });
-    };
    
     const verifyMobile = (otp) => {
         if(parseInt(otp) === 123456){
@@ -373,6 +274,7 @@ const RegistrationNew = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();       
         try{
+            setLoading(true)
             await validationSchema.validate(form, {abortEarly:false})
             // if(!mobileVerified){
             //     toast.error("Please verify your mobile number", {theme:"colored"})
@@ -381,11 +283,7 @@ const RegistrationNew = () => {
             //     toast.error("Please verify your email address", {theme:"colored"})
             //     return
             // }
-            const response = await api.post("auth/user/register/", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            })
+            const response = await api.post("auth/user/register/", form)
             if(response.status === 201){
                 setUser(response.data)
                 setShow(true)
@@ -406,58 +304,10 @@ const RegistrationNew = () => {
                 })
                 setErrors(newErrors)
             }
-            if(error){
-                console.log(error)
-            }
+        }finally{
+            setLoading(false)
         }
-    }
-
-    const handleEnrolmentno = (e) => {
-        const { name, value } = e.target;
-    
-        // Convert the input value to uppercase
-        const upperCaseValue = value.toUpperCase();
-    
-        // Regex to allow first 3 characters as uppercase letters, then slashes and numbers
-        const regexFirstPart = /^[A-Z]{3}/; // Only allows uppercase letters for the first 3 characters
-        const regexSecondPart = /^[0-9/]*$/; // Allows only uppercase letters, numbers, and slashes
-    
-        // Validate the first part (first 3 characters)
-        if (upperCaseValue.length <= 2 && upperCaseValue.length <= 3) {
-            // If length is 3 or less, ensure all characters are uppercase letters
-            if (/^[A-Z]*$/.test(upperCaseValue)) {
-                setForm({
-                    ...form,
-                    [name]: upperCaseValue, // Update the specific field with uppercase value
-                });
-            } else {
-                // If invalid character is entered for the first 3 chars, show error
-                setErrors({
-                    ...errors,
-                    [name]: 'The first 3 characters must be uppercase letters.',
-                });
-            }
-        } else {
-            // Validate the remaining part (after 3 characters)
-            const remainingPart = upperCaseValue.slice(3); // Get the part after the first 3 characters
-    
-            if (regexSecondPart.test(remainingPart)) {
-                // If valid, update the state with the full value
-                setForm({
-                    ...form,
-                    [name]: upperCaseValue,
-                });
-                setErrors({ ...errors, [name]: '' }); // Clear error message if valid
-            } else {
-                // Show error if the remaining part contains invalid characters
-                setErrors({
-                    ...errors,
-                    [name]: 'Allowed Only 3 characters and after slashes and numbers are allowed.',
-                });
-            }
-        }
-    };
-    
+    } 
 
     return (
         <form onSubmit={handleSubmit} method="POST">
@@ -511,35 +361,23 @@ const RegistrationNew = () => {
                             </div>
                             <div className="card-body py-1">
                                 <div className="row">
-                                    <div className="col-md-6">
-                                        <select 
-                                            name="department"
-                                            className="d-none"
-                                            value={form.department}
-                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                        >
-                                            { departments.map((d, index) => (
-                                                <option value={d.id} key={index}>{d.department_name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
                                     <div className="col-md-12 d-flex justify-content-center mb-3">
                                         <FormControl>
                                             <RadioGroup
                                                 row
                                                 aria-labelledby="usertype-radios"
-                                                name="roles"
-                                                value={form.roles[0] || ''}
-                                                onChange={(e) => setForm({...form, [e.target.name]:[parseInt(e.target.value)]})}
+                                                name="department"
+                                                value={form.department}
+                                                onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                             >
-                                                <FormControlLabel value={10} control={<Radio />} label={t('advocate')} />
-                                                <FormControlLabel value={11} control={<Radio />} label={t('litigant')} />
+                                                <FormControlLabel value={4} control={<Radio />} label={t('advocate')} />
+                                                <FormControlLabel value={5} control={<Radio />} label={t('litigant')} />
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
                                     <div className="col-md-9 offset-md-2">
                                         <div className="form-group row md-3">
-                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.roles[0]) === 10 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.department) === 4 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
                                             <div className="col-sm-6">
                                                 <input 
                                                     type="text" 

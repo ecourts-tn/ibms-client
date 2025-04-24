@@ -13,6 +13,9 @@ import { Surety, SuretyForm, DischargeSurety, SuretyDetails } from "components/f
 import Payment from "components/filing/Payment";
 import Allied from "components/filing/Allied";
 import ListedPetition from "components/filing/ListedPetition";
+import ResponsePending from "components/filing/ResponsePending";
+import ResponseSubmitted from "components/filing/ResponseSubmitted";
+import ResponseCreate from "components/filing/ResponseCreate";
 
 
 const bailRoutes = [
@@ -137,7 +140,10 @@ export const FilingRoutes = () => {
                 { path: "auth/logout", element: <Logout /> },
                 { path: "auth/profile", element: <Profile /> },
                 { path: "auth/change-password", element: <ChangePassword /> },
-                { path: "filing/cases/", element:<ListedPetition />}
+                { path: "filing/cases/", element:<ListedPetition />},
+                { path: "pp-remarks/pending/", element:<ResponsePending />},
+                { path: "pp-remarks/submitted/", element:<ResponseSubmitted />},
+                { path: "pp-remarks/", element:<ResponseCreate />}
             ].map(({ path, element, private: isPrivate = true }, index) => (
                 <Route key={index} path={path} element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} />
             ))}

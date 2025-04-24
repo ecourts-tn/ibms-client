@@ -112,6 +112,7 @@ export default Advocate
 
 
 const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
+    const {efileNumber} = useContext(BaseContext)
     const[search, setSearch] = useState('')
     const[loading, setLoading] = useState(false)
     const [isSearchComplete, setIsSearchComplete] = useState(false);
@@ -201,9 +202,8 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const handleSubmit = async() => {
         try{
             await validationSchema.validate(advocate, { abortEarly:false})
-            advocate.efile_no = sessionStorage.getItem("efile_no")
             const data = {
-                petition: sessionStorage.getItem("efile_no"),
+                petition: efileNumber,
                 advocate:advocate.adv_id,
                 is_primary:false
             }

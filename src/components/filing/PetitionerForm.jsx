@@ -90,25 +90,17 @@ const PetitionerForm = ({addPetitioner, selectedPetitioner}) => {
     act: Yup.string().required(t('errors.act_required')),
     section: Yup.string().required(t('errors.section_required')),
     is_custody: Yup.boolean().required(t('errors.is_custody_required')),
-  
-    // prison: Yup.string()
-    //   .when('is_custody', {
-    //     is: true,
-    //     then: Yup.string().required('Details are required when custody is true'),
-    //     otherwise: Yup.string().notRequired(),
-    //   })
-    //   .nullable(),
-  
-    // custody_days: Yup.string()
-    //   .when('is_custody', {
-    //     is: true,
-    //     then: Yup.string().required('Number of custody days is required'),
-    //     otherwise: Yup.string().notRequired(),
-    //   })
-    //   .nullable(),
+    prison: Yup.string().when('is_custody', (is_custody, schema) => {
+        if(is_custody){
+          return schema.required('Details are required when custody is true')
+        }
+      }).nullable(),
+    custody_days: Yup.string().when('is_custody', (is_custody, schema) => {
+        if(is_custody){
+          return schema.required('Number of custody days is required')
+        }  
+      }).nullable(),
   });
-
-
 
   useEffect(() => { 
       const api_id = sessionStorage.getItem("api_id")

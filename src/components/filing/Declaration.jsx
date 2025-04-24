@@ -1,11 +1,11 @@
 import api from 'api';
 import React, { useContext, useEffect, useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
-import Button from '@mui/material/Button';
+import Button from 'react-bootstrap/Button';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import EFileDetails from 'components/filing/DraftDetail';
+import DraftDetail from 'components/filing/DraftDetail';
 import { ModelClose } from 'utils';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
@@ -108,30 +108,34 @@ const handleSubmit = async () => {
   return (
     <>
       { loading && <Loading />}
-      <ToastContainer />
+        <ToastContainer />
         <Modal 
-          show={showError} 
-          onHide={handleErrorClose} 
-          backdrop="static"
-          keyboard={false}
-          size="xl"
-        >
-          <Modal.Header >
-              <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
-              <ModelClose handleClose={handleErrorClose}/>
-          </Modal.Header>
-          <Modal.Body>
-              <ul className='error'>
-                { errors.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-          </Modal.Body>
-          <Modal.Footer>
-              <Button variant="contained" onClick={handleErrorClose}>
-                  {t('close')}
-              </Button>
-          </Modal.Footer>
+                show={showError} 
+                onHide={handleErrorClose} 
+                backdrop="static"
+                keyboard={false}
+                size="lg"
+            >
+                <Modal.Header className="bg-danger">
+                    <h6><strong>Unable to submit the application</strong></h6>
+                    <ModelClose handleClose={handleErrorClose}/>
+                </Modal.Header>
+                <Modal.Body>
+                    <ul>
+                    { errors.map((error, index) => (
+                        <li key={index} className='text-danger'><strong>{error}</strong></li>
+                    ))}
+                    </ul>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button 
+                        variant="danger" 
+                        onClick={handleErrorClose}
+                        className="btn btn-sm"
+                    >
+                        {t('close')}
+                    </Button>
+                </Modal.Footer>
         </Modal>
       <div className="row">
         <div className="col-md-10 offset-1">
@@ -153,8 +157,7 @@ const handleSubmit = async () => {
         </div>
         <div className="col-md-6 offset-3 text-center mt-5">
           <Button
-            variant="contained"
-            color="warning"
+            variant="warning"
             onClick={handleShow}
             disabled={!areAllChecked}
           >
@@ -162,8 +165,7 @@ const handleSubmit = async () => {
             { t('view_draft')}
           </Button>
           <Button
-            variant="contained"
-            color="success"
+            variant="success"
             className="ml-2"
             onClick={handleSubmit}
             disabled={!areAllChecked}
@@ -187,10 +189,13 @@ const handleSubmit = async () => {
           <ModelClose handleClose={handleClose} />
         </Modal.Header>
         <Modal.Body>
-          <EFileDetails />
+          <DraftDetail />
         </Modal.Body>
         <Modal.Footer style={{ justifyContent: 'end'}}>
-          <Button variant="contained" onClick={handleClose}>
+          <Button 
+            variant="primary" 
+            onClick={handleClose}
+          >
             {t('close')}
           </Button>
         </Modal.Footer>

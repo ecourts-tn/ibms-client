@@ -129,6 +129,21 @@ const Header = () => {
                 <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
               </li>
               )}
+              { parseInt(user?.department) === 4 && (
+                <li className="nav-item dropdown">
+                  <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
+                    {t('PP Remarks')}
+                  </a>
+                  <div className="dropdown-menu">
+                    <li className="nav-item">
+                      <Link to="/pp-remarks/pending/" className="nav-link">Pending Remarks</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link to="/pp-remarks/submitted" className="nav-link">Submitted Remarks</Link>
+                    </li>   
+                  </div>    
+                </li>
+              )}
               <li className="nav-item dropdown">
                 <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown">
                   {t('case_status')}

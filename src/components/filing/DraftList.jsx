@@ -1,16 +1,15 @@
 import React, {useState, useEffect, useContext} from 'react'
-import Button from '@mui/material/Button'
+import Button from 'react-bootstrap/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import ViewDocument from 'components/utils/ViewDocument'
 import { useNavigate, Link } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
-import { formatDate } from 'utils'
+import { formatDate, ModelClose } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
 import Loading from 'components/utils/Loading'
-import { pendingPetition } from 'services/petitionService'
 import { BaseContext } from 'contexts/BaseContext'
 import ListFilter from 'components/utils/ListFilter'
 import Pagination from 'components/utils/Pagination'
@@ -177,18 +176,18 @@ const DraftList = () => {
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>
-                                        <Link
-                                            to="/filing/detail"
-                                            state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
-                                        >
-                                            <strong>{item.petition?.efile_number}</strong>
-                                        </Link>
-                                        <span style={{ display: "block" }}>
-                                            {t("efile_date")}: {formatDate(item.petition?.efile_date)}
-                                        </span>
+                                            <Link
+                                                to="/filing/detail"
+                                                state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
+                                            >
+                                                <strong>{item.petition?.efile_number}</strong>
+                                            </Link>
+                                            <span style={{ display: "block" }}>
+                                                {t("efile_date")}: {formatDate(item.petition?.efile_date)}
+                                            </span>
                                         </td>
                                         <td>
-                                            { item.petition.judiciary.id== 2 && (
+                                            { (item.petition.judiciary?.id== 2 || item.petition.judiciary?.id== 3) && (
                                                 `${getCourtName(item.petition.court)}, ${getDistrictName(item.petition.district)}`
                                             )}
                                             { item.petition.judiciary.id === 1 && (
@@ -212,10 +211,18 @@ const DraftList = () => {
                                         </td>
                                         <td>
                                             <div className="d-flex justify-content-start align-items-center">
-                                                <Button variant="contained" color="primary" onClick={() => handleEdit(item.petition)}>
+                                                <Button 
+                                                    variant="primary" 
+                                                    onClick={() => handleEdit(item.petition)}
+                                                    className='btn-sm'
+                                                >
                                                     <i></i>{t("edit")}
                                                 </Button>
-                                                <Button variant="contained" color="success" className="ml-1" onClick={() => handleSubmit(item.petition.efile_number)}>
+                                                <Button 
+                                                    variant="success" 
+                                                    className="ml-1 btn-sm" 
+                                                    onClick={() => handleSubmit(item.petition.efile_number)}
+                                                >
                                                     <i className=""></i>{t("submit")}
                                                 </Button>
                                             </div>
@@ -297,16 +304,18 @@ export default DraftList
 const ValidateSubmission = ({showError, handleErrorClose, errors}) => {
 
     const {t} = useTranslation()
+
     return(
         <Modal 
                 show={showError} 
                 onHide={handleErrorClose} 
                 backdrop="static"
                 keyboard={false}
-                size="xl"
+                size="lg"
             >
-                <Modal.Header closeButton>
-                    <Modal.Title><strong>Unable to submit the application</strong></Modal.Title>
+                <Modal.Header className="bg-danger">
+                    <h6><strong>Unable to submit the application</strong></h6>
+                    <ModelClose handleClose={handleErrorClose}/>
                 </Modal.Header>
                 <Modal.Body>
                     <ul>
@@ -316,7 +325,11 @@ const ValidateSubmission = ({showError, handleErrorClose, errors}) => {
                     </ul>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="contained" onClick={handleErrorClose}>
+                    <Button 
+                        variant="danger" 
+                        onClick={handleErrorClose}
+                        className="btn btn-sm"
+                    >
                         {t('close')}
                     </Button>
                 </Modal.Footer>

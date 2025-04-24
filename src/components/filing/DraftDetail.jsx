@@ -33,7 +33,7 @@ const DraftDetail = () => {
     }, [efileNumber])
 
     return (
-        <>
+        <React.Fragment>
             <div className="card card-outline card-info">
                 <div className="card-header pb-0">
                     <h3 className="card-title"><strong>{t('basic_details')}</strong></h3>
@@ -49,8 +49,8 @@ const DraftDetail = () => {
                                 <td>{t('hc_bench')}</td>
                                 <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
                             </tr>
-                            { petition.judiciary.id === 2 && (
-                            <>
+                            { (petition.judiciary?.id === 2 || petition.judiciary?.id === 3) && (
+                            <React.Fragment>
                                 <tr>
                                     <td>{t('state')}</td>
                                     <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
@@ -63,7 +63,7 @@ const DraftDetail = () => {
                                     <td>{t('court')}</td>
                                     <td>{ language === 'ta' ? petition.court?.court_lname : petition.court?.court_name }</td>
                                 </tr>
-                            </>)}
+                            </React.Fragment>)}
                             <tr>
                                 <td>{t('case_type')}</td>
                                 <td>{ language === 'ta' ? petition.case_type?.type_lfull_form : petition.case_type?.type_full_form }</td>
@@ -166,7 +166,7 @@ const DraftDetail = () => {
                     ))}
                 </div>
             </div>
-        </>
+        </React.Fragment>
     )
 }
 

@@ -43,7 +43,7 @@ const PreviousCaseForm = () => {
         getStateName, 
         getDistrictName,
         getEstablishmentName,
-        getCourttName,
+        getCourtName,
         getSeatName,
         getFilingNumber,
         getRegistrationNumber 
@@ -176,7 +176,7 @@ const PreviousCaseForm = () => {
                                 { h.petition.judiciary?.id === 1 ? (
                                     <td colSpan={3}>{ getSeatName(h.petition.seat)}</td>
                                 ) : (
-                                    <td colSpan={3}>{ getCourttName(h.petition.court)}, { getEstablishmentName(h.petition.establishment)}, {getDistrictName(h.petition.district)}, {getStateName(h.petition.state)}</td>
+                                    <td colSpan={3}>{ getCourtName(h.petition.court)}, { getEstablishmentName(h.petition.establishment)}, {getDistrictName(h.petition.district)}, {getStateName(h.petition.state)}</td>
                                 )}
                             </tr>
                             <tr>

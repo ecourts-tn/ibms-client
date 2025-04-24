@@ -16,9 +16,10 @@ import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; 
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 import { MasterContext } from 'contexts/MasterContext'
+import { AuthContext } from 'contexts/AuthContext';
 
 const DepartmentRegistration = () => {
-
+    const { user } = useContext(AuthContext)
     const initialState = {
         judiciary: '',
         seat: '',
@@ -42,6 +43,7 @@ const DepartmentRegistration = () => {
         is_notary: false,
     }
     const [form, setForm] = useState(initialState)
+    const [userRoles, setUserRoles] = useState([])
     const [errors, setErrors] = useState(initialState)
     const { language } = useContext(LanguageContext)
     const { t } = useTranslation()
@@ -59,10 +61,20 @@ const DepartmentRegistration = () => {
         email: Yup.string().email().required(t('errors.email_required'))
     })
 
+    useEffect(() => {
+        if(user){
+            setForm({...form, department:user?.department})
+        }
+    }, [user])
+
 
     const handleSubmit = async () => {
         try {
-            const response = await api.post("auth/user/register/", form)
+            const post_data = {
+                user: form,
+                roles: userRoles
+            }
+            const response = await api.post("auth/user/register/", post_data)
             if (response.status === 201) {
                 toast.success("User registered successfully", {
                     theme: "colored"
@@ -213,6 +225,14 @@ const DepartmentRegistration = () => {
         roles
     }} = useContext(MasterContext)
 
+    const handleCheckboxChange = (roleId) => {
+        setUserRoles((prev) =>
+          prev.includes(roleId)
+            ? prev.filter((id) => id !== roleId) // remove
+            : [...prev, roleId]                  // add
+        );
+      };
+
     return (
         <div className="card card-outline card-primary">
             <ToastContainer />
@@ -230,6 +250,7 @@ const DepartmentRegistration = () => {
                                         name="department"
                                         className="form-control"
                                         value={form.department}
+                                        disabled={ user?.department ? true : false }
                                         onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                                     >
                                         <option value="">Select department</option>
@@ -397,11 +418,11 @@ const DepartmentRegistration = () => {
                                         id="police_station"
                                         className="form-control"
                                         value={form.police_station}
-                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.event })}
+                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                                     >
                                         <option value="">Select Police station</option>
                                         {policeStations.filter((p) => p.revenue_district === form.district).map((station, index) => (
-                                            <option key={index} value={station.station_code}>{station.station_name}</option>
+                                            <option key={index} value={station.cctns_code}>{station.station_name}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -582,9 +603,10 @@ const DepartmentRegistration = () => {
                                         <label>
                                             <input
                                                 type="checkbox"
-                                                value={1} // or r.role_name, depending on what you need
-                                                name="roles"
+                                                name="userRoles"
                                                 className="mr-1"
+                                                checked={userRoles.includes(1)}
+                                                onChange={() => handleCheckboxChange(1)}
                                             />
                                             {'Admin'}
                                         </label>
@@ -594,9 +616,11 @@ const DepartmentRegistration = () => {
                                             <label>
                                                 <input
                                                     type="checkbox"
-                                                    value={r.id} // or r.role_name, depending on what you need
+                                                    
                                                     name="roles"
                                                     className="mr-1"
+                                                    checked={userRoles.includes(r.id)}
+                                                    onChange={() => handleCheckboxChange(r.id)}
                                                 />
                                                 {r.role_name}
                                             </label>

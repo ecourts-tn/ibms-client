@@ -20,7 +20,7 @@ export const PrivateRoute = ({ children }) => {
     }
 
     // Redirect to profile if incomplete (except when already on profile page)
-    if (user?.role === 4 && !user?.is_complete && !isProfileRoute) {
+    if ((user?.department === 4  || user?.department ===5 )&& !user?.is_complete && !isProfileRoute) {
         return <Navigate to="/auth/profile" replace />;
     }
 
