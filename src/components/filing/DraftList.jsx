@@ -28,7 +28,6 @@ const DraftList = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const[loading, setLoading] = useState(false)
-    const [searchTerm, setSearchTerm] = useState('')
     const {setEfileNumber, clearEfileNumber} = useContext(BaseContext)
     
     // Pagination state
