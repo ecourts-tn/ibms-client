@@ -35,8 +35,8 @@ const BenchList = () => {
                 <div className="row">
                     <div className="col-md-12">
                         <div className="table-responsive">
-                            <table className="table table-bordered table-striped">
-                                <thead className="bg-secondary">
+                            <table className="table table-bordered table-striped table-sm">
+                                <thead className="bg-info">
                                     <tr>
                                         <th>Bench code</th>
                                         <th>Bench Name</th>

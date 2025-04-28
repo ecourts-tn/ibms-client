@@ -53,24 +53,11 @@ const AdvocateRegistration = () => {
     }
     const initialState = {
         department: 4,
-        roles: [10],
         username: '',
-        is_notary: false,
-        adv_reg: '',
-        gender: 1,
-        date_of_birth: '',
-        litigation_place: 1,
-        state: '',
-        district: '',
         password:'',
         confirm_password:'',
         mobile:'',
         email:'',
-        address: '',
-        profile_photo:'',
-        identity_proof: '',
-        reg_certificate: '',
-        notary_order: ''
     }
 
     const { masters: {states, districts, genders, departments }} = useContext(MasterContext)

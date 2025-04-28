@@ -1,7 +1,7 @@
 import api from 'api'
 import * as Yup from 'yup'
 import { RequiredField } from 'utils'
-import React, { useContext, useState} from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { toast, ToastContainer } from 'react-toastify'
@@ -37,7 +37,7 @@ const RegistrationNew = () => {
         navigate("/")
     }
     const initialState = {
-        department: '',
+        department: 4,
         username: '',
         password:'',
         confirm_password:'',
@@ -46,7 +46,8 @@ const RegistrationNew = () => {
     }
 
     const { masters: {departments }} = useContext(MasterContext)
-     const [form, setForm] = useState(initialState)
+    const [form, setForm] = useState(initialState)
+    const [userRoles, setUserRoles] = useState([])
     const [errors, setErrors] = useState(initialState)
     const [isMobileOtpSent, setIsMobileOtpSent] = useState(false)
     const [mobileOtp, setMobileOtp] = useState(null)
@@ -65,6 +66,16 @@ const RegistrationNew = () => {
         mobile: Yup.number().required(t('errors.mobile_required')).typeError(t('errors.numeric')),
         email: Yup.string().email().required(t('errors.email_required'))
     })
+
+    useEffect(() => {
+        let role = null;
+        if (parseInt(form.department) === 4) role = 10;
+        else if (parseInt(form.department) === 5) role = 11;
+    
+        if (role !== null) {
+            setUserRoles([role]);
+        }
+    }, [form.department]);
 
     
     const handleChange = (e) => {
@@ -283,7 +294,11 @@ const RegistrationNew = () => {
             //     toast.error("Please verify your email address", {theme:"colored"})
             //     return
             // }
-            const response = await api.post("auth/user/register/", form)
+            const post_data = {
+                user: form,
+                roles: userRoles
+            }
+            const response = await api.post("auth/user/register/", post_data)
             if(response.status === 201){
                 setUser(response.data)
                 setShow(true)

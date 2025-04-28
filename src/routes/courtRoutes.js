@@ -28,6 +28,8 @@ import ModifyBusiness from "components/court/proceeding/ModifyBusiness";
 import JudgePeriodList from "components/court/admin/judge/JudgePeriodList";
 import BenchList from "components/court/admin/judge/BenchList";
 import BenchForm from "components/court/admin/judge/BenchForm";
+import ProsecutorPeriod from "components/court/admin/judge/ProsecutorPeriod";
+import ProsecutorForm from "components/court/admin/judge/ProsecutorForm";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
@@ -55,6 +57,8 @@ const courtRoutes = [
     { path: "admin/judge/period/list", component: <JudgePeriodList />},
     { path: "admin/bench/list", component: <BenchList />},
     { path: "admin/bench", component: <BenchForm />},
+    { path: "admin/prosecutor/list", component: <ProsecutorPeriod />},
+    { path: "admin/prosecutor/", component: <ProsecutorForm />},
     { path: "auth/user/registration", component:<DepartmentRegistration />},
 
 ];
