@@ -18,28 +18,21 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-// Mock data: replace with API data
-const caseData = {
-  '2025-04-10': [{ id: 1, title: 'Case A' }, { id: 2, title: 'Case B' }, { id: 2, title: 'Case B' }],
-  '2025-06-12': [{ id: 3, title: 'Case C' }],
-};
 
-// Convert caseData into calendar events
-const events = Object.entries(caseData).map(([date, cases]) => ({
-//   title: `${cases.length} case${cases.length > 1 ? 's' : ''}`,
-  title: cases.length,
-  start: new Date(date),
-  end: new Date(date),
-  allDay: true,
-  resource: { date },
-}));
-
-const MyCalendar = () => {
+const MyCalendar = ({upcoming, endpoint}) => {
   const navigate = useNavigate();
+
+  const events = upcoming?.map(({ date, case_count }) => ({
+    title: `${case_count}`,
+    start: new Date(date),
+    end: new Date(date),
+    allDay: true,
+    resource: { date },
+  })) || [];
 
   const handleSelectEvent = (event) => {
     const date = event.resource.date;
-    navigate(`/filing/cases/`, { state: {next_date: date}}); // Navigate to /cases/2025-04-10
+    navigate(endpoint, { state: {next_date: date}}); // Navigate to /cases/2025-04-10
   };
 
   return (

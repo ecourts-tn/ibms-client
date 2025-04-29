@@ -1,22 +1,23 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
-import GenerateStyledDocx from './HtmlToDocx';
 import api from 'api';
 import Loading from 'components/utils/Loading';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { MasterContext } from 'contexts/MasterContext';
+import { AuthContext } from 'contexts/AuthContext';
 
 
 const GenerateOrder = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
     const {masters:{casetypes}} = useContext(MasterContext)
-
+    const { user } = useContext(AuthContext)
     const initialState = {
-        district: '',
+        seat: '',
+        bench: '',
         establishment: '',
         court: '',
         case_type: '',
@@ -40,6 +41,18 @@ const GenerateOrder = () => {
             .min(1900, 'Year must be greater than or equal to 1900') // You can change this range if necessary
             .test('len', 'Year must be 4 digits', (val) => val && val.toString().length === 4)
     });
+
+    useEffect(() => {
+        if(user){
+            setForm({
+                ...form,
+                seat: user.seat?.seat_code,
+                bench: user.bench?.bench_code,
+                establishment: user.establishment?.establishment_code,
+                court: user.court?.court_code
+            })
+        }
+    }, [user])
 
     // Function to handle case_number input validation (only numeric input)
     const handleCaseNumberChange = (e) => {
@@ -129,108 +142,96 @@ const GenerateOrder = () => {
 
 
     return (
-        // <div className="content-wrapper">
-            <div className="container-fluid mt-3">
-            <ToastContainer />
-            {loading && <Loading />}
-                <div className="card card-outline card-primary">
-                    <div className="card-header">
-                        <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('genrate_order')}</strong></h3>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            <div className="col-md-6">
-                                <form>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Select Casetype</label>
-                                        <div className="col-sm-8">
-                                            <select
-                                                name="case_type"
-                                                className={`form-control ${errors.case_type ? 'is-invalid' : ''}`}
-                                                value={form.case_type}
-                                                onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                            >
-                                                <option value="">{t('alerts.select_case_type')}</option>
-                                                {casetypes.map((t, index) => (
-                                                    <option key={index} value={t.id}>{language === 'ta' ? t.type_lfull_form : t.type_full_form}</option>
+        <div className="container-fluid mt-3">
+            <ToastContainer />  {loading && <Loading />}
+            <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
+                <div className="card-header">
+                    <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('genrate_order')}</strong></h3>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-md-4 offset-md-4">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <div className="form-group">
+                                        <label htmlFor="">Select Casetype</label>
+                                        <select
+                                            name="case_type"
+                                            className={`form-control ${errors.case_type ? 'is-invalid' : ''}`}
+                                            value={form.case_type}
+                                            onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
+                                        >
+                                            <option value="">{t('alerts.select_case_type')}</option>
+                                            {casetypes.map((t, index) => (
+                                                <option key={index} value={t.id}>{language === 'ta' ? t.type_lfull_form : t.type_full_form}</option>
+                                            ))}
+                                        </select>
+                                        <div className="invalid-feedback">
+                                            {errors.case_type}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-5">
+                                    <div className="form-group">
+                                        <label htmlFor="">Case Number</label>
+                                        <input
+                                            type="text"
+                                            className={`form-control ${errors.case_number ? 'is-invalid' : ''}`}
+                                            name="case_number"
+                                            value={form.case_number}
+                                            onChange={handleCaseNumberChange}  
+                                        />
+                                        <div className="invalid-feedback">
+                                            {errors.case_number}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="">Year</label>
+                                        <input
+                                            type="text"
+                                            className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
+                                            name="case_year"
+                                            value={form.case_year}
+                                            onChange={handleYearChange} 
+                                        />
+                                        <div className="invalid-feedback">
+                                            {errors.case_year}
+                                        </div>
+                                        {/* Show filtered year options as the user types */}
+                                        {showYearDropdown && form.case_year && (
+                                            <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc' }}>
+                                                {filteredYears.map((year) => (
+                                                    <li
+                                                        key={year}
+                                                        className="list-group-item"
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => handleYearSelect(year)} // Select year
+                                                    >
+                                                        {year}
+                                                    </li>
                                                 ))}
-                                            </select>
-                                            <div className="invalid-feedback">
-                                                {errors.case_type}
-                                            </div>
-                                        </div>
+                                            </ul>
+                                        )}
                                     </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Case Number</label>
-                                        <div className="col-sm-8">
-                                            <input
-                                                type="text"
-                                                className={`form-control ${errors.case_number ? 'is-invalid' : ''}`}
-                                                name="case_number"
-                                                value={form.case_number}
-                                                onChange={handleCaseNumberChange}  
-                                            />
-                                            <div className="invalid-feedback">
-                                                {errors.case_number}
-                                            </div>
-                                        </div>
+                                </div>
+                                <div className="col-md-3 pt-4 mt-2">
+                                    <div className="form-group">
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            type="submit"
+                                            onClick={handleSubmit}
+                                        >{t('submit')}</Button>
                                     </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Year</label>
-                                        <div className="col-sm-8">
-                                            {/* Input field for year with dynamic filtering */}
-                                            <input
-                                                type="text"
-                                                className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
-                                                name="case_year"
-                                                value={form.case_year}
-                                                onChange={handleYearChange} 
-                                                placeholder="Enter Year"
-                                            />
-                                            <div className="invalid-feedback">
-                                                {errors.case_year}
-                                            </div>
-                                            {/* Show filtered year options as the user types */}
-                                            {showYearDropdown && form.case_year && (
-                                                <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc' }}>
-                                                    {filteredYears.map((year) => (
-                                                        <li
-                                                            key={year}
-                                                            className="list-group-item"
-                                                            style={{ cursor: 'pointer' }}
-                                                            onClick={() => handleYearSelect(year)} // Select year
-                                                        >
-                                                            {year}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <div className="col-md-4 offset-md-4">
-                                            <Button
-                                                variant='contained'
-                                                color='primary'
-                                                type="submit"
-                                                onClick={handleSubmit}
-                                            >{t('submit')}</Button>
-                                        </div>
-                                    </div>
-                                    <div className="form-group row mt-5">
-                                        <div className="col-md-4 offset-md-4">
-                                            {Object.keys(order).length > 0 && (
-                                                <GenerateStyledDocx order={order} />
-                                            )}
-                                        </div>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        // </div>
+        </div>
     );
 };
 

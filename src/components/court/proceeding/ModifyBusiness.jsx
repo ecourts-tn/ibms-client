@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button';
@@ -7,15 +7,18 @@ import api from 'api';
 import Loading from 'components/utils/Loading';
 import { LanguageContext } from 'contexts/LanguageContex';
 import { MasterContext } from 'contexts/MasterContext';
+import { AuthContext } from 'contexts/AuthContext';
 
 
 const ModifyBusiness = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
     const {masters:{casetypes}} = useContext(MasterContext)
+    const { user } = useContext(AuthContext)
 
     const initialState = {
-        district: '',
+        seat:'',
+        bench: '',
         establishment: '',
         court: '',
         case_type: '',
@@ -23,11 +26,24 @@ const ModifyBusiness = () => {
         case_year: ''
     };
     const [form, setForm] = useState(initialState);
+    const [proceeding, setProceeding] = useState({})
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [showYearDropdown, setShowYearDropdown] = useState(false); // State to control dropdown visibility
 
     const currentYear = new Date().getFullYear(); // Get the current year
+
+    useEffect(() => {
+        if(user){
+            setForm({
+                ...form,
+                seat: user.seat?.seat_code,
+                bench: user.bench?.bench_code,
+                establishment: user.establishment?.establishment_code,
+                court: user.court?.court_code
+            })
+        }
+    }, [user])
 
     const validationSchema = Yup.object({
         case_type: Yup.string().required(),
@@ -85,38 +101,35 @@ const ModifyBusiness = () => {
     }
 
 
-    const handleSubmit = async (e) => {
+    const handleSearch = async (e) => {
         e.preventDefault();
         try {
             setLoading(true);
             await validationSchema.validate(form, { abortEarly: false });
-            try {
-                const response = await api.post(`court/order/generate/`, form);
-                if(response.status === 200){
-                    
+            const response = await api.post(`court/proceeding/modify/`, form);
+            if(response.status === 200){
+                setProceeding(response.data)
+            }
+            }catch (error) {
+                console.log(error)
+                if (error.inner) {
+                    const newErrors = {};
+                    error.inner.forEach((err) => {
+                        newErrors[err.path] = err.message;
+                    });
+                    setErrors(newErrors);
                 }
-            } catch (error) {
-                console.error("Error downloading file:", error);
+                if(error.response?.status === 404){
+                    toast.error("Case not found", {theme:"colored"})
+                }
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            if (error.inner) {
-                const newErrors = {};
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message;
-                });
-                setErrors(newErrors);
-            }
-            if(error.response?.status === 500){
-                toast.error("Something went wrong!", {theme:"colored"})
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
 
 
     return (
-        <div className="card card-outline card-primary" >
+        <div className="card card-outline card-primary" style={{height:'600px'}}>
             <ToastContainer />
             {loading && <Loading />}
             <div className="card-header">
@@ -124,11 +137,11 @@ const ModifyBusiness = () => {
             </div>
             <div className="card-body">
                 <div className="row">
-                    <div className="col-md-6">
-                        <form>
-                            <div className="form-group row">
-                                <label htmlFor="" className="col-sm-4">Select Casetype</label>
-                                <div className="col-sm-8">
+                    <div className="col-md-4 offset-md-4">
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="form-group">
+                                    <label htmlFor="">Select Casetype</label>
                                     <select
                                         name="case_type"
                                         className={`form-control ${errors.case_type ? 'is-invalid' : ''}`}
@@ -145,9 +158,9 @@ const ModifyBusiness = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="form-group row">
-                                <label htmlFor="" className="col-sm-4">Case Number</label>
-                                <div className="col-sm-8">
+                            <div className="col-md-5">
+                                <div className="form-group">
+                                    <label htmlFor="">Case Number</label>
                                     <input
                                         type="text"
                                         className={`form-control ${errors.case_number ? 'is-invalid' : ''}`}
@@ -160,10 +173,9 @@ const ModifyBusiness = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="form-group row">
-                                <label htmlFor="" className="col-sm-4">Year</label>
-                                <div className="col-sm-8">
-                                    {/* Input field for year with dynamic filtering */}
+                            <div className="col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="" >Year</label>
                                     <input
                                         type="text"
                                         className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
@@ -175,7 +187,6 @@ const ModifyBusiness = () => {
                                     <div className="invalid-feedback">
                                         {errors.case_year}
                                     </div>
-                                    {/* Show filtered year options as the user types */}
                                     {showYearDropdown && form.case_year && (
                                         <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc' }}>
                                             {filteredYears.map((year) => (
@@ -192,17 +203,17 @@ const ModifyBusiness = () => {
                                     )}
                                 </div>
                             </div>
-                            <div className="form-group row">
-                                <div className="col-md-4 offset-md-4">
+                            <div className="col-md-2 pt-4 mt-2">
+                                <div className="form-group">
                                     <Button
                                         variant='contained'
                                         color='primary'
                                         type="submit"
-                                        onClick={handleSubmit}
+                                        onClick={handleSearch}
                                     >{t('submit')}</Button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

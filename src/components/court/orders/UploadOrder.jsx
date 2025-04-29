@@ -1,12 +1,13 @@
 import api from 'api';
 import Loading from 'components/utils/Loading';
 import { LanguageContext } from 'contexts/LanguageContex';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast, ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button';
 import * as Yup from 'yup';
 import { MasterContext } from 'contexts/MasterContext';
+import { AuthContext } from 'contexts/AuthContext';
 
 const UploadOrder = () => {
     const { t } = useTranslation();
@@ -14,9 +15,11 @@ const UploadOrder = () => {
     const { masters:{
         casetypes
     }} = useContext(MasterContext)
+    const { user } = useContext(AuthContext)
 
     const initialState = {
-        district: '',
+        seat: '',
+        bench: '',
         establishment: '',
         court: '',
         case_type: '',
@@ -46,6 +49,18 @@ const UploadOrder = () => {
             .test('fileSize', 'File size must be less than 5MB', (value) => !value || value.size <= 5 * 1024 * 1024)  // 5MB
             .test('fileType', 'Only PDF files are allowed', (value) => !value || value.type === 'application/pdf'), // Only PDF files
     });
+
+    useEffect(() => {
+        if(user){
+            setForm({
+                ...form,
+                seat: user.seat?.seat_code,
+                bench: user.bench?.bench_code,
+                establishment: user.establishment?.establishment_code,
+                court: user.court?.court_code
+            })
+        }
+    }, [user])
 
     // Function to handle case_number input validation (only numeric input)
     const handleCaseNumberChange = (e) => {
@@ -110,7 +125,7 @@ const filteredResults = form.case_year
     const handleSearch = async () => {
         try {
             setLoading(true);
-            const response = await api.post(``, form);
+            const response = await api.post(`court/order/upload/`, form);
             if (response.status === 200) {
                 setOrders(response.data);
                 setShowDocumentUpload(true);
@@ -195,29 +210,23 @@ const filteredResults = form.case_year
     };
 
     return (
-        <div className="content-wrapper">
-            <ToastContainer />
-            {loading && <Loading />}
-            <div className="container-fluid mt-3">
-                <div className="card card-outline card-primary">
-                    <div className="card-header">
-                        <h3 className="card-title">
-                            <i className="fas fa-edit mr-2"></i>
-                            <strong>{t('upload_order')}</strong>
-                        </h3>
-                    </div>
-                    <div className="card-body">
-                        <div className="row">
-                            {orders.length > 0 && (
-                                <div className="col-md-12">
-                                    <OrderList orders={orders} handleDelete={handleDelete} />
-                                </div>
-                            )}
-                            <div className="col-md-6">
-                                <form onSubmit={handleSubmit}>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Select Casetype</label>
-                                        <div className="col-sm-8">
+        <div className="container-fluid mt-3">
+            <ToastContainer /> {loading && <Loading />}
+            <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
+                <div className="card-header">
+                    <h3 className="card-title">
+                        <i className="fas fa-edit mr-2"></i>
+                        <strong>{t('upload_order')}</strong>
+                    </h3>
+                </div>
+                <div className="card-body">
+                    <div className="row">
+                        <div className="col-md-4 offset-md-4">
+                            <form onSubmit={handleSubmit}>
+                                <div className="row">
+                                    <div className="col-md-12">
+                                        <div className="form-group">
+                                            <label htmlFor="">Select Casetype</label>
                                             <select
                                                 name="case_type"
                                                 className={`form-control ${errors.case_type ? 'is-invalid' : ''}`}
@@ -231,12 +240,14 @@ const filteredResults = form.case_year
                                                     </option>
                                                 ))}
                                             </select>
-                                            <div className="invalid-feedback">{errors.case_type}</div>
+                                            <div className="invalid-feedback">
+                                                {errors.case_type}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Case Number</label>
-                                        <div className="col-sm-8">
+                                    <div className="col-md-5">
+                                        <div className="form-group">
+                                            <label htmlFor="">Case Number</label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${errors.case_number ? 'is-invalid' : ''}`}
@@ -245,12 +256,14 @@ const filteredResults = form.case_year
                                                 onChange={handleCaseNumberChange}
                                                 placeholder="Case Number"
                                             />
-                                            <div className="invalid-feedback">{errors.case_number}</div>
+                                            <div className="invalid-feedback">
+                                                {errors.case_number}
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Year</label>
-                                        <div className="col-sm-8">
+                                    <div className="col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="">Year</label>
                                             <input
                                                 type="text"
                                                 className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
@@ -277,19 +290,22 @@ const filteredResults = form.case_year
                                             )}
                                         </div>
                                     </div>
-                                    <div className="form-group row">
-                                        <div className="col-sm-4"></div> {/* Empty space to align with input */}
-                                        <div className="col-sm-8">
-                                            <Button variant="contained" color="primary" type="button" onClick={handleSearch}>
+                                    <div className="col-md-3 pt-4 mt-2">
+                                        <div className="form-group">
+                                            <Button 
+                                                variant="contained" 
+                                                color="primary" 
+                                                type="button" 
+                                                onClick={handleSearch}
+                                            >
                                                 {t('search')}
                                             </Button>
                                         </div>
                                     </div>
                                     {/* {showDocumentUpload && ( */}
-                                    <>
-                                    <div className="form-group row">
-                                        <label htmlFor="" className="col-sm-4">Select document</label>
-                                        <div className="col-md-8">
+                                    <div className="col-md-12 mt-3">
+                                        <div className="form-group">
+                                            <label htmlFor="">Document</label>
                                             <input
                                                 type="file"
                                                 className="form-control"
@@ -298,21 +314,24 @@ const filteredResults = form.case_year
                                             />
                                             {errors.file && <div className="invalid-feedback">{errors.file}</div>}
                                         </div>
-                                    </div>
-                                    <div className="form-group row">
-                                        <div className="col-sm-4"></div> {/* Empty space to align with input */}
-                                        <div className="col-sm-8">
-                                            <Button variant="contained" color="success" type="submit">
-                                                {t('submit')}
-                                            </Button>
+                                        <div className="form-group row">
+                                            <div className="col-sm-4"></div> {/* Empty space to align with input */}
+                                            <div className="col-sm-8">
+                                                <Button variant="contained" color="success" type="submit">
+                                                    {t('submit')}
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                    </>
-                                    {/* )} */}
-                                </form>
-                            </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
+                    {orders.length > 0 && (
+                        <div className="col-md-12">
+                            <OrderList orders={orders} handleDelete={handleDelete} />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

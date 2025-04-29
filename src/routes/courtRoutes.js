@@ -30,9 +30,19 @@ import BenchList from "components/court/admin/judge/BenchList";
 import BenchForm from "components/court/admin/judge/BenchForm";
 import ProsecutorPeriod from "components/court/admin/judge/ProsecutorPeriod";
 import ProsecutorForm from "components/court/admin/judge/ProsecutorForm";
+import PetitionList from "components/court/PetitionList";
+import ApprovedList from "components/court/ApprovedList";
+import ReturnedList from "components/court/ReturnedList";
+import RejectedList from "components/court/RejectedList";
+import ListedCases from "components/court/ListedCases";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
+    { path: "petition", component: <PetitionList />},
+    { path: "approved", component: <ApprovedList />},
+    { path: "returned", component: <ReturnedList />},
+    { path: "rejected", component: <RejectedList />},
+    { path: "listed", component: <ListedCases />},
     { path: "case/scrutiny", component: <PendingList /> },
     { path: "case/scrutiny/detail", component: <ScrutinyDashboard /> },
     { path: "case/registration", component: <RegistrationPendingList /> },

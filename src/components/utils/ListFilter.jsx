@@ -22,7 +22,7 @@ const ListFilter = ({setSearch, pageSize, setPageSize}) => {
                             {[10, 25, 50, 75, 100].map(size => <option key={size} value={size}>{size}</option>)}
                         </select>
                     </div>
-                    <label htmlFor="" className="col-sm-6 m-1">entries per page</label>
+                    <label htmlFor="" className="col-sm-7 m-1">entries per page</label>
                 </div>
             </div>
             <div className="col-md-4">

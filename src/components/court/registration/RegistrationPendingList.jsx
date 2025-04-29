@@ -6,24 +6,33 @@ import Loading from 'components/utils/Loading'
 import { LanguageContext } from 'contexts/LanguageContex';
 import { useTranslation } from 'react-i18next'; 
 import { formatDate } from 'utils'
+import ListFilter from 'components/utils/ListFilter'
+import Pagination from 'components/utils/Pagination'
 
 const RegistrationPendingList = () => {
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false);
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
-    const [totalItems, setTotalItems] = useState(0);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState("");
+
     useEffect(() => {
         const fecthCases = async() =>{
             try{
                 setLoading(true)
-                const response = await api.get("court/registration/pending/")
+                const response = await api.get("court/registration/pending/", {
+                    params: {
+                        page,
+                        page_size: pageSize,
+                        search,
+                    },
+                })
                 if(response.status === 200){
-                    setCases(response.data)
-                    setTotalItems(response.data.length);
+                    setCases(response.data.results)
+                    setCount(response.data.count);
                 }
 
             }catch(error){
@@ -33,27 +42,7 @@ const RegistrationPendingList = () => {
             }
         }
         fecthCases();
-    },[])
-
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentCases = cases.slice(indexOfFirstItem, indexOfLastItem); // Slice cases for the current page
-
-    // Handle page change
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    // Handle items per page change
-    const handleItemsPerPageChange = (event) => {
-        setItemsPerPage(Number(event.target.value)); // Update items per page
-        setCurrentPage(1); // Reset to the first page whenever the items per page change
-    };
-
-    // Calculate total number of pages
-    const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(totalItems / itemsPerPage); i++) {
-        pageNumbers.push(i);
-    }
+    },[page, pageSize, search])
 
 
     return (
@@ -68,33 +57,25 @@ const RegistrationPendingList = () => {
                     <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
                         <div className="card-header"><strong>Case Registration - Pending List</strong></div>
                         <div className="card-body">
-                            <div className="row mb-3">
-                                <div className="col-md-1" style={{ display: 'flex' }}>
-                                    <label className="mr-3">{t('Filter')}:</label>
-                                    <select
-                                        className="form-control col-md-6"
-                                        value={itemsPerPage}
-                                        onChange={handleItemsPerPageChange}
-                                    >
-                                        <option value={10}>10</option>
-                                        <option value={15}>15</option>
-                                        <option value={25}>25</option>
-                                        <option value={50}>50</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <ListFilter 
+                                search={search}
+                                setSearch={setSearch}
+                                pageSize={pageSize}
+                                setPageSize={setPageSize}
+                                count={count}
+                            />
                             <table className="table table-bordered table-striped">
-                                <thead className="bg-secondary">
+                                <thead className="bg-info">
                                     <tr>
                                         <th>#</th>
                                         <th>{t('filing_number')}</th>
-                                        <th>{t('efile_number')}</th>
-                                        <th>{t('filing_date')}</th>
+                                        <th>{t('efile_number')} </th>
+                                        <th>{t('crime_details')}</th>
                                         <th>{t('litigants')}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentCases.map((c, index) => (
+                                    { cases.map((c, index) => (
                                     <tr>
                                         <td>{index+1}</td>
                                         <td>
@@ -102,9 +83,10 @@ const RegistrationPendingList = () => {
                                                 {c.petition?.cino}
                                             </Link>
                                         </td>
-                                        <td>{c.petition.efile_number}</td>
+                                        <td><span className="text-primary">{c.petition.efile_number}</span> <br/>{formatDate(c.petition?.efile_date)}</td>
                                         <td>
-                                            {formatDate(c.petition?.efile_date)}
+                                            {`${c.petition.fir_number}/${c.petition.fir_year}`} <br/>
+                                            {`${c.petition.police_station?.station_name}, ${c.petition.district?.district_name}`}
                                         </td>
                                         <td>
                                             { c.petition.pet_name }
@@ -115,65 +97,14 @@ const RegistrationPendingList = () => {
                                     ))}
                                 </tbody>
                             </table>
-                            {/* <ul className="todo-list" data-widget="todo-list">
-                                { currentCases.map((c, index) => (
-                                    <li key={index}>
-                                        <span className="handle">
-                                            <i className="fas fa-ellipsis-v" />
-                                            <i className="fas fa-ellipsis-v" />
-                                        </span>
-                                        <div className="icheck-primary d-inline ml-2">
-                                            <input type="checkbox" name={`todo${index}`} id={`todoCheck${index}`} />
-                                            <label htmlFor="todoCheck1" />
-                                        </div>
-                                        <span className="text mr-3">
-                                            <Link to={`/court/case/registration/detail/`} state={{efile_no: c.petition.efile_number}}>
-                                                {c.petition?.filing_type?.type_name && c.petition?.filing_number && c.petition?.filing_year ? (
-                                                    `${c.petition.filing_type.type_name}/${c.petition.filing_number}/${c.petition.filing_year}`
-                                                ) : null}
-                                            </Link>
-                                            <span className="text-success ml-2">
-                                                {`(${c.petition.efile_number})`}
-                                            </span>
-                                        </span>
-                                        { c.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name}</span>
-                                        ))
-                                        }
-                                        <span className="text text-danger">Vs</span>
-                                        { c.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2">{index+1}. {l.litigant_name} {l.designation?.designation_name}</span>
-                                        ))
-                                        }
-                                        <div className="float-right">
-                                            <small className="badge badge-success"><i className="far fa-clock" /><ReactTimeAgo date={c.petition.created_at} locale="en-US"/></small>
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul> */}
                         </div>
-                        <div className="card-footer">
-                            {/* Pagination Controls */}
-                            <div className="d-flex justify-content-between">
-                                <div className="pagination">
-                                    <ul className="pagination">
-                                        <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                            <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
-                                        </li>
-                                        {pageNumbers.map((number) => (
-                                            <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                                <button className="page-link" onClick={() => paginate(number)}>{number}</button>
-                                            </li>
-                                        ))}
-                                        <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-                                            <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div className="page-info">
-                                    <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {totalItems} {t('entries')}</span>
-                                </div>
-                            </div>
+                        <div className="card-footer pb-0">
+                            <Pagination 
+                                page={page}
+                                setPage={setPage}
+                                count={count}
+                                pageSize={pageSize}
+                            />
                         </div>
                     </div>
                 </div>

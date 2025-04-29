@@ -24,13 +24,13 @@ function VerifyOrder() {
                 return
             }
             setLoading(true)
-            const response = await api.post(`case/verify-order/`, {order_number:orderNumber})
+            const response = await api.post(`court/order/verify/`, {unique_id:orderNumber})
             if(response.status === 200){
 
             }
         }catch(error){
-            if(error.response){
-                toast.error(error.response.data.message, {theme:"colored"})
+            if(error.response.status === 400){
+                toast.error(error.response.data.error, {theme:"colored"})
             }
         }finally{
             setLoading(false)

@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DashboardCard from 'components/utils/DashboardCard'
-import Calendar from 'components/utils/Calendar'
 import PetitionList from 'components/utils/PetitionList'
 import { AuthContext } from 'contexts/AuthContext'
 import { JudgeContext } from 'contexts/JudgeContext'
+import MyCalendar from 'components/utils/MyCalendar'
 
 const Dashboard = () => {
 
@@ -26,20 +26,26 @@ const Dashboard = () => {
         try {
             setLoading(true)
             const countsEndpoint = 'court/dashboard/counts/';
-            const petitionsEndpoint = 'court/dashboard/petitions/';
-            const calendarEndpoint = 'case/dashboard/upcoming/'
+            const petitionsEndpoint = 'court/petition/';
+            const calendarEndpoint = 'court/dashboard/upcoming/'
             // Use Promise.all to fetch both endpoints in parallel
             const [countsResponse, petitionsResponse, calendarResponse] = await Promise.all([
                 api.get(countsEndpoint),
-                api.get(petitionsEndpoint),
+                api.get(petitionsEndpoint, {
+                    params:{
+                        page:'',
+                        page_size: 10,
+                        search: ''
+                    }
+                }),
                 api.get(calendarEndpoint)
             ]);
             // Extract the data from the responses
             const counts = countsResponse.data;
-            const petitions = petitionsResponse.data;       
+            const petitions = petitionsResponse.data.results;       
             const upcoming = calendarResponse.data    
             setCount(counts)
-            setCases(petitions?.petitions)
+            setCases(petitions)
             setCalendar(upcoming)
         } catch (error) {
             console.error('Error fetching dashboard data:', error);
@@ -94,39 +100,40 @@ const Dashboard = () => {
                             count={count.total_petitions}
                             title="Total Petitions"
                             icon={'ion-bag'}
-                            url={`/filing/draft`}
+                            url={`/court/petition/`}
                         />
                             <DashboardCard 
                             color={'bg-success'}
-                            count={count.submitted_petitions}
+                            count={count.approved_petitions}
                             title="Approved Petitions"
                             icon={'ion-bag'}
-                            url={`/filing/draft`}
+                            url={`/court/approved`}
                         />
                         <DashboardCard 
                             color={'bg-warning'}
-                            count={count.approved_petitions}
+                            count={count.returned_petitions}
                             title="Returened Petitions"
                             icon={'ion-bag'}
-                            url={`/filing/draft`}
+                            url={`/court/returned`}
                         />
                         <DashboardCard 
                             color={'bg-danger'}
-                            count={count.returned_petitions}
+                            count={count.rejected_petitions}
                             title="Rejected Petitions"
                             icon={'ion-bag'}
-                            url={`/filing/draft`}
+                            url={`/court/rejected`}
                         />
                     </div>
                     <div className="row">
                         <div className="col-md-5">
-                            <Calendar upcoming={calendar}/>
+                            <MyCalendar upcoming={calendar} endpoint={`/court/listed/`}/>
                         </div>
-                        <div className="col-md-7">
+                        <div className="col-md-7 pb-0">
                             <PetitionList 
                                 cases={cases}
                                 title={t('petitions')}
                                 url={`/court/case/scrutiny/detail/`}
+                                endpoint={`/court/petition/`}
                             />
                         </div>
                     </div>

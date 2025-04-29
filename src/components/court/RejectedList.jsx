@@ -9,7 +9,7 @@ import { formatDate } from 'utils';
 import ListFilter from 'components/utils/ListFilter';
 import Pagination from 'components/utils/Pagination';
 
-const PendingList = () => {
+const RejectedList = () => {
     const [cases, setCases] = useState([]);
     const [loading, setLoading] = useState(false);
     const { t } = useTranslation();
@@ -28,6 +28,7 @@ const PendingList = () => {
                         page,
                         page_size: pageSize,
                         search,
+                        status:3
                     },
                 });
                 if (response.status === 200) {
@@ -53,7 +54,7 @@ const PendingList = () => {
                         <li className="breadcrumb-item active">Dashboard</li>
                     </ol>
                     <div className="card card-outline card-primary" style={{ minHeight: '600px' }}>
-                        <div className="card-header"><strong>Scrutiny List</strong></div>
+                        <div className="card-header"><strong>Rejected Petition</strong></div>
                         <div className="card-body">
                             <ListFilter 
                                 search={search}
@@ -129,4 +130,4 @@ const PendingList = () => {
     );
 };
 
-export default PendingList;
+export default RejectedList;
