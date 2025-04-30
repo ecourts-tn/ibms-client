@@ -27,11 +27,12 @@ const ResponsePending = () => {
         async function fetchPetitions() {
             try{
                 setLoading(true)
-                const response = await api.get("police/response/pending/", {
+                const response = await api.get("police/response/list/", {
                     params: {
                         page,
                         page_size: pageSize,
                         search,
+                        status: false
                     },
                 });
                 if (response.status === 200) {

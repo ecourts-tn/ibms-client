@@ -1,20 +1,18 @@
 import api from 'api'
 import * as Yup from 'yup'
 import React, { useState, useEffect, useContext } from 'react'
-import { CreateMarkup, RequiredField } from 'utils';
+import { RequiredField } from 'utils';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
-import Form from 'react-bootstrap/Form'
 import FormControl from 'react-bootstrap/FormControl'
 import FormGroup from 'react-bootstrap/FormGroup'
 import FormLabel from 'react-bootstrap/FormLabel'
 import Button from '@mui/material/Button'
 import Document from 'components/police/Document';
-import FIRDetails from 'components/police/FIRDetails';
 import Loading from 'components/utils/Loading';
 import MaterialDetails from 'components/police/MaterialDetails';
 import VehicleDetails from 'components/police/VehicleDetails';
-import { handleMobileChange, handleNumberChange, validateEmail, handleAgeChange, handleBlur, handleNameChange, handlePincodeChange } from 'components/validation/validations';
+import { handleNumberChange } from 'components/validation/validations';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { LanguageContext } from 'contexts/LanguageContex';
@@ -24,6 +22,7 @@ import { AuthContext } from 'contexts/AuthContext';
 import PetitionDetail from './PetitionDetail';
 import AccusedDetail from './AccusedDetail';
 import LinkFIR from './LinkFIR';
+import DatePicker from 'components/utils/DatePicker';
 
 
 const ResponseCreate = () => {
@@ -42,16 +41,13 @@ const ResponseCreate = () => {
         court: '',
         pdistrict_id: ''
     }
-    const initialSearchForm = {
-        crime_number: '',
-        year: ''
-    }
+
     const initialState = {
         efile_no: '',
         crime_number: '',
         crime_year: '',
+        date_of_arrest:'',
         offences: '',
-        date_of_arrest: '',
         accused_name: '',
         specific_allegations: '',
         materials_used: '',
@@ -63,8 +59,7 @@ const ResponseCreate = () => {
         cnr_number: '',
         court: '',
         case_stage: '',
-        next_hearing: '',
-        no_of_witness: '',
+        no_of_witness: 0,
         previous_case: '',
         previous_bail: '',
         other_accused_status: '',
@@ -76,21 +71,16 @@ const ResponseCreate = () => {
         limitation_date: '',
         csr_number: '',
     }
+    const [form, setForm] = useState(initialState)
+    const [errors, setErrors] = useState({})
     const [materials, setMaterials] = useState([])
     const [vehicles, setVehicles] = useState([])
-    const [showAdditionalFields, setShowAdditionalFields] = useState(false)
     const [petition, setPetition] = useState(initialPetition)
-    const [searchForm, setSearchForm] = useState(initialSearchForm)
-    const [searchErrors, setSearchErrors] = useState({})
     const [loading, setLoading] = useState(false)
-    const [fir, setFir] = useState({});
     const [crime, setCrime] = useState({})
     const [accused, setAccused] = useState([])
-    const [respondent, setRespondent] = useState([])
     const [firTagged, setFirTagged] = useState(false)
     const [courts, setCourts] = useState([]);
-    const [notFound, setNotFound] = useState(false)
-
     const [documents, setDocuments] = useState([])
 
     const addDocument = (document) => {
@@ -102,19 +92,16 @@ const ResponseCreate = () => {
         setDocuments(newDocuments)
     }
 
-    const searchValidationSchema = Yup.object({
-        crime_number: Yup.number().required("This field should not be blank").typeError("This field should be numeric"),
-        year: Yup.number().required("This field should not be blank").typeError("This field should be numeric")
-    })
 
     const validationSchema = Yup.object({
         csr_number: Yup.string(),
         offences: Yup.string().required(),
-        date_of_arrest: Yup.date().required(),
         accused_name: Yup.string().required(),
         specific_allegations: Yup.string().required(),
         materials_used: Yup.string().required(),
-        // discharged: Yup.string().required(),
+        date_of_arrest: Yup.date().transform((value, originalValue) =>
+            originalValue === "" ? null : value
+            ).nullable().required("Date of arrest is required"),
         previous_case: Yup.string().required(),
         previous_bail: Yup.string().required(),
         other_accused_status: Yup.string().required(),
@@ -126,126 +113,44 @@ const ResponseCreate = () => {
                 return schema.required('CNR Number required')
             }
         }),
-        // court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
-        //     if(parseInt(investigation_stage) === 2){
-        //         return schema.required('Court required')
-        //     }
-        // }),
-        // case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
-        //     if(parseInt(investigation_stage) === 2){
-        //         return schema.required('CNR Number required')
-        //     }
-        // }),
-        // next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
-        //     if(parseInt(investigation_stage) === 2){
-        //         return schema.required('Next hearing required')
-        //     }
-        // }),
-        // no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
-        //     if(parseInt(investigation_stage) === 2){
-        //         return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
-        //         .integer('Number of witnesses must be an integer')
-        //     }
-        // }),
+        court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('Court required')
+            }
+        }),
+        case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('CNR Number required')
+            }
+        }),
+        next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.transform((value, originalValue) =>
+                    originalValue === "" ? null : value
+                ).nullable().required("Next hearing required")
+            }
+        }),
+        no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
+            if(parseInt(investigation_stage) === 2){
+                return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
+                .integer('Number of witnesses must be an integer').nullable()
+            }
+        }),
     })
 
-    const [form, setForm] = useState(initialState)
-    const [errors, setErrors] = useState(initialState)
+    const handleDateChange = (field, value) => {
+        setForm((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+     };
 
-    const date_of_arrest_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
-
-    const date_of_arrest_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-
-    const next_hearing_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
-
-    const next_hearing_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-
-    const formatDate1 = (date) => {
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
-
-    useEffect(() => {
-        const date_of_arrest = flatpickr(".date_of_arrest-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            defaultDate: form.date_of_arrest ? date_of_arrest_Display(new Date(form.date_of_arrest)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? date_of_arrest_Backend(selectedDates[0]) : "";
-                setForm({ ...form, date_of_arrest: formattedDate });
-            },
-        });
-
-        return () => {
-            if (date_of_arrest && typeof date_of_arrest.destroy === "function") {
-                date_of_arrest.destroy();
-            }
-        };
-    }, [form]);
-
-    useEffect(() => {
-        const limitation_date = flatpickr(".limitation_date-date-picker", {
-            dateFormat: "d/m/Y",
-            maxDate: "today",
-            defaultDate: form.limitation_date,
-            onChange: (selectedDates1) => {
-                const formattedDate1 = selectedDates1[0] ? formatDate1(selectedDates1[0]) : "";
-                setForm({ ...form, limitation_date: formattedDate1 });
-            },
-        });
-
-        return () => {
-            if (limitation_date && typeof limitation_date.destroy === "function") {
-                limitation_date.destroy();
-            }
-        };
-    }, [form]);
-
-    useEffect(() => {
-        const next_hearing = flatpickr(".next_hearing-date-picker", {
-            dateFormat: "d/m/Y",
-            minDate: "today",
-            defaultDate: form.next_hearing ? next_hearing_Display(new Date(form.next_hearing)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? next_hearing_Backend(selectedDates[0]) : "";
-                setForm({ ...form, next_hearing: formattedDate });
-            },
-        });
-
-        return () => {
-            if (next_hearing && typeof next_hearing.destroy === "function") {
-                next_hearing.destroy();
-            }
-        };
-    }, [form]);
 
     useEffect(() => {
         async function fetchPetitionDetail() {
             try{
                 setLoading(true)
-                const response = await api.get(`police/filing/detail/`, { params: { efile_no: state.efile_no } })
+                const response = await api.post(`police/petition/detail/`, { efile_no: state.efile_no })
                 if (response.status === 200) {
                     setForm({
                         ...form,
@@ -257,7 +162,6 @@ const ResponseCreate = () => {
                     const { petition, litigant, crime } = response.data
                     setPetition(petition)
                     setAccused(litigant.filter(l => l.litigant_type === 1))
-                    setRespondent(litigant.filter(l => l.litigant_type === 2))
                     setCrime(crime)
                 }
             }catch(error){
@@ -281,7 +185,6 @@ const ResponseCreate = () => {
                 console.error('Error fetching courts:', error);
             }
         }
-
         fetchCourts();
     }, []);
 
@@ -292,70 +195,6 @@ const ResponseCreate = () => {
         }
     }, [firTagged])
 
-    const handleCourtChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-
-    const handleSearch = async (e) => {
-        e.preventDefault()
-        try {
-            await searchValidationSchema.validate(searchForm, { abortEarly: false })
-            setLoading(true)
-            const data = {
-                state: user.police_station?.state,
-                district: user.police_station?.revenue_district,
-                pdistrict: user.police_station?.district_code,
-                police_station: user.police_station?.cctns_code,
-                fir_number: searchForm.crime_number,
-                fir_year: searchForm.year
-            }
-            const response = await api.post("external/police/fir-search/", data)
-            if (response.status === 200) {
-                sessionStorage.setItem("api_id", response.data.api_id)
-                setFir({
-                    ...fir,
-                    state: petition.state?.state_code,
-                    district: petition.district?.district_code,
-                    police_station: petition.police_station?.cctns_code,
-                    fir_number: searchForm.crime_number,
-                    fir_year: searchForm.year,
-                    date_of_occurrence: response.data.date_of_occurrence,
-                    investigation_officer: response.data.investigation_officer_name,
-                    fir_date_time: response.data.FIR_DATE_Time,
-                    place_of_occurrence: response.data.place_of_occurence,
-                    gist_of_fir: response.data.gist_of_FIR,
-                    gist_in_local: response.data.gist_of_FIR_local_language,
-                    complainant_age: response.data.complainant_age,
-                    complainant_guardian: response.data.complainant_guardian,
-                    complainant_guardian_name: response.data.complainant_guardian_name,
-                    complainant_name: response.data.complaintant_name,
-                    investigation_officer_rank: response.data.investigation_officer_rank,
-                    no_of_accused: response.data.no_of_accused
-                })
-                setShowAdditionalFields(true)
-                setNotFound(false)
-            }
-        } catch (error) {
-            if (error.inner) {
-                const newErrors = {}
-                error.inner.forEach((err) => {
-                    newErrors[err.path] = err.message
-                })
-                setSearchErrors(newErrors)
-            }
-            if(error.response){
-                if(error.response.status === 404){
-                    setNotFound(true);
-                }
-            }
-        } finally {
-            setLoading(false)
-        }
-    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -380,6 +219,7 @@ const ResponseCreate = () => {
         } catch (error) {
             console.log(error)
             if (error.inner) {
+                console.log(error.inner)
                 const newErrors = {};
                 error.inner.forEach((err) => {
                     newErrors[err.path] = err.message;
@@ -465,18 +305,11 @@ const ResponseCreate = () => {
                                             <div className="col-md-2">
                                                 <label htmlFor="">Date of Arrest<RequiredField /></label>
                                                 <div className="input-group mb-3">
-                                                    <input
-                                                        type="date"
-                                                        className={`form-control date_of_arrest-date-picker ${errors.date_of_arrest ? 'is-invalid' : ''}`}
+                                                    <DatePicker 
                                                         name="date_of_arrest"
-                                                        value={form.date_of_arrest ? form.date_of_arrest : ''}
-                                                        placeholder="DD/MM/YYYY"
-                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                        style={{
-                                                            backgroundColor: 'transparent',
-                                                            border: '1px solid #ccc', 
-                                                            padding: '8px',            
-                                                        }}
+                                                        value={form.date_of_arrest}
+                                                        onChange={handleDateChange}
+                                                        error={errors.date_of_arrest ? true : false}
                                                     />
                                                     <div className="invalid-feedback">
                                                         {errors.date_of_arrest}
@@ -719,18 +552,11 @@ const ResponseCreate = () => {
                                             <div className="col-md-3">
                                                 <div className="form-group">
                                                     <label htmlFor="" style={{ width: '380px', }} >Limitation date for filing Charge Sheet(As per Act)</label>
-                                                    <input type="date" className={`form-control limitation_date-date-picker ${errors.limitation_date ? 'is-invalid' : ''}`}
+                                                    <DatePicker 
                                                         name="limitation_date"
                                                         value={form.limitation_date}
-                                                        // readOnly={form.is_produced === true ? false : true }
-                                                        onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                        placeholder="DD/MM/YYYY"
-                                                        style={{
-                                                            backgroundColor: 'transparent',
-                                                            border: '1px solid #ccc', 
-                                                            padding: '8px',            
-                                                        }}
-
+                                                        onChange={handleDateChange}
+                                                        error={errors.limitation_date ? true : false}
                                                     />
                                                     <div className="invalid-feedback">
                                                         {errors.limitation_date}
@@ -761,18 +587,14 @@ const ResponseCreate = () => {
                                                             name="court"
                                                             className={`form-control ${errors.court ? 'is-invalid' : ''}`}
                                                             value={form.court}
-                                                            onChange={handleCourtChange}
+                                                            onChange={(e) => setForm({...form, [e.target.name] : e.target.value})}
                                                         >
                                                             <option value="">Select Court</option>
-                                                            {courts.length > 0 ? (
-                                                                courts.map((court) => (
-                                                                    <option key={court.court_code} value={court.court_code}>
-                                                                        {language === 'ta' ? court.court_lname : court.court_name}
-                                                                    </option>
-                                                                ))
-                                                            ) : (
-                                                                <option value="">No courts available</option>
-                                                            )}
+                                                            {courts.map((court, index) => (
+                                                                <option key={index} value={court.court_code}>
+                                                                    {language === 'ta' ? court.court_lname : court.court_name}
+                                                                </option>
+                                                            ))}
                                                         </select>
                                                         <div className="invalid-feedback">{errors.court}</div>
                                                     </FormGroup>
@@ -794,19 +616,12 @@ const ResponseCreate = () => {
                                                 <div className="col-md-2">
                                                     <FormGroup className="mb-3">
                                                         <label htmlFor="">Next Hearing Date</label>
-                                                        <FormControl
-                                                            type="date"
-                                                            className={`form-control next_hearing-date-picker ${errors.next_hearing ? 'is-invalid' : ''}`}
+                                                        <DatePicker 
                                                             name="next_hearing"
-                                                            value={form.next_hearing ? form.next_hearing : ''}
-                                                            placeholder="DD/MM/YYYY"
-                                                            onChange={(e) => setForm({ ...form, next_hearing: e.target.value })}
-                                                            style={{
-                                                                backgroundColor: 'transparent',
-                                                                border: '1px solid #ccc', 
-                                                                padding: '8px',            
-                                                            }}
-                                                        ></FormControl>
+                                                            value={form.next_hearing}
+                                                            onChange={handleDateChange}
+                                                            error={errors.next_hearing ? true : false}
+                                                        />
                                                         <div className="invalid-feedback">
                                                             {errors.next_hearing}
                                                         </div>
@@ -950,70 +765,6 @@ const ResponseCreate = () => {
                                 setFirTagged={setFirTagged}
                                 efileNumber={petition.efile_no}
                             />
-                            <div className="card card-outline card-info">
-                                <div className="card-header"><strong>Tag FIR</strong></div>
-                                <div className="card-body">
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            <p className="text-dark border-bottom pb-2"><strong>Tag FIR details</strong></p>
-                                        </div>
-                                        <div className="col-md-2">
-                                            <Form.Group className="mb-3">
-                                                <Form.Label>FIR Number<RequiredField /></Form.Label>
-                                                <Form.Control
-                                                    type="text"
-                                                    name="crime_number"
-                                                    className={`${searchErrors.crime_number ? 'is-invalid' : ''}`}
-                                                    value={searchForm.crime_number}
-                                                    onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                ></Form.Control>
-                                                <div className="invalid-feedback">{searchErrors.crime_number}</div>
-                                            </Form.Group>
-                                        </div>
-                                        <div className="col-md-2">
-                                            <Form.Group>
-                                                <Form.Label>Year<RequiredField /></Form.Label>
-                                                <Form.Control
-                                                    type="text"
-                                                    name="year"
-                                                    className={`${searchErrors.year ? 'is-invalid' : ''}`}
-                                                    value={searchForm.year}
-                                                    onChange={(e) => setSearchForm({ ...searchForm, [e.target.name]: e.target.value })}
-                                                ></Form.Control>
-                                                <div className="invalid-feedback">{searchErrors.year}</div>
-                                            </Form.Group>
-                                        </div>
-                                        <div className="col-md-1 mt-4 pt-2">
-                                            <Form.Group>
-                                                <Button
-                                                    variant="contained"
-                                                    onClick={handleSearch}
-                                                ><i className="fa fa-search mr-2"></i>Search</Button>
-                                            </Form.Group>
-                                        </div>
-                                        <div className="col-md-3 mt-4 pt-2">
-                                            {showAdditionalFields && (
-                                                <FIRDetails 
-                                                    setFirTagged={setFirTagged}
-                                                    efile_no = {petition.efile_no}
-                                                />
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-md-12">
-                                            { notFound && (
-                                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                    <span><strong>{t('errors.fir_not_found')}</strong> </span>
-                                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </React.Fragment>
                     )}
 

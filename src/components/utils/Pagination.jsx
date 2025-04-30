@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Pagination = ({ page, setPage, count, pageSize }) => {
+    const { t } = useTranslation()
     const totalPages = Math.ceil(count / pageSize);
 
     // Calculate the range of items to display
@@ -22,11 +24,11 @@ const Pagination = ({ page, setPage, count, pageSize }) => {
                     {/* Previous Button */}
                     <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
                         <button
-                        className="page-link"
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        disabled={page === 1}
+                            className="page-link"
+                            onClick={() => setPage((p) => Math.max(1, p - 1))}
+                            disabled={page === 1}
                         >
-                        Previous
+                            {t('previous')}
                         </button>
                     </li>
                     {/* Page Number Buttons */}
@@ -47,11 +49,11 @@ const Pagination = ({ page, setPage, count, pageSize }) => {
                     {/* Next Button */}
                     <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
                         <button
-                        className="page-link"
-                        onClick={() => setPage((p) => (p * pageSize < count ? p + 1 : p))}
-                        disabled={page * pageSize >= count}
+                            className="page-link"
+                            onClick={() => setPage((p) => (p * pageSize < count ? p + 1 : p))}
+                            disabled={page * pageSize >= count}
                         >
-                        Next
+                            {t('next')}
                         </button>
                     </li>
                 </ul>

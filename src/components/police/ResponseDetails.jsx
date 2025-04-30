@@ -56,7 +56,7 @@ const ResponseDetails = () => {
             }
         }
         fetchResponseDetail()
-    }, [])
+    }, [state.efile_no])
 
 
     return (

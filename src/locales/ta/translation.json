@@ -378,6 +378,9 @@
     "main_case_detail": "முதன்மை வழக்கு விவரங்கள்",
     "jurisdiction": "அதிகார வரம்பு",
     "magistrate_court": "மாஜிஸ்திரேட் நீதிமன்றம்",
+    "case_management": "வழக்கு மேலாண்மை",
+    "case_allocation": "வழக்கு ஒதுக்கீடு",
+
     "alerts": {
         "select_state": "மாநிலத்தைத் தேர்ந்தெடு",
         "select_district": "மாவட்டத்தை தேர்ந்தெடு",

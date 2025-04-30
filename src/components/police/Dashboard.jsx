@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react'
-import api from '../../api'
-import ReactTimeAgo from 'react-time-ago'
-import { Link } from 'react-router-dom'
+import api from 'api'
 import { ToastContainer } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import DashboardCard from 'components/utils/DashboardCard'
-import Calendar from 'components/utils/Calendar'
+import MyCalendar from 'components/utils/MyCalendar'
 import PetitionList from 'components/utils/PetitionList'
 
 const Dashboard = () => {
@@ -99,8 +97,9 @@ const Dashboard = () => {
                     </div>
                     <div className="row">
                         <div className="col-md-5">
-                            <Calendar 
-                                upcoming={calendar}    
+                            <MyCalendar 
+                                upcoming={calendar} 
+                                endpoint={`/police/listed`}   
                             /> 
                         </div>
                         <div className="col-md-7">

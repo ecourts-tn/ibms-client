@@ -379,6 +379,9 @@
     "main_case_detail": "Main Case Details",
     "jurisdiction": "Jurisdiction",
     "magistrate_court": "Magistrate Court",
+    "case_management": "Case Management",
+    "case_allocation": "Allocation",
+
     "alerts": {
         "select_state": "Select state",
         "select_district": "Select district",

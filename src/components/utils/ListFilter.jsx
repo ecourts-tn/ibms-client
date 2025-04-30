@@ -1,7 +1,9 @@
 import React, {useState} from 'react'
+import { useTranslation } from 'react-i18next'
 
 const ListFilter = ({setSearch, pageSize, setPageSize}) => {
     
+    const {t} = useTranslation()
     const [filterText, setFilterText] = useState('')
 
     const handleSearch = (e) => {
@@ -38,7 +40,7 @@ const ListFilter = ({setSearch, pageSize, setPageSize}) => {
                         <button 
                             className="btn btn-primary"
                             onClick={(e) => handleSearch(e)}
-                        >Search</button>
+                        >{t('search')}</button>
                     </div>
                 </div>
             </div>   

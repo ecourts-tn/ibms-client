@@ -80,9 +80,17 @@ const Header = () => {
                 </li>
               )}
               <li className="nav-item">
-                <button className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}>
+                <select 
+                  value={language}
+                  onChange={(e) => toggleLanguage(e.target.value)}
+                >
+                  <option value="">Select language</option>
+                  <option value="en">English</option>
+                  <option value="ta">Tamil</option>
+                </select>
+                {/* <a className="text-white" onClick={toggleLanguage}>
                   <strong>{language === 'en' ? 'Tamil' : 'ஆங்கிலம்'}</strong>
-                </button>
+                </a> */}
               </li>
             </ul>
           </div>

@@ -32,7 +32,7 @@ const PetitionFiling = () => {
     const {language} = useContext(LanguageContext)
     const [searchForm, setSearchForm] = useState({
         filing_type: 9,
-        search_type: 1,
+        search_type: "crime",
         state:'',
         district:'',
         police_station:'',
@@ -133,15 +133,15 @@ const PetitionFiling = () => {
         setLoading(true)
         setCaseFound(false)
         try{
-            const url = parseInt(searchForm.search_type) === 1 ? `police/search/crime/list/` : 'police/search/case/'
-            const response = await api.post(url, searchForm)
+            const response = await api.post(`police/petition/search/`, searchForm)
             if(response.status === 200){
                 if(Array.isArray(response.data) && response.data.length > 1){
+                    console.log("array")
                     setPetitions(response.data)
                 }else{
                     setCaseFound(true)
                     setPetition(response.data.petition)
-                    const accused = response.data.litigant?.filter((accused) => {
+                    const accused = response.data.litigants?.filter((accused) => {
                         return accused.litigant_type === 1
                     })
                     setAccused(accused)
@@ -152,7 +152,7 @@ const PetitionFiling = () => {
             if(error.response){
                 switch(error.response.status){
                     case 404:
-                        toast.error("Petition details not found", {theme:"colored"});
+                        toast.error(error.response.data.message, {theme:"colored"});
                         break;
                     case 400:
                         toast.error("Bad request. Please check your input.", { theme: "colored" });
@@ -179,9 +179,7 @@ const PetitionFiling = () => {
     useEffect(() => {
         const fetchPetitionDetail = async() => {
             try{
-                const response = await api.get(`police/filing/detail/`, {params:{
-                    efile_no:efileNumber}
-                })
+                const response = await api.post(`police/petition/detail/`, {efile_no:efileNumber})
                 if(response.status === 200){
                     setCaseFound(true)
                     setPetition(response.data.petition)
@@ -334,8 +332,8 @@ const PetitionFiling = () => {
                                                         type="radio" 
                                                         name="search_type" 
                                                         id="searchTypeYes" 
-                                                        checked={parseInt(searchForm.search_type) === 1}
-                                                        onChange={(e) => setSearchForm({...searchForm, search_type : 1})} 
+                                                        checked={searchForm.search_type === "crime"}
+                                                        onChange={(e) => setSearchForm({...searchForm, search_type : "crime"})} 
                                                     />
                                                     <label htmlFor="searchTypeYes">Search by Crime Number</label>
                                                     </div>
@@ -344,8 +342,8 @@ const PetitionFiling = () => {
                                                         type="radio" 
                                                         id="searchTypeNo" 
                                                         name="search_type" 
-                                                        checked={ parseInt(searchForm.search_type) === 2 } 
-                                                        onChange={(e) => setSearchForm({...searchForm, search_type : 2})}
+                                                        checked={ searchForm.search_type === "case" } 
+                                                        onChange={(e) => setSearchForm({...searchForm, search_type : "case"})}
                                                     />
                                                     <label htmlFor="searchTypeNo">Search by Case Number</label>
                                                     </div>
@@ -397,7 +395,7 @@ const PetitionFiling = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    { parseInt(searchForm.search_type) === 1 && (
+                                                    { searchForm.search_type === "crime" && (
                                                         <React.Fragment>
                                                             <div className="col-md-5">
                                                                 <div className="form-group">
@@ -450,7 +448,7 @@ const PetitionFiling = () => {
                                                             </div>
                                                         </React.Fragment>
                                                     )}
-                                                    { parseInt(searchForm.search_type) === 2 && (
+                                                    { searchForm.search_type === "case" && (
                                                         <React.Fragment>
                                                             <div className="col-md-5">
                                                                 <div className="form-group">

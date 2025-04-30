@@ -31,9 +31,18 @@ const Header = () => {
           <div className="ml-auto">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <a className="nav-link text-indigo font-weight-bolder" href="javascript:void(0);" onClick={toggleLanguage}>
+                <select 
+                  value={language}
+                  onChange={(e) => toggleLanguage(e.target.value)}
+                  className="mt-2"
+                >
+                  <option value="">Select language</option>
+                  <option value="en">English</option>
+                  <option value="ta">Tamil</option>
+                </select>
+                {/* <a className="nav-link text-indigo font-weight-bolder" href="javascript:void(0);" onClick={toggleLanguage}>
                   {language === 'en' ? 'தமிழ்' : 'English'}
-                </a>
+                </a> */}
               </li>
               <li className="nav-item">
                 <a className="nav-link" data-widget="fullscreen" href="javascript:void(0);" role="button">

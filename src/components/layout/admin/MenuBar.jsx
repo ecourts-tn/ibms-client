@@ -11,7 +11,6 @@ export default function MenuBar() {
 
   const {user, logout} = useContext(AuthContext)
   const {t} = useTranslation()
-  const { language, toggleLanguage } = useContext(LanguageContext);
   const [isAuth, setIsAuth] = useState(false);
   const navigate = useNavigate();
 
@@ -68,27 +67,27 @@ export default function MenuBar() {
                 </Link> 
               </li>
               <li className="nav-item">
-                <a href="/#" className="nav-link">
+                <a href="#" className="nav-link">
                   <i className="nav-icon fas fa-table"></i>
-                  <p>Case Management <i className="fas fa-angle-left right"></i></p>
+                  <p>{t('case_management')} <i className="fas fa-angle-left right"></i></p>
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
                     <Link to="/court/case/scrutiny" className="nav-link">
                       <i className="far fa-circle nav-icon" />
-                      <p>Scrutiny</p>
+                      <p>{t('case_scrutiny')}</p>
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/court/case/registration" className="nav-link">
                       <i className="far fa-circle nav-icon" />
-                      <p>Registration</p>
+                      <p>{t('registration')}</p>
                     </Link>
                   </li>
                   <li className="nav-item">
                     <Link to="/court/case/allocation" className="nav-link">
                       <i className="far fa-circle nav-icon" />
-                      <p>Allocation</p>
+                      <p>{t('case_allocation')}</p>
                     </Link>
                   </li>
                   <li className="nav-item">
@@ -124,14 +123,8 @@ export default function MenuBar() {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/court/case/surety/pendinglist/" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
-                      <p>Surety</p>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <Link to="#" className="nav-link">
-                      <i className="nav-icon far fa-circle text-info" />
+                    <Link to="/court/case/condition" className="nav-link">
+                      <i className="nav-icon far fa-circle" />
                       <p>Condition Complaince</p>
                     </Link>
                   </li>
@@ -275,7 +268,7 @@ export default function MenuBar() {
               </>
             )}
             {/** End - Prison user menu */}
-            { parseInt(user.department) === 2 && (
+            { parseInt(user.department) === 4 && (
               <>
                 <li className="nav-item menu-open">
                   <Link to="/prosecution/dashboard" className="nav-link active">

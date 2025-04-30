@@ -35,6 +35,7 @@ import ApprovedList from "components/court/ApprovedList";
 import ReturnedList from "components/court/ReturnedList";
 import RejectedList from "components/court/RejectedList";
 import ListedCases from "components/court/ListedCases";
+import ConditionComplaince from "components/court/ConditionComplaince";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
@@ -54,7 +55,8 @@ const courtRoutes = [
     { path: "case/proceeding", component: <DailyProceedingsList /> },
     { path: "case/proceeding/detail", component: <DailyProceedings />},
     { path: "case/proceeding/modify", component: <ModifyBusiness />},
-    { path: "case/order/odt", component: <BailBond />},
+    { path: "case/condition/", component: <ConditionComplaince /> },
+    { path: "case/bailbond/generate", component: <BailBond />},
     { path: "case/order/generate", component: <GenerateOrder />},
     { path: "case/order/upload", component: <UploadOrder />},
     { path: "case/surety/pendinglist", component: <SuretyPendingList />},

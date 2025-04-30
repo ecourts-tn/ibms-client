@@ -10,6 +10,7 @@ import ConditionList from 'components/police/ConditionList'
 import ConditionForm from 'components/police/ConditionForm'
 import PetitionFiling from 'components/police/PetitionFiling'
 import PoliceProfile from 'components/police/Profile'
+import ListedCases from "components/court/ListedCases";
 
 
 export const policeRoutes = [
@@ -73,6 +74,13 @@ export const policeRoutes = [
         element:(
             <PrivateRoute>
                 <PoliceProfile />
+            </PrivateRoute>
+        )
+    },
+    {   path:"listed",
+        element:(
+            <PrivateRoute>
+                <ListedCases />
             </PrivateRoute>
         )
     },

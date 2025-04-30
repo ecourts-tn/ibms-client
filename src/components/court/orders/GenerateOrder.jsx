@@ -142,7 +142,7 @@ const GenerateOrder = () => {
 
 
     return (
-        <div className="container-fluid mt-3">
+        <div className="">
             <ToastContainer />  {loading && <Loading />}
             <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
                 <div className="card-header">

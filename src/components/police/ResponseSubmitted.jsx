@@ -28,15 +28,15 @@ const ResponseSubmitted = () => {
         async function fetchPetitions() {
             try{
                 setLoading(true)
-                const response = await api.get("police/response/submitted/", {
+                const response = await api.get("police/response/list/", {
                     params: {
                         page,
                         page_size: pageSize,
                         search,
+                        status:true
                     },
                 });
                 if (response.status === 200) {
-                    console.log(response.data)
                     setPetitions(response.data.results)
                     setCount(response.data.count) 
                 }
@@ -135,7 +135,7 @@ const ResponseSubmitted = () => {
                                             <span className="text-center">-----</span>
                                         )}
                                     </td>
-                                    <td className="text-center">
+                                    <td>
                                         { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                             <span className="text ml-2" style={{display:'block'}} key={index}>{index+1}. {l.litigant_name}</span>
                                         ))}
