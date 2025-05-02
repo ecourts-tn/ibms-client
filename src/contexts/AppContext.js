@@ -15,9 +15,9 @@ export const AppProvider = ({children}) => {
 
     return(
         <AppContext.Provider>
-            <StepProvider>
-                <LanguageProvider>
-                    <BaseProvider>
+            <LanguageProvider>
+                <BaseProvider>
+                    <StepProvider>
                         <EstablishmentProvider>
                             <CourtProvider>          
                                 <PoliceStationProvider>
@@ -31,9 +31,9 @@ export const AppProvider = ({children}) => {
                                 </PoliceStationProvider>
                             </CourtProvider>
                         </EstablishmentProvider>
-                    </BaseProvider>
-                </LanguageProvider>
-            </StepProvider>
+                    </StepProvider>
+                </BaseProvider>
+            </LanguageProvider>
         </AppContext.Provider>
     )
 }

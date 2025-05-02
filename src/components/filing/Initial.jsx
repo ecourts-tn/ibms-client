@@ -36,6 +36,7 @@ const Initial = () => {
     const {setAccused, efileNumber, setEfileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
     const { t } = useTranslation()
+    const { setCurrentStep, saveStepStatus } = useContext(StepContext)
 
     const initialState = {
         judiciary: 1,
@@ -394,9 +395,12 @@ const Initial = () => {
             if(response.status === 200){
                 const efile_no = response.data.efile_number
                 setEfileNumber(efile_no)
+                
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
+                setCurrentStep(2)
+                saveStepStatus()
                 setIsSubmitted(true); 
             }
           }catch(error){
