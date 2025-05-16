@@ -117,10 +117,9 @@ const Initial = () => {
             try{
                 const response = await api.get(`base/court/detail/`, {params:{id:magistrateCourt}})
                 if(response.status === 200){
-                    console.log(response.data)
                     setPetition({
                         ...petition,
-                        court: response.data.court_code,
+                        // court: response.data.court_code,
                         establishment: response.data.establishment,
                     })
                 }
@@ -390,6 +389,8 @@ const Initial = () => {
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
+                setCurrentStep(2)
+                saveStepStatus()
                 setIsSubmitted(true); 
             }
             if(response.status === 200){
@@ -965,7 +966,7 @@ const Initial = () => {
                             { errors.establishment }
                         </div>
                     </div>
-                    <label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
+                    { /*<label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
                             name="court" 
@@ -984,7 +985,7 @@ const Initial = () => {
                         <div className="invalid-feedback">
                             { errors.court }
                         </div>
-                    </div>
+                    </div> */}
                 </div>  
                 </React.Fragment>    
                 )}

@@ -23,11 +23,12 @@ const PendingList = () => {
         const fecthCases = async () => {
             try {
                 setLoading(true);
-                const response = await api.get("court/petition/", {
+                const response = await api.get("court/scrutiny/pending/", {
                     params: {
                         page,
                         page_size: pageSize,
                         search,
+                        today : sessionStorage.getItem('today') || null
                     },
                 });
                 if (response.status === 200) {
@@ -49,8 +50,9 @@ const PendingList = () => {
                 {loading && <Loading />}
                 <div className="col-sm-12">
                     <ol className="breadcrumb mt-2">
-                        <li className="breadcrumb-item"><a href="#">Home</a></li>
-                        <li className="breadcrumb-item active">Dashboard</li>
+                        <li className="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li className="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                        <li className="breadcrumb-item active">Scrutiny</li>
                     </ol>
                     <div className="card card-outline card-primary" style={{ minHeight: '600px' }}>
                         <div className="card-header"><strong>Scrutiny List</strong></div>

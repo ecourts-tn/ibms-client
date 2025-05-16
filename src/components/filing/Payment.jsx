@@ -43,6 +43,9 @@ const Payment = () => {
 
 
     useEffect(() => {
+        const txnId = params.get("txnid");
+        if(!txnId) return;
+
         const data = {       
             efile_no: efileNumber,
             payer_name: params.get("udf1"),
@@ -50,7 +53,7 @@ const Payment = () => {
             mobile_number: params.get("udf3"),          
             amount: params.get("amt"),               
             status:params.get("txnStatus"),
-            transaction_id: params.get("txnid"),
+            transaction_id: txnId,
             transaction_date:params.get("txnDate"),
             transaction_type:params.get("txnType"),
             shc_transaction_id:params.get("shcltxnid"),
@@ -133,7 +136,7 @@ const Payment = () => {
             // Validate form
             await validationSchema.validate(form, { abortEarly: false });
     
-            const data = {
+            const post_data = {
                 efile_no: efileNumber, 
                 payer_name: form.udf1,
                 email_address: form.udf2,
@@ -142,7 +145,7 @@ const Payment = () => {
             };
     
             // First API call to initiate payment
-            const response = await api.post(`payment/court-fee/`, data);
+            const response = await api.post(`payment/court-fee/`, post_data);
     
             if (response.status === 201) {
                 // Ensure form is updated correctly (if using state)

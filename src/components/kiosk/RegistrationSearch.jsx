@@ -1,20 +1,17 @@
 import React, { useState, useContext } from 'react'
+import { Link } from 'react-router-dom'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
 import * as Yup from 'yup'
 import api from 'api';
 import { toast, ToastContainer } from 'react-toastify';
-import { StateContext } from 'contexts/StateContext';
-import { DistrictContext } from 'contexts/DistrictContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
-import { SeatContext } from 'contexts/SeatContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
 import Loading from 'components/utils/Loading';
-import { Link } from 'react-router-dom';
-import { truncateChars } from 'utils';
 import { MasterContext } from 'contexts/MasterContext';
+import { useLocalizedNames } from 'hooks/useLocalizedNames';
+import { truncateChars, formatDate } from 'utils'
 
 const RegistrationSearch = () => {
     
@@ -28,12 +25,20 @@ const RegistrationSearch = () => {
         reg_number: '',
         reg_year: ''
     })
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    // const {seats} = useContext(SeatContext)
+
+    const { 
+        getStateName,
+        getDistrictName,
+        getEstablishmentName,
+        getCourtName,
+        getJudiciaryName,
+        getFilingNumber,
+        getRegistrationNumber,
+        getSeatName
+    } = useLocalizedNames()
+
     const {language} = useContext(LanguageContext)
-    // const {casetypes}   = useContext(CaseTypeContext)
         const {masters:{
             states,
             districts, 
@@ -41,7 +46,11 @@ const RegistrationSearch = () => {
             casetypes
         }} = useContext(MasterContext)
     const {t} = useTranslation()
+
     const[petition, setPetition] = useState({})
+    const[litigants, setLitigants] = useState([])
+    const[objections, setObjections] = useState([])
+    const[proceedings, setProceedings] = useState([])
     const[errors, setErrors] = useState({})
     const[loading, setLoading] = useState(false)
     const[isExist, setIsExist] = useState(false)
@@ -79,8 +88,12 @@ const RegistrationSearch = () => {
             await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("case/search/registration-number/", form)
             if(response.status === 200){
+                const { petition, litigant, objection, proceeding } = response.data
                 setIsExist(true)
-                setPetition(response.data)
+                setPetition(petition)
+                setLitigants(litigant)
+                setObjections(objection)
+                setProceedings(proceeding)
             }
         }catch(error){
             if(error.inner){
@@ -246,9 +259,9 @@ const RegistrationSearch = () => {
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-md-10 offset-md-1">
+                            <div className="col-md-8 offset-md-2">
                                 <div className="row">
-                                    <div className="col-md-5">
+                                    <div className="col-md-4">
                                         <div className="form-group">
                                             <input 
                                                 type="text" 
@@ -256,7 +269,7 @@ const RegistrationSearch = () => {
                                                 name="reg_number"
                                                 value={form.reg_number}
                                                 onChange={(e)=> setForm({...form, [e.target.name]: e.target.value })}
-                                                placeholder={t('registration_number')}
+                                                placeholder='Reg. No.'
                                             />
                                             <div className="invalid-feedback">
                                                 { errors.reg_number }
@@ -278,7 +291,7 @@ const RegistrationSearch = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-4">
                                         <Button 
                                             variant='contained'
                                             color="primary"
@@ -301,47 +314,47 @@ const RegistrationSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>{t('efile_number')}</td>
-                                    <td>{petition.petition.efile_number}</td>
+                                    <td>{petition.efile_number}</td>
                                     <td>{t('efile_date')}</td>
-                                    <td>{petition.petition.efile_date}</td>
+                                    <td>{petition.efile_date}</td>
                                 </tr>
-                                { petition.petition.judiciary.id== 2 && (
+                                { petition.judiciary.id== 2 && (
                                 <>
                                 <tr>
                                     <td>{t('state')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.state.state_lname : petition.petition.state.state_name }</td>
+                                    <td>{ getStateName(petition?.state) }</td>
                                     <td>{t('district')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.district.district_lname : petition.petition.district.district_name }</td>
+                                    <td>{ getDistrictName(petition?.district) }</td>
                                 </tr>
                                 <tr>
                                     <td>{t('establishment')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.establishment.establishment_lname : petition.petition.establishment.establishment_name }</td>
+                                    <td>{ getEstablishmentName(petition?.establishment) }</td>
                                     <td>{t('court')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.court.court_lname : petition.petition.court.court_name }</td>
+                                    <td>{ getCourtName(petition?.court) }</td>
                                 </tr>
                                 </>
                                 )}
-                                {  petition.petition.judiciary.id === 1 && (
+                                {  petition.judiciary.id === 1 && (
                                 <>
                                     <tr>
                                         <td>Court Type</td>
-                                        <td>{ language === 'ta' ? petition.petition.judiciary.judiciary_lname : petition.petition.judiciary.judiciary_name}</td>
+                                        <td>{ getJudiciaryName(petition?.judiciary)}</td>
                                         <td>High Court Bench</td>
-                                        <td>{ language === 'ta' ? petition.petition.seat?.seat_lname : petition.petition.seat?.seat_name}</td>
+                                        <td>{ getSeatName(petition?.seat)}</td>
                                     </tr>
                                 </>
                                 )}
                                 <tr>
                                     <td>{t('filing_number')}</td>
-                                    <td>{ petition.petition.filing_type ? `${petition.petition.filing_type.type_name}/${petition.petition.filing_number}/${petition.petition.filing_year}` : null}</td>
+                                    <td>{ getFilingNumber(petition?.filing_number, petition?.filing_year)}</td>
                                     <td>{t('filing_date')}</td>
-                                    <td>{ petition.petition.filing_date }</td>
+                                    <td>{ petition.filing_date }</td>
                                 </tr>
                                 <tr>
-                                    <td>{t('case_number')}</td>
-                                    <td>{ petition.petition.reg_type ? `${petition.petition.reg_type.type_name}/${ petition.petition.reg_number}/${ petition.petition.reg_year}` : null }</td>
+                                    <td>{t('registration_number')}</td>
+                                    <td>{ getRegistrationNumber(petition?.reg_type, petition?.reg_number, petition?.reg_year) }</td>
                                     <td>{t('registration_date')}</td>
-                                    <td>{  petition.petition.registration_date }</td>
+                                    <td>{  petition.registration_date }</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -350,7 +363,7 @@ const RegistrationSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                        { petition.litigant.filter((l) =>l.litigant_type ===1).map((p, index) => (
+                                        { litigants.filter((l) =>l.litigant_type ===1).map((p, index) => (
                                             <p key={index}>
                                                 <strong>{index+1}. {p.litigant_name}</strong><br/>
                                                 { p.address }
@@ -365,7 +378,7 @@ const RegistrationSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                    { petition.litigant.filter((l)=>l.litigant_type===2).map((res, index) => (
+                                    { litigants.filter((l)=>l.litigant_type===2).map((res, index) => (
                                         <React.Fragment>
                                             <p key={index}>
                                                 <strong>{index+1}. {res.litigant_name} { language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</strong><br/>
@@ -379,6 +392,58 @@ const RegistrationSearch = () => {
                                 </tr>
                             </tbody>
                         </table>
+                        { Object.keys(objections).length > 0 && (
+                        <React.Fragment>
+                            <h6 className="text-center text-danger"><strong>Objections</strong></h6>
+                            <table className="table table-bordered table-striped">
+                                <thead className='bg-secondary'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Objection Date</th>
+                                        <th>Remarks</th>
+                                        <th>Complaince Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { objections.map((o, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>{o.objection_date}</td>
+                                        <td>{o.remarks}</td>
+                                        <td>{o.complaince_date}</td>
+                                    </tr> 
+                                    ))}
+                                </tbody>
+                            </table>
+                        </React.Fragment>
+                        )}
+                        { Object.keys(proceedings).length > 0 && (
+                        <React.Fragment>
+                            <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
+                            <table className="table table-bordered table-striped table-sm">
+                                <thead className='bg-info'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Business Date</th>
+                                        <th>Business</th>
+                                        <th>Next Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { proceedings.map((p, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>
+                                            <Link to={`/proceeding/detail/`} state={{cino:p.cino, proceeding_id:p.proceeding_id}}>{ formatDate(p.order_date) }</Link>
+                                        </td>
+                                        <td>{ truncateChars(p.order_remarks, 100)}</td>
+                                        <td>{ formatDate(p.next_date) }</td>
+                                    </tr> 
+                                    ))}
+                                </tbody>
+                            </table>
+                        </React.Fragment>
+                        )}
                     </React.Fragment>
                 )}
             </div>    

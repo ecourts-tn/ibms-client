@@ -50,8 +50,9 @@ const AllocationPendingList = () => {
             <div className="row">
                 <div className="col-sm-12">
                     <ol className="breadcrumb mt-2">
-                        <li className="breadcrumb-item"><a href="#">Home</a></li>
-                        <li className="breadcrumb-item active">Dashboard</li>
+                        <li className="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                        <li className="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                        <li className="breadcrumb-item active">Allocation</li>
                     </ol>
                     <div className="card card-outline card-primary" style={{minHeight:'600px'}}>
                         <div className="card-header"><strong>Case Allocation</strong></div>

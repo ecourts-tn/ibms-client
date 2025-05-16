@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import DateChange from './DateChange'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { JudgeContext } from 'contexts/JudgeContext'
-import MenuBar from './MenuBar'
+
 
 const Header = () => {
   const {language, toggleLanguage} = useContext(LanguageContext)
@@ -56,7 +56,7 @@ const Header = () => {
               </li>
             </ul>
           </div>
-      </div>
+        </div>
     </nav>
   )
 }

@@ -79,7 +79,7 @@ const Header = () => {
                   </div>
                 </li>
               )}
-              <li className="nav-item">
+              <li className="nav-item mt-2">
                 <select 
                   value={language}
                   onChange={(e) => toggleLanguage(e.target.value)}

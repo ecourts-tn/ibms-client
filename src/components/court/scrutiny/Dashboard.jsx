@@ -18,6 +18,8 @@ import DocumentList from 'components/court/common/DocumentList'
 import Loading from 'components/utils/Loading'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
+import DatePicker from 'components/utils/DatePicker'
+import { RequiredField } from 'utils'
 
 
 const CaseScrutiny = () => {
@@ -69,7 +71,6 @@ const CaseScrutiny = () => {
             try{
                 const response = await api.post("court/petition/detail/", {efile_no:state.efile_no})
                 if(response.status === 200){
-                    console.log(response.data)
                     const { petition, litigants, grounds, advocates, fees, crime, documents} = response.data
                     setPetition(petition)
                     setLitigant(litigants)
@@ -79,8 +80,8 @@ const CaseScrutiny = () => {
                     setFees(fees)
                     setCrime(crime)
                 }
-            }catch(err){
-                console.log(err)
+            }catch(error){
+                toast.error(error.respose?.data.message, { theme:"colored"})
             }
         }
         fetchPetitionDetail();
@@ -105,6 +106,13 @@ const CaseScrutiny = () => {
             setLoading(false)
         }
     }
+
+    const handleDateChange = (field, value) => {
+        setForm((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+     };
 
     const verification_date_Display = (date) => {
                 const day = ("0" + date.getDate()).slice(-2);
@@ -310,7 +318,7 @@ const CaseScrutiny = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="date" className="col-sm-3">{form.status === 2 ? t('objection_date') : t('verification_date')}</label>
+                            <label htmlFor="date" className="col-sm-3">{form.status === 2 ? t('objection_date') : t('verification_date')} <RequiredField /></label>
                             <div className="col-sm-4">
                                 <input 
                                     type="date" 
@@ -328,11 +336,12 @@ const CaseScrutiny = () => {
                             </div>
                         </div>
                     </div>
-                    { form.status === 2 && (
+                    { (form.status === 2 || form.status === 3) && (
                     <React.Fragment>
+                        { form.status === 2 && (
                         <div className="col-md-8 offset-2">
                             <div className="form-group row">
-                                <label htmlFor="date" className="col-sm-3">{t('compliance_date')}</label>
+                                <label htmlFor="date" className="col-sm-3">{t('compliance_date')} <RequiredField /></label>
                                 <div className="col-sm-4">
                                     <input 
                                         type="date" 
@@ -350,9 +359,10 @@ const CaseScrutiny = () => {
                                 </div>
                             </div>
                         </div>
+                        )}
                         <div className="col-md-8 offset-2">
                             <div className="form-group">
-                                <label htmlFor="remarks">{t('remarks')}</label>
+                                <label htmlFor="remarks">{t('remarks')}<RequiredField /></label>
                                 <textarea 
                                     name="remarks" 
                                     className="form-control" 
@@ -364,7 +374,7 @@ const CaseScrutiny = () => {
                         </div>
                     </React.Fragment>
                     )}
-                    { form.status === 3 && (
+                    {/* { form.status === 3 && (
                     <React.Fragment>
                         <div className="col-md-8 offset-2">
                             <div className="form-group">
@@ -379,7 +389,7 @@ const CaseScrutiny = () => {
                             </div>
                         </div>
                     </React.Fragment>
-                    )}
+                    )} */}
                     {statusOptions.map((option) =>
                         renderButton(option.status, option.color, option.icon, option.label)
                     )}

@@ -8,8 +8,6 @@ import * as Yup from 'yup'
 import { AuthContext } from 'contexts/AuthContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
@@ -19,13 +17,11 @@ import { MasterContext } from 'contexts/MasterContext'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 
-const Proceeding = ({efile_no}) => {
+const Proceeding = ({petition, litigant}) => {
     const {user} = useContext(AuthContext)
     const {t} = useTranslation()
     const navigate = useNavigate()
     const {language} = useContext(LanguageContext)
-    const[petition, setPetition] = useState({})
-    const[litigant, setLitigant] = useState([])
     const { masters: {
         states, 
         districts
@@ -35,8 +31,9 @@ const Proceeding = ({efile_no}) => {
     const{policeStations} = useContext(PoliceStationContext)
     const {judge} = useContext(JudgeContext)
     const initialState = {
-        efile_no: '',
         cino: '',
+        establishment: '',
+        court:'',
         case_number: '',
         proceeding: '',
         vakalath_filed: false,
@@ -50,8 +47,6 @@ const Proceeding = ({efile_no}) => {
         condition_establishment: '',
         condition_court: '',
         police_station:'',
-        establishment: '',
-        court:'',
         jocode:'',
         condition_time:'',
         condition_duration:'',
@@ -65,13 +60,15 @@ const Proceeding = ({efile_no}) => {
         order_date: '2024-09-03',
         order_remarks: '',
     }
+
+    console.log("judge", judge.jocode)
     const[form, setForm] = useState(initialState)
     const [errors, setErrors] = useState({})
     const [selectedItems, setSelectedItems] = useState([]);
     const validationSchema = Yup.object({
         vakalath_filed: Yup.boolean().required(),
         proceeding: Yup.string().required("Please select the proceeding type"),
-        accused: Yup.string().required("Please select the accused"),
+        // accused: Yup.string().required("Please select the accused"),
         bond_type: Yup.string().required("Please select the bond type"),
         no_of_surety: Yup.string().when("bond_type", (bond_type, schema) => {
             if(parseInt(bond_type) === 2){
@@ -124,47 +121,46 @@ const Proceeding = ({efile_no}) => {
                 return schema.required("Please select the condition duration")
             }
         }),
-        next_date: Yup.date().when("proceeding", (proceeding, schema) => {
-            if(parseInt(proceeding) === 3 || parseInt(proceeding) === 4){
-                return schema.required("Please enter the next date")
-            }
-        }),
+        // next_date: Yup.date().when("proceeding", (proceeding, schema) => {
+        //     if(parseInt(proceeding) === 3 || parseInt(proceeding) === 4){
+        //         return schema.required("Please enter the next date")
+        //     }
+        // }),
         order_remarks: Yup.string().required("Please enter the business remarks")
     })
 
-     const next_date_Display = (date) => {
-                        const day = ("0" + date.getDate()).slice(-2);
-                        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-                        const year = date.getFullYear();
-                        return `${day}-${month}-${year}`;
-                    };
+    const next_date_Display = (date) => {
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+    
+    const next_date_Backend = (date) => {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    };
                 
-                    const next_date_Backend = (date) => {
-                        const year = date.getFullYear();
-                        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-                        const day = ("0" + date.getDate()).slice(-2);
-                        return `${year}-${month}-${day}`;
-                    };
-                
-                    useEffect(() => {
-                            const next_date = flatpickr(".next_date-date-picker", {
-                                dateFormat: "d-m-Y",
-                                minDate: "today",
-                                defaultDate: form.next_date ? next_date_Display(new Date(form.next_date)) : '',
-                                onChange: (selectedDates) => {
-                                    const formattedDate = selectedDates[0] ? next_date_Backend(selectedDates[0]) : "";
-                                    setForm({ ...form, next_date: formattedDate });
-                                },
-                            });
-                    
-                            return () => {
-                                if (next_date && typeof next_date.destroy === "function") {
-                                    next_date.destroy();
-                                }
-                            };
-                        }, [form]);     
+    useEffect(() => {
+        const next_date = flatpickr(".next_date-date-picker", {
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            defaultDate: form.next_date ? next_date_Display(new Date(form.next_date)) : '',
+            onChange: (selectedDates) => {
+                const formattedDate = selectedDates[0] ? next_date_Backend(selectedDates[0]) : "";
+                setForm({ ...form, next_date: formattedDate });
+            },
+        });
 
-    // console.log(judge)
+        return () => {
+            if (next_date && typeof next_date.destroy === "function") {
+                next_date.destroy();
+            }
+        };
+    }, [form]);     
+
 
     const handleCheckboxChange = (option) => {
         if (selectedItems.includes(option)) {
@@ -175,38 +171,20 @@ const Proceeding = ({efile_no}) => {
     };
 
     useEffect(() => {
-        async function fetchData(){
-            if(efile_no){
-                try{
-                    const response = await api.post(`court/petition/detail/`, {efile_no})
-                    if(response.status === 200){
-
-                        setPetition(response.data.petition)
-                        setLitigant(response.data.litigants)
-                        setForm({
-                            ...form, 
-                            cino: response.data.petition.cino,
-                            efile_no: response.data.petition.efile_number,
-                            case_number: response.data.petition.case_no,
-                            district: response.data.petition.district.district_code,
-                            establishment: response.data.petition.establishment.establishment_code,
-                            court: response.data.petition.court.court_code,
-                            jocode: judge.judge.jocode
-                        })
-                    }
-                }catch(error){
-                    console.log(error)
-                }
-            }
+        if(petition){
+            setForm({
+                ...form,
+                jocode: judge?.jocode,
+                cino: petition?.cino,
+                establishment: petition.establishment?.establishment_code,
+                court: petition.court?.court_code,
+            })
         }
-        fetchData();
-    },[])
-
+    }, [judge, petition])
 
     const handleSubmit = async () => {
         try{
-            // await validationSchema.validate(form, {abortEarly:false})
-            // form.jocode = judge.jocode
+            await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("court/proceeding/create/", form)
             if(response.status === 201){
                 setTimeout(() => {
@@ -225,6 +203,7 @@ const Proceeding = ({efile_no}) => {
                 })
                 setErrors(newErrors)
             }
+            console.log(error.inner)
             if(error.response?.status === 400){
                 console.log("error")
                 toast.error("Something went wrong",{
@@ -246,25 +225,6 @@ const Proceeding = ({efile_no}) => {
                 <strong>{t('case_proceedings')}</strong>
             </div>
             <div className="card-body" style={{ height:'700px', overflowY:"scroll"}}>
-                { Object.keys(petition).length > 0 && (
-                    <>
-                        <input 
-                            type="hidden" 
-                            name="petition"
-                            value={petition}
-                        />
-                        <input 
-                            type="hidden"
-                            name="establishment"
-                            value={form.establishment} 
-                        />
-                        <input 
-                            type="hidden"
-                            name="court"
-                            value={form.court} 
-                        />
-                    </>
-                )}
                 <div className="row">
                     <div className="col-md-12">
                         <div className="form-group row">
@@ -538,7 +498,6 @@ const Proceeding = ({efile_no}) => {
                     </>
                     )}
                     { parseInt(form.appear_location) === 2 && (
-                    <>
                         <div className="col-md-12">
                             <div className="form-group">
                                 <label htmlFor="">{t('police_station')}</label>
@@ -558,41 +517,40 @@ const Proceeding = ({efile_no}) => {
                                 </div>
                             </div>
                         </div>
-                    </>    
                     )}
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="">{t('condition_time')}</label>
-                                <input 
-                                    type="text" 
-                                    className={`form-control ${errors.condition_time ? 'is-invalid' : ''}`}
-                                    name="condition_time"
-                                    value={form.condition_time}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
-                                />
-                                <div className="invalid-feedback">
-                                    { errors.condition_time }
-                                </div>
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="">{t('condition_time')}</label>
+                            <input 
+                                type="text" 
+                                className={`form-control ${errors.condition_time ? 'is-invalid' : ''}`}
+                                name="condition_time"
+                                value={form.condition_time}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                            />
+                            <div className="invalid-feedback">
+                                { errors.condition_time }
                             </div>
                         </div>
-                        <div className="col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="">{t('condition_duration')}</label>
-                                <select 
-                                    name="condition_duration"
-                                    className={`form-control ${errors.condition_duration ? 'is-invalid' : ''}`}
-                                    value={form.condition_duration}
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                >
-                                    <option value="">Select station</option>
-                                    <option value="1">Until Further Order</option>
-                                    <option value="2">Whenever Need</option>
-                                </select>
-                                <div className="invalid-feedback">
-                                    { errors.condition_duration }
-                                </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="form-group">
+                            <label htmlFor="">{t('condition_duration')}</label>
+                            <select 
+                                name="condition_duration"
+                                className={`form-control ${errors.condition_duration ? 'is-invalid' : ''}`}
+                                value={form.condition_duration}
+                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                            >
+                                <option value="">Select station</option>
+                                <option value="1">Until Further Order</option>
+                                <option value="2">Whenever Need</option>
+                            </select>
+                            <div className="invalid-feedback">
+                                { errors.condition_duration }
                             </div>
                         </div>
+                    </div>
                     </>
                     )}
                     <div className="col-md-12">
@@ -608,7 +566,7 @@ const Proceeding = ({efile_no}) => {
                         </div>
                     </div>
                     { (parseInt(form.proceeding) === 3 || parseInt(form.proceeding) === 4) && (
-                    <>
+                    <React.Fragment>
                         <div className="col-md-12">
                             <div className="form-group row">
                                 <label htmlFor="" className="col-sm-2 mt-2">{t('next_date')}</label>
@@ -632,7 +590,7 @@ const Proceeding = ({efile_no}) => {
                                 </div>
                             </div>
                         </div>
-                    </>    
+                    </React.Fragment>    
                     )}
                     </>
                     )}
@@ -653,7 +611,6 @@ const Proceeding = ({efile_no}) => {
                             </div>            
                         </div>
                     </div>
-                    { efile_no && (
                     <div className="col-md-12">
                         <div className="form-group text-center">
                             <button 
@@ -666,7 +623,6 @@ const Proceeding = ({efile_no}) => {
                             >{t('reset')}</button>
                         </div>
                     </div>
-                    )}
                 </div>
             </div>
         </div>

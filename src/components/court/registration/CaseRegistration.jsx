@@ -189,6 +189,11 @@ const CaseRegistration = () => {
                                 {t('document')}
                             </a>
                         </li>
+                        {/* <li className="nav-item">
+                            <a className="nav-link" id="response-tab" data-toggle="tab" href="#response" role="tab" aria-controls="advocate" aria-selected="false">
+                                {t('police_response')}
+                            </a>
+                        </li> */}
                         <li className="nav-item">
                             <a className="nav-link" id="registration-tab" data-toggle="tab" href="#registration" role="tab" aria-controls="registration" aria-selected="false">
                                 {t('registration')}
@@ -221,6 +226,9 @@ const CaseRegistration = () => {
                                 documents={documents}
                             />
                         </div>
+                        {/* <div className="tab-pane fade" id="response" role="tabpanel" aria-labelledby="response-tab">
+
+                        </div> */}
                         <div className="tab-pane fade" id="registration" role="tabpanel" aria-labelledby="registration-tab">
                             <form>
                                 <div className="row mt-5">

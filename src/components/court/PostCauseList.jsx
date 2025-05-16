@@ -96,106 +96,115 @@ const PostCauseList = () => {
     };
 
     return (
-        <div className="card card-outline card-primary">
-            <ToastContainer />
-            {loading && <Loading />}
-            <div className="card-header">
-                <h3 className="card-title">
-                    <i className="fas fa-edit mr-2"></i><strong>{t('Cause List')}</strong>
-                </h3>
-            </div>
-            <div className="card-body admin-card">
-                <ListFilter 
-                    search={search}
-                    setSearch={setSearch}
-                    pageSize={pageSize}
-                    setPageSize={setPageSize}
-                    count={count}
-                />
-                <div className="row">
-                    <div className="col-md-12">
-                        <div className="table-responsive">
-                            <table className="table table-bordered">
-                                <thead className="bg-info">
-                                    <tr>
-                                        <th width="70">{t('sl_no')}</th>
-                                        <th>{t('Case Number')}</th>
-                                        <th>{t('Crime Detail')}</th>
-                                        <th>{t('litigants')}</th>
-                                        <th width="150">{t('Hearing Date')}</th>
-                                        <th>{t('Action')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {cases.map((c, index) => (
-                                        <tr key={index}>
-                                            <td>{index + 1 }</td>
-                                            <td>
-                                                <React.Fragment>
-                                                    <span className="text-success text-bold d-block">
-                                                        {`(${c.petition?.reg_type?.type_name}/${c.petition?.reg_number}/${c.petition?.reg_year})`}
-                                                    </span>
-                                                    <Link 
-                                                        to="#" 
-                                                        state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
-                                                    >
-                                                        {c.petition?.efile_number ? (
-                                                            <strong>{c.petition.cino}</strong>
-                                                        ) : null}
-                                                    </Link>
-                                                </React.Fragment>
-                                            </td>
-                                            <td>
-                                                {c.petition?.fir_number} / {c.petition?.fir_year}<br />
-                                                {c.petition.police_station?.station_name && (
-                                                    <span>{c.petition.police_station?.station_name}, {c.petition.district?.district_name}</span>
-                                                )}
-                                            </td>
-                                            <td>
-                                                { c.petition.pet_name }
-                                                    <span className="mx-2 text-danger">Vs</span>
-                                                { c.petition.res_name}
-                                            </td>
-                                            <td>
-                                                <div className="input-group date-input">
-                                                    <input
-                                                        type="text"
-                                                        className="form-control appointment-date-picker"
-                                                        data-index={index}
-                                                        value={dates[index] || ""}
-                                                        placeholder={t('Select hearing date')}
-                                                        style={{
-                                                            backgroundColor: 'transparent',
-                                                            border: '1px solid #ccc', // Optional: Adjust border
-                                                            padding: '8px',            // Optional: Adjust padding
-                                                        }}
-                                                    />
-                                                    
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className="btn btn-primary btn-sm"
-                                                    onClick={() => handleSubmit(c, index)}
-                                                >
-                                                    Submit
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+        <div className="row">
+            <div className="col-md-12">
+                <ol className="breadcrumb mt-2">
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                    <li className="breadcrumb-item active">Post Casue List</li>
+                </ol>
+                <div className="card card-outline card-primary">
+                    <ToastContainer />
+                    {loading && <Loading />}
+                    <div className="card-header">
+                        <h3 className="card-title">
+                            <i className="fas fa-edit mr-2"></i><strong>{t('Cause List')}</strong>
+                        </h3>
+                    </div>
+                    <div className="card-body admin-card">
+                        <ListFilter 
+                            search={search}
+                            setSearch={setSearch}
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            count={count}
+                        />
+                        <div className="row">
+                            <div className="col-md-12">
+                                <div className="table-responsive">
+                                    <table className="table table-bordered">
+                                        <thead className="bg-info">
+                                            <tr>
+                                                <th width="70">{t('sl_no')}</th>
+                                                <th>{t('Case Number')}</th>
+                                                <th>{t('Crime Detail')}</th>
+                                                <th>{t('litigants')}</th>
+                                                <th width="150">{t('Hearing Date')}</th>
+                                                <th>{t('Action')}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {cases.map((c, index) => (
+                                                <tr key={index}>
+                                                    <td>{index + 1 }</td>
+                                                    <td>
+                                                        <React.Fragment>
+                                                            <span className="text-success text-bold d-block">
+                                                                {`(${c.petition?.reg_type?.type_name}/${c.petition?.reg_number}/${c.petition?.reg_year})`}
+                                                            </span>
+                                                            <Link 
+                                                                to="#" 
+                                                                state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
+                                                            >
+                                                                {c.petition?.efile_number ? (
+                                                                    <strong>{c.petition.cino}</strong>
+                                                                ) : null}
+                                                            </Link>
+                                                        </React.Fragment>
+                                                    </td>
+                                                    <td>
+                                                        {c.petition?.fir_number} / {c.petition?.fir_year}<br />
+                                                        {c.petition.police_station?.station_name && (
+                                                            <span>{c.petition.police_station?.station_name}, {c.petition.district?.district_name}</span>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        { c.petition.pet_name }
+                                                            <span className="mx-2 text-danger">Vs</span>
+                                                        { c.petition.res_name}
+                                                    </td>
+                                                    <td>
+                                                        <div className="input-group date-input">
+                                                            <input
+                                                                type="text"
+                                                                className="form-control appointment-date-picker"
+                                                                data-index={index}
+                                                                value={dates[index] || ""}
+                                                                placeholder={t('Select hearing date')}
+                                                                style={{
+                                                                    backgroundColor: 'transparent',
+                                                                    border: '1px solid #ccc', // Optional: Adjust border
+                                                                    padding: '8px',            // Optional: Adjust padding
+                                                                }}
+                                                            />
+                                                            
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <button
+                                                            className="btn btn-primary btn-sm"
+                                                            onClick={() => handleSubmit(c, index)}
+                                                        >
+                                                            Submit
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div className="card-footer pb-0">
+                        <Pagination 
+                            page={page}
+                            setPage={setPage}
+                            count={count}
+                            pageSize={pageSize}
+                        />
+                    </div>
                 </div>
-            </div>
-            <div className="card-footer pb-0">
-                <Pagination 
-                    page={page}
-                    setPage={setPage}
-                    count={count}
-                    pageSize={pageSize}
-                />
             </div>
         </div>
     );

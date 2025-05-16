@@ -224,8 +224,8 @@ const PetitionDetail = () => {
                             { Object.keys(proceedings).length > 0 && (
                             <>
                             <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
-                            <table className="table table-bordered table-striped">
-                                <thead className='bg-secondary'>
+                            <table className="table table-bordered table-striped table-sm">
+                                <thead className='bg-info'>
                                     <tr>
                                         <th>#</th>
                                         <th>Business Date</th>
@@ -238,7 +238,7 @@ const PetitionDetail = () => {
                                     <tr>
                                         <td>{index+1}</td>
                                         <td>
-                                            <Link to={`/proceeding/detail/`} state={{efile_no:p.efile_no, id:p.id}}>{p.order_date}</Link>
+                                            <Link to={`/proceeding/detail/`} state={{cino:p.cino, proceeding_id:p.proceeding_id}}>{p.order_date}</Link>
                                         </td>
                                         <td>{ truncateChars(p.order_remarks, 100)}</td>
                                         <td>{p.next_date}</td>

@@ -27,9 +27,6 @@ const FilingSearch = () => {
         filing_year:'',
     })
     const {t} = useTranslation()
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
-    // const {seats} = useContext(SeatContext)
     const {establishments} = useContext(EstablishmentContext)
     const {masters:{
         states,
@@ -269,7 +266,7 @@ const FilingSearch = () => {
                 </div>
                 { Object.keys(petitions).length > 0 && (
                 <table className="table table-bordered table-striped mt-5">
-                    <thead className="bg-secondary">
+                    <thead className="bg-info">
                         <tr>
                             <th>Filing Number</th>
                             <th>Litigants</th>

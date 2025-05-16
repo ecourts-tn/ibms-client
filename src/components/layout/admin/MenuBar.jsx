@@ -60,8 +60,8 @@ export default function MenuBar() {
             {/* Start - Court user menu */}
             { parseInt(user.department) === 1 && (
             <>
-              <li className="nav-item menu-open">
-                <Link to="/court/dashboard" className="nav-link active">
+              <li className="nav-item">
+                <Link to="/court/dashboard" className="nav-link">
                   <i className="nav-icon fas fa-tachometer-alt" />
                   <p>{t('dashboard')}</p>
                 </Link> 

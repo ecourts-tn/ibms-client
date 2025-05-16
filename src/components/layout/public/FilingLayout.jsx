@@ -49,11 +49,11 @@ const FilingLayout = ({ routes, title }) => {
       
         const isCurrentStepCompleted = completedSteps.includes(currentRoute.id);
       
-        if (!isCurrentStepCompleted) {
-          // block navigation and optionally alert user
-          alert("Please complete the current step before proceeding.");
-          return;
-        }
+        // if (!isCurrentStepCompleted) {
+        //   // block navigation and optionally alert user
+        //   alert("Please complete the current step before proceeding.");
+        //   return;
+        // }
       
         navigate(`/filing/${basePath}/${nextRoute.path}`);
     };
@@ -95,14 +95,16 @@ const FilingLayout = ({ routes, title }) => {
                                             <Link
                                                 key={index}
                                                 to={`/filing/${basePath}/${route.path}`}
-                                                onClick={(e) => { if (isDisabled) e.preventDefault(); }}
+                                                // onClick={(e) => { if (isDisabled) e.preventDefault(); }}
                                                 className={`list-group-item py-2`}
                                                 style={{
                                                     color: '#FAFAFA',
                                                     backgroundColor: isActive ? '#e59866' : '#076280',
                                                     fontWeight: "bold",
-                                                    pointerEvents: isDisabled ? "none" : "auto",
-                                                    opacity: isDisabled ? 0.6 : 1,
+                                                    // pointerEvents: isDisabled ? "none" : "auto",
+                                                    pointerEvents:"auto",
+                                                    textDecoration:"none",
+                                                    // opacity: isDisabled ? 0.6 : 1,
                                                 }}
                                             >
                                                 {t(route.name)}
@@ -127,10 +129,16 @@ const FilingLayout = ({ routes, title }) => {
                             </div>
                             <div className="card-footer">
                                 <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <Button variant="info" onClick={handlePrevious} disabled={previousDisabled}>
+                                    {/* <Button variant="info" onClick={handlePrevious} disabled={previousDisabled}>
                                         <i className="fa fa-arrow-left mr-2"></i>{t('previous')}
                                     </Button>
                                     <Button variant="info" onClick={handleNext} disabled={nextDisabled}>
+                                        {t('next')}<i className="fa fa-arrow-right ml-2"></i>
+                                    </Button> */}
+                                    <Button variant="info" onClick={handlePrevious}>
+                                        <i className="fa fa-arrow-left mr-2"></i>{t('previous')}
+                                    </Button>
+                                    <Button variant="info" onClick={handleNext}>
                                         {t('next')}<i className="fa fa-arrow-right ml-2"></i>
                                     </Button>
                                 </div>

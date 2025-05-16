@@ -30,18 +30,20 @@ const DailyProceedings = () => {
     const[crime, setCrime] = useState({})
     const[grounds, setGrounds] = useState([])
     const[advocates, setAdvocates] = useState([])
+    const[policeResponse, setPoliceResponse] = useState({})
 
     useEffect(() => {
         async function fetchData(){
             try{
                 const response = await api.post(`court/petition/detail/`, {efile_no:state.efile_no})
                 if(response.status === 200){
-                    const { petition, grounds, advocates, ppremarks, crime, litigants } = response.data
+                    const { petition, grounds, advocates, ppremarks, crime, litigants, police_response } = response.data
                     setPetition(petition)
                     setLitigant(litigants)
                     setAdvocates(advocates)
                     setGrounds(grounds)
                     setCrime(crime)
+                    setPoliceResponse(police_response)
                 }
             }catch(err){
             }
@@ -55,7 +57,7 @@ const DailyProceedings = () => {
                 <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('daily_proceedings')}</strong></h3>
             </div>
             <div className="card-body">
-                <div className="row">
+                <div className="row no-gutters">
                     <div className="col-md-7">
                         <div id="accordion">
                             <div className="card m-1">
@@ -121,10 +123,15 @@ const DailyProceedings = () => {
                                         <div className="row">
                                             <div className="col-md-12">
                                                 { grounds.map((ground, index) => (
-                                                    <div className="card" key={index}>
-                                                        <div className="card-body">
-                                                                <p dangerouslySetInnerHTML={CreateMarkup(ground.description)}></p>
-                                                        </div>
+                                                    <div key={index}>
+                                                        <span 
+                                                            className='text-muted d-block'>
+                                                                <strong>{t('ground')} {index+1}:</strong>
+                                                        </span>
+                                                        <span 
+                                                            dangerouslySetInnerHTML={CreateMarkup(ground.description)}
+                                                        ></span>
+                                                        <hr />
                                                     </div>
                                                 ))}
                                             </div>
@@ -142,7 +149,9 @@ const DailyProceedings = () => {
                                     <div className="card-body p-2">
                                         <div className="row">
                                             <div className="col-md-12">
-                                                <PoliceResponse />
+                                                <PoliceResponse 
+                                                    response={policeResponse}
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -167,7 +176,11 @@ const DailyProceedings = () => {
                         </div>
                     </div>
                     <div className="col-md-5">
-                        <Proceeding efile_no={state.efile_no}/>
+                        <Proceeding 
+                            // efile_no={state.efile_no}
+                            petition={petition}
+                            litigant={litigant}
+                        />
                     </div>
                 </div>
             </div>
