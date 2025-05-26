@@ -46,7 +46,7 @@ const DraftList = () => {
     }
 
     const {
-        getCourtName,
+        getEstablishmentName,
         getDistrictName,
         getSeatName
     } = useLocalizedNames()
@@ -187,7 +187,10 @@ const DraftList = () => {
                                         </td>
                                         <td>
                                             { (item.petition.judiciary?.id== 2 || item.petition.judiciary?.id== 3) && (
-                                                `${getCourtName(item.petition.court)}, ${getDistrictName(item.petition.district)}`
+                                                <span>
+                                                    {getEstablishmentName(item.petition.establishment)} <br/>
+                                                    {getDistrictName(item.petition.district)}
+                                                </span>
                                             )}
                                             { item.petition.judiciary.id === 1 && (
                                                 `${getSeatName(item.petition.seat)}`

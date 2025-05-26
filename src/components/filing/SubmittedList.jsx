@@ -26,7 +26,7 @@ const SubmittedList = () => {
     const [search, setSearch] = useState("");
 
     const {
-        getCourtName,
+        getEstablishmentName,
         getDistrictName,
         getSeatName
     } = useLocalizedNames()
@@ -140,8 +140,11 @@ const SubmittedList = () => {
                                         ) : null}
                                     </td>
                                     <td>
-                                        { item.petition.judiciary.id== 2 && (
-                                            `${getCourtName(item.petition.court)}, ${getDistrictName(item.petition.district)}`
+                                        {(item.petition.judiciary?.id== 2 || item.petition.judiciary?.id== 3) && (
+                                            <span>
+                                                {getEstablishmentName(item.petition.establishment)} <br/>
+                                                {getDistrictName(item.petition.district)}
+                                            </span>
                                         )}
                                         { item.petition.judiciary.id === 1 && (
                                             `${getSeatName(item.petition.seat)}`

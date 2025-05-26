@@ -84,7 +84,7 @@ const Header = () => {
                   value={language}
                   onChange={(e) => toggleLanguage(e.target.value)}
                 >
-                  <option value="">Select language</option>
+                  <option value="">Language</option>
                   <option value="en">English</option>
                   <option value="ta">Tamil</option>
                 </select>

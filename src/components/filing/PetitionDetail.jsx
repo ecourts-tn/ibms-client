@@ -5,7 +5,7 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
 import Loading from 'components/utils/Loading'
 import { getPetitionByeFileNo } from 'services/petitionService'
-import { truncateChars } from 'utils'
+import { formatDate, truncateChars } from 'utils'
 import { useLocalizedNames } from 'hooks/useLocalizedNames'
 
 const PetitionDetail = () => {
@@ -83,7 +83,7 @@ const PetitionDetail = () => {
                                     <td>{t("efile_number")}</td>
                                     <td>{petition.efile_number}</td>
                                     <td>{t("efile_date")}</td>
-                                    <td>{petition.efile_date}</td>
+                                    <td>{formatDate(petition.efile_date)}</td>
                                     </tr>
                                     {(petition.judiciary.id === 2 || petition.judiciary.id === 3) && (
                                     <>
@@ -113,13 +113,13 @@ const PetitionDetail = () => {
                                     <td>{t("filing_number")}</td>
                                     <td>{ getFilingNumber(petition.filing_number, petition.filing_year)}</td>
                                     <td>{t("filing_date")}</td>
-                                    <td>{petition.filing_date || '---'}</td>
+                                    <td>{ formatDate(petition.filing_date) || '---'}</td>
                                     </tr>
                                     <tr>
                                     <td>{t("case_number")}</td>
                                     <td>{ getRegistrationNumber(petition.reg_type, petition.reg_number, petition.reg_year)}</td>
                                     <td>{t("registration_date")}</td>
-                                    <td>{petition.registration_date || '---'}</td>
+                                    <td>{ formatDate(petition.registration_date) || '---'}</td>
                                     </tr>
                                 </tbody>
                                 </table>
@@ -134,22 +134,22 @@ const PetitionDetail = () => {
                                                 { label: t("efile_date"), value: petition.efile_date },
                                                 ...(petition.judiciary.id === 2 || petition.judiciary.id === 3
                                                 ? [
-                                                    { label: t("state"), value: language === "ta" ? petition.state.state_lname : petition.state.state_name },
-                                                    { label: t("district"), value: language === "ta" ? petition.district.district_lname : petition.district.district_name },
-                                                    { label: t("establishment"), value: language === "ta" ? petition.establishment.establishment_lname : petition.establishment.establishment_name },
-                                                    { label: t("court"), value: language === "ta" ? petition.court.court_lname : petition.court.court_name },
+                                                    { label: t("state"), value: getStateName(petition.state) },
+                                                    { label: t("district"), value: getDistrictName(petition.district) },
+                                                    { label: t("establishment"), value: getEstablishmentName(petition.establishment) },
+                                                    { label: t("court"), value: getCourtName(petition.court) },
                                                     ]
                                                 : []),
                                                 ...(petition.judiciary.id === 1
                                                 ? [
-                                                    { label: t("court_type"), value: language === "ta" ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name },
+                                                    { label: t("court_type"), value: getJudiciaryName(petition.judiciary) },
                                                     { label: t("hc_bench"), value: language === "ta" ? petition.seat?.seat_lname : petition.seat?.seat_name },
                                                     ]
                                                 : []),
-                                                { label: t("filing_number"), value: `${petition.filing_number}/${petition.filing_year}` },
-                                                { label: t("filing_date"), value: petition.filing_date },
-                                                { label: t("case_number"), value: petition.reg_type ? `${petition.reg_type.type_name}/${petition.reg_number}/${petition.reg_year}` : null },
-                                                { label: t("registration_date"), value: petition.registration_date },
+                                                { label: t("filing_number"), value: getFilingNumber(petition.filing_number, petition.filing_year) },
+                                                { label: t("filing_date"), value: formatDate(petition.filing_date) || '---' },
+                                                { label: t("case_number"), value: getRegistrationNumber(petition.reg_type, petition.reg_number, petition.reg_year) },
+                                                { label: t("registration_date"), value: formatDate(petition.registration_date) || '---'},
                                             ].map((item, index) => (
                                                 <tr key={index}>
                                                     <td className="fw-bold">{item.label}</td>
