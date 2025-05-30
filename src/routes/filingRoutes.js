@@ -16,6 +16,7 @@ import ListedPetition from "components/filing/ListedPetition";
 import ResponsePending from "components/filing/ResponsePending";
 import ResponseSubmitted from "components/filing/ResponseSubmitted";
 import ResponseCreate from "components/filing/ResponseCreate";
+import PayCourtFee from "components/filing/PayCourtFee";
 
 
 const bailRoutes = [
@@ -130,7 +131,7 @@ export const FilingRoutes = () => {
 
             {[
                 { path: "filing/dashboard", element: <Dashboard /> },
-                // { path: "filing/pleadings", element: <Pleadings /> },
+                { path: "filing/court-fee", element: <PayCourtFee /> },
                 { path: "filing/draft", element: <DraftList /> },
                 { path: "filing/submitted", element: <SubmittedList /> },
                 { path: "filing/approved", element: <ApprovedList /> },

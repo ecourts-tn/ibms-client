@@ -137,7 +137,7 @@ const Header = () => {
                 <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
               </li>
               )}
-              { parseInt(user?.department) === 4 && (
+              { parseInt(user?.department) === 5 && (
                 <li className="nav-item dropdown">
                   <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
                     {t('PP Remarks')}
@@ -151,6 +151,11 @@ const Header = () => {
                     </li>   
                   </div>    
                 </li>
+              )}
+              {isAuth && (
+              <li className="nav-item">
+                <Link to="/filing/court-fee" className="nav-link">{t('payment')}</Link>
+              </li>
               )}
               <li className="nav-item dropdown">
                 <a href="#/" className="nav-link dropdown-toggle" role="button" data-toggle="dropdown">

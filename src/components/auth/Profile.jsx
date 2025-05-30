@@ -532,7 +532,7 @@ const Profile = () => {
                                             >
                                                 <option value="">Select District</option>
                                                 { districts.filter((d) => parseInt(d.state) === parseInt(form.state)).map((item, index) => (
-                                                    <option value={item.district_code} key={index}>{item.district_name}</option>
+                                                    <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname :  item.district_name}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -563,8 +563,13 @@ const Profile = () => {
                                             row
                                             aria-labelledby="notary-radios"
                                             name="is_notary"
-                                            value={form.is_notary}
-                                            onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
+                                            value={form.is_notary === true ? "true" : "false"}
+                                            onChange={(e) =>
+                                                setForm({
+                                                    ...form,
+                                                    [e.target.name]: e.target.value === "true",
+                                                })
+                                            }
                                         >
                                             <FormControlLabel value={true} control={<Radio />} label={t('yes')} />
                                             <FormControlLabel value={false} control={<Radio />} label={t('no')} />
@@ -572,7 +577,7 @@ const Profile = () => {
                                     </FormControl>
                                     </div>
                                 </div>
-                                { form.is_notary === "true" && (
+                                { form.is_notary && (
                                     <div className="form-group row">
                                         <div className="col-sm-3">
                                             <label htmlFor="">{t('appointment_date')}<RequiredField/></label>

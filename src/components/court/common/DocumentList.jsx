@@ -3,6 +3,7 @@ import config from 'config'
 import Button from '@mui/material/Button'
 import { useTranslation } from 'react-i18next'
 import ViewDocument from 'components/utils/ViewDocument'
+import { formatDate } from 'utils'
 
 const DocumentList = ({documents}) => {
     const {t} = useTranslation()
@@ -22,16 +23,25 @@ const DocumentList = ({documents}) => {
                 <tr>
                     <th>Document No.</th>
                     <th>{t('document_title')}</th>
-                    <td>Hash</td>
+                    <th>Submitted At</th>
+                    <th>Verified</th>
                     <th>{t('action')}</th>
                 </tr>
             </thead>
             <tbody>
                 { documents.map((d, index) => (
                 <tr key={index}>
-                    <td>{`${d.efile_no}${d.id}`}</td>
+                    <td>{ d.document_id }</td>
                     <td>{ d.title?.document_name }</td>
-                    <td>{ d.hash }</td>
+                    <td>{ formatDate(d.created_at) }</td>
+                    <td>
+                        {d.is_verified ? (
+                            <span className="text-success">Verified</span>
+                        ) : (
+                            <span className="text-danger">Not Verified</span>
+                        )}
+                    </td>
+
                     <td>
                         <Button 
                             variant="contained"
@@ -45,6 +55,7 @@ const DocumentList = ({documents}) => {
                                 title={selectedDocument.title?.document_name}
                                 show={!!selectedDocument}
                                 handleClose={handleClose}
+                                // isDepartment={true}
                             />
                         )}
                     </td>

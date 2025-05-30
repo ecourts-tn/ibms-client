@@ -19,8 +19,7 @@ import { IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 import { GroupContext } from 'contexts/GroupContext';
 import { MasterContext } from 'contexts/MasterContext';
-import {encryptData, decryptData} from 'utils';
-// import bcrypt from 'bcryptjs';  
+import { encrypt } from 'components/utils/crypto';  
 
 const Login = () => {
   // const { groups}     = useContext(GroupContext)
@@ -92,15 +91,15 @@ const Login = () => {
 
     try {
         await validationSchema.validate(form, { abortEarly: false });
+        // const post_data = {
+        //   username: encrypt(form.username),
+        //   password: encrypt(form.password),
+        //   department: form.department,
+        //   captcha: form.captcha,
+        //   remember: form.remember
+        // }
         const response = await api.post('auth/login/', form, { skipInterceptor: true });
-
-        // Call the login function from AuthContext
         await login(response.data, form.remember);
-        // const encrypted = encryptData(response);
-        // console.log("Encrypted:", encrypted);
-        // const decrypted = decryptData(encrypted, response);
-        // console.log("Decrypted:", decrypted);
-        // toast.success('Logged in successfully', { theme: 'colored' });
 
     } catch (error) {
         console.error("Error during login:", error); // Debugging log
