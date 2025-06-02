@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next';
 import ListFilter from 'components/utils/ListFilter';
 import Pagination from 'components/utils/Pagination';
+import { toast, ToastContainer } from 'react-toastify';
 
 const DailyProceedingsList = () => {
 
@@ -27,7 +28,11 @@ const DailyProceedingsList = () => {
                 setCases(response.data.results)
                 setCount(response.data.count)
             }catch(err){
-                console.log(err)
+                if(err.response.status === 400){
+                    toast.error(err.response.data.error, {
+                        theme: "colored"
+                    })
+                }
             }
         }
         fetchData();
@@ -35,6 +40,7 @@ const DailyProceedingsList = () => {
 
     return (
         <div className="card card-outline card-primary" style={{ minHeight: '700px' }}>
+            <ToastContainer />
             <div className="card-header">
                 <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Proceeding List</strong></h3>
             </div>

@@ -28,6 +28,7 @@ const RegistrationPendingList = () => {
                         page,
                         page_size: pageSize,
                         search,
+                        today : sessionStorage.getItem('today') || null
                     },
                 })
                 if(response.status === 200){

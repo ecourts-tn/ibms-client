@@ -9,8 +9,8 @@ const AdvocateDetails = ({advocates}) => {
     return (
         <>
             { Object.keys(advocates).length > 0 && (
-                <table className="table table-striped table-bordered">
-                    <thead className="bg-secondary">
+                <table className="table table-striped table-bordered table-sm">
+                    <thead className="bg-info">
                         <tr>
                             <th>{t('adv_name')}</th>
                             <th>{t('enrollment_number')}</th>

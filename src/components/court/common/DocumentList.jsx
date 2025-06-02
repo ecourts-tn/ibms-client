@@ -18,7 +18,7 @@ const DocumentList = ({documents}) => {
     }
 
     return (
-        <table className="table table-striped table-bordered table-sm mt-3">
+        <table className="table table-striped table-bordered table-sm">
             <thead className="bg-secondary">
                 <tr>
                     <th>Document No.</th>

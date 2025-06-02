@@ -36,6 +36,7 @@ import ReturnedList from "components/court/ReturnedList";
 import RejectedList from "components/court/RejectedList";
 import ListedCases from "components/court/ListedCases";
 import ConditionComplaince from "components/court/ConditionComplaince";
+import UserList from "components/auth/UserList";
 
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
@@ -71,8 +72,6 @@ const courtRoutes = [
     { path: "admin/bench", component: <BenchForm />},
     { path: "admin/prosecutor/list", component: <ProsecutorPeriod />},
     { path: "admin/prosecutor/", component: <ProsecutorForm />},
-    { path: "auth/user/registration", component:<DepartmentRegistration />},
-
 ];
 
 

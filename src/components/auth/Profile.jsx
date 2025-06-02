@@ -605,9 +605,9 @@ const Profile = () => {
                             </React.Fragment>    
                             )}
                             <React.Fragment>
-                                <div className="form-group row mb-3">
-                                    <label htmlFor="mobile_number" className="col-sm-3">{t('mobile_number')}</label>
-                                    <div className="col-md-3">
+                                {/* <div className="form-group row mb-3">
+                                    <label htmlFor="mobile_number" className="col-sm-3">{t('mobile_number')}</label> */}
+                                    {/* <div className="col-md-3">
                                         <input 
                                             type="text" 
                                             className={`form-control ${errors.mobile ? 'is-invalid' : null}`}
@@ -620,15 +620,14 @@ const Profile = () => {
                                         <div className="invalid-feedback">
                                             { errors.mobile }
                                         </div>
-                                    </div>
-                                    { changeMobile === false ? (
-                                        // <div className="col-md-1">
-                                        //     <button 
-                                        //         className="btn btn-primary"
-                                        //         onClick={updateMobile}
-                                        //     >{t('change')}</button>
-                                        // </div>
-                                        <></>
+                                    </div> */}
+                                    {/* { changeMobile === false ? (
+                                        <div className="col-md-1">
+                                            <button 
+                                                className="btn btn-primary"
+                                                onClick={updateMobile}
+                                            >{t('change')}</button>
+                                        </div>
                                     ):(
                                         <div className="col-md-2">
                                             <button 
@@ -636,13 +635,13 @@ const Profile = () => {
                                                 onClick={sendMobileOtp}
                                             >{t('send_otp')}</button>
                                         </div>
-                                    )}
-                                    { mobileOtp && (
+                                    )} */}
+                                    {/* { mobileOtp && (
                                         <React.Fragment>
                                             <div className="col-md-2">
-                                                <div className="form-group">
+                                                <div className="form-group"> */}
                                                     {/* <label htmlFor="mobile_otp">{t('send_otp')}</label> */}
-                                                    <input 
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control"
                                                         name="mobile_otp"
@@ -656,9 +655,9 @@ const Profile = () => {
                                                 <button className="btn btn-success" onClick={verfiyMobileOtp}>{t('verify')}</button>
                                             </div>
                                         </React.Fragment>
-                                    )}
-                                </div>
-                                <div className="form-group row mb-3">
+                                    )} */}
+                                {/* </div> */}
+                                {/* <div className="form-group row mb-3">
                                     <label htmlFor="email" className='col-sm-3'>{t('email_address')}</label>
                                     <div className="col-md-3">
                                         <input 
@@ -675,13 +674,12 @@ const Profile = () => {
                                         </div>
                                     </div>        
                                     { changeEmail === false ? (
-                                        // <div className="col-md-1">
-                                        //     <button 
-                                        //         className="btn btn-primary"
-                                        //         onClick={updateEmail}
-                                        //     >{t('change')}</button>
-                                        // </div>
-                                        <></>
+                                        <div className="col-md-1">
+                                            <button 
+                                                className="btn btn-primary"
+                                                onClick={updateEmail}
+                                            >{t('change')}</button>
+                                        </div>
                                     ):(
                                         <div className="col-md-2">
                                             <button 
@@ -693,9 +691,9 @@ const Profile = () => {
                                     { emailOtp && (
                                         <React.Fragment>
                                             <div className="col-md-2">
-                                                <div className="form-group">
+                                                <div className="form-group"> */}
                                                     {/* <label htmlFor="email_otp">OTP</label> */}
-                                                    <input 
+                                                    {/* <input 
                                                         type="text" 
                                                         className="form-control"
                                                         name="email_otp"
@@ -710,7 +708,7 @@ const Profile = () => {
                                             </div>
                                         </React.Fragment>
                                     )}
-                                </div>
+                                </div> */}
                             </React.Fragment>
                             <div className="form-group row mb-3">
                                 <label htmlFor="address" className="col-form-label col-sm-3">{t('address')}</label>

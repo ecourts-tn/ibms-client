@@ -13,61 +13,52 @@ import { prosecutorRoutes } from 'routes/prosecutorRoutes';
 import { prisonRoutes } from 'routes/prisonRoutes';
 import { FilingRoutes } from 'routes/filingRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
-import EncryptionDemo from 'components/EncryptionDemo';
+import UserList from 'components/auth/UserList';
 
 function App() {
 
-  const handleRightClick = (event) => {
-    event.preventDefault();  // Prevent the context menu from appearing
-    alert('Right-click is disabled on this page!');
-  };
+    const handleRightClick = (event) => {
+        event.preventDefault();  // Prevent the context menu from appearing
+        alert('Right-click is disabled on this page!');
+    };
   
-  return (
-    <>  
-    {/* <div onContextMenu={handleRightClick}> */}
-      <BrowserRouter basename="/ibms">
-        <AuthProvider>
-          <AppProvider>
-            <Routes>
-              <Route element={<PublicLayout/>}>
-              
-                {publicRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} />
-                ))}
-                { FilingRoutes()}
-              </Route> 
-              <Route element={<AdminLayout />}>
-              <Route path='/auth/user/registration' element={<DepartmentRegistration/>} />
-                  { CourtRoutes() }
-                <Route path="police">
-                  { policeRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} />
-                ))}
-                </Route>
-                <Route path="prison">
-                { prisonRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} />
-                ))}
-                </Route>
-                <Route path="prosecution">
-                { prosecutorRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} />
-                ))}
-                </Route>
-              </Route>
-              <Route path='registration' element={<DepartmentRegistration/>}>
-
-              </Route>
-              <Route path="enc" element={<EncryptionDemo />} />
-            </Routes>
-          </AppProvider>
-        </AuthProvider>
-      </BrowserRouter> 
-      {/* </div> */}
-
-    </>
-    
-  )
+    return (
+        <BrowserRouter basename="/ibms">
+            <AuthProvider>
+            <AppProvider>
+                <Routes>
+                    <Route element={<PublicLayout/>}>
+                    
+                        {publicRoutes.map((route, index) => (
+                        <Route key={index} path={route.path} element={route.element} />
+                        ))}
+                        { FilingRoutes()}
+                    </Route> 
+                    <Route element={<AdminLayout />}>
+                        { CourtRoutes() }
+                        <Route path="police">
+                            { policeRoutes.map((route, index) => (
+                                <Route key={index} path={route.path} element={route.element} />
+                            ))}
+                        </Route>
+                        <Route path="prison">
+                            { prisonRoutes.map((route, index) => (
+                                <Route key={index} path={route.path} element={route.element} />
+                            ))}
+                        </Route>
+                        <Route path="prosecution">
+                            { prosecutorRoutes.map((route, index) => (
+                                <Route key={index} path={route.path} element={route.element} />
+                            ))}
+                        </Route>
+                        <Route path='/auth/user/registration' element={<DepartmentRegistration/>} />
+                        <Route path="/auth/users" element={<UserList />} />
+                    </Route>
+                </Routes>
+            </AppProvider>
+            </AuthProvider>
+        </BrowserRouter> 
+    )
 }
 
 
