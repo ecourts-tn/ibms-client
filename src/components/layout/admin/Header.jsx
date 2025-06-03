@@ -19,10 +19,10 @@ const Header = () => {
             { judge ? (
                 <div className="mx-5">
                 <span className="text-primary font-weight-bold">
-                    {judge.judge?.judge_name} ({judge.judge?.jocode}) {judge.is_incharge ? '(Incharge)' : ''}
+                    {judge.judge?.judge_name} ({judge.judge?.jocode}) {judge.is_incharge ? '(Incharge)' : ''} - {judge.court?.designation_name}
                 </span>
                 <span className="d-block text-muted font-weight-bold" style={{ marginTop: '-5px' }}>
-                    {`${judge.court?.designation_name}, ${judge.court?.court_name}`}
+                    {`${judge.court?.court_name}`}
                 </span>
                 </div>
             ) : (

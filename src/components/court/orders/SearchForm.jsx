@@ -10,7 +10,7 @@ import { MasterContext } from 'contexts/MasterContext';
 import { AuthContext } from 'contexts/AuthContext';
 import { RequiredField } from 'utils';
 
-const UploadOrder = () => {
+const SearchForm = () => {
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
     const { masters:{
@@ -332,4 +332,4 @@ const OrderList = ({ orders, handleDelete }) => {
     );
 };
 
-export default UploadOrder;
+export default SearchForm;
