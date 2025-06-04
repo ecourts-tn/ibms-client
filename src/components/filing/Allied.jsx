@@ -94,12 +94,11 @@ const Allied = () => {
 
 
     useEffect(() => {
-        const fetchDetails = async() => {
+        const fetchPetitionDetail = async() => {
             try{
                 const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:main, litigants} = response.data
-                    console.log(response.data)
                     setIsPetition(true)
                     setBail(main)
                     setPetitioners(litigants.filter(l=>l.litigant_type===1))
@@ -122,7 +121,9 @@ const Allied = () => {
                 console.log(error)
             }
         }
-        fetchDetails()
+        if(mainNumber){
+            fetchPetitionDetail()
+        }
     },[mainNumber])
 
 
@@ -205,6 +206,11 @@ const Allied = () => {
                     cases={cases}
                     mainNumber={mainNumber}
                     setMainNumber={setMainNumber}
+                    setIsPetition={setIsPetition}
+                    setBail={setBail}
+                    setPetition={setPetition}
+                    setPetitioners={setPetitioners}
+                    setRespondents={setRespondents}
                 />
                 <div className="row">
                     <div className="col-md-12">

@@ -88,12 +88,12 @@ const RegistrationSearch = () => {
             await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("case/search/registration-number/", form)
             if(response.status === 200){
-                const { petition, litigant, objection, proceeding } = response.data
+                const { petition, litigants, objections, proceedings } = response.data
                 setIsExist(true)
                 setPetition(petition)
-                setLitigants(litigant)
-                setObjections(objection)
-                setProceedings(proceeding)
+                setLitigants(litigants)
+                setObjections(objections)
+                setProceedings(proceedings)
             }
         }catch(error){
             if(error.inner){
