@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react'
-// import GroundsList from './GroundsList'
-// import GroundsForm from './GroundsForm'
 import api from 'api'
 import { useTranslation } from 'react-i18next'
 import { toast, ToastContainer } from 'react-toastify'
@@ -133,7 +131,7 @@ const GroundsForm = ({ addGround, selectedGround }) => {
     const validationSchema = Yup.object({
         description: Yup.string()
             .max(3000, "Description should not be more than 3000 characters") // Max 3000 characters
-            .required("The description field may not be blank") // Required field
+            .required("The grounds field may not be blank") // Required field
     });
 
     const initialState = {
@@ -207,11 +205,6 @@ const GroundsForm = ({ addGround, selectedGround }) => {
             setErrors({ ...errors, description: '' }); // Clear error if within limit
         }
     };
-    // const handleKeyDown = (e) => {
-    //     if (e.key === 'Enter') {
-    //       e.preventDefault();  // Prevent the default behavior (line break)
-    //     }
-    //   };
 
     return (
         <React.Fragment>
@@ -229,7 +222,7 @@ const GroundsForm = ({ addGround, selectedGround }) => {
                     <span>{remainingChars} characters remaining</span>
                 </div>
                 {errors.description && (
-                    <div style={{ color: 'red' }}>{errors.description}</div> // Display error if max limit exceeded
+                    <div className='text-danger'>{errors.description}</div> // Display error if max limit exceeded
                 )}
             </div>
             <div className="form-group">
@@ -247,14 +240,15 @@ const GroundsForm = ({ addGround, selectedGround }) => {
 const GroundsList = ({grounds, deleteGround, editGround}) => {
     const {t} = useTranslation()
     return (
-        <>
+        <React.Fragment>
             { grounds.map((ground, index) => (
                 <div className="card" key={index}>
-                    <div className="card-body" dangerouslySetInnerHTML={CreateMarkup(ground.description)}>
-
+                    <div 
+                        className="card-body" 
+                        dangerouslySetInnerHTML={CreateMarkup(ground.description)}>
                     </div>
                     <div className="card-footer d-flex justify-content-end" style={{backgroundColor:"inherit", borderTop:"none", marginTop:"-20px"}}>
-                    <Button 
+                        <Button 
                             variant="primary" 
                             size="sm" 
                             className="mr-2"
@@ -272,6 +266,6 @@ const GroundsList = ({grounds, deleteGround, editGround}) => {
                     </div>
                 </div>
             ))}
-        </>
+        </React.Fragment>
     )
 }

@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react'
-import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import * as Yup from 'yup'
 import api from 'api'
-import { toast, ToastContainer } from 'react-toastify'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { handleMobileChange, validateEmail, handleNameChange } from 'components/validation/validations';
 import { MasterContext } from 'contexts/MasterContext'
 import { BaseContext } from 'contexts/BaseContext'
 import { RequiredField } from 'utils'
@@ -31,24 +28,10 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
         email_address:'',
     }
     const[litigant, setLitigant] = useState(initialState)
+    const[petition, setPetition] = useState({})
+    const [errors, setErrors] = useState({})
     const[respondentPolice, setRespondentPolice] = useState(false)  
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        // Update form state
-        setLitigant((prevForm) => ({
-            ...prevForm,
-            [name]: value,  // Dynamically update the field
-        }));
-
-        // Validate the field and update errors
-        const errorMessage = validateEmail(name, value);  // Validate the email field
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: errorMessage,  // Set the error message for the specific field
-        }));
-    };
 
     useEffect(() => {
         if(selectedRespondent){
@@ -62,6 +45,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
                 if(response.status === 200){
                     const petition = response.data.petition
+                    setPetition(petition)
                     setLitigant({...litigant, 
                         state: petition.state?.state_code || '',
                         district: petition.district?.district_code || '',
@@ -85,23 +69,55 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
 
 
     const validationSchema = Yup.object({
-        litigant_name: Yup.string().required(t('errors.respondent_name_required')),
-        designation: Yup.string().required(t('errors.designation_required')),
-        address: Yup.string().required(t('errors.address_required')),
-        district: Yup.string().required(t('errors.district_required'))
-    })
-    const[errors, setErrors] = useState({})
+        state: Yup.string()
+            .nullable()
+            .when('$respondentPolice', {
+            is: true,
+            then: schema => schema.required(t('errors.state_required')),
+            otherwise: schema => schema.notRequired(),
+        }),
+        district: Yup.string()
+            .nullable()
+            .when('$respondentPolice', {
+            is: true,
+            then: schema => schema.required(t('errors.district_required')),
+            otherwise: schema => schema.notRequired(),
+        }),
+        police_station: Yup.string()
+            .nullable()
+            .when('$respondentPolice', {
+            is: true,
+            then: schema => schema.required(t('errors.police_station_required')),
+            otherwise: schema => schema.notRequired(),
+        }),
+        designation: Yup.string()
+            .nullable()
+            .when('$respondentPolice', {
+            is: true,
+            then: schema => schema.required(t('errors.designation_required')),
+            otherwise: schema => schema.notRequired(),
+        }),
+        mobile_number: Yup.string()
+            .nullable()
+            .notRequired()
+            .matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits')
+            .transform(value => (value === '' ? null : value)),
+        email_address: Yup.string()
+            .nullable()
+            .notRequired()
+            .email('Enter a valid email address')
+            .transform(value => (value === '' ? null : value)),
+                    litigant_name: Yup.string().required(t('errors.respondent_name_required')),
+                    address: Yup.string().required(t('errors.address_required')),
+        })
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
-        let formIsValid = true;
-        let newErrors = {};
         try{
-            await validationSchema.validate(litigant, {abortEarly:false})
+            await validationSchema.validate(litigant, { context: {respondentPolice}, abortEarly:false})
             addRespondent(litigant)
         }catch(error){
-            console.error(error)
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
@@ -109,19 +125,6 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 });
                 setErrors(newErrors)
                 }
-        }
-        // const mobileError = handleMobileChange ({ target: { value: litigant.age } }, setLitigant, litigant);
-        // if (mobileError) {
-        //   newErrors.mobile_number = mobileError;
-        //   formIsValid = false;
-        // }
-    
-        const emailError = validateEmail(litigant.email_address);
-        if (emailError) {
-          newErrors.email_address = emailError;
-          formIsValid = false;
-        } else {
-          delete newErrors.email_address; // Clear any existing error
         }
     }
 
@@ -135,8 +138,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
     }
 
     return (
-        <>
-            <ToastContainer />
+        <React.Fragment>
             <div className="row mt-3">
                 <div className="col-md-12">
                     <div className="form-group">
@@ -153,7 +155,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         name="litigant_name"
                         value={litigant.litigant_name}
                         className={`form-control ${errors.litigant_name ? 'is-invalid' : ''}`}
-                        onChange={(e) => handleNameChange(e, setLitigant, litigant, 'litigant_name')}
+                        onChange={(e) => setLitigant({...litigant, [e.target.name] : e.target.value})}
                     />
                     <div className="invalid-feedback">
                         { errors.litigant_name }
@@ -161,7 +163,6 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 </div>
             </div>    
             )}
-            { console.log('litigant', litigant)}
             { respondentPolice && (
              <React.Fragment>
                 <div className="form-group row">
@@ -169,10 +170,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     <div className="col-md-6">
                         <select 
                             name="state" 
-                            id="state" 
-                            className="form-control"
+                            className={`form-control ${errors.state ? 'is-invalid' : ''}`}
                             value={litigant.state}
-                            disabled={ litigant.state !== '' }
+                            disabled={ parseInt(petition.crime_registered) === 1 && '' && litigant.state !== '' }
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_state')}</option>
@@ -180,6 +180,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">{ errors.state }</div>
                     </div>
                 </div>
                 <div className="form-group row">
@@ -187,9 +188,8 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     <div className="col-md-6">
                         <select 
                             name="district" 
-                            id="district" 
-                            className="form-control"
-                            disabled={ litigant.district !== ''}
+                            className={`form-control ${errors.district ? 'is-invalid' : ''}`}
+                            disabled={ parseInt(petition.crime_registered) === 1 && litigant.district !== ''}
                             value={litigant.district}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         >
@@ -200,6 +200,9 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                                 </option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">
+                            { errors.district }
+                        </div>
                     </div>                       
                 </div>
                 <div className="form-group row">
@@ -207,8 +210,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                     <div className="col-md-6">
                         <select 
                             name="police_station" 
-                            id="police_station" 
-                            disabled={litigant.police_station !== ''}
+                            disabled={ parseInt(petition.crime_registered) === 1 && litigant.police_station !== ''}
                             className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
                             value={litigant.police_station}
                             onChange={(e)=> setLitigant({...litigant, [e.target.name]: e.target.value })}
@@ -226,13 +228,13 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                 <div className="form-group row">
                     <label htmlFor="litigant_name" className="col-sm-3 col-form-label">{t('respondent_name')}<RequiredField /></label>
                     <div className="col-md-6">
-                        <Form.Control
+                        <input
                             name="litigant_name"
                             value={litigant.litigant_name}
-                            className={`${errors.litigant_name ? 'is-invalid' : ''}`}
+                            className={`form-control ${errors.litigant_name ? 'is-invalid' : ''}`}
                             onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                             readOnly={respondentPolice}
-                        ></Form.Control>
+                        />
                         <div className="invalid-feedback">{ errors.litigant_name }</div>
                     </div>
                 </div>
@@ -264,7 +266,12 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="mobile_number" 
                             className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}` }
                             value={litigant.mobile_number}
-                            onChange={(e) => handleMobileChange(e, setLitigant, litigant, 'mobile_number')}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '')
+                                if(value.length <=10){
+                                    setLitigant({...litigant, [e.target.name]: value})
+                                }
+                            }}
                         />
                         <div className="invalid-feedback">{ errors.mobile_number }</div>
                     </div>
@@ -277,7 +284,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                             name="email_address" 
                             className={`form-control ${errors.email_address ? 'is-invalid' : ''}` }
                             value={litigant.email_address}
-                            onChange={handleChange}
+                            onChange={(e) => setLitigant({...litigant, [e.target.name]: e.target.value})}
                         />
                         <div className="invalid-feedback">{ errors.email_address }</div>
                     </div>
@@ -304,7 +311,7 @@ const RespondentForm = ({addRespondent, selectedRespondent}) => {
                         <i className="fa fa-plus mr-2"></i>{t('add_respondent')}</Button>
                 </div>
             </div>
-        </>
+        </React.Fragment>
     )
 }
 

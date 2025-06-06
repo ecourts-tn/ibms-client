@@ -6,16 +6,15 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Button from '@mui/material/Button'
 import { ToastContainer, toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next';
-import { DocumentContext } from 'contexts/DocumentContext';
 import { LanguageContext } from 'contexts/LanguageContex';
 import ViewDocument from 'components/utils/ViewDocument';
 import Loading from 'components/utils/Loading';
 import { formatDate } from 'utils';
 import { MasterContext } from 'contexts/MasterContext';
 import { BaseContext } from 'contexts/BaseContext';
+import * as Yup from 'yup'
 
-const Document = ({swornRequired}) => {
-    swornRequired = true
+const Document = () => {
     const { masters: {documents}} = useContext(MasterContext)
     const {language}  = useContext(LanguageContext)
     const initialState = {
@@ -24,14 +23,20 @@ const Document = ({swornRequired}) => {
     }
     const {efileNumber} = useContext(BaseContext)
     const[form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState({})
     const[documentList, setDocumentList] = useState([])
     const[loading, setLoading] = useState(false)
     const[otp, setOtp] = useState('')
     const {t} = useTranslation()
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
-    const [selectedDocument, setSelectedDocument] = useState(null);
+    const[selectedDocument, setSelectedDocument] = useState(null);
+    const[showAffidavit, setShowAffidavit] = useState(false)
 
+    const validationSchema = Yup.object({
+        title: Yup.string().required('Please select the document'),
+        document: Yup.string().required('Please choose a file')
+    })
     
     const handleShow = (document) => {
         setSelectedDocument(document);
@@ -41,6 +46,25 @@ const Document = ({swornRequired}) => {
     const handleClose = () => {
         setSelectedDocument(null);
     };
+
+    useEffect(() => {
+        const fetchPetitionDetail = async() => {
+            try{
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
+                if(response.status === 200){
+                    const petition = response.data.petition
+                    if(petition.case_type?.id !== 1){
+                        setShowAffidavit(true)
+                    }
+                }
+            }catch(error){
+                console.log(error)
+            }
+        }
+        if(efileNumber){
+            fetchPetitionDetail()
+        }
+    },[efileNumber])
 
     const sendMobileOTP = () => {
         // if(otp === ''){
@@ -117,6 +141,7 @@ const Document = ({swornRequired}) => {
     const handleSubmit = async () => {
     try {
         // Add efile_no to the form data
+        await validationSchema.validate(form, { abortEarly: false });
         const formData = new FormData();
         formData.append("efile_no", efileNumber);
         formData.append("title", form.title);
@@ -141,17 +166,17 @@ const Document = ({swornRequired}) => {
             });
         }
     } catch (error) {
-        console.error("Error uploading document:", error);
-
-        // Handle specific error scenarios
         if (error.response?.status === 400) {
             toast.error("Invalid form data. Please check your input.", {
                 theme: "colored",
             });
-        } else {
-            toast.error("An error occurred while uploading. Please try again.", {
-                theme: "colored",
-            });
+        } 
+        if(error.inner){
+            const newErrors = {}
+            error.inner.forEach(err => {
+                newErrors[err.path] = err.message
+            })
+            setErrors(newErrors)
         }
     }finally{
         setLoading(false)
@@ -210,7 +235,7 @@ const Document = ({swornRequired}) => {
                     <div className="col-md-5"> 
                         <select 
                             name="title" 
-                            className="form-control"
+                            className={`form-control ${errors.title ? 'is-invalid' : ''}`}
                             onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                         >
                             <option value="">{t('alerts.select_document')}</option>
@@ -218,6 +243,7 @@ const Document = ({swornRequired}) => {
                             <option key={index} value={d.id}>{ language === 'ta' ? d.document_lname : d.document_name }</option>
                             ))}
                         </select>
+                        <div className="invalid-feedback">{ errors.title }</div>
                     </div>
                 </div>
                 <div className="form-group row mb-4">
@@ -226,36 +252,23 @@ const Document = ({swornRequired}) => {
                         <input 
                             type="file" 
                             name="document" 
-                            className="form-control"
+                            className={`form-control ${errors.document ? 'is-invalid' : ''}`}
                             onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
                         />
+                        <div className="invalid-feedback">{ errors.document }</div>
                     </div>
                 </div>
-                { swornRequired && (
-                <div className="form-group row mb-4 no-gutters">
+                { showAffidavit && (
+                <div className="form-group row mb-4">
                     <label htmlFor="" className="col-sm-3 col-form-label">{t('enrollment_number')}</label>
-                    <div className="col-md-1 ml-2">
+                    <div className="col-md-3">
                         <input 
                             type="text" 
                             className="form-control" 
-                            placeholder='MS'
+                            placeholder='Enrollment No. (MS/xxx/yyyy)'
                         />
                     </div>
-                    <div className="col-md-1">
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder='Reg. No.'
-                        />
-                    </div>
-                    <div className="col-md-1">
-                        <input 
-                            type="text" 
-                            className="form-control" 
-                            placeholder='Reg. Year'
-                        />
-                    </div>
-                    <div className="col-md-2 ml-2">
+                    <div className="col-md-3">
                         <Button 
                             variant="contained"
                             color="primary"
@@ -268,7 +281,7 @@ const Document = ({swornRequired}) => {
                 { mobileOtp && (
                 <div className='form-group row mb-4'>
                     <label htmlFor="" className='col-sm-3 col-form-group'>Verify OTP</label>
-                    <div className="col-md-1">
+                    <div className="col-md-2">
                         <input 
                             type="password" 
                             className="form-control" 
@@ -287,18 +300,19 @@ const Document = ({swornRequired}) => {
                         >Verify</button>
                     </div>
                     { mobileVerified && (
-                        <div className="col-md-2">
+                        <div className="col-md-2 ml-2 mt-1">
                             <CheckCircleRoundedIcon color="success"/>
-                            <span className="text-success ml-1"><strong>Verified</strong></span>
+                            <span className="text-success"><strong>Verified</strong></span>
                         </div>
                     )}
                 </div>
                 )}
-                <div className="col-md-12 d-flex justify-content-center">
+                <div className="col-md-10 d-flex justify-content-center">
                     <div className="">
                         <Button
                             variant="contained"
                             color="success"
+                            disabled={ showAffidavit && !mobileVerified}
                             onClick={handleSubmit}
                         >
                             {t('upload')}

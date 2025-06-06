@@ -27,9 +27,10 @@ const Payment = () => {
     const {efileNumber} = useContext(BaseContext)
     const[form, setForm] = useState(initialState)
     const validationSchema = Yup.object({
-        udf1: Yup.string().required("Please enter payer"),
-        udf3: Yup.number("Enter valid number").required("Please enter the mobile number"),
-        amount: Yup.number("Enter amount").required("Please enter amount")
+        udf1: Yup.string().required("Payer name is required"),
+        udf2: Yup.string().required('Email address is required').email('Enter valid email address'),
+        udf3: Yup.string().required(t('errors.mobile_required')).matches(/^d{10}$/, 'Mobile number must be exactly 10 digits'),
+        amount: Yup.string().required("Amount is required field").matches(/^d{1-10}$/, 'Amount is required field')
     })
 
     const[payments, setPayments] = useState([])
@@ -211,10 +212,9 @@ const Payment = () => {
                             className={`form-control ${error.udf1 ? 'is-invalid' : null }`}
                             value={form.udf1}
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                            // readOnly={true}
                         />
                         <div className="invalid-feedback">
-                            { error.petitioner_name }
+                            { error.udf1 }
                         </div>
                     </div>
                 </div>
@@ -226,7 +226,12 @@ const Payment = () => {
                             className={`form-control ${error.udf3 ? 'is-invalid' : null }`}
                             name="udf3"
                             value={form.udf3}
-                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '')
+                                if(value.length <= 10){
+                                    setForm({...form, [e.target.name]: value})
+                                }
+                            }}
                         />
                         <div className="invalid-feedback">
                             { error.udf3 }
@@ -244,7 +249,7 @@ const Payment = () => {
                             onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                         />
                         <div className="invalid-feedback">
-                            { error.udf3 }
+                            { error.udf2 }
                         </div>
                     </div>
                 </div>

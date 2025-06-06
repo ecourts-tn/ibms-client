@@ -95,7 +95,7 @@ const SuretyDetails = () => {
     };
 
     return (
-        <div className="container">
+        <div>
             <ToastContainer />
             <Modal 
                 show={showModal} 

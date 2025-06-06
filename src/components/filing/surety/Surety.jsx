@@ -40,7 +40,6 @@ const Surety = () => {
         async function fetchData(){
             try{
                 const response = await api.get(`case/filing/approved/`)
-                console.log(response.data)
                 if(response.status === 200){
                     setCases(response.data.results)
                 }

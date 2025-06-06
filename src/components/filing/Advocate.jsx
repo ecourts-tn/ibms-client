@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useContext} from 'react'
-import Form from 'react-bootstrap/Form'
 import Button from '@mui/material/Button'
 import { toast, ToastContainer } from 'react-toastify'
 import api from 'api'
@@ -114,8 +113,9 @@ export default Advocate
 const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const {efileNumber} = useContext(BaseContext)
     const[search, setSearch] = useState('')
+    const[searchError, setSearchError] = useState(false)
     const[loading, setLoading] = useState(false)
-    const [isSearchComplete, setIsSearchComplete] = useState(false);
+    const[isSearchComplete, setIsSearchComplete] = useState(false);
     const initialAdvocate = {
         adv_id:'',
         adv_name: '',
@@ -130,7 +130,7 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
     const validationSchema = Yup.object({
         adv_name: Yup.string().required(t('errors.adv_name_required')),
         adv_email: Yup.string().email().required(t('errors.adv_email_required')),
-        adv_mobile: Yup.string().required(t('errors.adv_mobile_required')),
+        adv_mobile: Yup.string().required(t('errors.adv_mobile_required')).matches(/^$d{10}$/, 'Mobile number must be exactly 10 digits'),
         adv_reg: Yup.string().required(t('errors.adv_reg_required'))
     })
 
@@ -235,6 +235,10 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
         setTimeout(() => {})
         try{
             setLoading(true)
+            if(search === ''){
+                setSearchError(true)
+                return
+            }
             const response = await api.post("case/adv/search/", {search})
             if(response.status === 200){
                 setAdvocate({
@@ -261,99 +265,104 @@ const AdvocateForm = ({setAdvocates, selectedAdvocate}) => {
 
 
     return (
-        <>
+        <div className="row">
             { loading && <Loading />}
             <ToastContainer />
-            <div className="row">
-                <div className="col-md-6 offset-md-3">
-                    <div className="row my-5">
-                        <div className="col-md-9">
-                            <input 
-                                name="search"
-                                type="text" 
-                                className="form-control" 
-                                onChange={(e)=>setSearch(e.target.value)}
-                                placeholder={`${t('mobile_number')}/${t('email_address')}/${t('enrollment_number')}`}
-                            />
-                        </div>
-                        <div className="col-md-3">
-                            <button 
-                                className="btn btn-primary btn-block"
-                                onClick={searchAdvocate}
-                            >
-                                {t('search')}
-                            </button>
+            <div className="col-md-6 offset-md-3">
+                <div className="row my-5">
+                    <div className="col-md-9">
+                        <input 
+                            name="search"
+                            type="text" 
+                            className={`form-control ${searchError ? 'is-invalid' : null}`}
+                            onChange={(e)=>setSearch(e.target.value)}
+                            placeholder={`${t('mobile_number')}/${t('email_address')}/${t('enrollment_number')}`}
+                        />
+                        <div className="invalid-feedback">
+                            Please enter Mobile Number/Email Address/Enrolment Number
                         </div>
                     </div>
-                    <Form.Group className="row mb-3">
-                        <Form.Label  className="col-sm-5">{t('adv_name')}</Form.Label>
-                        <div className="col-sm-7">
-                            <Form.Control
-                                name="adv_name"
-                                value={advocate.adv_name}
-                                onChange={ handleChange }
-                                className={`${errors.adv_name ? 'is-invalid' : ''}`}
-                            ></Form.Control>
-                            <div className="invalid-feedback">
-                                { errors.adv_name }
-                            </div>
-                        </div>
-                    </Form.Group>
-                    <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-5">{t('enrollment_number')}</Form.Label>
-                        <div className="col-sm-7">
-                            <Form.Control
-                                name="adv_reg"
-                                value={advocate.adv_reg}
-                                onChange={ handleChangeAdvReg }
-                                className={`${errors.adv_reg ? 'is-invalid' : ''}`}
-                                placeholder='MS/----/----'
-                            ></Form.Control>
-                            <div className="invalid-feedback">
-                                { errors.adv_reg }
-                            </div>
-                        </div>
-                    </Form.Group>
-                    <Form.Group  className="row mb-3">
-                        <Form.Label className="col-sm-5">{t('mobile_number')}</Form.Label>
-                        <div className="col-sm-7">
-                            <Form.Control
-                                name="adv_mobile"
-                                value={advocate.adv_mobile}
-                                onChange={ handleChangeMobile }
-                                className={`${errors.adv_mobile ? 'is-invalid' : ''}`}
-                                type="tel"
-                            ></Form.Control>
-                            <div className="invalid-feedback">
-                                {errors.adv_mobile || "Mobile number must be 10 digits."}
-                            </div>
-                        </div>
-                    </Form.Group>
-                    <Form.Group className="row mb-3">
-                        <Form.Label className="col-sm-5">{t('email_address')}</Form.Label>
-                        <div className="col-sm-7">
-                            <Form.Control
-                                name="adv_email"
-                                value={advocate.adv_email}
-                                onChange={ handleChangeEmail }
-                                className={`${errors.adv_email ? 'is-invalid' : ''}`}
-                            ></Form.Control>
-                            <div className="invalid-feedback">
-                                 {errors.adv_email || "Please provide a valid email address."}   
-                            </div>
-                         </div>
-                    </Form.Group>
+                    <div className="col-md-3">
+                        <button 
+                            className="btn btn-primary btn-block"
+                            onClick={searchAdvocate}
+                        >
+                            {t('search')}
+                        </button>
+                    </div>
                 </div>
-                <div className="col-md-12 mb-3 d-flex justify-content-center">
-                    <Button
-                        variant="contained"
-                        color="success"
-                        onClick={handleSubmit}
-                        disabled={!isSearchComplete || !advocate.adv_name || !advocate.adv_email || !advocate.adv_mobile || !advocate.adv_reg}
-                    ><i className="fa fa-plus mr-2"></i>{t('add_advocate')}</Button>
+                <div className="form-group row mb-3">
+                    <label  className="col-sm-5">{t('adv_name')}</label>
+                    <div className="col-sm-7">
+                        <input
+                            name="adv_name"
+                            value={advocate.adv_name}
+                            onChange={ handleChange }
+                            disabled={ advocate.adv_name }
+                            className={`form-control ${errors.adv_name ? 'is-invalid' : ''}`}
+                        />
+                        <div className="invalid-feedback">
+                            { errors.adv_name }
+                        </div>
+                    </div>
+                </div>
+                <div className="row mb-3">
+                    <label className="col-sm-5">{t('enrollment_number')}</label>
+                    <div className="col-sm-7">
+                        <input
+                            name="adv_reg"
+                            value={advocate.adv_reg}
+                            onChange={ handleChangeAdvReg }
+                            disabled={advocate.adv_reg}
+                            className={`form-control ${errors.adv_reg ? 'is-invalid' : ''}`}
+                            placeholder='MS/----/----'
+                        />
+                        <div className="invalid-feedback">
+                            { errors.adv_reg }
+                        </div>
+                    </div>
+                </div>
+                <div  className="row mb-3">
+                    <label className="col-sm-5">{t('mobile_number')}</label>
+                    <div className="col-sm-7">
+                        <input
+                            name="adv_mobile"
+                            value={advocate.adv_mobile}
+                            onChange={ handleChangeMobile }
+                            disabled={advocate.adv_mobile}
+                            className={`form-control ${errors.adv_mobile ? 'is-invalid' : ''}`}
+                            type="tel"
+                        />
+                        <div className="invalid-feedback">
+                            {errors.adv_mobile || "Mobile number must be 10 digits."}
+                        </div>
+                    </div>
+                </div>
+                <div className="row mb-3">
+                    <label className="col-sm-5">{t('email_address')}</label>
+                    <div className="col-sm-7">
+                        <input
+                            name="adv_email"
+                            value={advocate.adv_email}
+                            onChange={ handleChangeEmail }
+                            disabled={advocate.adv_email}
+                            className={`form-control ${errors.adv_email ? 'is-invalid' : ''}`}
+                        />
+                        <div className="invalid-feedback">
+                                {errors.adv_email || "Please provide a valid email address."}   
+                        </div>
+                        </div>
                 </div>
             </div>
-        </>
+            <div className="col-md-12 mb-3 d-flex justify-content-center">
+                <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleSubmit}
+                    disabled={!isSearchComplete || !advocate.adv_name || !advocate.adv_email || !advocate.adv_mobile || !advocate.adv_reg}
+                ><i className="fa fa-plus mr-2"></i>{t('add_advocate')}</Button>
+            </div>
+        </div>
     )
 }
 

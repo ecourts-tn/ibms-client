@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import InitialInput from 'components/filing/InitialInput';
 import PetitionSearch from 'components/utils/PetitionSearch';
 import { BaseContext } from 'contexts/BaseContext';
+import SuretyDetails  from './SuretyDetails';
 
 
 const DischargeSurety = () => {
@@ -29,13 +30,38 @@ const DischargeSurety = () => {
         crime_registered: 2,
     })
     const[errors, setErrors] = useState({})
+    const [sureties, setSureties] = useState([])
+    const [surety, setSurety] = useState([])
+    const [selectedSurety, setSelectedSurety] = useState([])  
+    const [showModal, setShowModal] = useState(false);
+    
+    const handleShow = (surety) => {
+        setSurety(surety);  
+        setShowModal(true); 
+    };
+    
+    const handleClose = () => {
+        setShowModal(false);  
+    };
+
+    const isSuretySelected = (surety) => selectedSurety.includes(surety.surety_id);
+    
+    const handleSuretyCheckBoxChange = (surety) => {
+        const isSelected = isSuretySelected(surety);
+        if (isSelected) {
+          setSelectedSurety(selectedSurety.filter(id => id !== surety.surety_id));
+        } else {
+          setSelectedSurety([...selectedSurety, surety.surety_id]);
+        }
+    };
+
 
     useEffect(() => {
         async function fetchData(){
             try{
                 const response = await api.get(`case/filing/approved/`)
                 if(response.status === 200){
-                    setCases(response.data)
+                    setCases(response.data.results)
                 }
             }catch(error){
                 console.log(error)
@@ -71,7 +97,7 @@ const DischargeSurety = () => {
             }
         }
         if(mainNumber){
-            setEfileNumber(mainNumber)
+            // setEfileNumber(mainNumber)
             fetchPetitionDetail();
         }
     },[mainNumber])
@@ -101,34 +127,71 @@ const DischargeSurety = () => {
     }
 
     return(
-        <>
+        <div className="container-fluid mt-3">
             <ToastContainer />
-            <div className="container-fluid mt-3">
-                <PetitionSearch 
-                    cases={cases}
-                    mainNumber={mainNumber}
-                    setMainNumber={setMainNumber}
-                />
-                <div className="row">
-                    <div className="col-md-12">
-                    { isPetition && (
-                        <>
-                            <InitialInput petition={bail} />
-                            <div className="d-flex justify-content-center">
-                                <Button
-                                    variant='contained'
-                                    color="success"
-                                    onClick={handleSubmit}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
-                        </>
-                    )}
-                    </div>
+            <PetitionSearch 
+                cases={cases}
+                mainNumber={mainNumber}
+                setMainNumber={setMainNumber}
+            />
+            <div className="row">
+                <div className="col-md-12">
+                { isPetition && (
+                    <React.Fragment>
+                        <InitialInput petition={bail} />
+                        <table className="table table-bordered table-striped">
+                            <thead>
+                                <tr className="bg-navy">
+                                    <td colSpan={9}><strong>{t('surety_details')}</strong></td>
+                                </tr>
+                                <tr>
+                                    <th>{t('select')}</th>
+                                    <th>{t('surety_name')}</th>
+                                    <th>{t('father_husband_guardian')}</th>
+                                    <th>{t('aadhar_number')}</th>
+                                    <th>{t('mobile_number')}</th>
+                                    <th>{t('action')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sureties.map((s, index) => (
+                                    <tr key={index}>
+                                        <td>
+                                            <div className="icheck-success">
+                                                <input 
+                                                    type="checkbox" 
+                                                    id={`checkboxSuccess${s.surety_id}`} 
+                                                    checked={isSuretySelected(s)} 
+                                                    onChange={() => handleSuretyCheckBoxChange(s)} 
+                                                />
+                                                <label htmlFor={`checkboxSuccess${s.surety_id}`}></label>
+                                            </div>                                                                            
+                                        </td>
+                                        <td>{s.surety_name}</td>
+                                        <td>{s.relative_name}</td>
+                                        <td>{s.aadhar_number}</td>
+                                        <td>{s.mobile_number}</td>
+                                        <td>
+                                            <span className="badge badge-info badge-pill" onClick={() => handleShow(s)}>View</span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div className="d-flex justify-content-center">
+                            <Button
+                                variant='contained'
+                                color="success"
+                                onClick={handleSubmit}
+                            >
+                                Submit
+                            </Button>
+                        </div>
+                    </React.Fragment>
+                )}
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

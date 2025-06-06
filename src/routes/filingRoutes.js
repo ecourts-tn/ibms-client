@@ -28,7 +28,7 @@ const bailRoutes = [
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 const abailRoutes = [
@@ -40,7 +40,7 @@ const abailRoutes = [
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 const alliedRoutes = [
@@ -49,14 +49,14 @@ const alliedRoutes = [
     { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 4, path: "document", component: <Document />, name:"upload_document" },
     { id: 5, path: "payment", component: <Payment />, name:"payment" },
-    { id: 6, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 6, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 const pleadingRoutes = [
     { id: 1, path: "", component: <Pleadings />, name:"main_case_detail"},
     { id: 2, path: "ground", component: <Grounds />, name:"ground" },
     { id: 3, path: "document", component: <Document />, name:"upload_document" },
-    { id: 4, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 4, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 const interveneRoutes = [
@@ -68,7 +68,7 @@ const interveneRoutes = [
     { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 7, path: "document", component: <Document />, name:"upload_document" },
     { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 
@@ -79,17 +79,17 @@ const suretyRoutes = [
     { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
     { id: 5, path: "document", component: <Document />, name:"upload_document" },
     { id: 6, path: "payment", component: <Payment />, name:"payment" },
-    { id: 7, path: "efile", component: <Declaration />, name:"efile" },
+    { id: 7, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 const dischargeRoutes = [
     { id: 1, path: "main-case-detail", component: <DischargeSurety />, name:"basic_details"},
-    { id: 2, path: "surety-detail", component: <SuretyDetails />, name:"surety_details" },
-    { id: 3, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 5, path: "document", component: <Document />, name:"upload_document" },
-    { id: 6, path: "payment", component: <Payment />, name:"payment" },
-    { id: 7, path: "efile", component: <Declaration />, name:"efile" },
+    // { id: 2, path: "surety-detail", component: <SuretyDetails />, name:"surety_details" },
+    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
+    { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
+    { id: 4, path: "document", component: <Document />, name:"upload_document" },
+    { id: 5, path: "payment", component: <Payment />, name:"payment" },
+    { id: 6, path: "declaration", component: <Declaration />, name:"declaration" },
 ];
 
 

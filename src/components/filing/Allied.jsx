@@ -312,16 +312,16 @@ const Allied = () => {
                                 </table>
                                 { (parseInt(petition.case_type) === 3 || parseInt(petition.case_type) === 4 || parseInt(petition.case_type) === 5) && (<ConditionDetail />)}
                                 {parseInt(petition.case_type) === 6 && (
-    <PassportDetail passportDetails={passportDetails} setPassportDetails={setPassportDetails} />
-)}
+                                    <PassportDetail passportDetails={passportDetails} setPassportDetails={setPassportDetails} />
+                                )}
                                 { petition.case_type && parseInt(petition.case_type) === 7 && (
-    <PropertyDetail 
-        materials={materials} 
-        setMaterials={setMaterials} 
-        vehicles={vehicles} 
-        setVehicles={setVehicles} 
-    />
-)}
+                                    <PropertyDetail 
+                                        materials={materials} 
+                                        setMaterials={setMaterials} 
+                                        vehicles={vehicles} 
+                                        setVehicles={setVehicles} 
+                                    />
+                                )}
                             </>
                         )}
                         { isPetition && (
