@@ -1,8 +1,12 @@
+import CryptoJS from "crypto-js";
+
 export const CreateMarkup = (content) => {
     return {__html: content}
 }
 
 export const formatDate = (dateString) => {
+    if(!dateString)
+        return null
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); 
@@ -60,5 +64,13 @@ export const encode_efile_number = (pk) => {
 
 export const decode_file_number = (encodedPk) => {
     return atob(encodedPk);
+};
+
+export const getDistrictName = (district, lang) => {
+    if (!district) return;
+    return lang === 'ta' ? district.district_lname || '' : district.district_name || '';
   };
+  
+
+
 

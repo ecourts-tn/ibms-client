@@ -4,6 +4,8 @@ import api from 'api'
 import { LanguageContext } from 'contexts/LanguageContex'
 import { useTranslation } from 'react-i18next'
 import Loading from 'components/utils/Loading'
+import { useLocalizedNames } from 'hooks/useLocalizedNames'
+import { formatDate } from 'utils'
 
 
 const ProceedingDetail = () => {
@@ -17,12 +19,24 @@ const ProceedingDetail = () => {
     const[proceeding, setProceeding] = useState({})
     const {language} = useContext(LanguageContext)
 
+    const {
+        getStateName,
+        getDistrictName,
+        getEstablishmentName,
+        getCourtName,
+        getSeatName,
+        getJudiciaryName,
+        getFilingNumber,
+        getRegistrationNumber
+    } = useLocalizedNames()
+
+
     useEffect(() => {
         async function fetchData(){
             try{
                 const response = await api.post(`court/proceeding/detail/`, {
-                    efile_no:state.efile_no,
-                    id: state.id
+                    cino:state.cino,
+                    proceeding_id: state.proceeding_id
                 })
                 if(response.status === 200){
                     setPetition(response.data.petition)
@@ -71,21 +85,21 @@ const ProceedingDetail = () => {
                                         <td>{t('efile_number')}</td>
                                         <td>{petition.efile_number}</td>
                                         <td>{t('efile_date')}</td>
-                                        <td>{petition.efile_date}</td>
+                                        <td>{ formatDate(petition.efile_date)}</td>
                                     </tr>
                                     { petition.judiciary.id== 2 && (
                                     <>
                                     <tr>
                                         <td>{t('state')}</td>
-                                        <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
+                                        <td>{ getStateName(petition?.state) }</td>
                                         <td>{t('district')}</td>
-                                        <td>{ language === 'ta' ? petition.district.district_lname : petition.district.district_name }</td>
+                                        <td>{ getDistrictName(petition?.district) }</td>
                                     </tr>
                                     <tr>
                                         <td>{t('establishment')}</td>
-                                        <td>{ language === 'ta' ? petition.establishment.establishment_lname : petition.establishment.establishment_name }</td>
+                                        <td>{ getEstablishmentName(petition?.establishment) }</td>
                                         <td>{t('court')}</td>
-                                        <td>{ language === 'ta' ? petition.court.court_lname : petition.court.court_name }</td>
+                                        <td>{ getCourtName(petition?.court) }</td>
                                     </tr>
                                     </>
                                     )}
@@ -93,23 +107,23 @@ const ProceedingDetail = () => {
                                     <>
                                         <tr>
                                             <td>Court Type</td>
-                                            <td>{ language === 'ta' ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
+                                            <td>{ getJudiciaryName(petition?.judiciary) }</td>
                                             <td>High Court Bench</td>
-                                            <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
+                                            <td>{ getSeatName(petition?.seat)}</td>
                                         </tr>
                                     </>
                                     )}
                                     <tr>
                                         <td>{t('filing_number')}</td>
-                                        <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
+                                        <td>{ getFilingNumber(petition?.filing_number, petition?.filing_year)}</td>
                                         <td>{t('filing_date')}</td>
-                                        <td>{ petition.filing_date }</td>
+                                        <td>{ formatDate(petition.filing_date) }</td>
                                     </tr>
                                     <tr>
                                         <td>{t('case_number')}</td>
-                                        <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
+                                        <td>{ getRegistrationNumber(petition?.reg_type, petition?.reg_number, petition?.reg_year) }</td>
                                         <td>{t('registration_date')}</td>
-                                        <td>{  petition.registration_date }</td>
+                                        <td>{ formatDate(petition.registration_date) }</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -142,10 +156,10 @@ const ProceedingDetail = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                            <table className="table table-borderless">
-                                <thead style={{backgroundColor:"#052963", color:"#FAFAFA"}}>
+                            <table className="table table-bordered table-striped table-sm">
+                                <thead className="bg-info">
                                     <tr>
-                                        <th colSpan={2}>Daily Status</th>
+                                        <th colSpan={2}>Proceeding</th>
                                     </tr>
                                 </thead>
                                 <tbody>

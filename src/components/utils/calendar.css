@@ -1,0 +1,52 @@
+.rbc-month-view {
+    border-collapse: collapse;
+}
+
+/* 📅 Date cell borders */
+.rbc-month-view .rbc-day-bg {
+    border: 1px solid #649fda; /* Bootstrap light gray border */
+    box-sizing: border-box;
+  }
+  
+  /* 🗓️ Day of week header (Sun, Mon, etc.) */
+  .rbc-month-view .rbc-header {
+    background-color: #2972bb; /* Bootstrap light bg */
+    color: #fafafa;
+    padding: 10px 0;
+    font-weight: 500;
+    border-bottom: 2px solid #649fda;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .rbc-month-row + .rbc-month-row {
+    border-top: none;
+  }
+
+  /* Optional: Highlight today's cell */
+  .rbc-today {
+    background-color: #e74c3c!important;
+  }
+  
+  /* Optional: Add hover effect on date cells */
+  .rbc-day-bg:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+  
+  /* Optional: Style the month/year label in the custom toolbar */
+  .custom-toolbar-label {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+
+
+  .rbc-event {
+    background-color: transparent; /* subtle blue */
+    color:  #c0392b; /* Bootstrap primary */
+    font-size: 1.1rem; /* adjust text size */
+    margin: -10px 10px 0 10px;
+    font-weight: 700;
+    box-shadow: none;
+  }

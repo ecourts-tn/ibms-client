@@ -374,11 +374,15 @@
     "court_detail": "Court Detail",
     "payment": "Payment",
     "efile": "E-File",
+    "declaration": "Declaration",
     "efile_date": "eFile Date",
     "download": "Download",
     "main_case_detail": "Main Case Details",
     "jurisdiction": "Jurisdiction",
     "magistrate_court": "Magistrate Court",
+    "case_management": "Case Management",
+    "case_allocation": "Allocation",
+
     "alerts": {
         "select_state": "Select state",
         "select_district": "Select district",
@@ -465,7 +469,8 @@
         "adv_email_required": "Please enter the Advocate E-Mail Address",
         "dob_required": "Please enter valid Date of Birth",
         "cnr_required": "Please enter the CNR Number",
-        "captcha_required":"Plase enter CAPTCHA code"
+        "captcha_required":"Plase enter CAPTCHA code",
+        "something_wrong": "Something went wrong. Please try later!"
     }
 }
   

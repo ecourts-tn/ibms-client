@@ -1,14 +1,10 @@
 import React, { useContext } from 'react'
 import { useState } from 'react'
-import FormControl from '@mui/material/FormControl'
-import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import SearchIcon from '@mui/icons-material/Search'
 import * as Yup from 'yup'
 import api from 'api'
 import { toast, ToastContainer } from 'react-toastify'
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
 import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
@@ -19,8 +15,6 @@ import { MasterContext } from 'contexts/MasterContext'
 
 const FIRSearch = () => {
 
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
     const {masters:{
         states,
         districts
@@ -56,19 +50,16 @@ const FIRSearch = () => {
                 setIsExist(true)
                 setPetitions(response.data)
             }
-            if(response.status === 404){
-                toast.error(response.data.message, {theme:"colored"})
-            }
         }catch(error){
+            if(error.response.status === 404){
+                toast.error(error.response.data.message, {theme:"colored"})
+            }
             if(error.inner){
                 const newErrors = {}
                 error.inner.forEach((err) => {
                     newErrors[err.path] = err.message
                 })
                 setErrors(newErrors)
-            }
-            if(error.response){
-                toast.error(error.response.data.message, {theme:"colored"})
             }
         }finally{
             setLoading(false)
@@ -194,8 +185,8 @@ const FIRSearch = () => {
                     </div>
                 </div>
                 { Object.keys(petitions).length > 0 && (
-                <table className="table table-bordered table-striped mt-5">
-                    <thead>
+                <table className="table table-bordered table-striped mt-5 table-sm">
+                    <thead className="bg-info">
                         <tr>
                             <th>Filing Number</th>
                             <th>Litigants</th>
@@ -205,7 +196,11 @@ const FIRSearch = () => {
                     <tbody>
                         { petitions.map((p, index) => (
                             <tr key={index}>
-                                <td>{`${p.petition.filing_type?.type_name}/${p.petition.filing_number}/${p.petition.filing_year}`}</td>
+                                <td>
+                                    <Link to={`/filing/detail/`} state={{ efile_no: p.petition.efile_number }}>
+                                        {`${p.petition.filing_type?.type_name}/${p.petition.filing_number}/${p.petition.filing_year}`}
+                                    </Link>        
+                                </td>
                                 <td>
                                     {p.litigants
                                         .filter((l) => parseInt(l.litigant_type) === 1)

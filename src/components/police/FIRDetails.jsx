@@ -52,17 +52,21 @@ const FIRDetails = ({setFirTagged}) => {
     }, []);
 
 
-    const tagFir = async() => {
-        const data = {
-            efile_no: efileNumber,
-            fir : sessionStorage.getItem("api_id")
-        }
-        const response = await api.put(`case/filing/update/`, data)
-        if(response.status === 201){
-            handleClose();
-            clearEfileNumber()
-            sessionStorage.removeItem("api_id")
-            setFirTagged(true)
+    const linkFIR = async() => {
+        try{
+            const data = {
+                efile_no: efileNumber,
+                fir : sessionStorage.getItem("api_id")
+            }
+            const response = await api.put(`case/filing/update/`, data)
+            if(response.status === 200){
+                handleClose();
+                clearEfileNumber()
+                sessionStorage.removeItem("api_id")
+                setFirTagged(true)
+            }
+        }catch(error){
+            console.log(error)
         }
     }
 
@@ -177,7 +181,7 @@ const FIRDetails = ({setFirTagged}) => {
                                 </div>
                             </Modal.Body>
                             <Modal.Footer className="d-flex justify-content-between">
-                                <Button variant="contained" color="success" onClick={() => tagFir()}>Tag FIR </Button>
+                                <Button variant="contained" color="success" onClick={() => linkFIR()}>Tag FIR </Button>
                                 <Button variant="contained" onClick={handleClose}>
                                     {t('close')}
                                 </Button>

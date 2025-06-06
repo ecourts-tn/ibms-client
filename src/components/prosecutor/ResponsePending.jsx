@@ -60,7 +60,7 @@ const ResponsePending = () => {
                                                 <span>{ language === 'ta' ? item.petition.establishment?.establishment_lname : item.petition.establishment?.establishment_name }</span><br/>
                                                 <span>{ language === 'ta' ? item.petition.district?.district_lname : item.petition.district?.district_name }</span>
                                             </td>
-                                            <td>{ item.crime.fir_number }/{ item.crime.fir_year }</td>
+                                            <td>{ item.fir_number }/{ item.fir_year }</td>
                                             <td className="text-center">
                                                 { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
                                                     <span className="text ml-2" style={{display:'block'}} key={index}>{index+1}. {l.litigant_name}</span>

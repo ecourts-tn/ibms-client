@@ -8,7 +8,7 @@ const Respondent = ({litigant}) => {
     return (
         <>
             { litigant.filter(l=>l.litigant_type===2).map((res, index) => (
-            <table className="table table-bordered table-striped mb-2" key={index}>
+            <table className="table table-bordered table-striped mb-2 table-sm" key={index}>
                 <thead className="bg-olive">
                     <tr>
                         <td colSpan={4}><strong>{t('respondent')} - {index+1}. { res.litigant_name }</strong></td>
@@ -26,9 +26,9 @@ const Respondent = ({litigant}) => {
                     </tr>
                     <tr>
                         <td>{t('district')}</td>
-                        <td>{ language === 'ta' ? res.district.district_lname : res.district.district_name }</td>
+                        <td>{ language === 'ta' ? res.district?.district_lname : res.district?.district_name }</td>
                         <td>{t('police_station')}</td>
-                        <td>{ language === 'ta' ? res.police_station.station_lname : res.police_station.station_name }</td>
+                        <td>{ language === 'ta' ? res.police_station?.station_lname : res.police_station?.station_name }</td>
                     </tr>
                 </tbody>
             </table>

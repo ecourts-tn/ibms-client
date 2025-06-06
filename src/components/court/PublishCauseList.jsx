@@ -24,7 +24,7 @@ const PublishCasueList = () => {
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${day}-${month}-${year}`;
     };
 
     const produced_date_Backend = (date) => {
@@ -36,7 +36,7 @@ const PublishCasueList = () => {
 
     useEffect(() => {
         const publish_date = flatpickr(".publish-date-date-picker", {
-            dateFormat: "d/m/Y",
+            dateFormat: "d-m-Y",
             minDate: "today",
             onChange: (selectedDates) => {
                 const formattedDate = selectedDates[0] ? produced_date_Backend(selectedDates[0]) : "";
@@ -105,11 +105,16 @@ const PublishCasueList = () => {
     };
 
     return (
-        <div className="content-wrapper">
-            <ToastContainer />
-            {loading && <Loading />}
-            <div className="container-fluid mt-3">
-                <div className="card card-outline card-primary">
+        <div className="row">
+            <div className="col-md-12">
+                <ol className="breadcrumb mt-2">
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                    <li className="breadcrumb-item active">Publish Casue List</li>
+                </ol>
+                <div className="card card-outline card-primary" style={{ height: "75vh" }}>
+                    <ToastContainer />
+                    {loading && <Loading />}
                     <div className="card-header">
                         <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>{t('post_cause_list')}</strong></h3>
                     </div>
@@ -131,11 +136,11 @@ const PublishCasueList = () => {
                                                 padding: '8px',
                                             }}
                                         />
-                                        <div className="input-group-append">
+                                        {/* <div className="input-group-append">
                                             <span className="input-group-text">
                                                 <FaCalendarAlt />
                                             </span>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="col-md-2">
                                         <Button

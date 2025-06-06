@@ -1,15 +1,15 @@
 const config = {
   development: {
-    apiUrl: "http://192.168.100.155:81/api/v1/",
-    docUrl: "http://192.168.100.155:81/",
+    apiUrl: process.env.REACT_APP_API_URL,
+    docUrl: process.env.REACT_APP_DOC_URL,
     featureFlag: true,
   },
   staging: {
-    apiUrl: "http://192.168.100.155:81/api/v1/",
+    apiUrl: process.env.REACT_APP_API_URL,
     featureFlag: false,
   },
   production: {
-    apiUrl: "http://192.168.100.155:81/api/v1/",
+    apiUrl: process.env.REACT_APP_API_URL,
     featureFlag: false,
   },
 };

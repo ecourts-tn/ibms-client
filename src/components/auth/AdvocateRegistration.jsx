@@ -1,14 +1,14 @@
 import api from 'api'
 import * as Yup from 'yup'
 import { RequiredField } from 'utils'
-import React, { useEffect, useState} from 'react'
+import React, { useContext, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from 'react-bootstrap/Modal'
 import { toast, ToastContainer } from 'react-toastify'
 import { styled } from '@mui/material/styles';
 import FormControl from '@mui/material/FormControl'
-import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
+import BootstrapButton from 'react-bootstrap/Button'
 import Alert from '@mui/material/Alert'
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import Radio from '@mui/material/Radio';
@@ -23,7 +23,9 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { IconButton } from '@mui/material'; // For the toggle button
 import { Visibility, VisibilityOff } from '@mui/icons-material'; // Eye icons for toggle
-
+import { MasterContext } from 'contexts/MasterContext'
+import { LanguageContext } from 'contexts/LanguageContex'
+import { ModelClose } from 'utils'
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -50,39 +52,25 @@ const AdvocateRegistration = () => {
         navigate("/")
     }
     const initialState = {
-        group: 1,
+        department: 4,
         username: '',
-        is_notary: false,
-        adv_reg: '',
-        gender: 1,
-        date_of_birth: '',
-        litigation_place: 1,
-        district: '',
-        police_station:'',
-        prison:'',
         password:'',
         confirm_password:'',
         mobile:'',
-        mobile_otp:'',
         email:'',
-        email_otp:'',
-        idproof:'',
-        photo:'',
-        state_code:'',
-        profile_photo:'',
-        identity_proof: '',
-        reg_certificate: '',
-        address: '',
-        notary_order: ''
     }
-    const[districts, setDistricts] = useState([])
+
+    const { masters: {states, districts, genders, departments }} = useContext(MasterContext)
+    const { language } = useContext(LanguageContext)
     const [form, setForm] = useState(initialState)
-    const[errors, setErrors] = useState(initialState)
-    const[mobileOtp, setMobileOtp] = useState(false)
-    const[emailOtp, setEmailOtp] = useState(false)
-    const[loading, setLoading] = useState(false)
-    const[mobileVerified, setMobileVerified] = useState(false)
-    const[emailVerified, setEmailVerified]   = useState(false)
+    const [errors, setErrors] = useState(initialState)
+    const [isMobileOtpSent, setIsMobileOtpSent] = useState(false)
+    const [mobileOtp, setMobileOtp] = useState(null)
+    const [isEmailOtpSent, setIsEmailOtpSent] = useState(false)
+    const [emailOtp, setEmailOtp] = useState(null)
+    const [loading, setLoading] = useState(false)
+    const [mobileVerified, setMobileVerified] = useState(false)
+    const [emailVerified, setEmailVerified]   = useState(false)
     const [showPassword, setShowPassword] = useState(false); 
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); 
 
@@ -97,6 +85,7 @@ const AdvocateRegistration = () => {
         email: Yup.string().email().required(t('errors.email_required'))
     })
 
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -363,7 +352,7 @@ const AdvocateRegistration = () => {
                 theme:"colored"
             })
             setMobileVerified(false)
-            setMobileOtp(true)
+            setIsMobileOtpSent(true)
         }
     }
 
@@ -388,7 +377,7 @@ const AdvocateRegistration = () => {
             }
 
             setEmailVerified(false)
-            setEmailOtp(true)
+            setIsEmailOtpSent(true)
         }finally{
             setLoading(false)
         }
@@ -402,7 +391,7 @@ const AdvocateRegistration = () => {
                 toast.success(t('alerts.mobile_otp_sent'),{
                     theme:"colored"
                 })
-                setMobileOtp(true)
+                setIsMobileOtpSent(true)
             }
         }catch(error){
             if(error.response?.status === 400 || error.response?.status === 409){
@@ -422,7 +411,7 @@ const AdvocateRegistration = () => {
                     const response2 = await api.post("auth/email/otp/", {email: form.email})
                     if(response2.status === 200){
                         toast.success(t('alerts.email_otp_sent'),{theme:"colored"})
-                        setEmailOtp(true)
+                        setIsEmailOtpSent(true)
                     }
                 }catch(err){
                     console.log(err)
@@ -443,13 +432,13 @@ const AdvocateRegistration = () => {
         e.preventDefault();       
         try{
             await validationSchema.validate(form, {abortEarly:false})
-            if(!mobileVerified){
-                toast.error("Please verify your mobile number", {theme:"colored"})
-                return
-            }if(!emailVerified){
-                toast.error("Please verify your email address", {theme:"colored"})
-                return
-            }
+            // if(!mobileVerified){
+            //     toast.error("Please verify your mobile number", {theme:"colored"})
+            //     return
+            // }if(!emailVerified){
+            //     toast.error("Please verify your email address", {theme:"colored"})
+            //     return
+            // }
             const response = await api.post("auth/user/register/", form, {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -537,18 +526,32 @@ const AdvocateRegistration = () => {
                 onHide={handleClose} 
                 backdrop="static"
                 keyboard={false}
-                size="md"
+                size="lg"
             >
-                <Modal.Header closeButton className="bg-success">
+                <Modal.Header className="bg-success">
                     <Modal.Title style={{ fontSize:'18px'}}><strong>Registration</strong></Modal.Title>
+                    <ModelClose handleClose={handleClose}/>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Thank you for registering with us! Your can now use your registered mobile number or email address to login the portal</p>
+                    <p>Dear <strong>{user?.username}</strong>,</p>
+                    <p>
+                        Thank you for registering with us! You can now log in to the portal using any of the following credentials:
+                        <br /><br />
+                        • Mobile Number: <strong>{user?.mobile}</strong>
+                        <br />
+                        • Email Address: <strong>{user?.email}</strong>
+                        <br />
+                        • User ID: <strong>{user?.userlogin}</strong>
+                    </p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                    Close
-                    </Button>
+                    <BootstrapButton 
+                        variant="secondary" 
+                        onClick={handleClose}
+                        className="btn-sm"
+                    >
+                        Close
+                    </BootstrapButton>
                 </Modal.Footer>
             </Modal>
             <div className="container">
@@ -566,23 +569,35 @@ const AdvocateRegistration = () => {
                             </div>
                             <div className="card-body py-1">
                                 <div className="row">
+                                    <div className="col-md-6">
+                                        <select 
+                                            name="department"
+                                            className="d-none"
+                                            value={form.department}
+                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                        >
+                                            { departments.map((d, index) => (
+                                                <option value={d.id} key={index}>{d.department_name}</option>
+                                            ))}
+                                        </select>
+                                    </div>
                                     <div className="col-md-12 d-flex justify-content-center mb-3">
                                         <FormControl>
                                             <RadioGroup
                                                 row
                                                 aria-labelledby="usertype-radios"
-                                                name="user_type"
-                                                value={form.user_type}
-                                                onChange={(e) => setForm({...form, user_type:e.target.value})}
+                                                name="roles"
+                                                value={form.roles[0] || ''}
+                                                onChange={(e) => setForm({...form, [e.target.name]:[parseInt(e.target.value)]})}
                                             >
-                                                <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
-                                                <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
+                                                <FormControlLabel value={10} control={<Radio />} label={t('advocate')} />
+                                                <FormControlLabel value={11} control={<Radio />} label={t('litigant')} />
                                             </RadioGroup>
                                         </FormControl>
                                     </div>
                                     <div className="col-md-9 offset-md-2">
                                         <div className="form-group row md-3">
-                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.user_type) === 1 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
+                                            <label htmlFor="" className="col-sm-3">{ parseInt(form.roles[0]) === 10 ? t('adv_name') : t('name_of_litigant') }<RequiredField/></label>
                                             <div className="col-sm-8">
                                                 <input 
                                                     type="text" 
@@ -608,16 +623,17 @@ const AdvocateRegistration = () => {
                                                         value={form.gender}
                                                         onChange={(e) => setForm({...form, [e.target.name]:e.target.value})}
                                                     >
-                                                        <FormControlLabel value={1} control={<Radio />} label={t('male')} />
-                                                        <FormControlLabel value={2} control={<Radio />} label={t('female')} />
-                                                        <FormControlLabel value={3} control={<Radio />} label={t('other')} />
+                                                        { genders.map((g, index) => (
+                                                            <FormControlLabel value={g.id} control={<Radio />} label={ language === 'ta' ? g.gender_lname : g.gender_name} />
+                                                        ))}
                                                     </RadioGroup>
                                                     <div className="invalid-feedback">
                                                         { errors.gender }
                                                     </div>
                                                 </FormControl>
-                                            </div> </div>
-                                            <div className="form-group row mb-3">
+                                            </div> 
+                                        </div>
+                                        <div className="form-group row mb-3">
                                             <div className="col-sm-3">
                                                 <label htmlFor="">{t('date_of_birth')}<RequiredField/></label>
                                             </div>
@@ -658,26 +674,44 @@ const AdvocateRegistration = () => {
                                             </div>
                                         </div>
                                         { parseInt(form.litigation_place) === 2 && (
-                                            
-                                            <div className="form-group row mb-3">
-                                                <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
-                                                <div className="col-sm-6">
-                                                    <select 
-                                                        name="district" 
-                                                        id="district" 
-                                                        className="form-control"
-                                                        value={form.district}
-                                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                                    >
-                                                        <option value="">Select District</option>
-                                                        { districts.map((item, index) => (
-                                                            <option value={item.district_code} key={index}>{item.district_name}</option>
-                                                        ))}
-                                                    </select>
+                                            <React.Fragment>
+                                                <div className="form-group row mb-3">
+                                                    <label htmlFor="state" className='col-form-label col-sm-3'>{t('state')}<RequiredField/></label>
+                                                    <div className="col-sm-6">
+                                                        <select 
+                                                            name="state" 
+                                                            id="state" 
+                                                            className="form-control"
+                                                            value={form.state}
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        >
+                                                            <option value="">Select State</option>
+                                                            { states.map((s, index) => (
+                                                                <option value={s.state_code} key={index}>{language === 'ta' ? s.state_lname : s.state_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                                <div className="form-group row mb-3">
+                                                    <label htmlFor="district" className='col-form-label col-sm-3'>{t('district')}<RequiredField/></label>
+                                                    <div className="col-sm-6">
+                                                        <select 
+                                                            name="district" 
+                                                            id="district" 
+                                                            className="form-control"
+                                                            value={form.district}
+                                                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                        >
+                                                            <option value="">Select District</option>
+                                                            { districts.filter((d) => parseInt(d.state) === parseInt(form.state)).map((item, index) => (
+                                                                <option value={item.district_code} key={index}>{item.district_name}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </React.Fragment>
                                         )}
-                                        { parseInt(form.user_type) === 1 && (
+                                        { parseInt(form.roles[0]) === 10 && (
                                         <>
                                             <div className="form-group row mb-3">
                                                 <label htmlFor="#" className="col-sm-3 col-form-label">{t('enrollment_number')}<RequiredField/></label>
@@ -891,23 +925,23 @@ const AdvocateRegistration = () => {
 
                                             )}
                                             {/* { mobileLoading && (<Spinner variant="primary"/>)} */}
-                                            { mobileOtp && !mobileVerified && (
+                                            { isMobileOtpSent && !mobileVerified && (
                                                 <div className="col-sm-3">
                                                     <div className="row">
                                                         <div className="col-sm-6">
                                                             <input 
                                                                 type="password" 
-                                                                name="mobile_otp" 
+                                                                name="mobileOtp" 
                                                                 className="form-control" 
-                                                                value={form.mobile_otp}
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                                value={mobileOtp}
+                                                                onChange={(e) => setMobileOtp(e.target.value)}
                                                             />
                                                         </div>
                                                         <div className="col-md-6">
                                                             <Button 
                                                                 variant="contained"
                                                                 color="success"
-                                                                onClick={() => verifyMobile(form.mobile_otp)}
+                                                                onClick={() => verifyMobile(mobileOtp)}
                                                             >
                                                             {t('verify')}</Button>
                                                         </div>
@@ -948,23 +982,23 @@ const AdvocateRegistration = () => {
                                                 </div>
                                             )}
                                             {/* { emailLoading && (<Spinner variant="primary"/>)} */}
-                                            { emailOtp  && !emailVerified && (
+                                            { isEmailOtpSent  && !emailVerified && (
                                                 <div className="col-sm-3">
                                                     <div className="row">
                                                         <div className="col-sm-6">
                                                             <input  
                                                                 type="password" 
-                                                                name="email_otp" 
+                                                                name="emailOtp" 
                                                                 className="form-control" 
-                                                                value={form.email_otp}
-                                                                onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                                value={emailOtp}
+                                                                onChange={(e) => setEmailOtp(e.target.value)}
                                                             />
                                                         </div>
                                                         <div className="col-md-6">
                                                             <Button 
                                                                 variant="contained" 
                                                                 color="success"
-                                                                onClick={() => verifyEmail(form.email_otp)}
+                                                                onClick={() => verifyEmail(emailOtp)}
                                                             >{t('verify')}</Button>
                                                         </div>
                                                     </div>

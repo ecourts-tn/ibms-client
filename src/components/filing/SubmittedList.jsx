@@ -2,13 +2,15 @@ import React, {useState, useEffect, useContext} from 'react'
 import { toast, ToastContainer } from 'react-toastify'
 import { Link, useNavigate } from 'react-router-dom'
 import ViewDocument from 'components/utils/ViewDocument'
-import { formatDate, formatLitigant } from 'utils'
+import { formatDate, formatLitigant, getDistrictName } from 'utils'
 import api from 'api'
 import config from 'config'
 import { useTranslation } from 'react-i18next'
 import { LanguageContext } from 'contexts/LanguageContex'
-import { submittedPetition } from 'services/petitionService'
 import Loading from 'components/utils/Loading'
+import ListFilter from 'components/utils/ListFilter'
+import Pagination from 'components/utils/Pagination'
+import { useLocalizedNames } from 'hooks/useLocalizedNames'
 
 const SubmittedList = () => {
 
@@ -18,13 +20,17 @@ const SubmittedList = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
     const[selectedDocument, setSelectedDocument] = useState(null)
-    const [searchTerm, setSearchTerm] = useState('')
-        
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1)
-    const [itemsPerPage, setItemsPerPage] = useState(10) // Default items per page
-    const [totalItems, setTotalItems] = useState(0)
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState("");
 
+    const {
+        getEstablishmentName,
+        getDistrictName,
+        getSeatName
+    } = useLocalizedNames()
+        
 
     const handleShow = (document) => {
         setSelectedDocument(document)
@@ -36,9 +42,16 @@ const SubmittedList = () => {
     useEffect(() => {
         const fetchPetition = async() => {
             try{
-                const response = await submittedPetition()
-                setCases(response)
-                setTotalItems(response.length) 
+                setLoading(true)
+                const response = await api.get(`case/filing/submitted/`, {
+                    params: {
+                        page,
+                        page_size: pageSize,
+                        search,
+                      },
+                })
+                setCases(response.data.results)
+                setCount(response.data.count);
             }catch(error){
                 console.log(error)
             }finally{
@@ -46,41 +59,8 @@ const SubmittedList = () => {
             }
         }
         fetchPetition()
-    }, [])
+    }, [page, pageSize, search])
 
-     // Filter petitions based on search term (efile_number or crime_number/year)
-     const filteredPetitions = cases.filter(item => {
-        const efileMatch = item.petition.efile_number.toLowerCase().includes(searchTerm.toLowerCase());
-        
-        // Concatenate crime number and year into a single string for search
-        const crimeNumberYear = `${item.crime?.fir_number}/${item.crime?.fir_year}`;
-        const crimeMatch = crimeNumberYear.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const caseNumber = `${item.petition.reg_type?.type_name}/${item.petition.reg_number}/${item.petition.reg_year}` ;
-        const caseMatch = caseNumber.toLowerCase().includes(searchTerm.toLowerCase());
-
-        return efileMatch || crimeMatch || caseMatch;
-    })
-
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage
-    const currentPetitions = filteredPetitions.slice(indexOfFirstItem, indexOfLastItem)
-
-    // Handle page change
-    const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
-    // Handle items per page change
-    const handleItemsPerPageChange = (event) => {
-        setItemsPerPage(Number(event.target.value)) // Update items per page
-        setCurrentPage(1) // Reset to the first page whenever the items per page change
-    }
-
-    // Calculate total number of pages
-    const pageNumbers = []
-    for (let i = 1; i <= Math.ceil(filteredPetitions.length / itemsPerPage); i++) {
-        pageNumbers.push(i)
-    }
 
     const handleSubmit = async(efile_no) => {
         try{
@@ -114,37 +94,13 @@ const SubmittedList = () => {
                             </ol>
                         </nav>
                         <h3 className="pb-2"><strong>{t('submitted_petition')}</strong></h3>
-                        <div className="row mb-3">
-                            <label className="mr-2">{t('Search')}:</label>
-                            <div className="col-md-3">
-                                {/* Search Box */}
-                                <div className="d-flex align-items-center">
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        placeholder={t('Search Case or Efile or Crime number')}
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)} 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="col-md-1">
-                                <div className="d-flex align-items-center">
-                                    <label className="mr-2">{t('Filter')}:</label>
-                                    <select 
-                                        className="form-control" 
-                                        value={itemsPerPage} 
-                                        onChange={handleItemsPerPageChange}
-                                    >
-                                        <option value={10}>10</option>
-                                        <option value={15}>15</option>
-                                        <option value={25}>25</option>
-                                        <option value={50}>50</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                        <ListFilter 
+                            search={search}
+                            setSearch={setSearch}
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            count={count}
+                        />
                         <table className="table table-striped table-bordered">
                             <thead className="bg-secondary">
                                 <tr className='bg-info'>
@@ -159,64 +115,45 @@ const SubmittedList = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                { currentPetitions.map((item, index) => (
+                                { cases.map((item, index) => (
                                 <tr>
-                                    <td>{ index+1+indexOfFirstItem }</td>
-                                    {/* <td>
-                                        <Link to="/filing/detail" state={{efile_no:item.petition.efile_number}}>
-                                            <strong>{ item.petition.efile_number }</strong>
-                                        </Link>
-                                        <span style={{display:'block'}}>{t('efile_date')}: { formatDate(item.petition.efile_date) }</span>
-                                    </td> */}
+                                    <td>{ index+1 }</td>
                                     <td>
-                                        <Link 
-                                            to="/filing/detail" 
-                                            state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
-                                        >
-                                            {/* {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
-                                                <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
-                                            ) : null}
-                                            <br /> */}
-                                            {item.petition?.efile_number ? (
+                                        <React.Fragment>
+                                            <Link 
+                                                to="/filing/detail" 
+                                                state={item.petition?.efile_number ? { efile_no: item.petition.efile_number } : undefined}
+                                            >{item.petition?.efile_number ? (
                                                 <strong>{item.petition.efile_number}</strong>
                                             ) : null}
-                                        </Link>
+                                            </Link> <br/>
+                                            {item.petition?.reg_type?.type_name && item.petition?.reg_number && item.petition?.reg_year ? (
+                                                <span className="text-success">
+                                                    <strong>{`${item.petition.reg_type.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`}</strong>
+                                                </span>
+                                            ) : null}
+                                        </React.Fragment>
                                         {item.petition?.efile_date ? (
                                             <span style={{ display: "block" }}>
                                                 {t('efile_date')}: {formatDate(item.petition.efile_date)}
                                             </span>
                                         ) : null}
                                     </td>
-                                    {/* <td>
-                                        {item.petition.filing_type ? `${item.petition.filing_type?.type_name}/${item.petition.filing_number}/${item.petition.filing_year}` : null}
-                                    </td> */}
                                     <td>
-                                        { item.petition.judiciary.id== 2 && (
+                                        {(item.petition.judiciary?.id== 2 || item.petition.judiciary?.id== 3) && (
                                             <span>
-                                                { 
-                                                    language === 'ta' ? 
-                                                        `${item.petition.court?.court_lname}, ${item.petition.district?.district_lname}` : 
-                                                        `${item.petition.court?.court_name}, ${item.petition.district?.district_name}`
-                                                }
+                                                {getEstablishmentName(item.petition.establishment)} <br/>
+                                                {getDistrictName(item.petition.district)}
                                             </span>
                                         )}
                                         { item.petition.judiciary.id === 1 && (
-                                        <span>
-                                            { language === 'ta' ? item.petition.seat?.seat_lname : item.petition.seat?.seat_name}
-                                        </span>
+                                            `${getSeatName(item.petition.seat)}`
                                         )}
                                     </td>
-                                    <td className="text-center">
-                                        { item.litigants.filter((l) => l.litigant_type ===1 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>{index+1}. {l.litigant_name}</span>
-                                        ))
-                                        }
-                                        <span className="text text-danger ml-2">Vs</span> <br/>
-                                        { item.litigants.filter((l) => l.litigant_type ===2 ).map((l, index) => (
-                                            <span className="text ml-2" key={index}>
-                                                {index+1}. {l.litigant_name} { language === 'ta' ? l.designation?.designation_lname : l.designation?.designation_name }</span>
-                                        ))
-                                        }
+                                    <td className="">
+                                        { item.petition.pet_name }
+                                            <span className="text-danger mx-2">Vs</span> <br/>
+                                        { item.petition.res_name }
                                     </td>
                                     <td>
                                         { item.document.map((d, index) => (
@@ -242,32 +179,20 @@ const SubmittedList = () => {
                                     </td>
                                     <td>
                                         <Link to="/filing/generate/pdf" state={{efile_no:item.petition.efile_number}}>{t('download')}</Link>
+                                        {/* <PdfDownloadButton
+                                            state={{efile_no:item.petition.efile_number}}
+                                        /> */}
                                     </td>
                                 </tr>
                                 ))}
                             </tbody>
                         </table>
-                        {/* Pagination Controls */}
-                        <div className="d-flex justify-content-between mt-3">
-                            <div className="pagination">
-                                <ul className="pagination">
-                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
-                                    </li>
-                                    {pageNumbers.map(number => (
-                                        <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                            <button className="page-link" onClick={() => paginate(number)}>{number}</button>
-                                        </li>
-                                    ))}
-                                    <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-                                        <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div className="page-info">
-                                <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredPetitions.length} {t('entries')}</span>
-                            </div>
-                        </div>
+                        <Pagination 
+                            page={page}
+                            setPage={setPage}
+                            count={count}
+                            pageSize={pageSize}
+                        />
                     </div>
                 </div>
             </div>

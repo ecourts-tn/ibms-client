@@ -19,7 +19,7 @@ import { IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
 import { GroupContext } from 'contexts/GroupContext';
 import { MasterContext } from 'contexts/MasterContext';
-// import bcrypt from 'bcryptjs';  
+import { encrypt } from 'components/utils/crypto';  
 
 const Login = () => {
   // const { groups}     = useContext(GroupContext)
@@ -35,7 +35,7 @@ const Login = () => {
   const [is2FA, setIs2FA] = useState(false)
   const [otp, setOtp] = useState('')
   const [form, setForm] = useState({
-    usertype: '',
+    department: '',
     username: '',
     password: '',
     captcha: '',
@@ -43,7 +43,7 @@ const Login = () => {
   });
 
   const validationSchema = Yup.object({
-    usertype: Yup.string().required(t('errors.usertype_required')),
+    department: Yup.string().required(t('errors.usertype_required')),
     username: Yup.string().required(t('errors.username_required')),
     password: Yup.string().required(t('errors.password_required')),
     captcha: Yup.string().required(t('errors.captcha_required')),
@@ -88,43 +88,51 @@ const Login = () => {
   const handleSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-  
+
     try {
-      await validationSchema.validate(form, { abortEarly: false });
-      const response = await api.post('auth/login/', form, { skipInterceptor: true });
-        // Call the login function from AuthContext
-      await login(response.data, form.remember);
-        toast.success('Logged in successfully', { theme: 'colored' });
+        await validationSchema.validate(form, { abortEarly: false });
+        // const post_data = {
+        //   username: encrypt(form.username),
+        //   password: encrypt(form.password),
+        //   department: form.department,
+        //   captcha: form.captcha,
+        //   remember: form.remember
+        // }
+        const response = await api.post('auth/login/', form, { skipInterceptor: true });
+        await login(response.data, form.remember);
+
     } catch (error) {
-      if (error.inner) {
-        const newErrors = {};
-        error.inner.forEach((err) => {
-          newErrors[err.path] = err.message;
-        });
-        setErrors(newErrors);
-      } else if (error.response) {
-        const { status, data } = error.response;
-        switch (status) {
-          case 400:
-            toast.error(data.message, { theme: 'colored' });
-            break;
-          case 401:
-            toast.error(t('alerts.not_authorized'), { theme: 'colored' });
-            break;
-          case 403:
-            toast.error(t('alerts.not_activated'), { theme: 'colored' });
-            break;
-          case 404:
-            toast.error(data.message, { theme: 'colored' });
-            break;
-          default:
-            toast.error(error, { theme: 'colored' });
+        console.error("Error during login:", error); // Debugging log
+
+        if (error.inner) {
+            const newErrors = {};
+            error.inner.forEach((err) => {
+                newErrors[err.path] = err.message;
+            });
+            setErrors(newErrors);
+        } else if (error.response) {
+            const { status, data } = error.response;
+            switch (status) {
+                case 400:
+                case 404:
+                    toast.error(data.message, { theme: 'colored' });
+                    break;
+                case 401:
+                    toast.error(t?.('alerts.not_authorized') || "Not Authorized", { theme: 'colored' });
+                    break;
+                case 403:
+                    toast.error(t?.('alerts.not_activated') || "Account Not Activated", { theme: 'colored' });
+                    break;
+                default:
+                    console.error("Unexpected error:", error);
+                    toast.error(error.message || "An unexpected error occurred", { theme: 'colored' });
+            }
         }
-      }
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
+
 
   return (
     <React.Fragment>
@@ -170,17 +178,17 @@ const Login = () => {
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
                     className="d-flex justify-content-center"
-                    value={form.usertype}
-                    onChange={(e) => setForm({ ...form, usertype: e.target.value })}
+                    value={form.department}
+                    onChange={(e) => setForm({ ...form, department: e.target.value })}
                   >
-                    <FormControlLabel value={1} control={<Radio />} label={t('advocate')} />
-                    <FormControlLabel value={2} control={<Radio />} label={t('litigant')} />
+                    <FormControlLabel value={4} control={<Radio />} label={t('advocate')} />
+                    <FormControlLabel value={5} control={<Radio />} label={t('litigant')} />
                   </RadioGroup>
                   <p
                     className="text-danger mb-3 text-center"
                     style={{ marginTop: '-15px', fontSize: '14px', fontWeight: 'bold' }}
                   >
-                    {errors.usertype}
+                    {errors.department}
                   </p>
                 </div>
               )}
@@ -189,16 +197,16 @@ const Login = () => {
                   <div className="form-group">
                     <label htmlFor="">{t('usertype')}</label>
                     <select
-                      name="usertype"
+                      name="department"
                       className="form-control"
                       onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                     >
                       <option value="">{t('alerts.select_usertype')}</option>
-                      {groups
-                        .filter((g) => g.id !== 1 && g.id !== 2)
-                        .map((g, index) => (
-                          <option key={index} value={g.id}>
-                            {language === 'ta' ? g.name : g.name}
+                      {departments
+                        .filter((d) => d.display)
+                        .map((d, index) => (
+                          <option key={index} value={d.id}>
+                            {language === 'ta' ? d.department_lname : d.department_name }
                           </option>
                         ))}
                     </select>

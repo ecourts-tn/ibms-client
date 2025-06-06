@@ -1,40 +1,28 @@
-// import React, { useContext, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { AuthContext } from "contexts/AuthContext";
-// import { ToastContainer, toast } from "react-toastify";
-
-// export const PrivateRoute = ({ children }) => {
-//   const { isAuth, user } = useContext(AuthContext); // Use isAuth and user from AuthContext
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     // Redirect to the home page if the user is not authenticated
-//     if (!isAuth || !user) {
-//       toast.error("Please login to access the page", { theme: "colored" });
-//       setTimeout(() => navigate("/"), 100); // Redirect after showing toast
-//     }
-//   }, [isAuth, user, navigate]);
-
-//   // If the user is not authenticated, show only the ToastContainer
-//   if (!isAuth || !user) {
-//     return <ToastContainer />;
-//   }
-
-//   // Render the protected content if the user is authenticated
-//   return children;
-// };
-
 import { useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "contexts/AuthContext";
-
+import Loading from "components/utils/Loading";
 
 export const PrivateRoute = ({ children }) => {
-  const { isAuth, user } = useContext(AuthContext);
-  const navigate = useNavigate()
-  if (!user || !isAuth) {
-    // user is not authenticated
-    return navigate("/")
-  }
-  return children;
+    const { isAuth, user, loading } = useContext(AuthContext);
+    const location = useLocation();
+
+    if (loading) {
+        return <Loading />;
+    }
+
+    // Allow access to profile page even if not complete
+    const isProfileRoute = location.pathname.includes('/auth/profile');
+    const isAllowedRoute = !isAuth || (user?.role === 4 && !user?.is_complete && isProfileRoute);
+
+    if (!isAuth) {
+        return <Navigate to="/" replace state={{ from: location }} />;
+    }
+
+    // Redirect to profile if incomplete (except when already on profile page)
+    if ((user?.department === 4  || user?.department ===5 )&& !user?.is_complete && !isProfileRoute) {
+        return <Navigate to="/auth/profile" replace />;
+    }
+
+    return children;
 };

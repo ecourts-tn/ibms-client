@@ -12,8 +12,8 @@ export const LanguageProvider = ({ children }) => {
     return storedLanguage || 'en';
   });
 
-  const toggleLanguage = () => {
-    const newLanguage = language === 'en' ? 'ta' : 'en';
+  const toggleLanguage = (newLanguage) => {
+    // const newLanguage = language === 'en' ? 'ta' : 'en';
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
     sessionStorage.setItem('language', newLanguage);

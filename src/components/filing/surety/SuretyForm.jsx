@@ -4,11 +4,6 @@ import api from 'api'
 import {toast,ToastContainer} from 'react-toastify'
 import Button from '@mui/material/Button'
 import Modal from 'react-bootstrap/Modal'
-import ArrowForward from '@mui/icons-material/ArrowForward'
-import { StateContext } from 'contexts/StateContext'
-import { DistrictContext } from 'contexts/DistrictContext'
-import { TalukContext } from 'contexts/TalukContext'
-import { RelationContext } from 'contexts/RelationContext'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
 import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
@@ -20,10 +15,6 @@ import { LanguageContext } from 'contexts/LanguageContex'
 
 const SuretyForm = () => {
 
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
-    // const {taluks}    = useContext(TalukContext)
-    // const {relations} = useContext(RelationContext)  
     const {language} = useContext(LanguageContext)
     const { masters: {
         states, 
@@ -117,15 +108,208 @@ const SuretyForm = () => {
         surety_name: Yup.string().required(),
         relation: Yup.string().required(),
         relative_name: Yup.string().required(),
-        aadhar_number: Yup.number().required().typeError("Aadhar number should be numeric"),
+        aadhar_number: Yup.string()
+            .required('Aadhar number is required')
+            .matches(/^\d{12}$/, 'Aadhar number must be 12 digits'),
         state: Yup.string().required(),
         district: Yup.string().required(),
         taluk: Yup.string().required(),
         address: Yup.string().required(),
-        pincode: Yup.number().required().typeError("Pincode must be numeric"),
-        mobile_number: Yup.number().required().typeError("Mobile number must be numeric"),
-        residing_years: Yup.string().required(),
+        pincode: Yup.string()
+            .required('Pincode is required')
+            .matches(/^\d{6}$/, 'Pincode must be 6 digits'),
+        mobile_number: Yup.string()
+            .required('Mobile number is required')
+            .matches(/^\d{10}$/, 'Mobile number must be 10 digits'),
+        residing_years: Yup.string()
+            .required('Residing years is required')
+            .matches(/^\d{1-2}$/, 'Value must less than 2 digits'),
         property_type: Yup.string().required(),
+        survey_number: Yup.string()
+            .nullable()
+            .when('property_type', (property_type, schema) => {
+                if (parseInt(property_type) === 1) {
+                  return schema.required('Survey number is required');
+                }
+                return schema.notRequired();
+            }),
+        site_location: Yup.string()
+            .nullable()
+            .when('property_type', (property_type, schema) => {
+                if (parseInt(property_type) === 1) {
+                  return schema.required('Location is required');
+                }
+                return schema.notRequired();
+            }),
+        site_area: Yup.string()
+            .nullable()
+            .when('property_type', (property_type, schema) => {
+                if (parseInt(property_type) === 1) {
+                  return schema.required('Area is required');
+                }
+                return schema.notRequired();
+            }),
+        site_valuation: Yup.string()
+            .nullable()
+            .when('property_type', (property_type, schema) => {
+                if (parseInt(property_type) === 1) {
+                  return schema.required('Valuation is required');
+                }
+                return schema.notRequired();
+            }),
+        employment_type: Yup.string().required('employment_type is required'),
+        employer_name: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Employer name is required');
+                }
+                return schema.notRequired();
+            }),
+        designation: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Designation is required');
+                }
+                return schema.notRequired();
+            }),
+        employer_address: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Address is required');
+                }
+                return schema.notRequired();
+            }),
+        employer_state: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required(t('errors.state_required'));
+                }
+                return schema.notRequired();
+            }),
+        employer_district: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required(t('errors.district_required'));
+                }
+                return schema.notRequired();
+            }),
+        employer_taluk: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required(t('errors.taluk_required'));
+                }
+                return schema.notRequired();
+            }),
+        service_length: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Service length is required');
+                }
+                return schema.notRequired();
+            }),
+        pf_amount: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('PF Amount is required');
+                }
+                return schema.notRequired();
+            }),
+        property_details: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Property details required');
+                }
+                return schema.notRequired();
+            }),
+        income_tax_paid: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('this field is required');
+                }
+                return schema.notRequired();
+            }),
+        employment_document: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Document required');
+                }
+                return schema.notRequired();
+            }),
+        business_address: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 1) {
+                  return schema.required('Address is required');
+                }
+                return schema.notRequired();
+            }),
+        business_state: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required(t('errors.state_required'));
+                }
+                return schema.notRequired();
+            }),
+        business_district: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required(t('errors.district_required'));
+                }
+                return schema.notRequired();
+            }),
+        business_taluk: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required(t('errors.taluk_required'));
+                }
+                return schema.notRequired();
+            }),
+        business_nature: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required('Business nature is required');
+                }
+                return schema.notRequired();
+            }),
+        business_rent_paid: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required('This field is required');
+                }
+                return schema.notRequired();
+            }),
+        is_rent_bill_name: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required('This field is required');
+                }
+                return schema.notRequired();
+            }),
+        business_document: Yup.string()
+            .nullable()
+            .when('employment_type', (employment_type, schema) => {
+                if (parseInt(employment_type) === 3) {
+                  return schema.required('Document required');
+                }
+                return schema.notRequired();
+            }),
         accused_duration_year: Yup.number().required().typeError("This field should be numeric"),
         accused_duration_month: Yup.number().required().typeError("This field should be numeric"),
         is_related: Yup.boolean().required(),
@@ -331,8 +515,6 @@ const SuretyForm = () => {
         }));
     };
     
-    console.log("employments:", employments)
-
     return (
         <div className="container-fluid">
              <Modal 
@@ -414,8 +596,7 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="surety_name" 
                                 value={surety.surety_name} 
-                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                onChange={(e) => handleNameChange(e, setSurety, surety, 'surety_name')}
+                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                 className={`form-control ${errors.surety_name ? 'is-invalid' : null }`}
                             />
                             <div className="invalid-feedback">
@@ -428,15 +609,14 @@ const SuretyForm = () => {
                             <label htmlFor="">{t('relationship_type')} <RequiredField/></label>
                             <select 
                                 name="relation" 
-                                id="relation" 
                                 className={`form-control ${errors.relation ? 'is-invalid' : ''}`}
                                 value={surety.relation}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                >
+                            >
                                 <option value="">{t('alerts.select_parantage')}</option>
                                 { relations.map((item, index) => (
                                     <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
-                                )) }
+                                ))}
                             </select>
                             <div className="invalid-feedback">{ errors.relation }</div>
                         </div>
@@ -448,13 +628,10 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="relative_name" 
                                 value={surety.relative_name} 
-                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                onChange={(e) => handleNameChange(e, setSurety, surety, 'relative_name')}
+                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                 className={`form-control ${errors.relative_name ? 'is-invalid' : null }`}
                             />
-                            <div className="invalid-feedback">
-                                { errors.relative_name }
-                            </div>
+                            <div className="invalid-feedback">{ errors.relative_name }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -464,13 +641,15 @@ const SuretyForm = () => {
                                 type="text" 
                                 name="aadhar_number" 
                                 value={surety.aadhar_number} 
-                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                onChange={(e) => handleAadharChange(e, setSurety, surety, 'aadhar_number')}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '')
+                                    if(value.length <= 12){
+                                        setSurety({...surety, [e.target.name]: value})
+                                    } 
+                                }}
                                 className={`form-control ${errors.aadhar_number ? 'is-invalid' : null}`}
                             />
-                            <div className="invalid-feedback">
-                                { errors.aadhar_number }
-                            </div>
+                            <div className="invalid-feedback">{ errors.aadhar_number }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -487,9 +666,7 @@ const SuretyForm = () => {
                                 <option value={item.state_code} key={index}>{language === 'ta' ? item.state_lname : item.state_name}</option>
                                 ))}
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.state }
-                            </div>
+                            <div className="invalid-feedback">{ errors.state }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -506,9 +683,7 @@ const SuretyForm = () => {
                                 <option value={item.district_code} key={index}>{language === 'ta' ? item.district_lname : item.district_name}</option>
                                 ))}
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.district }
-                            </div>
+                            <div className="invalid-feedback">{ errors.district }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -525,9 +700,7 @@ const SuretyForm = () => {
                                 <option value={item.taluk_code} key={index}>{ language === 'ta' ? item.taluk_lname : item.taluk_name }</option>
                                 ))}
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.taluk }
-                            </div>
+                            <div className="invalid-feedback">{ errors.taluk }</div>
                         </div>
                     </div>
                     <div className="col-md-4">
@@ -540,9 +713,7 @@ const SuretyForm = () => {
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
                                 className={`form-control ${errors.address ? 'is-invalid' : null }`}
                             />
-                            <div className="invalid-feedback">
-                                { errors.address}
-                            </div>
+                            <div className="invalid-feedback">{ errors.address}</div>
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -553,12 +724,14 @@ const SuretyForm = () => {
                                 name="pincode"
                                 className={`form-control ${errors.pincode ? 'is-invalid' :  null}`}
                                 value={surety.pincode}
-                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                onChange={(e) => handlePincodeChange(e, setSurety, surety, 'pincode')}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '')
+                                    if(value.length <= 6){
+                                        setSurety({...surety, [e.target.name]: value})
+                                    }
+                                }}
                             />
-                            <div className="invalid-feedback">
-                                { errors.pincode }
-                            </div>
+                            <div className="invalid-feedback">{ errors.pincode }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -569,11 +742,14 @@ const SuretyForm = () => {
                                 name="mobile_number"
                                 className={`form-control ${errors.mobile_number ? 'is-invalid' : ''}`}
                                 value={surety.mobile_number}
-                                onChange={(e) => handleMobileChange(e, setSurety, surety, 'mobile_number')}
+                                onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '')
+                                    if(value.length <= 10){
+                                        setSurety({...surety, [e.target.name]: value})
+                                    }
+                                }}
                             />
-                            <div className="invalid-feedback">
-                                { errors.mobile_number }
-                            </div>
+                            <div className="invalid-feedback">{ errors.mobile_number }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -584,14 +760,12 @@ const SuretyForm = () => {
                                 name="email_address"
                                 className={`form-control ${errors.email_address ? 'is-invalid' : ''}`}
                                 value={surety.email_address}
-                                // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                onChange={handleChange}
+                                onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                             />
-                            {errors.email_address && <div className="invalid-feedback">{errors.email_address}</div>}
+                            <div className="invalid-feedback">{errors.email_address}</div>
                         </div>
-                        
                     </div>
-                    <div className="col-md-2">
+                    <div className="col-md-3">
                         <div className="form-group">
                             <label htmlFor="">{t('residing_since')}<RequiredField/></label>
                             <input 
@@ -620,9 +794,7 @@ const SuretyForm = () => {
                                 <option key={index} value={p.id}>{language === 'ta' ? p.type_lname : p.type_name}</option>
                                 ))}
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.property_type }
-                            </div>
+                            <div className="invalid-feedback">{ errors.property_type }</div>
                         </div>
                     </div>
                     { parseInt(surety.property_type) === 1 && (
@@ -635,8 +807,9 @@ const SuretyForm = () => {
                                 name="survey_number"
                                 value={surety.survey_number}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                className="form-control" 
+                                className={`form-control ${errors.survey_number ? 'is-invalid' : null}`}
                             />
+                            <div className="invalid-feedback">{ errors.survey_number }</div>
                         </div>
                     </div>
                     <div className="col-md-3">
@@ -647,8 +820,9 @@ const SuretyForm = () => {
                                 name="site_location"
                                 value={surety.site_location}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}  
-                                className="form-control"
+                                className={`form-control ${errors.site_location ? 'is-invalid' : null}`}
                             />
+                            <div className="invalid-feedback">{ errors.site_location }</div>
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -659,8 +833,9 @@ const SuretyForm = () => {
                                 name="site_area"
                                 value={surety.site_area}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                className="form-control"  
+                                className={`form-control ${errors.site_area ? 'is-invalid' : null}`}  
                             />
+                            <div className="invalid-feedback">{ errors.site_area }</div>
                         </div>
                     </div>
                     <div className="col-md-2">
@@ -671,8 +846,9 @@ const SuretyForm = () => {
                                 name="site_valuation"
                                 value={surety.site_valuation}
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                className="form-control"  
+                                className={`form-control ${errors.site_valuation ? 'is-invalid' : null}`} 
                             />
+                            <div className="invalid-feedback">{ errors.site_valuation }</div>
                         </div>
                     </div>
                     </>   
@@ -683,26 +859,26 @@ const SuretyForm = () => {
                             <label>{t('rent_bill')}<RequiredField/></label><br />
                             <div>
                                 <div className="icheck-success d-inline mx-2">
-                                <input 
-                                    type="radio" 
-                                    name="rent_bill_surety_name" 
-                                    id="isRentBillYes" 
-                                    value={surety.rent_bill_surety_name}
-                                    checked={ surety.rent_bill_surety_name }
-                                    onChange={(e) => setSurety({...surety, rent_bill_surety_name: true})} 
-                                />
-                                <label htmlFor="isRentBillYes">{t('yes')}</label>
+                                    <input 
+                                        type="radio" 
+                                        name="rent_bill_surety_name" 
+                                        id="isRentBillYes" 
+                                        value={surety.rent_bill_surety_name}
+                                        checked={ surety.rent_bill_surety_name }
+                                        onChange={(e) => setSurety({...surety, rent_bill_surety_name: true})} 
+                                    />
+                                    <label htmlFor="isRentBillYes">{t('yes')}</label>
                                 </div>
                                 <div className="icheck-danger d-inline mx-2">
-                                <input 
-                                    type="radio" 
-                                    id="isRentBillNo" 
-                                    name="rent_bill_surety_name" 
-                                    value={surety.rent_bill_surety_name}
-                                    checked={ !surety.rent_bill_surety_name } 
-                                    onChange={(e) => setSurety({...surety, rent_bill_surety_name: false})}
-                                />
-                                <label htmlFor="isRentBillNo">{t('no')}</label>
+                                    <input 
+                                        type="radio" 
+                                        id="isRentBillNo" 
+                                        name="rent_bill_surety_name" 
+                                        value={surety.rent_bill_surety_name}
+                                        checked={ !surety.rent_bill_surety_name } 
+                                        onChange={(e) => setSurety({...surety, rent_bill_surety_name: false})}
+                                    />
+                                    <label htmlFor="isRentBillNo">{t('no')}</label>
                                 </div>
                             </div>
                         </div>
@@ -714,10 +890,11 @@ const SuretyForm = () => {
                             <label htmlFor="">{parseInt(surety.property_type) === 1 ? t('patta_chitta') : t('rental_agreement')}<RequiredField/></label>
                             <input 
                                 type="file" 
-                                className="form-control" 
+                                className={`form-control ${errors.property_document ? 'is-invalid' : null}`} 
                                 name="property_document"
                                 onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                             />
+                            <div className="invalid-feedback">{ errors.property_document }</div>
                         </div>
                     </div>
                 
@@ -735,9 +912,7 @@ const SuretyForm = () => {
                                 <option key={index} value={e.id}>{language === 'ta' ? e.type_lname : e.type_name }</option>
                                 ))}
                             </select>
-                            <div className="invalid-feedback">
-                                { errors.employment_type }
-                            </div>
+                            <div className="invalid-feedback">{ errors.employment_type }</div>
                         </div>
                     </div>
                 </div>
@@ -754,10 +929,10 @@ const SuretyForm = () => {
                                     <input type="text" 
                                         name="employer_name" 
                                         value={surety.employer_name} 
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        onChange={(e) => handleNameChange(e, setSurety, surety, 'employer_name')}
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
                                         className={`form-control ${errors.employer_name ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.employer_name }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -766,10 +941,10 @@ const SuretyForm = () => {
                                     <input type="text" 
                                         name="designation" 
                                         value={surety.designation} 
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        onChange={(e) => handleNameChange(e, setSurety, surety, 'designation')}
-                                        className="form-control"
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
+                                        className={`form-control ${errors.designation ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.designation }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -777,7 +952,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('state')}<RequiredField/></label>
                                     <select 
                                         name="employer_state" 
-                                        className="form-control"
+                                        className={`form-control ${errors.employer_state ? 'is-invalid' : null }`}
                                         value={surety.employer_state}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -786,6 +961,7 @@ const SuretyForm = () => {
                                         <option value={state.state_code} key={index}>{state.state_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.employer_state }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -793,7 +969,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('district')}<RequiredField/></label>
                                     <select 
                                         name="employer_district"
-                                        className="form-control"
+                                        className={`form-control ${errors.employer_district ? 'is-invalid' : null }`}
                                         value={surety.employer_district}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -802,6 +978,7 @@ const SuretyForm = () => {
                                         <option value={district.district_code} key={index}>{district.district_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.employer_district }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -809,7 +986,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('taluk')}<RequiredField/></label>
                                     <select 
                                         name="employer_taluk"
-                                        className="form-control"
+                                        className={`form-control ${errors.employer_taluk ? 'is-invalid' : null }`}
                                         value={surety.employer_taluk}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -818,6 +995,7 @@ const SuretyForm = () => {
                                         <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.employer_taluk }</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -827,8 +1005,9 @@ const SuretyForm = () => {
                                         name="employer_address" 
                                         value={surety.employer_address} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        className={`form-control ${errors.employer_address ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.employer_address }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -839,8 +1018,9 @@ const SuretyForm = () => {
                                         name="service_length" 
                                         value={surety.service_length} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        className={`form-control ${errors.service_years ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.service_years }</div>
                                 </div>
                             </div>
                             <div className="col-md-2">
@@ -851,8 +1031,9 @@ const SuretyForm = () => {
                                         name="pf_amount" 
                                         value={surety.pf_amount} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
-                                        className="form-control" 
+                                        className={`form-control ${errors.pf_amount ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.pf_amount }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -862,9 +1043,10 @@ const SuretyForm = () => {
                                         name="property_details" 
                                         value={surety.property_details} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className='form-control'
+                                        className={`form-control ${errors.property_details ? 'is-invalid' : null }`}
                                         rows={1}
                                     />
+                                    <div className="invalid-feedback">{ errors.property_details }</div>
                                 </div>
                             </div>
                             <div className="col-md-5">
@@ -875,18 +1057,20 @@ const SuretyForm = () => {
                                         name="income_tax_paid" 
                                         value={surety.income_tax_paid} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        className={`form-control ${errors.income_tax_paid ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.income_tax_paid }</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
                                 <label htmlFor="">{t('upload_document')}<RequiredField/></label>
                                 <input 
                                     type="file" 
-                                    className="form-control" 
                                     name="employment_document"
                                     onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                    className={`form-control ${errors.employment_document ? 'is-invalid' : null }`}
                                 />
+                                <div className="invalid-feedback">{ errors.employment_document }</div>
                             </div>
                         </div>
                     </div>
@@ -904,7 +1088,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('state')}<RequiredField/></label>
                                     <select 
                                         name="business_state" 
-                                        className="form-control"
+                                        className={`form-control ${errors.business_state ? 'is-invalid' : null }`}
                                         value={surety.business_state}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -913,6 +1097,7 @@ const SuretyForm = () => {
                                         <option value={state.state_code} key={index}>{ state.state_name }</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.business_state }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -920,7 +1105,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('district')}<RequiredField/></label>
                                     <select 
                                         name="business_district"
-                                        className="form-control"
+                                        className={`form-control ${errors.business_district ? 'is-invalid' : null }`}
                                         value={surety.business_district}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -929,6 +1114,7 @@ const SuretyForm = () => {
                                         <option value={district.district_code} key={index}>{district.district_name}</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.business_district }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -936,7 +1122,7 @@ const SuretyForm = () => {
                                     <label htmlFor="">{t('taluk')}<RequiredField/></label>
                                     <select 
                                         name="business_taluk"
-                                        className="form-control"
+                                        className={`form-control ${errors.business_taluk ? 'is-invalid' : null }`}
                                         value={surety.business_taluk}
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})}
                                     >
@@ -945,6 +1131,7 @@ const SuretyForm = () => {
                                         <option value={taluk.id} key={index}>{ taluk.taluk_name }</option>
                                         ))}
                                     </select>
+                                    <div className="invalid-feedback">{ errors.business_taluk }</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -955,8 +1142,9 @@ const SuretyForm = () => {
                                         name="business_address" 
                                         value={surety.business_address} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className='form-control'
+                                        className={`form-control ${errors.business_address ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.business_address }</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -967,8 +1155,9 @@ const SuretyForm = () => {
                                         name="business_nature" 
                                         value={surety.business_nature} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        className={`form-control ${errors.business_nature ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.business_nature }</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -979,8 +1168,9 @@ const SuretyForm = () => {
                                         name="business_rent_paid" 
                                         value={surety.business_rent_paid} 
                                         onChange={(e) => setSurety({...surety, [e.target.name]: e.target.value})} 
-                                        className="form-control"
+                                        className={`form-control ${errors.business_rent_paid ? 'is-invalid' : null }`}
                                     />
+                                    <div className="invalid-feedback">{ errors.business_rent_paid }</div>
                                 </div>
                             </div>
                             <div className="col-md-3">
@@ -1016,10 +1206,11 @@ const SuretyForm = () => {
                                 <label htmlFor="">{t('upload_document')}<RequiredField/></label>
                                 <input 
                                     type="file" 
-                                    className="form-control" 
                                     name="business_document"
                                     onChange={(e)=> setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                    className={`form-control ${errors.business_document ? 'is-invalid' : null }`}
                                 />
+                                <div className="invalid-feedback">{ errors.business_document }</div>
                             </div>
                         </div>
                     </div>

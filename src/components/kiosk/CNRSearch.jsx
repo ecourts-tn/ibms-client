@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { useState } from 'react'
 import FormControl from '@mui/material/FormControl'
 import TextField from '@mui/material/TextField'
@@ -10,15 +11,19 @@ import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
 import Loading from 'components/utils/Loading'
 import { LanguageContext } from 'contexts/LanguageContex'
+import { formatDate, truncateChars } from 'utils'
 
 const CNRSearch = () => {
+    const {t} = useTranslation()
+    const {language} = useContext(LanguageContext)
     const[cino, setCino] = useState(null)
     const[petition, setPetition] = useState({})
-    const [errors, setErrors] = useState({})
-    const {t} = useTranslation()
+    const[litigants, setLitigants] = useState([])
+    const[objections, setObjections] = useState([])
+    const[proceedings, setProceedings] = useState([])
+    const[errors, setErrors] = useState({})
     const[loading, setLoading] = useState(false)
     const[isExist, setIsExist] = useState(false)
-    const {language} = useContext(LanguageContext)
 
     const validationSchema = Yup.object({
         cino: Yup.string().required(t('errors.cnr_required'))
@@ -31,8 +36,12 @@ const CNRSearch = () => {
             setLoading(true)
             const response = await api.post("case/search/cnr-number/", {cino})
             if(response.status === 200){
+                const { petition, litigants, objections, proceedings } = response.data
                 setIsExist(true)
-                setPetition(response.data)
+                setPetition(petition)
+                setLitigants(litigants)
+                setObjections(objections)
+                setProceedings(proceedings)
             }
         }catch(error){
             if(error.inner){
@@ -99,47 +108,47 @@ const CNRSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>{t('efile_number')}</td>
-                                    <td>{petition.petition.efile_number}</td>
+                                    <td>{petition.efile_number}</td>
                                     <td>{t('efile_date')}</td>
-                                    <td>{petition.petition.efile_date}</td>
+                                    <td>{petition.efile_date}</td>
                                 </tr>
-                                { petition.petition.judiciary.id== 2 && (
+                                { petition.judiciary.id== 2 && (
                                 <>
                                 <tr>
                                     <td>{t('state')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.state.state_lname : petition.petition.state.state_name }</td>
+                                    <td>{ language === 'ta' ? petition.state.state_lname : petition.state.state_name }</td>
                                     <td>{t('district')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.district.district_lname : petition.petition.district.district_name }</td>
+                                    <td>{ language === 'ta' ? petition.district.district_lname : petition.district.district_name }</td>
                                 </tr>
                                 <tr>
                                     <td>{t('establishment')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.establishment.establishment_lname : petition.petition.establishment.establishment_name }</td>
+                                    <td>{ language === 'ta' ? petition.establishment.establishment_lname : petition.establishment.establishment_name }</td>
                                     <td>{t('court')}</td>
-                                    <td>{ language === 'ta' ? petition.petition.court.court_lname : petition.petition.court.court_name }</td>
+                                    <td>{ language === 'ta' ? petition.court.court_lname : petition.court.court_name }</td>
                                 </tr>
                                 </>
                                 )}
-                                {  petition.petition.judiciary.id === 1 && (
+                                {  petition.judiciary.id === 1 && (
                                 <>
                                     <tr>
                                         <td>Court Type</td>
-                                        <td>{ language === 'ta' ? petition.petition.judiciary.judiciary_lname : petition.petition.judiciary.judiciary_name}</td>
+                                        <td>{ language === 'ta' ? petition.judiciary.judiciary_lname : petition.judiciary.judiciary_name}</td>
                                         <td>High Court Bench</td>
-                                        <td>{ language === 'ta' ? petition.petition.seat?.seat_lname : petition.petition.seat?.seat_name}</td>
+                                        <td>{ language === 'ta' ? petition.seat?.seat_lname : petition.seat?.seat_name}</td>
                                     </tr>
                                 </>
                                 )}
                                 <tr>
                                     <td>{t('filing_number')}</td>
-                                    <td>{ petition.petition.filing_type ? `${petition.petition.filing_type.type_name}/${petition.petition.filing_number}/${petition.petition.filing_year}` : null}</td>
+                                    <td>{ petition.filing_type ? `${petition.filing_type.type_name}/${petition.filing_number}/${petition.filing_year}` : null}</td>
                                     <td>{t('filing_date')}</td>
-                                    <td>{ petition.petition.filing_date }</td>
+                                    <td>{ petition.filing_date }</td>
                                 </tr>
                                 <tr>
                                     <td>{t('case_number')}</td>
-                                    <td>{ petition.petition.reg_type ? `${petition.petition.reg_type.type_name}/${ petition.petition.reg_number}/${ petition.petition.reg_year}` : null }</td>
+                                    <td>{ petition.reg_type ? `${petition.reg_type.type_name}/${ petition.reg_number}/${ petition.reg_year}` : null }</td>
                                     <td>{t('registration_date')}</td>
-                                    <td>{  petition.petition.registration_date }</td>
+                                    <td>{  petition.registration_date }</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -148,7 +157,7 @@ const CNRSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                        { petition.litigant.filter((l) =>l.litigant_type ===1).map((p, index) => (
+                                        { litigants.filter((l) =>l.litigant_type ===1).map((p, index) => (
                                             <p key={index}>
                                                 <strong>{index+1}. {p.litigant_name}</strong><br/>
                                                 { p.address }
@@ -163,7 +172,7 @@ const CNRSearch = () => {
                             <tbody>
                                 <tr>
                                     <td>
-                                    { petition.litigant.filter((l)=>l.litigant_type===2).map((res, index) => (
+                                    { litigants.filter((l)=>l.litigant_type===2).map((res, index) => (
                                         <React.Fragment>
                                             <p key={index}>
                                                 <strong>{index+1}. {res.litigant_name} { language === 'ta' ? res.designation?.designation_lname : res.designation?.designation_name }</strong><br/>
@@ -177,6 +186,58 @@ const CNRSearch = () => {
                                 </tr>
                             </tbody>
                         </table>
+                        { Object.keys(objections).length > 0 && (
+                        <React.Fragment>
+                            <h6 className="text-center text-danger"><strong>Objections</strong></h6>
+                            <table className="table table-bordered table-striped">
+                                <thead className='bg-secondary'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Objection Date</th>
+                                        <th>Remarks</th>
+                                        <th>Complaince Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { objections.map((o, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>{o.objection_date}</td>
+                                        <td>{o.remarks}</td>
+                                        <td>{o.complaince_date}</td>
+                                    </tr> 
+                                    ))}
+                                </tbody>
+                            </table>
+                        </React.Fragment>
+                        )}
+                        { Object.keys(proceedings).length > 0 && (
+                        <React.Fragment>
+                            <h6 className="text-center text-danger"><strong>Daily Proceedings</strong></h6>
+                            <table className="table table-bordered table-striped table-sm">
+                                <thead className='bg-info'>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Business Date</th>
+                                        <th>Business</th>
+                                        <th>Next Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    { proceedings.map((p, index) => (
+                                    <tr>
+                                        <td>{index+1}</td>
+                                        <td>
+                                            <Link to={`/proceeding/detail/`} state={{cino:p.cino, proceeding_id:p.proceeding_id}}>{ formatDate(p.order_date) }</Link>
+                                        </td>
+                                        <td>{ truncateChars(p.order_remarks, 100)}</td>
+                                        <td>{ formatDate(p.next_date) }</td>
+                                    </tr> 
+                                    ))}
+                                </tbody>
+                            </table>
+                        </React.Fragment>
+                        )}
                     </React.Fragment>
                 )}
             </div>

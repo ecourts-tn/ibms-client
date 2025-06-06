@@ -9,6 +9,8 @@ import { toast, ToastContainer } from 'react-toastify';
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css"; // Import flatpickr styles
 import { FaCalendarAlt } from 'react-icons/fa'; // Import a calendar icon (FontAwesome)
+import ListFilter from 'components/utils/ListFilter';
+import Pagination from 'components/utils/Pagination';
 
 const PostCauseList = () => {
     const { t } = useTranslation();
@@ -16,21 +18,25 @@ const PostCauseList = () => {
     const [loading, setLoading] = useState(false);
     const [cases, setCases] = useState([]);
     const [dates, setDates] = useState({}); // State to track individual dates
-    const [searchTerm, setSearchTerm] = useState('');
-
-    // Pagination state
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10); // Default items per page
-    const [totalItems, setTotalItems] = useState(0);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [count, setCount] = useState(0);
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         async function fetchData() {
             try {
                 setLoading(true);
-                const response = await api.get("court/cause-list/pending/");
+                const response = await api.get("court/cause-list/pending/", {
+                    params: {
+                        page,
+                        page_size: pageSize,
+                        search,
+                    },
+                });
                 if (response.status === 200) {
-                    setCases(response.data);
-                    setTotalItems(response.data.length);
+                    setCases(response.data.results);
+                    setCount(response.data.count);
                 }
             } catch (err) {
                 console.error(err);
@@ -39,7 +45,7 @@ const PostCauseList = () => {
             }
         }
         fetchData();
-    }, []);
+    }, [page, pageSize, count]);
 
     const formatDate = (date) => {
         if (!(date instanceof Date)) {
@@ -64,37 +70,6 @@ const PostCauseList = () => {
         });
     }, [cases]); // Runs every time the cases data changes
 
-    // Filter cases based on search term (efile_number or crime_number/year)
-    const filteredCases = cases.filter(item => {
-        const efileMatch = item.petition.efile_number.toLowerCase().includes(searchTerm.toLowerCase());
-        const crimeNumberYear = `${item.crime?.fir_number}/${item.crime?.fir_year}`;
-        const crimeMatch = crimeNumberYear.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const caseNumber = `${item.petition.reg_type?.type_name}/${item.petition.reg_number}/${item.petition.reg_year}`;
-        const caseMatch = caseNumber.toLowerCase().includes(searchTerm.toLowerCase());
-
-        return efileMatch || crimeMatch || caseMatch;
-    });
-
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentCases = filteredCases.slice(indexOfFirstItem, indexOfLastItem);
-
-    // Handle page change
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    // Handle items per page change
-    const handleItemsPerPageChange = (event) => {
-        setItemsPerPage(Number(event.target.value)); // Update items per page
-        setCurrentPage(1); // Reset to the first page whenever the items per page change
-    };
-
-    // Calculate total number of pages
-    const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(filteredCases.length / itemsPerPage); i++) {
-        pageNumbers.push(i);
-    }
 
     const handleSubmit = async (caseData, index) => {
         const hearingDate = dates[index];
@@ -121,100 +96,72 @@ const PostCauseList = () => {
     };
 
     return (
-        <div className="content-wrapper">
-            <ToastContainer />
-            {loading && <Loading />}
-            <div className="container-fluid mt-3">
+        <div className="row">
+            <div className="col-md-12">
+                <ol className="breadcrumb mt-2">
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                    <li className="breadcrumb-item"><a href="javascript:void(0)">Dashboard</a></li>
+                    <li className="breadcrumb-item active">Post Casue List</li>
+                </ol>
                 <div className="card card-outline card-primary">
+                    <ToastContainer />
+                    {loading && <Loading />}
                     <div className="card-header">
                         <h3 className="card-title">
                             <i className="fas fa-edit mr-2"></i><strong>{t('Cause List')}</strong>
                         </h3>
                     </div>
                     <div className="card-body admin-card">
-                        {/* Search and Items per page filter */}
-                        <div className="row mb-3">
-                            <label className="mr-2">{t('Search')}:</label>
-                            <div className="col-md-3">
-                                {/* Search Box */}
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder={t('Search Case or Efile or Crime number')}
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)} // Handle search input change
-                                />
-                            </div>
-
-                            <div className="col-md-1" style={{display:'flex'}}>
-                                <label className="mr-3">{t('Filter')}:</label>
-                                <select 
-                                    className="form-control col-md-6" 
-                                    value={itemsPerPage} 
-                                    onChange={handleItemsPerPageChange}
-                                >
-                                    <option value={10}>10</option>
-                                    <option value={15}>15</option>
-                                    <option value={25}>25</option>
-                                    <option value={50}>50</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        {/* Table with data */}
+                        <ListFilter 
+                            search={search}
+                            setSearch={setSearch}
+                            pageSize={pageSize}
+                            setPageSize={setPageSize}
+                            count={count}
+                        />
                         <div className="row">
                             <div className="col-md-12">
                                 <div className="table-responsive">
-                                    <table className="table table-bordered table-striped">
-                                        <thead className="bg-secondary">
+                                    <table className="table table-bordered">
+                                        <thead className="bg-info">
                                             <tr>
-                                                <th>S. NO</th>
-                                                <th>{t('Case Number or efile_number')}</th>
-                                                <th>{t('Crime Number/Year')}</th>
-                                                <th>{t('Petitioners')}</th>
-                                                <th>{t('Hearing Date')}</th>
+                                                <th width="70">{t('sl_no')}</th>
+                                                <th>{t('Case Number')}</th>
+                                                <th>{t('Crime Detail')}</th>
+                                                <th>{t('litigants')}</th>
+                                                <th width="150">{t('Hearing Date')}</th>
                                                 <th>{t('Action')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {currentCases.map((c, index) => (
+                                            {cases.map((c, index) => (
                                                 <tr key={index}>
-                                                    <td>{index + 1 + indexOfFirstItem}</td>
+                                                    <td>{index + 1 }</td>
                                                     <td>
-                                                        <Link 
-                                                            to="/court/case/scrutiny/detail" 
-                                                            state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
-                                                        >
-                                                            {c.petition?.reg_type?.type_name && c.petition?.reg_number && c.petition?.reg_year ? (
-                                                                <strong>{`${c.petition.reg_type.type_name}/${c.petition.reg_number}/${c.petition.reg_year}`}</strong>
-                                                            ) : null}
-                                                            <br />
-                                                            {c.petition?.efile_number ? (
-                                                                <strong>{c.petition.efile_number}</strong>
-                                                            ) : null}
-                                                        </Link>
-                                                        {c.petition?.efile_date ? (
-                                                            <span style={{ display: "block" }}>
-                                                                {t('efile_date')}: {formatDate(c.petition.efile_date)}
+                                                        <React.Fragment>
+                                                            <span className="text-success text-bold d-block">
+                                                                {`(${c.petition?.reg_type?.type_name}/${c.petition?.reg_number}/${c.petition?.reg_year})`}
                                                             </span>
-                                                        ) : null}
+                                                            <Link 
+                                                                to="#" 
+                                                                state={c.petition?.efile_number ? { efile_no: c.petition.efile_number } : undefined}
+                                                            >
+                                                                {c.petition?.efile_number ? (
+                                                                    <strong>{c.petition.cino}</strong>
+                                                                ) : null}
+                                                            </Link>
+                                                        </React.Fragment>
                                                     </td>
                                                     <td>
-                                                        {c.crime?.fir_number} / {c.crime?.fir_year}<br />
-                                                        {c.crime?.police_station?.station_name && (
-                                                            <span>{c.crime.police_station.station_name}, {c.crime.district?.district_name}</span>
+                                                        {c.petition?.fir_number} / {c.petition?.fir_year}<br />
+                                                        {c.petition.police_station?.station_name && (
+                                                            <span>{c.petition.police_station?.station_name}, {c.petition.district?.district_name}</span>
                                                         )}
                                                     </td>
-                                                    <td className="text-center">
-                                                        {c.litigants.filter(l => l.litigant_type === 1).map((l, idx) => (
-                                                            <span key={idx}>{l.litigant_name}</span>
-                                                        ))}
-                                                        <br />
-                                                        <span className="text text-danger">Vs</span>
-                                                        <br />
-                                                        {c.litigants.filter(l => l.litigant_type === 2).map((l, idx) => (
-                                                            <span key={idx}>{l.litigant_name} {l.designation?.designation_name}</span>
-                                                        ))}
+                                                    <td>
+                                                        { c.petition.pet_name }
+                                                            <span className="mx-2 text-danger">Vs</span>
+                                                        { c.petition.res_name}
                                                     </td>
                                                     <td>
                                                         <div className="input-group date-input">
@@ -230,11 +177,7 @@ const PostCauseList = () => {
                                                                     padding: '8px',            // Optional: Adjust padding
                                                                 }}
                                                             />
-                                                            <div className="input-group-append">
-                                                                <span className="input-group-text">
-                                                                    <FaCalendarAlt /> {/* Calendar icon inside input */}
-                                                                </span>
-                                                            </div>
+                                                            
                                                         </div>
                                                     </td>
                                                     <td>
@@ -250,30 +193,16 @@ const PostCauseList = () => {
                                         </tbody>
                                     </table>
                                 </div>
-                                
-                                {/* Pagination Controls */}
-                                <div className="d-flex justify-content-between mt-3">
-                                    <div className="pagination">
-                                        <ul className="pagination">
-                                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => paginate(currentPage - 1)}>{t('previous')}</button>
-                                            </li>
-                                            {pageNumbers.map(number => (
-                                                <li key={number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(number)}>{number}</button>
-                                                </li>
-                                            ))}
-                                            <li className={`page-item ${currentPage === pageNumbers.length ? 'disabled' : ''}`}>
-                                                <button className="page-link" onClick={() => paginate(currentPage + 1)}>{t('next')}</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="page-info">
-                                        <span>{t('showing')} {indexOfFirstItem + 1} {t('to')} {indexOfLastItem} {t('of')} {filteredCases.length} {t('entries')}</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
+                    </div>
+                    <div className="card-footer pb-0">
+                        <Pagination 
+                            page={page}
+                            setPage={setPage}
+                            count={count}
+                            pageSize={pageSize}
+                        />
                     </div>
                 </div>
             </div>

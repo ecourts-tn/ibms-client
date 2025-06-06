@@ -1,5 +1,5 @@
 import api from 'api';
-import * as Yup from 'yup'
+import * as Yup from 'yup' 
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
@@ -8,40 +8,22 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { RequiredField } from 'utils';
 import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import { JudiciaryContext } from 'contexts/JudiciaryContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { BailTypeContext } from 'contexts/BailTypeContext';
-import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import Loading from 'components/utils/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/utils/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
-import { CourtCaseTypeContext } from 'contexts/CourtCaseTypeContext';
 import { MasterContext } from 'contexts/MasterContext';
 
 
 const Initial = () => {
-    // const {states}          = useContext(StateContext)
-    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    // const {judiciaries}     = useContext(JudiciaryContext)
-    // const {seats}           = useContext(SeatContext)
-    // const {casetypes}       = useContext(CaseTypeContext)
-    // const {ccasetypes}      = useContext(CourtCaseTypeContext)
-    // const {bailtypes}       = useContext(BailTypeContext)
-    // const {complainttypes}  = useContext(ComplaintTypeContext)
-    // const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
     const { 
         masters: { 
@@ -54,6 +36,7 @@ const Initial = () => {
     const {fir, setFir, setAccused, setFirId, efileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
     const {updateStep} = useContext(StepContext)
+    const {setEfileNumber} = useContext(BaseContext)
 
     const { t } = useTranslation()
 
@@ -103,19 +86,19 @@ const Initial = () => {
             try{
                 const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
                 if(response.status === 200){
-                    const petition = response.data.petition
+                    const data = response.data.petition
                     setPetition({...petition, 
-                        judiciary: petition.judiciary?.id,
-                        seat: petition.seat?.seat_code,
-                        state: petition.state?.state_code,
-                        district: petition.district?.district_code,
-                        pdistrict: petition.pdistrict?.district_code,
-                        police_station: petition.police_station?.cctns_code,
-                        establishment: petition.establishment?.establishment_code,
-                        court: petition.court?.court_code,
-                        case_type:petition.case_type?.id,
-                        bail_type: petition.bail_type?.id,
-                        complaint_type: petition.complaint_type?.id
+                        judiciary: data.judiciary?.id,
+                        seat: data.seat?.seat_code,
+                        state: data.state?.state_code,
+                        district: data.district?.district_code,
+                        pdistrict: data.pdistrict?.district_code,
+                        police_station: data.police_station?.cctns_code,
+                        establishment: data.establishment?.establishment_code,
+                        court: data.court?.court_code,
+                        case_type:data.case_type?.id,
+                        bail_type: data.bail_type?.id,
+                        complaint_type: data.complaint_type?.id
                     })
                 }else{
                     setPetition(initialState)
@@ -324,11 +307,12 @@ const Initial = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", petition)
+            const response = efileNumber ?
+            await api.put("case/filing/", {...petition, efile_no:efileNumber}) :
+            await api.post("case/filing/", petition)
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                sessionStorage.setItem("efile_no", efile_no)
-                sessionStorage.setItem("petition", JSON.stringify(response.data))
+                setEfileNumber(efile_no)
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })

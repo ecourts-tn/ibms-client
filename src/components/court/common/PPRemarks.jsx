@@ -91,26 +91,26 @@ const PPRemarks = ({ efile_no }) => {
 
     if (Object.keys(remarks).length > 0){
         return(
-            <table className="table table-bordered table-striped">
-                <thead className='bg-secondary'>
-                    <tr>
-                        <th>#</th>
-                        <th>Accused Name</th>
-                        <th>Accused Type</th>
-                        <th>Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {remarks.map((r, index) => (
-                    <tr>
-                        <td>{index+1}</td>
-                        <td>{r.accused_name}</td>
-                        <td>{r.accused_type}</td>
-                        <td>{r.remarks}</td>
-                    </tr>
-                    ))}
-                </tbody>
-            </table>
+            <React.Fragment>
+                {remarks.map((r, index) => (
+                    <table className="table table-bordered table-striped table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Accused Name</td>
+                            <td>{r.accused_name}</td>
+                        </tr>
+                        <tr>
+                            <td>Accused Type</td>
+                            <td>{r.accused_type}</td>
+                        </tr>
+                        <tr>
+                            <td>Remarks</td>
+                            <td>{r.remarks}</td>
+                        </tr>
+                    </tbody>
+                    </table>
+                ))}
+            </React.Fragment>
         )
     }
 

@@ -22,7 +22,7 @@ const CaseScrutiny = () => {
     const[verify, setVerify] = useState('')
 
     useEffect(() => {
-        async function fetchData(){
+        async function fetchPetitionDetail(){
             try{
                 const response = await api.get(`api/bail/petition/detail/`, {params: {cino:state.cino}})
                 const { petition, petitioner, grounds, respondent,advocate} = response.data
@@ -35,7 +35,7 @@ const CaseScrutiny = () => {
                 console.log(err)
             }
         }
-        fetchData();
+        fetchPetitionDetail();
     }, [state.cino])
 
 

@@ -373,11 +373,15 @@
     "court_detail": "நீதிமன்ற விவரங்கள்",
     "payment": "கட்டண விவரங்கள்",
     "efile": "சமர்ப்பி",
+    "declaration": "உறுதிமொழி",
     "efile_date": "வழக்கு தாக்கல் தேதி",
     "download": "பதிவிறக்க",
     "main_case_detail": "முதன்மை வழக்கு விவரங்கள்",
     "jurisdiction": "அதிகார வரம்பு",
     "magistrate_court": "மாஜிஸ்திரேட் நீதிமன்றம்",
+    "case_management": "வழக்கு மேலாண்மை",
+    "case_allocation": "வழக்கு ஒதுக்கீடு",
+
     "alerts": {
         "select_state": "மாநிலத்தைத் தேர்ந்தெடு",
         "select_district": "மாவட்டத்தை தேர்ந்தெடு",
@@ -464,6 +468,8 @@
         "adv_email_required": "வழக்கறிஞர் மின்னஞ்சல் முகவரியை உள்ளிடவும்",
         "dob_required": "சரியான பிறந்த தேதியை உள்ளிடவும்",
         "cnr_required": "CNR எண்ணை உள்ளிடவும்",
-        "captcha_required":"கேப்ட்சாவை உள்ளிடவும்"
+        "captcha_required":"கேப்ட்சாவை உள்ளிடவும்",
+        "something_wrong": "ஏதோ தவறாகிவிட்டது. தயவுசெய்து பின்னர் முயற்சிக்கவும்!"
+
     }
 }

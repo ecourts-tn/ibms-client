@@ -8,40 +8,22 @@ import { toast, ToastContainer } from 'react-toastify';
 import { useLocalStorage } from "hooks/useLocalStorage";
 import { RequiredField } from 'utils';
 import { BaseContext } from 'contexts/BaseContext';
-import { DistrictContext } from 'contexts/DistrictContext';
-import { StateContext } from 'contexts/StateContext';
 import { EstablishmentContext } from 'contexts/EstablishmentContext';
 import { CourtContext } from 'contexts/CourtContext';
-import { JudiciaryContext } from 'contexts/JudiciaryContext';
-import { SeatContext } from 'contexts/SeatContext';
-import { BailTypeContext } from 'contexts/BailTypeContext';
-import { ComplaintTypeContext } from 'contexts/ComplaintTypeContext';
 import { useTranslation } from 'react-i18next';
 import { LanguageContext } from 'contexts/LanguageContex';
-import { PoliceDistrictContext } from 'contexts/PoliceDistrictContext';
 import { PoliceStationContext } from 'contexts/PoliceStationContext';
 import Loading from 'components/utils/Loading'
 import Select from 'react-select'
 import FIRDetails from 'components/utils/FIRDetails'
 import { StepContext } from 'contexts/StepContext';
 import { AgencyContext } from 'contexts/AgencyContext';
-import { CaseTypeContext } from 'contexts/CaseTypeContext';
-import { CourtCaseTypeContext } from 'contexts/CourtCaseTypeContext';
 import { MasterContext } from 'contexts/MasterContext';
 
 
 const Initial = () => {
-    // const {states}          = useContext(StateContext)
-    // const {districts}       = useContext(DistrictContext)
     const {establishments}  = useContext(EstablishmentContext)
     const {courts}          = useContext(CourtContext)
-    // const {judiciaries}     = useContext(JudiciaryContext)
-    // const {seats}           = useContext(SeatContext)
-    // const {casetypes}       = useContext(CaseTypeContext)
-    // const {ccasetypes}      = useContext(CourtCaseTypeContext)
-    // const {bailtypes}       = useContext(BailTypeContext)
-    // const {complainttypes}  = useContext(ComplaintTypeContext)
-    // const {policeDistricts} = useContext(PoliceDistrictContext)
     const {policeStations}  = useContext(PoliceStationContext)
     const { 
         masters: { 
@@ -51,11 +33,10 @@ const Initial = () => {
     } = useContext(MasterContext);
     
     const {language}        = useContext(LanguageContext)
-    const {fir, setFir, setAccused, setFirId, efileNumber} = useContext(BaseContext)
+    const {setAccused, efileNumber, setEfileNumber} = useContext(BaseContext)
     const { agencies } = useContext(AgencyContext)
-    const {updateStep} = useContext(StepContext)
-
     const { t } = useTranslation()
+    const { setCurrentStep, saveStepStatus } = useContext(StepContext)
 
     const initialState = {
         judiciary: 1,
@@ -101,21 +82,21 @@ const Initial = () => {
     useEffect(() => {
         const getPetitionDetail = async() => {
             try{
-                const response = await api.get(`case/filing/detail/`, {params:{efile_no:efileNumber}})
+                const response = await api.get(`case/filing/detail/`, {params:{efile_no: efileNumber}})
                 if(response.status === 200){
-                    const petition = response.data.petition
+                    const data = response.data.petition
                     setPetition({...petition, 
-                        judiciary: petition.judiciary?.id,
-                        seat: petition.seat?.seat_code,
-                        state: petition.state?.state_code,
-                        district: petition.district?.district_code,
-                        pdistrict: petition.pdistrict?.district_code,
-                        police_station: petition.police_station?.cctns_code,
-                        establishment: petition.establishment?.establishment_code,
-                        court: petition.court?.court_code,
-                        case_type:petition.case_type?.id,
-                        bail_type: petition.bail_type?.id,
-                        complaint_type: petition.complaint_type?.id
+                        judiciary: data.judiciary?.id,
+                        seat: data.seat?.seat_code,
+                        state: data.state?.state_code,
+                        district: data.district?.district_code,
+                        pdistrict: data.pdistrict?.district_code,
+                        police_station: data.police_station?.cctns_code,
+                        establishment: data.establishment?.establishment_code,
+                        court: data.court?.court_code,
+                        case_type:data.case_type?.id,
+                        bail_type: data.bail_type?.id,
+                        complaint_type: data.complaint_type?.id
                     })
                 }else{
                     setPetition(initialState)
@@ -136,10 +117,9 @@ const Initial = () => {
             try{
                 const response = await api.get(`base/court/detail/`, {params:{id:magistrateCourt}})
                 if(response.status === 200){
-                    console.log(response.data)
                     setPetition({
                         ...petition,
-                        court: response.data.court_code,
+                        // court: response.data.court_code,
                         establishment: response.data.establishment,
                     })
                 }
@@ -185,6 +165,8 @@ const Initial = () => {
         case_type: Yup.string().required('errors.case_type_required'),
         bail_type: Yup.string().required(t('errors.bail_required')),
         complaint_type: Yup.string().required(t('errors.complaint_required')),
+        // fir_number: Yup.string()
+        //     .matches().nullable()
     })
 
     const FirValidationSchema = Yup.object({
@@ -192,8 +174,72 @@ const Initial = () => {
         district: Yup.string().required(t('errors.district_required')),
         pdistrict: Yup.string().required(t('errors.police_district_required')),
         police_station: Yup.string().required(t('errors.police_station_required')),
-        fir_number: Yup.string().required(t('errors.fir_number_required')),
-        fir_year: Yup.string().required(t('errors.fir_year_required')),
+        fir_number: Yup.string()
+            .required(t('errors.fir_number_required'))
+            .matches(/^\d{1,5}$/, 'Only digits allowed max 5'),
+        fir_year: Yup.string()
+            .required(t('errors.year_required'))
+            .matches(/^\d{4}$/, t('errors.invalid_year_format')) // Must be 4 digits
+            .test(
+                'is-not-future',
+                t('errors.future_year_not_allowed'), // e.g., "Year cannot be in the future"
+                (value) => {
+                const currentYear = new Date().getFullYear();
+                return value && parseInt(value, 10) <= currentYear;
+                }
+            ),
+    })
+    const CaseValidationSchema = Yup.object({
+        state: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.state_required'))
+            }
+        }),
+        district: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.district_required'))
+            }
+        }),
+        establishment: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.establishment_required'))
+            }
+        }),
+        court: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.court_required'))
+            }
+        }),
+        cnr_number: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 1){
+                return schema.required().matches(/^TN[A-Z]{2}[0-9][A-F0-9]\d{6}\d{4}$/, "Enter valid CNR Number")
+            }
+        }),
+        cis_case_type: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.police_station_required'))
+            }
+        }),
+        case_number: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.case_number_required'))
+                .matches(/^\d{1,5}$/, 'Only digits allowed max 5')
+            }
+        }),
+        case_year: Yup.string().when("search_type", (search_type, schema) => {
+            if(parseInt(search_type) === 2){
+                return schema.required(t('errors.year_required'))
+                .matches(/^\d{4}$/, t('errors.invalid_year_format')) // Must be 4 digits
+                .test(
+                    'is-not-future',
+                    t('errors.future_year_not_allowed'), // e.g., "Year cannot be in the future"
+                    (value) => {
+                    const currentYear = new Date().getFullYear();
+                    return value && parseInt(value, 10) <= currentYear;
+                    }
+                )
+            }
+        }),
     })
 
     const handleCheckPending = async(e) => {
@@ -291,6 +337,7 @@ const Initial = () => {
     const handleCaseSearch = async() => {
         try{
             setLoading(true)
+            await CaseValidationSchema.validate(petition, {abortEarly:false})
             const response = await api.get(`external/ecourt/case-detail`, {params:
                 {
                     establishment:petition.establishment,
@@ -308,6 +355,15 @@ const Initial = () => {
                 setAccused(accused)
             }
         }catch(error){
+            console.log(error)
+            console.log(error.inner)
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach((err) => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
             if(error.response){
                 if(error.response.status === 500){
                     toast.error("Internal server error", {
@@ -324,16 +380,29 @@ const Initial = () => {
         e.preventDefault()
         try{
             await validationSchema.validate(petition, { abortEarly:false})
-            const response = await api.post("case/filing/create/", petition)
+            const response = efileNumber 
+                ? await api.put("case/filing/", {...petition, efile_no:efileNumber}) // Updating an existing filing
+                : await api.post("case/filing/", petition ); // Creating a new filing
             if(response.status === 201){
                 const efile_no = response.data.efile_number
-                sessionStorage.setItem("efile_no", efile_no)
-                sessionStorage.setItem("petition", JSON.stringify(response.data))
+                setEfileNumber(efile_no)
                 toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
                     theme:"colored"
                 })
+                setCurrentStep(2)
+                saveStepStatus()
                 setIsSubmitted(true); 
-                updateStep(efile_no, 2)
+            }
+            if(response.status === 200){
+                const efile_no = response.data.efile_number
+                setEfileNumber(efile_no)
+                
+                toast.success(t('alerts.submit_success').replace('{efile_no}', efile_no), {
+                    theme:"colored"
+                })
+                setCurrentStep(2)
+                saveStepStatus()
+                setIsSubmitted(true); 
             }
           }catch(error){
             if (error.inner){
@@ -487,7 +556,12 @@ const Initial = () => {
                             name="fir_number"
                             className={`${errors.fir_number ? 'is-invalid': ''}`}
                             value={petition.fir_number}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 5) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Crime Number'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.fir_number }</div>
@@ -499,7 +573,12 @@ const Initial = () => {
                             name="fir_year"
                             className={`${errors.fir_year ? 'is-invalid' : ''}`}
                             value={petition.fir_year}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 4) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Year'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.fir_year }</div>
@@ -565,7 +644,7 @@ const Initial = () => {
                     <div className="col-md-2">
                         <Button 
                             variant="info"
-                            onClick={ handleSearch }
+                            onClick={ handleCaseSearch }
                         ><i className="fa fa-search mr-2"></i>{t('search')}</Button>
                     </div>
                 </div>
@@ -725,7 +804,12 @@ const Initial = () => {
                             name="case_number"
                             value={petition.case_number}
                             className={`${errors.case_number ? 'is-invalid' : ''}`}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value })}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 5) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Case Number'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.case_number }</div>
@@ -735,7 +819,12 @@ const Initial = () => {
                             name="case_year"
                             value={petition.case_year}
                             className={`${errors.case_year ? 'is-invalid' : ''}`}
-                            onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/\D/g, '');
+                                if (value.length <= 4) {
+                                  setPetition({...petition, [e.target.name]: value});
+                                }
+                            }}
                             placeholder='Year'
                         ></Form.Control>
                         <div className="invalid-feedback">{ errors.case_year }</div>   
@@ -750,7 +839,7 @@ const Initial = () => {
                 </React.Fragment> 
                 )}
                 <div className="form-group row mb-4">
-                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}</label>
+                    <label htmlFor="" className="col-sm-2 col-form-label">{t('jurisdiction')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
                             name="judiciary" 
@@ -877,7 +966,7 @@ const Initial = () => {
                             { errors.establishment }
                         </div>
                     </div>
-                    <label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
+                    { /*<label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
                             name="court" 
@@ -896,7 +985,7 @@ const Initial = () => {
                         <div className="invalid-feedback">
                             { errors.court }
                         </div>
-                    </div>
+                    </div> */}
                 </div>  
                 </React.Fragment>    
                 )}
@@ -911,7 +1000,7 @@ const Initial = () => {
                             onChange={(e) => setPetition({...petition, [e.target.name]: e.target.value})}
                         >
                             <option value="">{t('alerts.select_case_type')}</option>
-                            { casetypes.filter((c) => c.id === 1 || c.id === 2).map((c, index) => (
+                            { casetypes.filter((c) => c.id === 1 || c.id === 2 ).map((c, index) => (
                             <option key={index} value={c.id}>{ language === 'ta' ? c.type_lfull_form : c.type_full_form }</option>
                             ))}
                         </select>

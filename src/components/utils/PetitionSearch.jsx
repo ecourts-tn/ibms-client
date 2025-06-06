@@ -10,16 +10,17 @@ import api from 'api'
 import { ToastContainer, toast } from 'react-toastify'
 import { MasterContext } from 'contexts/MasterContext'
 
-const PetitionSearch = ({cases, mainNumber, setMainNumber}) => {
+const PetitionSearch = ({cases, mainNumber, setMainNumber, setPetition, setPetitioners, setRespondents, setBail, setIsPetition}) => {
 
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
-    // const {states} = useContext(StateContext)
-    // const {districts} = useContext(DistrictContext)
     const {establishments} = useContext(EstablishmentContext)
-    // const {seats} = useContext(SeatContext)
-    // const {casetypes} = useContext(CaseTypeContext)
-    const {masters: {states, districts, seats, casetypes}} = useContext(MasterContext)
+    const {masters: {
+        states, 
+        districts, 
+        seats, 
+        casetypes
+    }} = useContext(MasterContext)
 
     const [searchType, setSearchType] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -67,7 +68,24 @@ const PetitionSearch = ({cases, mainNumber, setMainNumber}) => {
             await validationSchema.validate(form, {abortEarly:false})
             const response = await api.post("case/approved/single/", form)
             if(response.status === 200){
-                setMainNumber(response.data.efile_number)
+                const {petition:main, litigants} = response.data
+                    setIsPetition(true)
+                    setBail(main)
+                    setPetitioners(litigants.filter(l=>l.litigant_type===1))
+                    setRespondents(litigants.filter(l=>l.litigant_type===2))
+                    setPetition((prevPetition) => ({
+                        ...prevPetition,
+                        judiciary: main.judiciary?.id,
+                        bench_type: main.bench_type ? main.bench_type.bench_code : null,
+                        state: main.state ? main.state.state_code : null,
+                        district: main.district ? main.district.district_code : null,
+                        establishment: main.establishment ? main.establishment.establishment_code : null,
+                        court: main.court ? main.court.court_code : null,
+                        bail_type: main.bail_type ? main.bail_type.type_code : null,
+                        complaint_type: main.complaint_type ? main.complaint_type.id : null,
+                        crime_registered: main.crime_registered ? main.crime_registered.id : null,
+                        main_petition: main.efile_number,
+                    }));
             }
         }
         catch(error){

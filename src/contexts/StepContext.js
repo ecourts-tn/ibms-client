@@ -1,45 +1,72 @@
+import React, { useState, useEffect, createContext, useMemo, useContext, useRef } from 'react';
+import api from 'api';
+import { BaseContext } from './BaseContext';
 
-import React, {useState, useEffect, createContext, useMemo} from 'react'
-import api from 'api'
+export const StepContext = createContext();
 
-export const StepContext = createContext()
+export const StepProvider = ({ children }) => {
+    const [currentStep, setCurrentStep] = useState(1);
+    const [completedSteps, setCompletedSteps] = useState([]);
+    const { efileNumber } = useContext(BaseContext);
 
-export const StepProvider = ({children}) => {
-    const[currentStep, setCurrentStep] = useState(1)
-
+ 
     useEffect(() => {
-        const efile_no = sessionStorage.getItem("efile_no")
-        const getCurrentType = async() => {
-            try{
-                const response = await api.get("case/step-status/", {params:{efile_no}})
-                if(response.status === 200){
-                    setCurrentStep(response.data)
-                }
-            }catch(error){
-                console.error(error)
+        const getCurrentStepStatus = async () => {
+          try {
+            const response = await api.get("case/step-status/", {
+              params: { efile_no: efileNumber }
+            });
+            if (response.status === 200) {
+              setCurrentStep(response.data.current_step);
+              setCompletedSteps(response.data.completed_steps || []);
             }
-        }
-        if(efile_no){
-            getCurrentType();
-        }
-    },[])
+          } catch (error) {
+            console.error(error);
+          }
+        };
+      
+        if (efileNumber) getCurrentStepStatus();
+      }, [efileNumber]);
+      
+      
+  
+   // ✅ New method to trigger POST manually
+   const saveStepStatus = async () => {
+    if (!efileNumber) return;
 
-    const updateStep = async(efile_no, step) => {
-        try{
-            const response = await api.post(`case/step-status/`, {efile_no, step})
-            if(response.status === 200){
-                setCurrentStep(response.data.step)
-            }
-        }catch(error){
-            console.log(error)
+    try {
+        const newCompletedSteps = Array.from(new Set([
+            ...completedSteps,
+            currentStep - 1
+        ])).filter(step => step > 0);
+
+        const response = await api.post("case/step-status/", {
+            efile_no: efileNumber,
+            active_step: currentStep,
+            completed_steps: newCompletedSteps
+        });
+
+        if (response.status === 200) {
+            setCompletedSteps(response.data.completed_steps || []);
         }
+    } catch (error) {
+        console.log(error);
     }
+};
+      
 
-    const contextValue = useMemo(()=>({currentStep,setCurrentStep, updateStep}), [currentStep])
-
+  
+    const contextValue = useMemo(() => ({
+      currentStep,
+      completedSteps,
+      setCurrentStep,
+      saveStepStatus
+    }), [currentStep, completedSteps]);
+  
     return (
-        <StepContext.Provider value={contextValue}>
-            {children}
-        </StepContext.Provider>
-    )
-}
+      <StepContext.Provider value={contextValue}>
+        {children}
+      </StepContext.Provider>
+    );
+  };
+  

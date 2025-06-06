@@ -12,13 +12,13 @@ const Header = () => {
   const { isAuth, user, logout } = useContext(AuthContext); // Consume AuthContext
   const navigate = useNavigate();
   const { t } = useTranslation();
-
   const handleHomeClick = (event) => {
     if (isAuth) {
       event.preventDefault(); // Prevent navigation if authenticated
     }
   };
 
+  console.log("User authenticated:", isAuth)
 
   const handleLogout = async () => {
     try {
@@ -79,10 +79,18 @@ const Header = () => {
                   </div>
                 </li>
               )}
-              <li className="nav-item">
-                <button className="btn btn-sm btn-warning mt-1 ml-2 px-3" onClick={toggleLanguage}>
+              <li className="nav-item mt-2">
+                <select 
+                  value={language}
+                  onChange={(e) => toggleLanguage(e.target.value)}
+                >
+                  <option value="">Language</option>
+                  <option value="en">English</option>
+                  <option value="ta">Tamil</option>
+                </select>
+                {/* <a className="text-white" onClick={toggleLanguage}>
                   <strong>{language === 'en' ? 'Tamil' : 'ஆங்கிலம்'}</strong>
-                </button>
+                </a> */}
               </li>
             </ul>
           </div>
@@ -127,6 +135,26 @@ const Header = () => {
               {isAuth && (
               <li className="nav-item">
                 <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
+              </li>
+              )}
+              { parseInt(user?.department) === 5 && (
+                <li className="nav-item dropdown">
+                  <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
+                    {t('PP Remarks')}
+                  </a>
+                  <div className="dropdown-menu">
+                    <li className="nav-item">
+                      <Link to="/pp-remarks/pending/" className="nav-link">Pending Remarks</Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link to="/pp-remarks/submitted" className="nav-link">Submitted Remarks</Link>
+                    </li>   
+                  </div>    
+                </li>
+              )}
+              {isAuth && (
+              <li className="nav-item">
+                <Link to="/filing/court-fee" className="nav-link">{t('payment')}</Link>
               </li>
               )}
               <li className="nav-item dropdown">
