@@ -19,7 +19,8 @@ const Document = () => {
     const {language}  = useContext(LanguageContext)
     const initialState = {
         title: '',
-        document: ''
+        document: '',
+        enrollment: ''
     }
     const {efileNumber} = useContext(BaseContext)
     const[form, setForm] = useState(initialState)
@@ -31,11 +32,19 @@ const Document = () => {
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
     const[selectedDocument, setSelectedDocument] = useState(null);
-    const[showAffidavit, setShowAffidavit] = useState(false)
+    const[showAffidavit, setShowAffidavit] = useState(true)
 
     const validationSchema = Yup.object({
         title: Yup.string().required('Please select the document'),
-        document: Yup.string().required('Please choose a file')
+        document: Yup.string().required('Please choose a file'),
+        enrollment: Yup.string()
+            .nullable()
+            .when('$showAffidavit', {
+            is: true,
+            then: schema => schema.required('Please enter enrollment number'),
+            otherwise: schema => schema.notRequired(),
+        }),
+
     })
     
     const handleShow = (document) => {
@@ -46,6 +55,39 @@ const Document = () => {
     const handleClose = () => {
         setSelectedDocument(null);
     };
+
+    const handleSwornAffidavit = async() => {
+        // if(form.enrollment === ''){
+        //     setErrors({...errors, enrollment: "Please enter enrollment number"})
+        //     return 
+        // }else{
+        //     setMobileOtp(true)
+        // }
+        try{
+            await validationSchema.validate(form, { context: {showAffidavit}, abortEarly:false})
+            setLoading(true)
+            const response = await api.post('auth/affidavit/', { enrollment: form.enrollment})
+            if(response.status === 200){
+                toast.success(response.data.message,{
+                    theme:"colored"
+                })
+                setMobileOtp(true)
+            }
+        }catch(error){
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
+            if(error.response?.status === 400){
+                toast.error(error.response.data.message, { theme:'colored'})
+            }
+        }finally{
+            setLoading(false)
+        }
+    }
 
     useEffect(() => {
         const fetchPetitionDetail = async() => {
@@ -67,12 +109,7 @@ const Document = () => {
     },[efileNumber])
 
     const sendMobileOTP = () => {
-        // if(otp === ''){
-        //     toast.error("Please enter valid mobile number",{
-        //         theme:"colored"
-        //     })
-        // }else{
-            // setMobileLoading(true)
+
         if(mobileOtp){
             toast.success("OTP already verified successfully.", {
                 theme: "colored"
@@ -83,7 +120,6 @@ const Document = () => {
                 theme:"colored"
             })
             setMobileOtp(true)
-        // }
     }
 
     const verifyMobile = (otp) => {
@@ -264,15 +300,19 @@ const Document = () => {
                     <div className="col-md-3">
                         <input 
                             type="text" 
-                            className="form-control" 
+                            name="enrollment"
+                            value={form.enrollment}
+                            className={`form-control ${errors.enrollment ? 'is-invalid' : ''}`} 
                             placeholder='Enrollment No. (MS/xxx/yyyy)'
+                            onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                         />
+                        <div className="invalid-feedback">{ errors.enrollment}</div>
                     </div>
                     <div className="col-md-3">
                         <Button 
                             variant="contained"
                             color="primary"
-                            onClick={sendMobileOTP}
+                            onClick={handleSwornAffidavit}
                             endIcon={<SendIcon />}
                         >{t('sworn_affidavit')}</Button>
                     </div>

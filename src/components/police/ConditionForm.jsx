@@ -14,9 +14,12 @@ import { PoliceStationContext } from 'contexts/PoliceStationContext'
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { AuthContext } from 'contexts/AuthContext'
 import PetitionList from './PetitionList'
+import { useTranslation } from 'react-i18next'
+import Loading from 'components/utils/Loading'
 
 const ConditionForm = () => {
     const {state} = useLocation()
+    const { t } = useTranslation()
     const {user} = useContext(AuthContext)
     const {policeStations} = useContext(PoliceStationContext)
     const {establishments} = useContext(EstablishmentContext)
@@ -28,13 +31,15 @@ const ConditionForm = () => {
     const initialState = {
         crime_number: '',
         crime_year: '',
-        accused_name:'',
+        accused: '',
         condition_date: '',
         condition_time:'',
         remarks: '',
         is_present:false,
         is_fingerprint:false,
-        is_photo:false
+        is_photo:false,
+        photo: '',
+        fingerprint:''
     }
     const[form, setForm] = useState(initialState)
     const [searchForm, setSearchForm] = useState({
@@ -50,18 +55,116 @@ const ConditionForm = () => {
             case_number:'',
             case_year:''
         })
-    const[searchErrors, setSearchErrors] = useState([])
-    const searchValidationSchema = Yup.object({
-        search: Yup.string().required(),
-        state: Yup.string().required()
-    })
-    const [errors, setErrors] = useState([])
+    const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
     const [caseFound, setCaseFound] = useState(false)
     const [petition, setPetition] = useState({})
     const [petitions, setPetitions] = useState([])
     const[efileNumber, setEfileNumber] = useState('')
     const [accused, setAccused] = useState([])
+    const[searchErrors, setSearchErrors] = useState({})
+    const searchValidationSchema = Yup.object({
+        search_type: Yup.string().required(),
+        state: Yup.string().required(t('errors.state_required')),
+        district: Yup.string().required(t('errors.district_required')),
+        police_station: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Police station is required')
+                }
+                return schema.notRequired()
+            }),
+        crime_number: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Crime number is required').matches(/^\d{1-6}$/, 'Crime number is required')
+                }
+                return schema.notRequired()
+            }),
+        crime_year: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Crime year is required').matches(/^\d{4}$/, 'Year must be exactly 4 digits')
+                }
+                return schema.notRequired()
+            }),
+        establishment: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Establishment is required')
+                }
+                return schema.notRequired()
+            }),
+        case_type: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case type is required')
+                }
+                return schema.notRequired()
+            }),
+        case_number: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case number is required').matches(/^\d{1-6}$/, 'Case number is required')
+                }
+                return schema.notRequired()
+            }),
+        case_year: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case year is required').matches(/^\d{4}$/, 'Year must be exactly 4 digits')
+                }
+                return schema.notRequired()
+            })
+    })
+
+    const validationSchema = Yup.object({
+        crime_number: Yup.string().required('Crime number is required').matches(/\d{1-6}/g, 'Crime number should be numeric'),
+        crime_year: Yup.string().required('Crime year is required').matches(/\d{1-4}/g, 'Year must be exactly 4 digits'),
+        accused: Yup.string().required('Accused name is required'),
+        condition_date: Yup.string().required('Condition date is required'),
+        condition_time: Yup.string().required('Condition time is required'),
+        remarks: Yup.string().nullable(),
+        is_present: Yup.boolean().required('This field is required'),
+        is_fingerprint:Yup.boolean()
+            .nullable()
+            .when('is_present', {
+                is: true,
+                then: schema => schema.required('Capture fingerprint is required'),
+                otherwise: schema => schema.notRequired()
+            }),
+        is_photo: Yup.string()
+            .nullable()
+            .when('is_present', {
+                is: true,
+                then: schema => schema.required('Capture photo is required'),
+                otherwise: schema => schema.notRequired()
+            }),
+        photo: Yup.string()
+            .nullable()
+            .when('is_photo', {
+                is: true,
+                then: schema => schema.required('Capture photo is required'),
+                otherwise: schema => schema.notRequired()
+            }),
+        fingerprint: Yup.string()
+            .nullable()
+            .when('is_fingerprint', {
+                is: true,
+                then: schema => schema.required('Capture photo is required'),
+                otherwise: schema => schema.notRequired()
+            }),
+
+    })
+
+
 
     useEffect(() => {
         if(user){
@@ -127,6 +230,7 @@ const ConditionForm = () => {
         setLoading(true)
         setCaseFound(false)
         try{
+            await searchValidationSchema.validate(searchForm, { abortEarly: false})
             const url = parseInt(searchForm.search_type) === 1 ? `police/search/crime/list/` : 'police/search/case/'
             const response = await api.post(url, searchForm)
             if(response.status === 200){
@@ -143,6 +247,14 @@ const ConditionForm = () => {
                 }
             }
         }catch(error){
+            if(error.inner){
+                console.log(error.inner)
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setSearchErrors(newErrors)
+            }
             if(error.response){
                 switch(error.response.status){
                     case 404:
@@ -195,8 +307,29 @@ const ConditionForm = () => {
         }
     }, [efileNumber])
 
+    const handleSubmit = async() => {
+        try{
+            await validationSchema.validate(form, { abortEarly: false })
+            const response = await api.post(``)
+            if(response.status === 201){
+                toast.success("Condition details updated successfully", { theme: "colored"})
+            }
+        }catch(error){
+            if(error.inner){
+                console.log(error.inner)
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
+        }
+
+    }
+
     return (
         <div className="card card-outline card-primary">
+            { loading && <Loading />} <ToastContainer />
             <div className="card-header">
                 <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Condition Compliance</strong></h3>
             </div>
@@ -304,7 +437,12 @@ const ConditionForm = () => {
                                                             className={`form-control ${searchErrors.crime_number ? 'is-invalid' : ''}`} 
                                                             name="crime_number"
                                                             value={searchForm.crime_number}
-                                                            onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
+                                                            onChange={(e) => {
+                                                                const value = e.target.value.replace(/\D/g, '')
+                                                                if(value.length <= 6){
+                                                                    setSearchForm({...searchForm, [e.target.name]: value })
+                                                                }}
+                                                            }
                                                         />
                                                         <div className="invalid-feedback">
                                                             { searchErrors.crime_number }
@@ -335,8 +473,7 @@ const ConditionForm = () => {
                                                         <label htmlFor="establishment">Establishment Name<RequiredField /></label>
                                                         <select 
                                                             name="establishment" 
-                                                            id="establishment" 
-                                                            className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
+                                                            className={`form-control ${searchErrors.establishment ? 'is-invalid' : null}`}
                                                             value={searchForm.establishment}
                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]:e.target.value})}
                                                         >
@@ -348,7 +485,7 @@ const ConditionForm = () => {
                                                             }
                                                         </select>
                                                         <div className="invalid-feedback">
-                                                            { errors.establishment }
+                                                            { searchErrors.establishment }
                                                         </div>
                                                     </div>
                                                 </div>
@@ -423,44 +560,68 @@ const ConditionForm = () => {
                         setEfileNumber={setEfileNumber}
                     />
                 )}
-                { caseFound && (
+                { !caseFound && (
                     <React.Fragment>
                         <div className="row mt-4">
                             <div className="col-md-10 offset-md-1">
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Crime Number</label>
-                                            <div className="col-sm-6">
+                                            <label htmlFor="" className="col-sm-3">Crime Number <RequiredField /></label>
+                                            <div className="col-sm-3">
                                                 <input 
                                                     type="text"
                                                     name="crime_number" 
-                                                    className="form-control"
+                                                    className={`form-control ${errors.crime_number ? 'is-invalid' : null}`}
                                                     value={form.crime_number}
-                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '')
+                                                        if(value.length <= 6){
+                                                            setForm({...form, [e.target.name]: value})
+                                                        }}
+                                                    }
+                                                    placeholder='FIR No'
                                                 />
+                                                <div className="invalid-feedback">{ errors.crime_number}</div>
+                                            </div>
+                                            <div className="col-sm-3">
+                                                <input 
+                                                    type="text"
+                                                    name="crime_year" 
+                                                    className={`form-control ${errors.crime_year ? 'is-invalid' : null}`}
+                                                    value={form.crime_year}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '')
+                                                        if(value.length <= 4){
+                                                            setForm({...form, [e.target.name]: e.target.value})
+                                                        }}
+                                                    }
+                                                    placeholder='FIR Year'
+                                                />
+                                                <div className="invalid-feedback">{ errors.crime_year}</div>
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Accused Name</label>
+                                            <label htmlFor="" className="col-sm-3">Accused Name <RequiredField /></label>
                                             <div className="col-sm-6">
                                                 <select 
                                                     name="accused"
-                                                    className="form-control"
+                                                    className={`form-control ${errors.accused ? 'is-invalid' : null}`}
                                                 >
                                                     <option value="">Select accused</option>
                                                     { accused.map((a, index) => (
                                                     <option key={index} value={a.litigant_id}>{a.litigant_name}</option>
                                                     ))}
                                                 </select>
+                                                <div className="invalid-feedback">{ errors.accused }</div>
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Condition Date</label>
+                                            <label htmlFor="" className="col-sm-3">Condition Date <RequiredField /></label>
                                             <div className="col-sm-6">
                                                 <input 
                                                     type="date" 
-                                                    className="form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}` "
+                                                    className={`form-control condition_date-date-picker ${errors.condition_date ? 'is-invalid' : ''}`}
                                                     name="condition_date"
                                                     value={form.condition_date ? form.condition_date : ''}
                                                     placeholder="DD-MM-YYYY"
@@ -471,18 +632,20 @@ const ConditionForm = () => {
                                                         padding: '8px',            
                                                     }}
                                                 />
+                                                <div className="invalid-feedback">{ errors.condition_date }</div>
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label htmlFor="" className="col-sm-3">Condition Time</label>
+                                            <label htmlFor="" className="col-sm-3">Condition Time <RequiredField /></label>
                                             <div className="col-sm-6">
                                                 <input 
                                                     type="text" 
-                                                    className="form-control"
+                                                    className={`form-control ${errors.condition_time ? 'is-invalid' : ''}`}
                                                     name="condition_time"
                                                     value={form.condition_time}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})} 
                                                 />
+                                                <div className="invalid-feedback">{ errors.condition_time }</div>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -509,8 +672,7 @@ const ConditionForm = () => {
                                                         checked={form.is_present}
                                                         onChange={(e) => setForm({...form, [e.target.name]: !form.is_present})}
                                                     />
-                                                    <label for="isPresentCheckbox">
-                                                    </label>
+                                                    <label for="isPresentCheckbox"></label>
                                                 </div>
                                             </div>
                                         </div>
@@ -528,8 +690,8 @@ const ConditionForm = () => {
                                                                 checked={form.is_fingerprint}
                                                                 onChange={(e) => setForm({...form, [e.target.name]: !form.is_fingerprint})}
                                                             />
-                                                            <label for="fingerprintCheckbox">
-                                                            </label>
+                                                            <label for="fingerprintCheckbox"></label>
+                                                            <div className="text-danger">{ errors.is_fingerprint }</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -563,6 +725,7 @@ const ConditionForm = () => {
                                                 <Button
                                                     variant='contained'
                                                     color='success'
+                                                    onClick={handleSubmit}
                                                 >Submit</Button>
                                             </div>
                                         </div>

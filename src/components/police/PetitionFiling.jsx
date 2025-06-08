@@ -32,7 +32,7 @@ const PetitionFiling = () => {
     const {language} = useContext(LanguageContext)
     const [searchForm, setSearchForm] = useState({
         filing_type: 9,
-        search_type: "crime",
+        search_type: 1,
         state:'',
         district:'',
         police_station:'',
@@ -45,8 +45,65 @@ const PetitionFiling = () => {
     })
     const[searchErrors, setSearchErrors] = useState([])
     const searchValidationSchema = Yup.object({
-        search: Yup.string().required(),
-        state: Yup.string().required()
+        search_type: Yup.string().required(),
+        state: Yup.string().required(t('errors.state_required')),
+        district: Yup.string().required(t('errors.district_required')),
+        police_station: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Police station is required')
+                }
+                return schema.notRequired()
+            }),
+        crime_number: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Crime number is required')
+                }
+                return schema.notRequired()
+            }),
+        crime_year: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 1){
+                    return schema.required('Crime year is required')
+                }
+                return schema.notRequired()
+            }),
+        establishment: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Establishment is required')
+                }
+                return schema.notRequired()
+            }),
+        case_type: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case type is required')
+                }
+                return schema.notRequired()
+            }),
+        case_number: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case number is required')
+                }
+                return schema.notRequired()
+            }),
+        case_year: Yup.string()
+            .nullable()
+            .when('search_type', (search_type, schema) => {
+                if(parseInt(search_type) === 2){
+                    return schema.required('Case year is required')
+                }
+                return schema.notRequired()
+            })
     })
     const[selectedRespondent, setSelectedRespondent] = useState([])
     const[caseFound, setCaseFound] = useState(false)
@@ -133,7 +190,9 @@ const PetitionFiling = () => {
         setLoading(true)
         setCaseFound(false)
         try{
-            const response = await api.post(`police/petition/search/`, searchForm)
+            await searchValidationSchema.validate(searchForm, { abortEarly: false})
+            const url = parseInt(searchForm.search_type) === 1 ? `police/search/crime/list/` : 'police/search/case/'
+            const response = await api.post(url, searchForm)
             if(response.status === 200){
                 if(Array.isArray(response.data) && response.data.length > 1){
                     console.log("array")
@@ -149,6 +208,13 @@ const PetitionFiling = () => {
                 }
             }
         }catch(error){
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setSearchErrors(newErrors)
+            }
             if(error.response){
                 switch(error.response.status){
                     case 404:
@@ -332,8 +398,8 @@ const PetitionFiling = () => {
                                                         type="radio" 
                                                         name="search_type" 
                                                         id="searchTypeYes" 
-                                                        checked={searchForm.search_type === "crime"}
-                                                        onChange={(e) => setSearchForm({...searchForm, search_type : "crime"})} 
+                                                        checked={parseInt(searchForm.search_type) === 1 }
+                                                        onChange={(e) => setSearchForm({...searchForm, search_type : 1})} 
                                                     />
                                                     <label htmlFor="searchTypeYes">Search by Crime Number</label>
                                                     </div>
@@ -342,8 +408,8 @@ const PetitionFiling = () => {
                                                         type="radio" 
                                                         id="searchTypeNo" 
                                                         name="search_type" 
-                                                        checked={ searchForm.search_type === "case" } 
-                                                        onChange={(e) => setSearchForm({...searchForm, search_type : "case"})}
+                                                        checked={ parseInt(searchForm.search_type) === 2 } 
+                                                        onChange={(e) => setSearchForm({...searchForm, search_type : 2 })}
                                                     />
                                                     <label htmlFor="searchTypeNo">Search by Case Number</label>
                                                     </div>
@@ -395,7 +461,7 @@ const PetitionFiling = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    { searchForm.search_type === "crime" && (
+                                                    { parseInt(searchForm.search_type) === 1 && (
                                                         <React.Fragment>
                                                             <div className="col-md-5">
                                                                 <div className="form-group">
@@ -448,7 +514,7 @@ const PetitionFiling = () => {
                                                             </div>
                                                         </React.Fragment>
                                                     )}
-                                                    { searchForm.search_type === "case" && (
+                                                    { parseInt(searchForm.search_type) === 2 && (
                                                         <React.Fragment>
                                                             <div className="col-md-5">
                                                                 <div className="form-group">
@@ -456,7 +522,7 @@ const PetitionFiling = () => {
                                                                     <select 
                                                                         name="establishment" 
                                                                         id="establishment" 
-                                                                        className={`form-control ${errors.establishment ? 'is-invalid' : null}`}
+                                                                        className={`form-control ${searchErrors.establishment ? 'is-invalid' : null}`}
                                                                         value={searchForm.establishment}
                                                                         onChange={(e) => setSearchForm({...searchForm, [e.target.name]:e.target.value})}
                                                                     >
@@ -468,7 +534,7 @@ const PetitionFiling = () => {
                                                                         }
                                                                     </select>
                                                                     <div className="invalid-feedback">
-                                                                        { errors.establishment }
+                                                                        { searchErrors.establishment }
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -543,7 +609,7 @@ const PetitionFiling = () => {
                                     setEfileNumber={setEfileNumber}
                                 />
                             )}
-                            { caseFound && (
+                            { !caseFound && (
                             <React.Fragment>
                                 <div className="card card-info mt-3">
                                     <div className="card-header">
@@ -691,7 +757,7 @@ const PetitionFiling = () => {
                                                 </select>
                                             </div>
                                         </div>
-                                        <div className="col-md-4">
+                                        <div className="col-md-8">
                                             <Form.Group className="mb-3">
                                                 <Form.Label>Address</Form.Label>
                                                 <Form.Control
@@ -703,7 +769,7 @@ const PetitionFiling = () => {
                                                 <div className="invalid-feedback">{ errors.address }</div>
                                             </Form.Group>
                                         </div>
-                                        <div className="col-md-2">
+                                        <div className="col-md-4">
                                             <Form.Group>
                                                 <Form.Label>Post Office</Form.Label>
                                                 <Form.Control
@@ -725,7 +791,7 @@ const PetitionFiling = () => {
                                                 ></Form.Control>
                                             </Form.Group>
                                         </div>
-                                        <div className="col-md-2">
+                                        <div className="col-md-3">
                                             <Form.Group>
                                                 <Form.Label>Mobile Number</Form.Label>
                                                 <Form.Control
@@ -740,7 +806,7 @@ const PetitionFiling = () => {
                                                 </div>
                                             </Form.Group>
                                         </div>
-                                        <div className="col-md-2">
+                                        <div className="col-md-4">
                                             <Form.Group>
                                                 <Form.Label>Email Address</Form.Label>
                                                 <Form.Control

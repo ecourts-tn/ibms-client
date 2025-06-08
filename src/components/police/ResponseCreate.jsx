@@ -94,11 +94,39 @@ const ResponseCreate = () => {
 
 
     const validationSchema = Yup.object({
-        csr_number: Yup.string(),
+        csr_number: Yup.string().required('CSR Number is required'),
+        limitation_date: Yup.string().required('Limitation date is required'),
         offences: Yup.string().required(),
         accused_name: Yup.string().required(),
         specific_allegations: Yup.string().required(),
         materials_used: Yup.string().required(),
+        discharged: Yup.string().required(),
+        hospital_name: Yup.string()
+            .nullable()
+            .when('discharged', (discharged, schema) => {
+                if (parseInt(discharged) === 2) {
+                    return schema.required('Hospital name is required');
+                }
+                return schema.notRequired();
+            }),
+        victim_condition: Yup.string()
+            .nullable()
+            .when('discharged', (discharged, schema) => {
+                if (parseInt(discharged) === 2) {
+                    return schema.required('Condition details is required');
+                }
+                return schema.notRequired();
+            }),
+        injury_particulars: Yup.string()
+            .nullable()
+            .when('discharged', (discharged, schema) => {
+                if (parseInt(discharged) === 2) {
+                    return schema.required('Injury particulars is required');
+                }
+                return schema.notRequired();
+            }),
+        is_material_seized: Yup.string().required('Matirial serized is required'),
+        is_vehicle_seized: Yup.string().required('Vehicle serized is required'),
         date_of_arrest: Yup.date().transform((value, originalValue) =>
             originalValue === "" ? null : value
             ).nullable().required("Date of arrest is required"),
@@ -108,32 +136,45 @@ const ResponseCreate = () => {
         reason_not_given: Yup.string().required(),
         other_information: Yup.string().required(),
         investigation_stage: Yup.string().required(),
-        cnr_number: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+        cnr_number: Yup.string()
+            .nullable()
+            .when("investigation_stage", (investigation_stage, schema) => {
             if (parseInt(investigation_stage) === 2) {
                 return schema.required('CNR Number required')
             }
+            return schema.notRequired()
         }),
-        court: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+        court: Yup.string()
+            .nullable()
+            .when("investigation_stage", (investigation_stage, schema) => {
             if(parseInt(investigation_stage) === 2){
                 return schema.required('Court required')
             }
+            return schema.notRequired()
         }),
-        case_stage: Yup.string().when("investigation_stage", (investigation_stage, schema) => {
+        case_stage: Yup.string()
+            .nullable()
+            .when("investigation_stage", (investigation_stage, schema) => {
             if(parseInt(investigation_stage) === 2){
                 return schema.required('CNR Number required')
             }
+            return schema.notRequired()
         }),
-        next_hearing: Yup.date().when("investigation_stage", (investigation_stage, schema) => {
+        next_hearing: Yup.date()
+            .nullable()
+            .when("investigation_stage", (investigation_stage, schema) => {
             if(parseInt(investigation_stage) === 2){
                 return schema.transform((value, originalValue) =>
                     originalValue === "" ? null : value
                 ).nullable().required("Next hearing required")
             }
+            return schema.notRequired()
         }),
-        no_of_witness: Yup.number().when("investigation_stage", (investigation_stage, schema) => {
+        no_of_witness: Yup.string()
+            .nullable()
+            .when("investigation_stage", (investigation_stage, schema) => {
             if(parseInt(investigation_stage) === 2){
-                return schema.required('No of witness required').typeError('Number of witnesses must be a valid integer')
-                .integer('Number of witnesses must be an integer').nullable()
+                return schema.required('No of witness required').matches(/^\d{2}$/, 'No of witness required')
             }
         }),
     })
@@ -265,7 +306,7 @@ const ResponseCreate = () => {
                                                     <label htmlFor="csr_number">CSR Number</label>
                                                     <input
                                                         type="text"
-                                                        className="form-control"
+                                                        className={`form-control ${errors.csr_number ? 'is-invalid' : ''}`}
                                                         name="csr_number"
                                                         value={form.csr_number}
                                                         onChange={(e) => handleNumberChange(e, setForm, form, 'csr_number')}
@@ -281,12 +322,15 @@ const ResponseCreate = () => {
                                                     <label htmlFor="">Crime Number <RequiredField /></label>
                                                     <input
                                                         type="text"
-                                                        className="form-control"
+                                                        className={`form-control ${errors.limitation_date ? 'is-invalid' : null}`}
                                                         name="crime_number"
                                                         value={form.crime_number}
                                                         readOnly={form.crime_number !== '' ? true : false}
                                                         onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                                                     />
+                                                    <div className="invalid-feedback">
+                                                        { errors.limitation_date }
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div className="col-md-2">
@@ -411,20 +455,24 @@ const ResponseCreate = () => {
                                                                 checked={parseInt(form.discharged) === 3 ? true : false} />
                                                             <label htmlFor="radioDischarged3">Not Applicable</label>
                                                         </div>
+                                                        <div className="text-danger">{ errors.discharged }</div>
                                                     </div>
                                                 </div>
                                                 {parseInt(form.discharged) === 2 && (
-                                                    <>
+                                                    <React.Fragment>
                                                         <div className="form-group row">
                                                             <label htmlFor="" className="col-sm-3">Hospital Name</label>
                                                             <div className="col-sm-9">
                                                                 <input
                                                                     type="text"
-                                                                    className="form-control"
+                                                                    className={`form-control ${errors.hospital_name ? 'is-invalid' : null}`}
                                                                     name="hospital_name"
                                                                     value={form.hospital_name}
                                                                     onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                                                                 />
+                                                                <div className="invalid-feedback">
+                                                                    { errors.hospital_name }
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div className="form-group row">
@@ -432,26 +480,32 @@ const ResponseCreate = () => {
                                                             <div className="col-sm-9">
                                                                 <input
                                                                     type="text"
-                                                                    className="form-control"
+                                                                    className={`form-control ${errors.victim_condition ? 'is-invalid' : null}`}
                                                                     name="victim_condition"
                                                                     value={form.victim_condition}
                                                                     onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
                                                                 />
+                                                                <div className="invalid-feedback">
+                                                                    { errors.victim_condition }
+                                                                </div>
                                                             </div>
                                                         </div>
                                                         <div className="form-group row">
                                                             <label htmlFor="" className="col-sm-3">Particulars of Injury</label>
                                                             <div className="col-sm-9">
-                                                                <FormControl
-                                                                    as="textarea"
+                                                                <textarea
                                                                     rows={2}
                                                                     name="injury_particulars"
+                                                                    className={`form-control ${errors.injury_particulars ? 'is-invalid' : null}`}
                                                                     value={form.injury_particulars}
                                                                     onChange={(e) => setForm({ ...form, [e.target.name]: e.target.value })}
-                                                                ></FormControl>
+                                                                ></textarea>
+                                                                <div className="invalid-feedback">
+                                                                    { errors.injury_particulars}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </>
+                                                    </React.Fragment>
                                                 )}
                                             </div>
                                         </div>
@@ -486,6 +540,7 @@ const ResponseCreate = () => {
                                                         checked={parseInt(form.is_material_seized) === 3 ? true : false} />
                                                     <label htmlFor="radioseized3">Not Applicable</label>
                                                 </div>
+                                                <div className="text-danger">{ errors.is_material_seized }</div>
                                             </div>
                                         </div>
                                         {parseInt(form.is_material_seized) === 1 && (
@@ -522,6 +577,7 @@ const ResponseCreate = () => {
                                                         checked={parseInt(form.is_vehicle_seized) === 3 ? true : false} />
                                                     <label htmlFor="radioseized3">Not Applicable</label>
                                                 </div>
+                                                <div className="text-danger">{ errors.is_vehicle_seized }</div>
                                             </div>
                                         </div>
                                         {parseInt(form.is_vehicle_seized) === 1 && (
