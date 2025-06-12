@@ -42,7 +42,7 @@ const Pleadings = () => {
             try{
                 const response = await api.get(`case/filing/submitted/`)
                 if(response.status === 200){
-                    setCases(response.data)
+                    setCases(response.data.results)
                 }
             }catch(error){
                 console.log(error)

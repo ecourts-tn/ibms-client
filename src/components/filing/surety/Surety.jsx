@@ -32,6 +32,7 @@ const Surety = () => {
         bail_type: '',
         complaint_type: 2,
         crime_registered: 2,
+        main_petition:''
     })
 
     const [user, setUser] = useLocalStorage("user", null)
@@ -71,7 +72,8 @@ const Surety = () => {
                         reg_type: main.reg_type.id,
                         reg_number: main.reg_number,
                         reg_year: main.reg_year,
-                        registration_date: main.registration_date
+                        registration_date: main.registration_date,
+                        main_petition: main.efile_number
                     })
                 }
             }catch(error){

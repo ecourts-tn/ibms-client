@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import api from '../../../api'
+import api from 'api'
 import '../style.css'
 import Button from '@mui/material/Button'
 import CheckIcon from '@mui/icons-material/CheckCircleRounded'
@@ -20,6 +20,7 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import DatePicker from 'components/utils/DatePicker'
 import { RequiredField } from 'utils'
+import * as Yup from 'yup'
 
 
 const CaseScrutiny = () => {
@@ -44,6 +45,28 @@ const CaseScrutiny = () => {
         status:1
     }
     const[form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState({})
+
+    const validationSchema = Yup.object({
+        status: Yup.string().required('Status is requried'),
+        verification_date: Yup.string().required('This field is required'),
+        complaince_date: Yup.string()
+            .nullable()
+            .when('status', (status, schema) => {
+                if(parseInt(status) === 2){
+                    return schema.required('This field is required')
+                }
+                return schema.notRequired()
+            }),
+        remarks: Yup.string()
+            .nullable()
+            .when('status', (status, schema) => {
+                if(parseInt(status) === 2 || parseInt(status) === 3){
+                    return schema.required('This field is required')
+                }
+                return schema.notRequired()
+            }),
+    })
 
     const statusOptions = [
         { status: 1, color: "success", icon: <CheckIcon />, label: t('approve') },
@@ -89,6 +112,7 @@ const CaseScrutiny = () => {
 
     const handleSubmit = async() => {
         try{
+            await validationSchema.validate(form, {abortEarly:false})
             setLoading(true)
             form.efile_no = state.efile_no
             const response = await api.post(`court/case/scrutiny/`, form)
@@ -101,18 +125,19 @@ const CaseScrutiny = () => {
                 }, 1000)
             }
         }catch(error){
-            toast.error("Something went wrong", {theme:"colored"})
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
         }finally{
             setLoading(false)
         }
     }
 
-    const handleDateChange = (field, value) => {
-        setForm((prev) => ({
-          ...prev,
-          [field]: value,
-        }));
-     };
+
 
     const verification_date_Display = (date) => {
                 const day = ("0" + date.getDate()).slice(-2);
@@ -315,6 +340,7 @@ const CaseScrutiny = () => {
                                     />
                                     <label htmlFor="radioVerify3">{'Reject'}</label>
                                 </div>
+                                <div className="text-danger">{ errors.status }</div>
                             </div>
                         </div>
                         <div className="form-group row">
@@ -322,17 +348,13 @@ const CaseScrutiny = () => {
                             <div className="col-sm-4">
                                 <input 
                                     type="date" 
-                                    className="form-control verification_date-date-picker ${errors.objection_date ? 'is-invalid' : null}" 
+                                    className={`form-control verification_date-date-picker ${errors.verification_date ? 'is-invalid' : null}`}
                                     name="verification_date"
                                     value={form.verification_date ? form.verification_date : ''}
                                     placeholder="DD-MM-YYYY"
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
                                 />
+                                <div className="invalid-feedback">{ errors.verification_date }</div>
                             </div>
                         </div>
                     </div>
@@ -345,17 +367,13 @@ const CaseScrutiny = () => {
                                 <div className="col-sm-4">
                                     <input 
                                         type="date" 
-                                        className="form-control compliance_date-date-picker ${errors.compliance_date ? 'is-invalid' : null}"  
+                                        className={`form-control compliance_date-date-picker ${errors.complaince_date ? 'is-invalid' : null}`}  
                                         name="complaince_date"
                                         value={form.complaince_date ? form.complaince_date : ''}
                                         placeholder="DD-MM-YYYY"
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                        style={{
-                                            backgroundColor: 'transparent',
-                                            border: '1px solid #ccc', 
-                                            padding: '8px',            
-                                        }}
                                     />
+                                    <div className="invalid-feedback">{errors.complaince_date}</div>
                                 </div>
                             </div>
                         </div>
@@ -365,11 +383,12 @@ const CaseScrutiny = () => {
                                 <label htmlFor="remarks">{t('remarks')}<RequiredField /></label>
                                 <textarea 
                                     name="remarks" 
-                                    className="form-control" 
+                                    className={`form-control ${errors.remarks ? 'is-invalid' : null}`} 
                                     rows="2"
                                     value={form.remarks}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                 ></textarea>
+                                <div className="invalid-feedback">{ errors.remarks }</div>
                             </div>
                         </div>
                     </React.Fragment>

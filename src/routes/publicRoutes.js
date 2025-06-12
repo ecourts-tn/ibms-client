@@ -5,7 +5,6 @@ import CNRSearch from 'components/kiosk/CNRSearch'
 import FIRSearch from 'components/kiosk/FIRSearch'
 import FilingSearch from "components/kiosk/FilingSearch";
 import RegistrationSearch from 'components/kiosk/RegistrationSearch'
-import AdvocateRegistration from "components/auth/AdvocateRegistration";
 import VerifyOrder from "components/VerifyOrder";
 import NotFound from "components/layout/public/NotFound";
 import ResetPassword from "components/auth/ResetPassword";

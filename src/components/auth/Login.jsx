@@ -17,7 +17,6 @@ import { LanguageContext } from 'contexts/LanguageContex';
 import { AuthContext } from 'contexts/AuthContext';
 import { IconButton } from '@mui/material'; 
 import { Visibility, VisibilityOff } from '@mui/icons-material'; 
-import { GroupContext } from 'contexts/GroupContext';
 import { MasterContext } from 'contexts/MasterContext';
 import { encrypt } from 'components/utils/crypto';  
 
@@ -284,7 +283,7 @@ const Login = () => {
                 </div>
               </div>
               <div className="col-md-7">
-                <div class="input-group mb-3">
+                <div className="input-group mb-3">
                   <input 
                     type="text" 
                     className="form-control captcha-text"
@@ -296,9 +295,9 @@ const Login = () => {
                       backgroundColor:"#FAFAFA"
                     }}
                   />
-                  <div class="input-group-append">
+                  <div className="input-group-append">
                     <span 
-                      class="input-group-text bg-info"
+                      className="input-group-text bg-info"
                       onClick={refreshCaptcha}
                     ><RefreshIcon /></span>
                   </div>
