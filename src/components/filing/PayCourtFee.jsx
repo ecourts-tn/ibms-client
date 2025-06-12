@@ -12,6 +12,7 @@ import { RequiredField } from 'utils';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 
 
+
 const PayCourtFee = () => {
     const {t} = useTranslation()
     const {language} = useContext(LanguageContext)
@@ -21,26 +22,23 @@ const PayCourtFee = () => {
     const[cases, setCases] = useState([])
     const[loading, setLoading] = useState(false)
     const[form, setForm] = useState({
-        judiciary: '',
-        bench_type: '',
-        state: '',
-        district:'',
-        establishment: '',
-        court: '',
-        case_type: '',
-        bail_type: '',
-        complaint_type: '',
-        crime_registered: '',
-        main_petition: ''
+        txnid:null,
+        amount:"",
+        scamt:"0.00",
+        udf1:"",
+        udf2:"",
+        udf3:"",
     })
     const[errors, setErrors] = useState({})
     const[otp, setOtp] = useState('')
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
-
-    const validationSchema = {
-
-    }
+    const validationSchema = Yup.object({
+        udf1: Yup.string().required("Payer name is required"),
+        udf2: Yup.string().required('Email address is required').email('Enter valid email address'),
+        udf3: Yup.string().required(t('errors.mobile_required')).matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
+        amount: Yup.string().required("Amount is required field").matches(/^\d{1,10}$/, 'Amount is required field')
+    })
 
     useEffect(() => {
         const fetchPetition = async() => {
@@ -77,11 +75,13 @@ const PayCourtFee = () => {
                 })
                 setMobileOtp(true)
             }catch(error){
-                const newError = {}
-                errors.inner.forEach((err)=> {
-                    newError[err.path] = err.message
-                })
-                setErrors(newError)
+                if(error.inner){
+                    const newError = {}
+                    error.inner.forEach((err)=> {
+                        newError[err.path] = err.message
+                    })
+                    setErrors(newError)                    
+                }
             }
         }
     
@@ -108,7 +108,6 @@ const PayCourtFee = () => {
                 const response = await api.get("case/filing/detail/", {params: {efile_no:mainNumber}})
                 if(response.status === 200){
                     const {petition:main, litigants} = response.data
-                    console.log(response.data)
                     setIsPetition(true)
                     setForm((prevPetition) => ({
                         ...prevPetition,
@@ -138,6 +137,7 @@ const PayCourtFee = () => {
             await validationSchema.validate(form, {abortEarly:false})
         }catch(error){
             if(error.inner){
+                console.log(error.inner)
                 const newErrors = {}
                 error.inner.forEach((err) => {
                     newErrors[err.path] = err.message
@@ -181,9 +181,10 @@ const PayCourtFee = () => {
                     mainNumber={mainNumber}
                     setMainNumber={setMainNumber}
                 />
-                <div className="row">
-                    <div className="col-md-8 offset-md-2">
-                        <div className="container-fluid my-4">
+                <div className="container my-4">
+                    <div className="row">
+                        <div className="col-md-2"></div>
+                        <div className="col-md-10">
                             <div className="form-group row mb-3">
                                 <label htmlFor="" className="col-sm-3 col-form-label">{t('payer_name')}<RequiredField /></label>
                                 <div className="col-md-4">
@@ -195,9 +196,7 @@ const PayCourtFee = () => {
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                         // readOnly={true}
                                     />
-                                    <div className="invalid-feedback">
-                                        { errors.petitioner_name }
-                                    </div>
+                                    <div className="invalid-feedback">{ errors.udf1 }</div>
                                 </div>
                             </div>
                             <div className="form-group row mb-3">
@@ -208,11 +207,14 @@ const PayCourtFee = () => {
                                         className={`form-control ${errors.udf3 ? 'is-invalid' : null }`}
                                         name="udf3"
                                         value={form.udf3}
-                                        onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, '')
+                                            if(value.length <= 10){
+                                                setForm({...form, [e.target.name]: value})
+                                            }}
+                                        }
                                     />
-                                    <div className="invalid-feedback">
-                                        { errors.udf3 }
-                                    </div>
+                                    <div className="invalid-feedback">{ errors.udf3 }</div>
                                 </div>
                             </div>
                             <div className="form-group row mb-3">
@@ -225,9 +227,7 @@ const PayCourtFee = () => {
                                         value={form.udf2}
                                         onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                     />
-                                    <div className="invalid-feedback">
-                                        { errors.udf3 }
-                                    </div>
+                                    <div className="invalid-feedback">{ errors.udf2 }</div>
                                 </div>
                             </div>
                             <div className="form-group row mb-3">

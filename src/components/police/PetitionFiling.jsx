@@ -139,41 +139,25 @@ const PetitionFiling = () => {
 
 
     const validationSchema = Yup.object({
-        // efile_no: Yup.string().required(),
-        litigant_name: Yup.string().required(),
-        designation: Yup.string().required(),
-        gender: Yup.string().required(),
-        age:Yup.string().required(),
-        relation:Yup.string().required(),
-        relation_name:Yup.string().required(),
-        state:'',
-        district:'',
-        taluk:'',
-        address:Yup.string().required(),
-        // post_office:Yup.string().required(),
-        // pincode:Yup.string().required(),
-        mobile_number:Yup.string().required(),
-        // email_address:Yup.string().required(),
+        litigant_name: Yup.string().required('Litigant name is required'),
+        designation: Yup.string().required('Designation is required'),
+        gender: Yup.string().required('Gender is required'),
+        age:Yup.string().required('Age is requried').matches(/^\d{1-2}$/, 'Age must be less than 99'),
+        relation:Yup.string().required('Relation is required'),
+        relation_name:Yup.string().required('Relation name is required'),
+        state: Yup.string().required('State is required'),
+        district: Yup.string().required('District is required'),
+        taluk: Yup.string().required('Taluk is required'),
+        address:Yup.string().required('Address is requried'),
+        post_office:Yup.string().required('Post office is required'),
+        pincode:Yup.string().required('Pincode is required').matches(/^\d{6}$/, 'Pincode must be exactly 6 digits'),
+        mobile_number:Yup.string().required('Mobile number is requried').matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
+        email_address:Yup.string().email('Invalid email address').required('Email address is requried'),
         grounds: Yup.string().required()
     })
     
     const[errors, setErrors] = useState([])
     const[accused, setAccused] = useState([])
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-          // Update form state
-        setForm((prevForm) => ({
-            ...prevForm,
-            [name]: value,  // Dynamically update the field
-        }));
-          // Validate the field and update errors
-        const errorMessage = validateEmail(name, value);  // Validate the email field
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: errorMessage,  // Set the error message for the specific field
-        }));
-    };
 
     useEffect(() => {
         if(user){
@@ -285,6 +269,7 @@ const PetitionFiling = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            await validationSchema.validate(form, { abortEarly: false });
             const post_data = {
                 accused: selectedRespondent,  
                 petition: {
@@ -321,7 +306,7 @@ const PetitionFiling = () => {
             };
     
             // Validate form using Yup schema
-            await validationSchema.validate(form, { abortEarly: false });
+            
     
             // Send the request with the structured data
             const response = await api.post("police/filing/petition/", post_data);
@@ -330,7 +315,7 @@ const PetitionFiling = () => {
                 toast.success("Petition filed successfully", { theme: "colored" });
             }
         } catch (error) {
-            // console.log(error.inner);
+            console.log(error.inner);
             if (error.inner) {
                 const newErrors = {};
                 error.inner.forEach((err) => {
@@ -426,7 +411,7 @@ const PetitionFiling = () => {
                                                         <select 
                                                             name="state" 
                                                             id="state" 
-                                                            className={ `form-control ${errors.state ? 'is-invalid': ''}`}
+                                                            className={ `form-control ${searchErrors.state ? 'is-invalid': ''}`}
                                                             value={searchForm.state}
                                                             disabled={searchForm.state ? true : false }
                                                             onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}    
@@ -437,7 +422,7 @@ const PetitionFiling = () => {
                                                         ))}
                                                         </select>
                                                         <div className="invalid-feedback">
-                                                            { errors.state }
+                                                            { searchErrors.state }
                                                         </div>
                                                     </div>
                                                     <div className="col-md-4">
@@ -446,7 +431,7 @@ const PetitionFiling = () => {
                                                             <select 
                                                                 name="district" 
                                                                 id="district" 
-                                                                className={`form-control ${errors.district ? 'is-invalid' : ''}`}
+                                                                className={`form-control ${searchErrors.district ? 'is-invalid' : ''}`}
                                                                 value={searchForm.district} 
                                                                 disabled={ searchForm.district ? true : false }
                                                                 onChange={(e) => setSearchForm({...searchForm, [e.target.name]: e.target.value })}
@@ -457,7 +442,7 @@ const PetitionFiling = () => {
                                                                 ))}
                                                             </select>
                                                             <div className="invalid-feedback">
-                                                                { errors.district }
+                                                                { searchErrors.district }
                                                             </div>
                                                         </div>
                                                     </div>
@@ -469,7 +454,7 @@ const PetitionFiling = () => {
                                                                 <select 
                                                                     name="police_station" 
                                                                     id="police_station" 
-                                                                    className={`form-control ${errors.police_station ? 'is-invalid' : ''}`}
+                                                                    className={`form-control ${searchErrors.police_station ? 'is-invalid' : ''}`}
                                                                     value={searchForm.police_station}
                                                                     disabled={searchForm.police_station ? true : false }
                                                                     onChange={(e)=> setSearchForm({...searchForm, [e.target.name]: e.target.value })}
@@ -479,7 +464,7 @@ const PetitionFiling = () => {
                                                                         <option key={index} value={item.cctns_code}>{ item.station_name}</option>
                                                                     ))}
                                                                 </select>
-                                                                <div className="invalid-feedback">{ errors.police_station }</div>
+                                                                <div className="invalid-feedback">{ searchErrors.police_station }</div>
                                                                 </div>
                                                             </div>
                                                             <div className="col-md-3 offset-md-3">
@@ -624,14 +609,14 @@ const PetitionFiling = () => {
                                                     name="litigant_name" 
                                                     className={`${errors.litigant_name ? 'is-invalid' : ''}`}
                                                     value={form.litigant_name} 
-                                                    onChange={(e) => handleNameChange(e, setForm, form, 'litigant_name')}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 ></Form.Control>
                                                 <div className="invalid-feedback">{ errors.litigant_name }</div>
                                             </Form.Group>
                                         </div>
                                         <div className="col-md-3">
                                         <Form.Group>
-                                            <Form.Label>{t('designation')}</Form.Label>
+                                            <Form.Label>{t('designation')} <RequiredField /></Form.Label>
                                             <select 
                                                 name="designation" 
                                                 className={`form-control ${errors.designation ? 'is-invalid' : ''}` }
@@ -648,7 +633,7 @@ const PetitionFiling = () => {
                                         </div>
                                         <div className="col-md-2">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Gender<RequiredField /></Form.Label>
+                                                <Form.Label>{t('gender')}<RequiredField /></Form.Label>
                                                 <select 
                                                     name="gender" 
                                                     value={form.gender} 
@@ -665,20 +650,25 @@ const PetitionFiling = () => {
                                         </div>
                                         <div className="col-md-2">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Age</Form.Label>
+                                                <Form.Label>{t('age')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     name="age"
                                                     value={form.age}
                                                     className={`${errors.age ? 'is-invalid' : ''}`}
-                                                    onChange={(e) => handleAgeChange(e, setForm, form)}
-                                                    //onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '')
+                                                        if(value.length <= 2){
+                                                            setForm({...form, [e.target.name]: value})
+
+                                                        }}
+                                                    }
                                                 ></Form.Control>
                                                 <div className="invalid-feedback">{ errors.age }</div>
                                             </Form.Group>
                                         </div>
                                         <div className="col-md-2">
                                             <div className="form-group mb-3">
-                                                <label htmlFor="relation">Relation</label><br />
+                                                <label htmlFor="relation">{t('relationship_type')} <RequiredField /></label><br />
                                                 <select 
                                                 name="relation" 
                                                 id="relation" 
@@ -696,23 +686,22 @@ const PetitionFiling = () => {
                                         </div>
                                         <div className="col-md-3">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Relation Name</Form.Label>
+                                                <Form.Label>{t('relationship_name')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     name="relation_name"
                                                     value={form.relation_name}
                                                     className={`${errors.relation_name ? 'is-invalid' : ''}`}
-                                                    onChange={(e) => handleNameChange(e, setForm, form, 'relation_name')}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 ></Form.Control>
                                                 <div className="invalid-feedback">{ errors.relation_name }</div>
                                             </Form.Group>
                                         </div>
                                         <div className="col-md-3">
                                             <div className="form-group">
-                                                <label htmlFor="state">State</label><br />
+                                                <label htmlFor="state">{t('state')} <RequiredField /></label>
                                                 <select 
                                                     name="state" 
-                                                    id="state" 
-                                                    className="form-control"
+                                                    className={`form-control ${errors.state ? 'is-invalid' : ''}`}
                                                     value={form.state}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 >
@@ -721,15 +710,15 @@ const PetitionFiling = () => {
                                                     <option value={item.state_code} key={index}>{item.state_name}</option>
                                                     ))}
                                                 </select>
+                                                <div className="invalid-feedback">{ errors.state }</div>
                                             </div>
                                         </div>
                                         <div className="col-md-3">
                                             <div className="form-group">
-                                                <label htmlFor="district">District</label><br />
+                                                <label htmlFor="district">{t('district')} <RequiredField /></label>
                                                 <select 
                                                     name="district" 
-                                                    id="district" 
-                                                    className="form-control"
+                                                    className={`form-control ${errors.district ? 'is-invalid' : ''}`}
                                                     value={form.district}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 >
@@ -738,15 +727,15 @@ const PetitionFiling = () => {
                                                     <option value={item.district_code} key={index}>{item.district_name}</option>
                                                     ))}
                                                 </select>
+                                                <div className="invalid-feedback">{ errors.district }</div>
                                             </div>
                                         </div>
                                         <div className="col-md-3">
                                             <div className="form-group">
-                                                <label htmlFor="taluk">Taluk</label><br />
+                                                <label htmlFor="taluk">{t('taluk')} <RequiredField /></label>
                                                 <select 
                                                     name="taluk" 
-                                                    id="taluk" 
-                                                    className="form-control"
+                                                    className={`form-control ${errors.district ? 'is-invalid' : ''}`}
                                                     value={form.taluk}
                                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 >
@@ -755,11 +744,12 @@ const PetitionFiling = () => {
                                                     <option value={item.taluk_code} key={index}>{ item.taluk_name }</option>
                                                     ))}
                                                 </select>
+                                                <div className="invalid-feedback">{ errors.taluk }</div>
                                             </div>
                                         </div>
                                         <div className="col-md-8">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Address</Form.Label>
+                                                <Form.Label>{t('address')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     name="address"
                                                     value={form.address}
@@ -771,7 +761,7 @@ const PetitionFiling = () => {
                                         </div>
                                         <div className="col-md-4">
                                             <Form.Group>
-                                                <Form.Label>Post Office</Form.Label>
+                                                <Form.Label>{t('post_office')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     name="post_office"
@@ -782,39 +772,49 @@ const PetitionFiling = () => {
                                         </div>
                                         <div className="col-md-2">
                                             <Form.Group className="mb-3">
-                                                <Form.Label>Pincode</Form.Label>
+                                                <Form.Label>{t('pincode')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     name="pincode"
+                                                    className={`${errors.pincode ? 'is-invalid' : ''}`}
                                                     value={form.pincode}
-                                                    onChange={(e) => handlePincodeChange(e, setForm, form, 'pincode')}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '')
+                                                        if(value.length <= 6){
+                                                            setForm({...form, [e.target.name]: value})
+                                                        }
+                                                    }}
                                                 ></Form.Control>
+                                                <div className="invalid-feedback">{ errors.pincode }</div>
                                             </Form.Group>
                                         </div>
                                         <div className="col-md-3">
                                             <Form.Group>
-                                                <Form.Label>Mobile Number</Form.Label>
+                                                <Form.Label>{t('mobile_number')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     name="mobile_number"
                                                     className={`${errors.mobile_number ? 'is-invalid' : ''}`}
                                                     value={form.mobile_number}
-                                                    onChange={(e) => handleMobileChange(e, setForm, form, 'mobile_number')}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value.replace(/\D/g, '')
+                                                        if(value.length <= 6){
+                                                            setForm({...form, [e.target.name] :  value})
+                                                        }
+                                                    }}
                                                 ></Form.Control>
-                                                <div className="invalid-feedback">
-                                                { errors.mobile_number}
-                                                </div>
+                                                <div className="invalid-feedback">{ errors.mobile_number}</div>
                                             </Form.Group>
                                         </div>
                                         <div className="col-md-4">
                                             <Form.Group>
-                                                <Form.Label>Email Address</Form.Label>
+                                                <Form.Label>{t('email_address')} <RequiredField /></Form.Label>
                                                 <Form.Control
                                                     type="text"
                                                     name="email_address"
                                                     value={form.email_address}
                                                     className={`${errors.email_address ? 'is-invalid' : ''}`}
-                                                    onChange={handleChange}
+                                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                                 ></Form.Control>
                                                 <div className="invalid-feedback">{ errors.email_address }</div>
                                             </Form.Group>
@@ -827,7 +827,7 @@ const PetitionFiling = () => {
                                     <div className="card-body p-1">
                                         {accused.filter((l) => l.litigant_type === 1)
                                         .map((a, index) => (
-                                        <div class="card mb-3 border-info">
+                                        <div class="card mb-3 border-info" key={index}>
                                             <div class="row no-gutters">
                                                 <div class="col-md-2 pt-2 text-center">
                                                     <img src={`${process.env.PUBLIC_URL}/images/profile.jpg`} alt="" style={{width:"120px", height:"120px"}}/> <br/>
@@ -892,7 +892,7 @@ const PetitionFiling = () => {
                                 <div className="row">
                                     <div className="col-md-12">
                                         <div className="form-group">
-                                            <label htmlFor="">Grounds</label>
+                                            <label htmlFor="">{t('ground')} <RequiredField /></label>
                                             <textarea 
                                                 name="grounds" 
                                                 cols="30" 

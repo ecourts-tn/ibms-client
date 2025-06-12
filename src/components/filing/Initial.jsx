@@ -136,6 +136,14 @@ const Initial = () => {
 
 
     let validationSchema = Yup.object({
+        complaint_type: Yup.string().required(t('errors.complaint_required')),
+        search_type: Yup.string()
+            .nullable()
+            .when('complaint_type', (complaint_type, schema) => {
+                if(parseInt(complaint_type) === 3){
+                    return schema.required('Search type is required')
+                }
+            }),
         judiciary: Yup.string().required("Please select court type"),
         seat: Yup.string().when("judiciary",(judiciary, schema) => {
             if(parseInt(judiciary) === 1){
@@ -164,7 +172,6 @@ const Initial = () => {
         }),
         case_type: Yup.string().required('errors.case_type_required'),
         bail_type: Yup.string().required(t('errors.bail_required')),
-        complaint_type: Yup.string().required(t('errors.complaint_required')),
         // fir_number: Yup.string()
         //     .matches().nullable()
     })
@@ -190,7 +197,10 @@ const Initial = () => {
             ),
     })
     const CaseValidationSchema = Yup.object({
-        state: Yup.string().when("search_type", (search_type, schema) => {
+        search_type: Yup.string().required('Search type is requried'),
+        state: Yup.string()
+            .nullable()
+            .when("search_type", (search_type, schema) => {
             if(parseInt(search_type) === 2){
                 return schema.required(t('errors.state_required'))
             }
@@ -625,6 +635,7 @@ const Initial = () => {
                             />
                             <label htmlFor="case_search_advanced">{t('advance_search')}</label>
                         </div>
+                        <div className="text-danger">{ errors.search_type }</div>
                     </div>
                 </div>
                 )}
@@ -966,7 +977,7 @@ const Initial = () => {
                             { errors.establishment }
                         </div>
                     </div>
-                    { /*<label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
+                    <label htmlFor="court" className='col-sm-2 col-form-label'>{t('court')}<RequiredField /></label>
                     <div className="col-md-4">
                         <select 
                             name="court" 
@@ -985,7 +996,7 @@ const Initial = () => {
                         <div className="invalid-feedback">
                             { errors.court }
                         </div>
-                    </div> */}
+                    </div> 
                 </div>  
                 </React.Fragment>    
                 )}

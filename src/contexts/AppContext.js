@@ -14,7 +14,7 @@ export const AppContext = createContext()
 export const AppProvider = ({children}) => {
 
     return(
-        <AppContext.Provider>
+        <AppContext.Provider value={{}}>
             <LanguageProvider>
                 <BaseProvider>
                     <StepProvider>

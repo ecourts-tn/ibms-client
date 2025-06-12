@@ -37,8 +37,8 @@ const FIRSearch = () => {
         state: Yup.string().required("Please select state"),
         district: Yup.string().required("Please select district"),
         police_station: Yup.string().required("Please select police station"),
-        fir_number: Yup.number().typeError("This field should be numeric").required(),
-        fir_year:   Yup.number().typeError("This field should be numeric").required()
+        fir_number: Yup.string().required('FIR number is required').matches(/^\d{1,6}$/, 'FIR number is required'),
+        fir_year:   Yup.string().required('FIR year is required').matches(/^\d{4}$/, 'Year must be exactly 4 digits')
     })
 
     const handleSubmit = async() => {
@@ -51,7 +51,7 @@ const FIRSearch = () => {
                 setPetitions(response.data)
             }
         }catch(error){
-            if(error.response.status === 404){
+            if(error.response?.status === 404){
                 toast.error(error.response.data.message, {theme:"colored"})
             }
             if(error.inner){

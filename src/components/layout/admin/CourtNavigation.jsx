@@ -17,7 +17,7 @@ const CourtNavigation = () => {
             </Link>
             </li>
     
-            { isFORA && (
+            {/* { isFORA && ( */}
                 <NavDropdown title={t('case_management')} icon="fas fa-table" items={[
                     { to: "/court/case/scrutiny", label: t('case_scrutiny') },
                     { to: "/court/case/registration", label: t('registration') },
@@ -25,9 +25,9 @@ const CourtNavigation = () => {
                     { to: "/court/case/cause-list/post", label: "Post to Causelist" },
                     { to: "/court/case/cause-list/publish", label: "Publish Causelist" },
                 ]} />
-            )}
+            {/* )}
         
-            { (isCourt || isJudge) && (
+            { (isCourt || isJudge) && ( */}
                 <React.Fragment>
                     <NavDropdown title="Court Proceedings" icon="fas fa-table" items={[
                         { to: "/court/case/proceeding", label: "Daily Proceedings" },
@@ -52,7 +52,7 @@ const CourtNavigation = () => {
                         </Link>
                     </li>   
                 </React.Fragment>
-            )}      
+            {/* )}       */}
             <li className="nav-item">
                 <Link to="#" className="nav-link">
                     <i className="nav-icon far fa-circle text-info" />

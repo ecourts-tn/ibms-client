@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useRef} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { RequiredField } from 'utils'
 import api from 'api'
 import {toast,ToastContainer} from 'react-toastify'
@@ -6,15 +6,19 @@ import Button from '@mui/material/Button'
 import Modal from 'react-bootstrap/Modal'
 import * as Yup from 'yup'
 import { useTranslation } from 'react-i18next'
-import { handleMobileChange, handleAadharChange, validateEmail, handleAgeChange, handleNameChange, handlePincodeChange } from 'components/validation/validations';
 import ViewSurety from './ViewSurety'
 import { MasterContext } from 'contexts/MasterContext'
 import { LanguageContext } from 'contexts/LanguageContex'
-
+import { BaseContext } from 'contexts/BaseContext'
+import BootstrapButton from 'react-bootstrap/Button'
+import { ModelClose } from 'utils'
 
 
 const SuretyForm = () => {
-
+    const FILE_SIZE = 10 *1024 * 1024
+    const IMAGE_SIZE = 3 * 1024 *1024
+    const SUPPORTED_FILES = ['application/pdf']
+    const SUPPORTED_IMAGES = ['image/jpeg','image/png','image/gif']
     const {language} = useContext(LanguageContext)
     const { masters: {
         states, 
@@ -25,7 +29,7 @@ const SuretyForm = () => {
         propertytypes
     }} = useContext(MasterContext)
     const {t} = useTranslation()
-    
+    const { efileNumber } = useContext(BaseContext)
     const initialState = {
         cino: '',
         surety_name: '',
@@ -76,14 +80,17 @@ const SuretyForm = () => {
         litigation_details: '',
         other_particulars: '',
         surety_amount: '',
-        photo: null,
-        signature:null,
-        identity_proof:null,
-        aadhar_card: null
+        photo: '',
+        signature:'',
+        identity_proof:'',
+        aadhar_card: ''
     }
     const[surety, setSurety] = useState(initialState);
+    const [show, setShow] = useState(false);
     const[sureties, setSureties] = useState([])
-    const [selectedSurety, setSelectedSurety] = useState(null);
+    const[selectedSurety, setSelectedSurety] = useState(null);
+    const[suretyCount, setSuretyCount] = useState(0)
+    const[petitions, setPetitions] = useState([])
     const initialAccount = {
         bank_name: '',
         branch_name: '',
@@ -93,7 +100,11 @@ const SuretyForm = () => {
     const[account, setAccount] = useState(initialAccount)
     const[bankAccounts, setBankAccounts] = useState([])
     const[errors, setErrors] = useState({})
-    const [showModal, setShowModal] = useState(false);
+    const[showModal, setShowModal] = useState(false);
+
+    const handlePreviousClose = () => {
+        setShow(false);
+    }
 
     const handleShow = (surety) => {
         setSelectedSurety(surety);  // Set selected surety details
@@ -123,7 +134,7 @@ const SuretyForm = () => {
             .matches(/^\d{10}$/, 'Mobile number must be 10 digits'),
         residing_years: Yup.string()
             .required('Residing years is required')
-            .matches(/^\d{1-2}$/, 'Value must less than 2 digits'),
+            .matches(/^\d{1,2}$/, 'Value must less than 2 digits'),
         property_type: Yup.string().required(),
         survey_number: Yup.string()
             .nullable()
@@ -154,6 +165,21 @@ const SuretyForm = () => {
             .when('property_type', (property_type, schema) => {
                 if (parseInt(property_type) === 1) {
                   return schema.required('Valuation is required');
+                }
+                return schema.notRequired();
+            }),
+        property_document: Yup.mixed()
+            .nullable()
+            .when('property_type', (property_type, schema) => {
+                if (parseInt(property_type) === 1) {
+                    return schema
+                        .required('Document is required')
+                        .test('fileSize', 'File too large (max 10MB)', value =>
+                            value ? value.size <= FILE_SIZE : false
+                        )
+                        .test('fileType', 'Unsupported file format', value =>
+                            value ? SUPPORTED_FILES.includes(value.type) : false
+                        );
                 }
                 return schema.notRequired();
             }),
@@ -238,11 +264,18 @@ const SuretyForm = () => {
                 }
                 return schema.notRequired();
             }),
-        employment_document: Yup.string()
+        employment_document: Yup.mixed()
             .nullable()
             .when('employment_type', (employment_type, schema) => {
                 if (parseInt(employment_type) === 1) {
-                  return schema.required('Document required');
+                    return schema
+                        .required('Document is required')
+                        .test('fileSize', 'File too large (max 10MB)', value =>
+                            value ? value.size <= FILE_SIZE : false
+                        )
+                        .test('fileType', 'Unsupported file format', value =>
+                            value ? SUPPORTED_FILES.includes(value.type) : false
+                        );
                 }
                 return schema.notRequired();
             }),
@@ -302,11 +335,18 @@ const SuretyForm = () => {
                 }
                 return schema.notRequired();
             }),
-        business_document: Yup.string()
+        business_document: Yup.mixed()
             .nullable()
             .when('employment_type', (employment_type, schema) => {
                 if (parseInt(employment_type) === 3) {
-                  return schema.required('Document required');
+                  return schema
+                    .required('Document is required')
+                    .test('fileSize', 'File too large (max 10MB)', value =>
+                        value ? value.size <= FILE_SIZE : false
+                    )
+                    .test('fileType', 'Unsupported file format', value =>
+                        value ? SUPPORTED_FILES.includes(value.type) : false
+                    );
                 }
                 return schema.notRequired();
             }),
@@ -318,18 +358,29 @@ const SuretyForm = () => {
         litigation_details: Yup.string().required(),
         other_particulars: Yup.string().required(),
         surety_amount: Yup.number().required().typeError("Amount should be numeric"),
-        photo: Yup.string().required(),
-        signature:Yup.string().required(),
-        identity_proof:Yup.string().required(),
-        aadhar_card:Yup.string().required()
+        photo: Yup.mixed()
+            .required('Photo is required')
+            .test('fileSize', 'File size to too large (Max 3MB)', (value) => value && value.size <= IMAGE_SIZE)
+            .test('fileType', 'Unsupported file format', (value) => value && SUPPORTED_IMAGES.includes(value.type)),
+        signature: Yup.mixed()
+            .required('Signature is required')
+            .test('fileSize', 'File size to too large (Max 3MB)', (value) => value && value.size <= IMAGE_SIZE)
+            .test('fileType', 'Unsupported file format', (value) => value && SUPPORTED_IMAGES.includes(value.type)),
+        identity_proof: Yup.mixed()
+            .required('Identity proof is required')
+            .test('fileSize', 'File size to too large (Max 3MB)', (value) => value && value.size <= IMAGE_SIZE)
+            .test('fileType', 'Unsupported file format', (value) => value && SUPPORTED_IMAGES.includes(value.type)),
+        aadhar_card: Yup.mixed()
+            .required('Aadhar card is required')
+            .test('fileSize', 'File size to too large (Max 3MB)', (value) => value && value.size <= IMAGE_SIZE)
+            .test('fileType', 'Unsupported file format', (value) => value && SUPPORTED_IMAGES.includes(value.type)),
     })
 
     useEffect(()=> {
         const fecthSureties = async() => {
             try{
-                const efile_no = sessionStorage.getItem("efile_no")
                 const response = await api.get("case/surety/list/", {
-                    params: {efile_no}
+                    params: {efile_no: efileNumber}
                 })
                 if(response.status === 200){
                     setSureties(response.data)
@@ -358,7 +409,7 @@ const SuretyForm = () => {
                 const newSureties = sureties.filter((s) => s.surety_id !== surety.surety_id);
     
                 // Show a success message
-                toast.success(`Surety with ID ${surety.surety_id} deleted successfully`, {
+                toast.success(`Surety deleted successfully`, {
                     theme: "colored"
                 });
     
@@ -375,39 +426,48 @@ const SuretyForm = () => {
     };
     
 
+    const handlePreviousSurety = async() => {
+        try{
+            const response = await api.post('case/surety/history/', {aadhar: surety.aadhar_number})
+            if(response.status === 200){
+                setShow(true)
+                setSuretyCount(response.data.aadhaar_count)
+                setPetitions(response.data.petitions)
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
 
     const handleSubmit = async(e) => {
         e.preventDefault()
         try{
             await validationSchema.validate(surety, {abortEarly:false})
-            const formData = new FormData();
+            // const formData = new FormData();
 
-            // Add all non-file fields to FormData
-            for (const key in surety) {
-                if (surety[key] && typeof surety[key] !== "object") {
-                    formData.append(key, surety[key]);
-                }
-            }
+            // // Add all non-file fields to FormData
+            // for (const key in surety) {
+            //     if (surety[key] && typeof surety[key] !== "object") {
+            //         formData.append(key, surety[key]);
+            //     }
+            // }
         
-            // Add file fields to FormData
-            if (surety.photo) formData.append("photo", surety.photo);
-            if (surety.signature) formData.append("signature", surety.signature);
-            if (surety.identity_proof) formData.append("identity_proof", surety.identity_proof);
-            if (surety.aadhar_card) formData.append("aadhar_card", surety.aadhar_card);
+            // // Add file fields to FormData
+            // if (surety.photo) formData.append("photo", surety.photo);
+            // if (surety.signature) formData.append("signature", surety.signature);
+            // if (surety.identity_proof) formData.append("identity_proof", surety.identity_proof);
+            // if (surety.aadhar_card) formData.append("aadhar_card", surety.aadhar_card);
         
             // Add efile_no separately if it's in sessionStorage
             const efile_no = sessionStorage.getItem("efile_no");
-            if (efile_no) formData.append("efile_no", efile_no);
-  
-            const response = await api.post("case/surety/create/", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
+            // if (efile_no) formData.append("efile_no", efile_no);
+            surety.efile_no = efile_no
+            const response = await api.post("case/surety/create/", surety, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
             if(response.status === 201){
-                toast.success("Surety Details added successfully", {
-                    theme:"colored"
-                })
+                toast.success("Surety Details added successfully", {theme:"colored"})
                 setSurety(initialState);
                 setBankAccounts([]);
             }
@@ -439,81 +499,6 @@ const SuretyForm = () => {
             });
         }
     };
-
-    const handleNameChange = (e, setState, state, field) => {
-        setState({
-            ...state,
-            [field]: e.target.value,
-        });
-    };
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-  
-        // Update form state
-        setSurety((prevForm) => ({
-            ...prevForm,
-            [name]: value,  // Dynamically update the field
-        }));
-  
-        // Validate the field and update errors
-        const errorMessage = validateEmail(name, value);  // Validate the email field
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [name]: errorMessage,  // Set the error message for the specific field
-        }));
-    };
-
-    const handleFileChange = (e, fileType) => {
-        const file = e.target.files[0]; // Get the first file
-        if (!file) return; // If no file is selected, return early
-    
-        let errorMessage = '';
-    
-        // Validation for specific file types
-        if (fileType === 'photo' || fileType === 'signature') {
-            // Only image files are allowed
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            if (!allowedImageTypes.includes(file.type)) {
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) are allowed.';
-            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB
-                errorMessage = 'Image size must be less than 3MB.';
-            }
-        } else if (fileType === 'identity_proof' || fileType === 'aadhar_card') {
-            // PDF or image files are allowed
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
-            if (file.type === 'application/pdf') {
-                if (file.size > 5 * 1024 * 1024) { // Max 5MB for PDF
-                    errorMessage = 'PDF size must be less than 5MB.';
-                }
-            } else if (!allowedImageTypes.includes(file.type)) {
-                errorMessage = 'Only image files (JPG, JPEG, PNG, GIF) or PDF are allowed.';
-            } else if (file.size > 3 * 1024 * 1024) { // Max 3MB for images
-                errorMessage = 'Image size must be less than 3MB.';
-            }
-        }
-    
-        // If there's an error, update the error state and return
-        if (errorMessage) {
-            setErrors((prevErrors) => ({
-                ...prevErrors,
-                [fileType]: errorMessage,
-            }));
-            return;
-        }
-    
-        // If validation passes, update the surety state with the actual File object
-        setSurety((prevSurety) => ({
-            ...prevSurety,
-            [fileType]: file, // Save the actual File object for uploading
-        }));
-    
-        // Clear any previous error for this file type
-        setErrors((prevErrors) => ({
-            ...prevErrors,
-            [fileType]: '',
-        }));
-    };
     
     return (
         <div className="container-fluid">
@@ -536,6 +521,56 @@ const SuretyForm = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <Modal 
+                show={show} 
+                onHide={handlePreviousClose} 
+                backdrop="static"
+                keyboard={false}
+                size="xl"
+            >
+            <Modal.Header className="bg-success">
+                <Modal.Title style={{ fontSize:'18px'}}><strong>Previous Surety Details</strong></Modal.Title>
+                <ModelClose handleClose={handlePreviousClose}/>
+            </Modal.Header>
+            <Modal.Body>
+                <p>The Aadhaar number <strong>{surety.aadhar_number}</strong> has already been provided for {suretyCount} sureties.</p>
+                <table className="table table-bordered table-striped table-sm">
+                    <thead className="bg-info">
+                        <tr>
+                            <th>#</th>
+                            <th>Case Number</th>
+                            <th>Litigants</th>
+                            <th>Court</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        { petitions.map((p, index) => (
+                        <tr>
+                            <td>{index+1}</td>
+                            <td>{`${p.case_type.type_name}/${p.reg_number}/${p.reg_year}`}</td>
+                            <td>{`${p.pet_name } Vs ${p.res_name}`}</td>
+                            <td>
+                                <React.Fragment>
+                                    { p.court?.court_name } <br />
+                                    { p.district?.district_name }
+                                </React.Fragment>
+                            </td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </Modal.Body>
+            <Modal.Footer>
+                <BootstrapButton 
+                    variant="secondary" 
+                    onClick={handlePreviousClose}
+                    className="btn-sm"
+                >
+                    Close
+                </BootstrapButton>
+            </Modal.Footer>
+        </Modal>
             <form onSubmit={handleSubmit} encType='multipart/form-data' method='POST'>
                 <ToastContainer />
                 <div className="row mt-3">
@@ -615,7 +650,7 @@ const SuretyForm = () => {
                             >
                                 <option value="">{t('alerts.select_parantage')}</option>
                                 { relations.map((item, index) => (
-                                    <option key={index} value={item.relation_name}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
+                                    <option key={index} value={item.id}>{ language === 'ta' ? item.relation_lname : item.relation_name }</option>
                                 ))}
                             </select>
                             <div className="invalid-feedback">{ errors.relation }</div>
@@ -647,6 +682,7 @@ const SuretyForm = () => {
                                         setSurety({...surety, [e.target.name]: value})
                                     } 
                                 }}
+                                onBlur={handlePreviousSurety}
                                 className={`form-control ${errors.aadhar_number ? 'is-invalid' : null}`}
                             />
                             <div className="invalid-feedback">{ errors.aadhar_number }</div>
@@ -1269,8 +1305,7 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="bank_name"
                                                 value={account.bank_name}
-                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
-                                                onChange={(e) => handleNameChange(e, setAccount, account, 'bank_name')}
+                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
                                                 className="form-control"
                                             />
                                         </div>
@@ -1282,8 +1317,7 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="branch_name"
                                                 value={account.branch_name}
-                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
-                                                onChange={(e) => handleNameChange(e, setAccount, account, 'branch_name')}
+                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
                                                 className="form-control"
                                             />
                                         </div>
@@ -1295,8 +1329,7 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="account_number"
                                                 value={account.account_number}
-                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
-                                                onChange={(e) => handleNameChange(e, setAccount, account, 'account_number')}
+                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
                                                 className="form-control"
                                             />
                                         </div>
@@ -1308,8 +1341,7 @@ const SuretyForm = () => {
                                                 type="text"
                                                 name="ifsc_code"
                                                 value={account.ifsc_code}
-                                                // onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
-                                                onChange={(e) => handleNameChange(e, setAccount, account, 'ifsc_code')}
+                                                onChange={(e) => setAccount({...account, [e.target.name]: e.target.value })}
                                                 className="form-control"
                                             />
                                         </div>
@@ -1472,9 +1504,9 @@ const SuretyForm = () => {
                                     <input 
                                         type="file" 
                                         name="photo"
+                                        accept="image/png, image/jpeg, image/gif"
                                         className={`form-control ${errors.photo ? 'is-invalid' : null }`}
-                                        onChange={(e) => handleFileChange(e, 'photo')}
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.photo }
@@ -1489,9 +1521,9 @@ const SuretyForm = () => {
                                     <input 
                                         type="file" 
                                         name="signature"
+                                        accept="image/png, image/jpeg, image/gif"
                                         className={`form-control ${errors.signature ? 'is-invalid' : null }`}
-                                        onChange={(e) => handleFileChange(e, 'signature')}
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.signature }
@@ -1506,9 +1538,9 @@ const SuretyForm = () => {
                                     <input 
                                         type="file" 
                                         name="aadhar_card"
+                                        accept="image/png, image/jpeg, image/gif"
                                         className={`form-control ${errors.aadhar_card ? 'is-invalid' : null }`}
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
-                                        onChange={(e) => handleFileChange(e, 'aadhar_card')}
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.aadhar_card }
@@ -1519,13 +1551,13 @@ const SuretyForm = () => {
                         <div className="row">
                             <div className="col-md-4">
                                 <div className="form-group">
-                                    <label>{t('upload_identity_proof')}</label>
+                                    <label>{t('upload_identity_proof')} <RequiredField /></label>
                                     <input 
                                         type="file" 
                                         name="identity_proof"
+                                        accept="image/png, image/jpeg, image/gif"
                                         className={`form-control ${errors.identity_proof ? 'is-invalid' : null }`}
-                                        // onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
-                                        onChange={(e) => handleFileChange(e, 'identity_proof')}
+                                        onChange={(e) => setSurety({...surety, [e.target.name]: e.target.files[0]})}
                                     />
                                     <div className="invalid-feedback">
                                         { errors.identity_proof }
@@ -1554,5 +1586,4 @@ const SuretyForm = () => {
         </div>
     )
 }
-
 export default SuretyForm

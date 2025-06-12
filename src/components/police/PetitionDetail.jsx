@@ -18,7 +18,7 @@ const PetitionDetail = ({petition, crime}) => {
                 <tbody>
                     <tr>
                         <td>Petition&nbsp;Number</td>
-                        <td>
+                        <td className="text-danger">
                             { (petition.filing_type && petition.filing_number && petition.filing_year) ? (
                                 <strong>
                                     {`${petition.filing_type?.type_name}/${petition.filing_number}/${petition.filing_year}`}

@@ -29,8 +29,8 @@ const Payment = () => {
     const validationSchema = Yup.object({
         udf1: Yup.string().required("Payer name is required"),
         udf2: Yup.string().required('Email address is required').email('Enter valid email address'),
-        udf3: Yup.string().required(t('errors.mobile_required')).matches(/^d{10}$/, 'Mobile number must be exactly 10 digits'),
-        amount: Yup.string().required("Amount is required field").matches(/^d{1-10}$/, 'Amount is required field')
+        udf3: Yup.string().required(t('errors.mobile_required')).matches(/^\d{10}$/, 'Mobile number must be exactly 10 digits'),
+        amount: Yup.string().required("Amount is required field").matches(/^\d{1,10}$/, 'Amount is required field')
     })
 
     const[payments, setPayments] = useState([])

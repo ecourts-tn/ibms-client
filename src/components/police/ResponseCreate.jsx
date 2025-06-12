@@ -277,11 +277,11 @@ const ResponseCreate = () => {
             <div className="card card-outline card-primary">
                 {loading && <Loading />}
                 <ToastContainer />
-                <div className="card-header d-flex justify-content-between">
+                <div className="card-header">
                     <h3 className="card-title">
                         <i className="fas fa-edit mr-2"></i><strong>Police Response: </strong>
                     </h3>
-                    <span className="text-primary"><strong>{state.efile_no}</strong></span>
+                    <span className="text-primary ml-3"><strong>{state.efile_no}</strong></span>
                 </div>
                 <div className="card-body">
                     <PetitionDetail 

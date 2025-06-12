@@ -18,6 +18,7 @@ import { AuthContext } from 'contexts/AuthContext'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { MasterContext } from 'contexts/MasterContext'
+import * as Yup from 'yup'
 
 
 const CaseAllocation = () => {
@@ -46,6 +47,28 @@ const CaseAllocation = () => {
         allocation_date: '',
     }
     const[form, setForm] = useState(initialState)
+    const[errors, setErrors] = useState({})
+
+    const validationSchema = Yup.object({
+        judiciary: Yup.string().required('Judiciary is required'),
+    bench: Yup.string()
+        .nullable()
+        .when('judiciary', (judiciary, schema) => {
+        if (parseInt(judiciary) === 1) {
+            return schema.required('Bench is required');
+        }
+        return schema.notRequired();
+        }),
+    court: Yup.string()
+        .nullable()
+        .when('judiciary', (judiciary, schema) => { // fixed typo: `judiciay` → `judiciary`
+        if (parseInt(judiciary) === 2) {
+            return schema.required('Court is required');
+        }
+        return schema.notRequired(); // this line was missing
+        }),
+    allocation_date: Yup.string().required('Allocation date is required'),
+});
 
     const allocation_date_Display = (date) => {
         const day = ("0" + date.getDate()).slice(-2);
@@ -102,6 +125,7 @@ const CaseAllocation = () => {
 
     const handleSubmit = async() => {
         try{
+            await validationSchema.validate(form, {abortEarly:false})
             setLoading(true)
             form.efile_no = state.efile_no
             const response = await api.post(`court/case/allocation/`, form)
@@ -114,7 +138,13 @@ const CaseAllocation = () => {
                 }, 1000)
             }
         }catch(error){
-            toast.error("Something went wrong", {theme:"colored"})
+            if(error.inner){
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
         }finally{
             setLoading(false)
         }
@@ -225,7 +255,7 @@ const CaseAllocation = () => {
                             <div className="col-md-6">
                                 <select 
                                     name="bench" 
-                                    className="form-control"
+                                    className={`form-control ${errors.bench ? 'is-invalid' : ''}`}
                                     value={form.bench}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                 >
@@ -234,6 +264,7 @@ const CaseAllocation = () => {
                                     <option key={index} value={b.bench_code}>{ b.bench_name }</option>    
                                     ))}
                                 </select>
+                                <div className="invalid-feedback">{ errors.bench }</div>
                             </div>
                         </div>
                         )}
@@ -243,7 +274,7 @@ const CaseAllocation = () => {
                             <div className="col-md-6">
                                 <select 
                                     name="court" 
-                                    className="form-control"
+                                    className={`form-control ${errors.court ? 'is-invalid' : ''}`}
                                     value={form.court}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
                                 >
@@ -252,6 +283,7 @@ const CaseAllocation = () => {
                                         <option key={index} value={c.court_code}>{ language === 'ta' ? c.court_lname : c.court_name }</option>
                                     ))}  
                                 </select>
+                                <div className="invalid-feedback">{ errors.court }</div>
                             </div>
                         </div>
                         )}
@@ -262,15 +294,11 @@ const CaseAllocation = () => {
                                     type="date" 
                                     name="allocation_date"
                                     value={form.allocation_date ? form.allocation_date : ''}
-                                    className="form-control allocation_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}" 
+                                    className={`form-control allocation_date-date-picker ${errors.allocation_date ? 'is-invalid' : ''}`} 
                                     placeholder="DD-MM-YYYY"
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
                                 />
+                                <div className="invalid-feedback">{ errors.allocation_date }</div>
                             </div>
                         </div>
                         <div className="form-group row">

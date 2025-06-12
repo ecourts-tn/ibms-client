@@ -15,6 +15,8 @@ import { BaseContext } from 'contexts/BaseContext';
 import * as Yup from 'yup'
 
 const Document = () => {
+    const FILE_SIZE = 10 * 1024 *1024
+    const SUPPORTED_FORMATS = ['application/pdf']
     const { masters: {documents}} = useContext(MasterContext)
     const {language}  = useContext(LanguageContext)
     const initialState = {
@@ -32,11 +34,14 @@ const Document = () => {
     const[mobileOtp, setMobileOtp] = useState(false)
     const[mobileVerified, setMobileVerified] = useState(false)
     const[selectedDocument, setSelectedDocument] = useState(null);
-    const[showAffidavit, setShowAffidavit] = useState(true)
+    const[showAffidavit, setShowAffidavit] = useState(false)
 
     const validationSchema = Yup.object({
         title: Yup.string().required('Please select the document'),
-        document: Yup.string().required('Please choose a file'),
+        document: Yup.mixed()
+            .required('Document is required')
+            .test('fileSize', 'File size to too large (Max 10MB)', (value) => value && value.size <= FILE_SIZE)
+            .test('fileType', 'Unsupported file format', (value) => value && SUPPORTED_FORMATS.includes(value.type)),
         enrollment: Yup.string()
             .nullable()
             .when('$showAffidavit', {
@@ -51,7 +56,6 @@ const Document = () => {
         setSelectedDocument(document);
     };
 
-    // Close the modal by clearing the selected document
     const handleClose = () => {
         setSelectedDocument(null);
     };
@@ -176,36 +180,23 @@ const Document = () => {
 
     const handleSubmit = async () => {
     try {
-        // Add efile_no to the form data
         await validationSchema.validate(form, { abortEarly: false });
-        const formData = new FormData();
-        formData.append("efile_no", efileNumber);
-        formData.append("title", form.title);
-        formData.append("document", form.document);
+        form.efile_no = efileNumber
         setLoading(true)
-        const response = await api.post(`case/document/`, formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-            },
+        const response = await api.post(`case/document/`, form, {
+            headers: {"Content-Type": "multipart/form-data",},
         });
 
         if (response.status === 201) {
-            // Update the document list with the new document
             setDocumentList((documents) => [...documents, response.data]);
-            // setForm(initialState); // Reset the form state
-            setForm({
-                title: "",
-                document: null,
-            });
+            setForm(initialState);
             toast.success(`Document ${response.data.efile_no}${response.data.document_id} uploaded successfully`, {
                 theme: "colored",
             });
         }
     } catch (error) {
         if (error.response?.status === 400) {
-            toast.error("Invalid form data. Please check your input.", {
-                theme: "colored",
-            });
+            toast.error("Invalid form data. Please check your input.", {theme: "colored"});
         } 
         if(error.inner){
             const newErrors = {}
@@ -250,8 +241,6 @@ const Document = () => {
                                     </td>
                                 </tr>    
                                 ))}
-
-                                {/* ViewDocument Modal, only shown if selectedDocument is not null */}
                                 {selectedDocument && (
                                     <ViewDocument
                                         url={`${config.docUrl}${selectedDocument.document}`}
@@ -288,6 +277,7 @@ const Document = () => {
                         <input 
                             type="file" 
                             name="document" 
+                            accept="application/pdf"
                             className={`form-control ${errors.document ? 'is-invalid' : ''}`}
                             onChange={(e) => setForm({...form,[e.target.name]:e.target.files[0]})}
                         />
