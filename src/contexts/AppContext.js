@@ -12,9 +12,10 @@ import { MasterProvider } from "./MasterContext";
 export const AppContext = createContext()
 
 export const AppProvider = ({children}) => {
+    const [toggle, setToggle] = useState(false);
 
     return(
-        <AppContext.Provider>
+        <AppContext.Provider value={{ toggle, setToggle }}>
             <LanguageProvider>
                 <BaseProvider>
                     <StepProvider>

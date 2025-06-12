@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, Route } from "react-router-dom";
+import { Outlet, Route, Navigate } from "react-router-dom";
 import { PrivateRoute } from "hooks/PrivateRoute";
 /* -------- Components ----------- */
 import Dashboard from "components/court/Dashboard";
@@ -38,56 +38,73 @@ import ListedCases from "components/court/ListedCases";
 import ConditionComplaince from "components/court/ConditionComplaince";
 import UserList from "components/auth/UserList";
 
+const RequiredRole = ({ allowed, children }) => {
+    debugger
+    const userStr = sessionStorage.getItem('user');
+    let department = null;
+
+    try {
+        department = JSON.parse(userStr)?.department;
+    } catch (e) {
+        // silently fail
+    }
+
+    if (!department) return <Navigate to="/unauthorized" replace />;
+
+    return department === allowed ? children : <Navigate to="/unauthorized" replace />;
+};
+
+
+
 const courtRoutes = [
     { path: "dashboard", component: <Dashboard /> },
-    { path: "petition", component: <PetitionList />},
-    { path: "approved", component: <ApprovedList />},
-    { path: "returned", component: <ReturnedList />},
-    { path: "rejected", component: <RejectedList />},
-    { path: "listed", component: <ListedCases />},
+    { path: "petition", component: <PetitionList /> },
+    { path: "approved", component: <ApprovedList /> },
+    { path: "returned", component: <ReturnedList /> },
+    { path: "rejected", component: <RejectedList /> },
+    { path: "listed", component: <ListedCases /> },
     { path: "case/scrutiny", component: <PendingList /> },
     { path: "case/scrutiny/detail", component: <ScrutinyDashboard /> },
     { path: "case/registration", component: <RegistrationPendingList /> },
     { path: "case/registration/detail", component: <CaseRegistration /> },
-    { path: "case/allocation", component: <AllocationPendingList />},
-    { path: "case/allocation/detail", component: <CaseAllocation />},
+    { path: "case/allocation", component: <AllocationPendingList /> },
+    { path: "case/allocation/detail", component: <CaseAllocation /> },
     { path: "case/cause-list/post", component: <PostCauseList /> },
     { path: "case/cause-list/publish", component: <PublishCasueList /> },
     { path: "case/proceeding", component: <DailyProceedingsList /> },
-    { path: "case/proceeding/detail", component: <DailyProceedings />},
-    { path: "case/proceeding/modify", component: <ModifyBusiness />},
+    { path: "case/proceeding/detail", component: <DailyProceedings /> },
+    { path: "case/proceeding/modify", component: <ModifyBusiness /> },
     { path: "case/condition/", component: <ConditionComplaince /> },
-    { path: "case/bailbond/generate", component: <BailBond />},
-    { path: "case/order/generate", component: <GenerateOrder />},
-    { path: "case/order/upload", component: <UploadOrder />},
-    { path: "case/surety/pendinglist", component: <SuretyPendingList />},
-    { path: "case/surety/verify", component: <SuretyVerify />},
-    { path: "case/transfer/request", component: <CaseTransferRequest />},
-    { path: "case/transfer/receive", component: <CaseTransferReceive />},
-    { path: "admin/judge", component: <JudgeForm />},
-    { path: "admin/judge/list", component: <JudgeList />},
-    { path: "admin/judge/period", component: <JudgePeriodForm />},
-    { path: "admin/judge/period/list", component: <JudgePeriodList />},
-    { path: "admin/bench/list", component: <BenchList />},
-    { path: "admin/bench", component: <BenchForm />},
-    { path: "admin/prosecutor/list", component: <ProsecutorPeriod />},
-    { path: "admin/prosecutor/", component: <ProsecutorForm />},
+    { path: "case/bailbond/generate", component: <BailBond /> },
+    { path: "case/order/generate", component: <GenerateOrder /> },
+    { path: "case/order/upload", component: <UploadOrder /> },
+    { path: "case/surety/pendinglist", component: <SuretyPendingList /> },
+    { path: "case/surety/verify", component: <SuretyVerify /> },
+    { path: "case/transfer/request", component: <CaseTransferRequest /> },
+    { path: "case/transfer/receive", component: <CaseTransferReceive /> },
+    { path: "admin/judge", component: <JudgeForm /> },
+    { path: "admin/judge/list", component: <JudgeList /> },
+    { path: "admin/judge/period", component: <JudgePeriodForm /> },
+    { path: "admin/judge/period/list", component: <JudgePeriodList /> },
+    { path: "admin/bench/list", component: <BenchList /> },
+    { path: "admin/bench", component: <BenchForm /> },
+    { path: "admin/prosecutor/list", component: <ProsecutorPeriod /> },
+    { path: "admin/prosecutor/", component: <ProsecutorForm /> },
 ];
-
 
 const CourtLayout = () => (
     <PrivateRoute>
         {/* <div className="container-fluid" style={{ minHeight:'500px'}}>
             <div className="card" style={{ boxShadow:'none', border:'none'}}>
                 <div className="card-body" style={{ boxShadow:'none', borderColor:'none'}}></div> */}
-                <Outlet />
-            {/* </div>
+        <Outlet />
+        {/* </div>
         </div> */}
     </PrivateRoute>
 );
 
 export const CourtRoutes = () => (
-    <Route path="court" element={<CourtLayout />}>
+    <Route path="court" element={<RequiredRole allowed={1}><CourtLayout /></RequiredRole>}>
         {courtRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={route.component} />
         ))}

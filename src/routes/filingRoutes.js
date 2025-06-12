@@ -1,12 +1,14 @@
 import React from "react";
-import { Route } from "react-router-dom";
+import { Navigate, Route } from "react-router-dom";
 import { PrivateRoute } from "hooks/PrivateRoute";
 /* -------- Components ----------- */
 import FilingLayout from "components/layout/public/FilingLayout";
 import { Logout, Profile, ChangePassword } from "components/auth";
-import { Dashboard, DraftList, SubmittedList, PdfGenerator, 
-    ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds,PreviousCaseHistory,
-    Petitioner, Respondent, Document, Initial, Declaration } from "components/filing";
+import {
+    Dashboard, DraftList, SubmittedList, PdfGenerator,
+    ApprovedList, ReturnedList, ProceedingDetail, Advocate, Grounds, PreviousCaseHistory,
+    Petitioner, Respondent, Document, Initial, Declaration
+} from "components/filing";
 import Pleadings from "components/Pleadings";
 import { InitialInput, Accused, IntevenePetitioner } from "components/filing/intervene";
 import { Surety, SuretyForm, DischargeSurety, SuretyDetails } from "components/filing/surety";
@@ -20,76 +22,76 @@ import PayCourtFee from "components/filing/PayCourtFee";
 
 
 const bailRoutes = [
-    { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <Petitioner />, name:"petitioners" },
-    { id: 3, path: "respondent", component: <Respondent />, name:"respondents" },
-    { id: 4, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name:"previous_case_details" },
-    { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 7, path: "document", component: <Document />, name:"upload_document" },
-    { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "initial-input", component: <Initial />, name: "basic_details" },
+    { id: 2, path: "petitioner", component: <Petitioner />, name: "petitioners" },
+    { id: 3, path: "respondent", component: <Respondent />, name: "respondents" },
+    { id: 4, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name: "previous_case_details" },
+    { id: 6, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 7, path: "document", component: <Document />, name: "upload_document" },
+    { id: 8, path: "payment", component: <Payment />, name: "payment" },
+    { id: 9, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 const abailRoutes = [
-    { id: 1, path: "initial-input", component: <Initial />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <Petitioner />, name:"petitioners" },
-    { id: 3, path: "respondent", component: <Respondent />, name:"respondents" },
-    { id: 4, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name:"previous_case_details" },
-    { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 7, path: "document", component: <Document />, name:"upload_document" },
-    { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "initial-input", component: <Initial />, name: "basic_details" },
+    { id: 2, path: "petitioner", component: <Petitioner />, name: "petitioners" },
+    { id: 3, path: "respondent", component: <Respondent />, name: "respondents" },
+    { id: 4, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 5, path: "previous-history", component: <PreviousCaseHistory />, name: "previous_case_details" },
+    { id: 6, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 7, path: "document", component: <Document />, name: "upload_document" },
+    { id: 8, path: "payment", component: <Payment />, name: "payment" },
+    { id: 9, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 const alliedRoutes = [
-    { id: 1, path: "main-case-detail", component: <Allied />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 4, path: "document", component: <Document />, name:"upload_document" },
-    { id: 5, path: "payment", component: <Payment />, name:"payment" },
-    { id: 6, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "main-case-detail", component: <Allied />, name: "main_case_detail" },
+    { id: 2, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 3, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 4, path: "document", component: <Document />, name: "upload_document" },
+    { id: 5, path: "payment", component: <Payment />, name: "payment" },
+    { id: 6, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 const pleadingRoutes = [
-    { id: 1, path: "", component: <Pleadings />, name:"main_case_detail"},
-    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 3, path: "document", component: <Document />, name:"upload_document" },
-    { id: 4, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "", component: <Pleadings />, name: "main_case_detail" },
+    { id: 2, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 3, path: "document", component: <Document />, name: "upload_document" },
+    { id: 4, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 const interveneRoutes = [
-    { id: 1, path: "initial-input", component: <InitialInput />, name:"basic_details"},
-    { id: 2, path: "petitioner", component: <IntevenePetitioner />, name:"petitioners" },
-    { id: 3, path: "accused", component: <Accused />, name:"accused_details" },
-    { id: 4, path: "respondent", component: <Respondent />, name:"respondents" },
-    { id: 5, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 6, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 7, path: "document", component: <Document />, name:"upload_document" },
-    { id: 8, path: "payment", component: <Payment />, name:"payment" },
-    { id: 9, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "initial-input", component: <InitialInput />, name: "basic_details" },
+    { id: 2, path: "petitioner", component: <IntevenePetitioner />, name: "petitioners" },
+    { id: 3, path: "accused", component: <Accused />, name: "accused_details" },
+    { id: 4, path: "respondent", component: <Respondent />, name: "respondents" },
+    { id: 5, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 6, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 7, path: "document", component: <Document />, name: "upload_document" },
+    { id: 8, path: "payment", component: <Payment />, name: "payment" },
+    { id: 9, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 
 const suretyRoutes = [
-    { id: 1, path: "main-case-detail", component: <Surety />, name:"basic_details"},
-    { id: 2, path: "surety-detail", component: <SuretyForm />, name:"surety_details" },
-    { id: 3, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 4, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 5, path: "document", component: <Document />, name:"upload_document" },
-    { id: 6, path: "payment", component: <Payment />, name:"payment" },
-    { id: 7, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 1, path: "main-case-detail", component: <Surety />, name: "basic_details" },
+    { id: 2, path: "surety-detail", component: <SuretyForm />, name: "surety_details" },
+    { id: 3, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 4, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 5, path: "document", component: <Document />, name: "upload_document" },
+    { id: 6, path: "payment", component: <Payment />, name: "payment" },
+    { id: 7, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 const dischargeRoutes = [
-    { id: 1, path: "main-case-detail", component: <DischargeSurety />, name:"basic_details"},
+    { id: 1, path: "main-case-detail", component: <DischargeSurety />, name: "basic_details" },
     // { id: 2, path: "surety-detail", component: <SuretyDetails />, name:"surety_details" },
-    { id: 2, path: "ground", component: <Grounds />, name:"ground" },
-    { id: 3, path: "advocate", component: <Advocate />, name:"advocate" },
-    { id: 4, path: "document", component: <Document />, name:"upload_document" },
-    { id: 5, path: "payment", component: <Payment />, name:"payment" },
-    { id: 6, path: "declaration", component: <Declaration />, name:"declaration" },
+    { id: 2, path: "ground", component: <Grounds />, name: "ground" },
+    { id: 3, path: "advocate", component: <Advocate />, name: "advocate" },
+    { id: 4, path: "document", component: <Document />, name: "upload_document" },
+    { id: 5, path: "payment", component: <Payment />, name: "payment" },
+    { id: 6, path: "declaration", component: <Declaration />, name: "declaration" },
 ];
 
 
@@ -116,6 +118,23 @@ export const FilingRoutes = () => {
         dischargeRoutes,
     };
 
+
+    const RequiredRole = ({ allowed, children }) => {
+        debugger
+        const userStr = sessionStorage.getItem('user');
+        let department = null;
+
+        try {
+            department = JSON.parse(userStr)?.department;
+        } catch (e) {
+            // silently fail
+        }
+
+        if (!department) return <Navigate to="/unauthorized" replace />;
+debugger
+        return department === allowed ? children : <Navigate to="/unauthorized" replace />;
+    };
+
     return (
         <>
             {routesConfig.map(({ path, routes, title }, index) => {
@@ -130,7 +149,7 @@ export const FilingRoutes = () => {
             })}
 
             {[
-                { path: "filing/dashboard", element: <Dashboard /> },
+                { path: 'filing/dashboard', element: (<RequiredRole allowed={4}><Dashboard /></RequiredRole>) },
                 { path: "filing/court-fee", element: <PayCourtFee /> },
                 { path: "filing/draft", element: <DraftList /> },
                 { path: "filing/submitted", element: <SubmittedList /> },
@@ -141,10 +160,10 @@ export const FilingRoutes = () => {
                 { path: "auth/logout", element: <Logout /> },
                 { path: "auth/profile", element: <Profile /> },
                 { path: "auth/change-password", element: <ChangePassword /> },
-                { path: "filing/cases/", element:<ListedPetition />},
-                { path: "pp-remarks/pending/", element:<ResponsePending />},
-                { path: "pp-remarks/submitted/", element:<ResponseSubmitted />},
-                { path: "pp-remarks/", element:<ResponseCreate />}
+                { path: "filing/cases/", element: <ListedPetition /> },
+                { path: "pp-remarks/pending/", element: <ResponsePending /> },
+                { path: "pp-remarks/submitted/", element: <ResponseSubmitted /> },
+                { path: "pp-remarks/", element: <ResponseCreate /> }
             ].map(({ path, element, private: isPrivate = true }, index) => (
                 <Route key={index} path={path} element={isPrivate ? <PrivateRoute>{element}</PrivateRoute> : element} />
             ))}

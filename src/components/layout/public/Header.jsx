@@ -54,7 +54,6 @@ const Header = () => {
 
   return (
     <>
-      <ToastContainer />
       <nav className="navbar navbar-expand-lg primary-navbar">
         <div className="container">
           <a className="navbar-brand" href="#"><strong>{t('title')}</strong></a>
@@ -137,7 +136,7 @@ const Header = () => {
                 <Link to="/filing/pleadings" className="nav-link">{t('pleadings')}</Link>
               </li>
               )}
-              { parseInt(user?.department) === 5 && (
+              { parseInt(user?.department) === 4 && (
                 <li className="nav-item dropdown">
                   <a className="nav-link dropdown-toggle" href="#/" role="button" data-toggle="dropdown">
                     {t('PP Remarks')}
