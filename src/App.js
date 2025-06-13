@@ -17,6 +17,8 @@ import { prisonRoutes } from 'routes/prisonRoutes';
 import { FilingRoutes } from 'routes/filingRoutes';
 import DepartmentRegistration from 'components/auth/DepartmentRegistration';
 import UserList from 'components/auth/UserList';
+import NotFound from 'components/layout/public/NotFound';
+import UnAuthorized from 'components/layout/public/UnAuthorized';
 
 function App() {
 
@@ -48,6 +50,8 @@ function App() {
                     <div>
                         <ToastContainer />
                         <Routes>
+                            <Route path= "*" element={<NotFound />} />
+                            <Route path= "unauthorized" element={<UnAuthorized />} />
                             <Route element={<PublicLayout />}>
 
                                 {publicRoutes.map((route, index) => (

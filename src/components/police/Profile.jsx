@@ -42,7 +42,7 @@ const Profile = () => {
         litigant_name: Yup.string().required('Litigant name is required'),
         designation: Yup.string().required('Designation is required'),
         gender: Yup.string().required('Gender is required'),
-        age:Yup.string().required('Age is requried').matches(/^\d{1-2}$/, 'Age must be less than 99'),
+        age:Yup.string().required('Age is requried').matches(/^\d{1,2}$/, 'Age must be less than 99'),
         relation:Yup.string().required('Relation is required'),
         relation_name:Yup.string().required('Relation name is required'),
         state: Yup.string().required('State is required'),

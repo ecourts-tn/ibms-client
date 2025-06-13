@@ -32,17 +32,16 @@ const FingerPrintCapture = () => {
 
   return (
     <div className="row">
-        <div className="col-md-6">
-            <button onClick={captureFingerprint} className="btn btn-secondary btn-sm">Capture Fingerprint</button>
-            {/* <button onClick={uploadFingerprint}>Upload Fingerprint</button> */}
-        </div>
-        <div className="col-md-6">
-            {fingerprintData && (
+        <div className="col-md-8">
+            <div style={{border:'1px solid lightgrey', height:120, marginBottom:5}}>
+              {fingerprintData && (
                 <>
                     <h6><strong>Fingerprint Data</strong></h6>
                     <pre>{JSON.stringify(fingerprintData, null, 2)}</pre>
                 </>
             )}
+            </div>
+            <button onClick={captureFingerprint} className="btn btn-secondary btn-sm btn-block">Capture</button>
         </div>
     </div>
   );

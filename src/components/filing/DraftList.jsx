@@ -135,6 +135,7 @@ const DraftList = () => {
                     title={ language === 'ta' ? selectedDocument.title?.document_lname || null : selectedDocument.title?.document_name || null}
                     show={!!selectedDocument}
                     handleClose={handleClose}
+                    isDepartment={true}
                 />
             )}
             <div className="container-fluid px-md-5 my-4" style={{minHeight:'500px'}}>

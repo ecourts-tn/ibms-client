@@ -37,6 +37,7 @@ import RejectedList from "components/court/RejectedList";
 import ListedCases from "components/court/ListedCases";
 import ConditionComplaince from "components/court/ConditionComplaince";
 import UserList from "components/auth/UserList";
+import ConditionForm from "components/court/ConditionForm";
 
 const RequiredRole = ({ allowed, children }) => {
     debugger
@@ -74,7 +75,7 @@ const courtRoutes = [
     { path: "case/proceeding", component: <DailyProceedingsList /> },
     { path: "case/proceeding/detail", component: <DailyProceedings /> },
     { path: "case/proceeding/modify", component: <ModifyBusiness /> },
-    { path: "case/condition/", component: <ConditionComplaince /> },
+    { path: "case/condition/", component: <ConditionForm /> },
     { path: "case/bailbond/generate", component: <BailBond /> },
     { path: "case/order/generate", component: <GenerateOrder /> },
     { path: "case/order/upload", component: <UploadOrder /> },

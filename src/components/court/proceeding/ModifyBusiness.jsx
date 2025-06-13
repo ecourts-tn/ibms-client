@@ -29,9 +29,6 @@ const ModifyBusiness = () => {
     const [proceeding, setProceeding] = useState({})
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
-    const [showYearDropdown, setShowYearDropdown] = useState(false); // State to control dropdown visibility
-
-    const currentYear = new Date().getFullYear(); // Get the current year
 
     useEffect(() => {
         if(user){
@@ -47,58 +44,13 @@ const ModifyBusiness = () => {
 
     const validationSchema = Yup.object({
         case_type: Yup.string().required(),
-        case_number: Yup.string().required(),
-        case_year: Yup.number()
+        case_number: Yup.string()
+            .required('Case number is required')
+            .matches(/^\d{1,6}$/, 'Case number should be numeric'),
+        case_year: Yup.string()
             .required('Year is required')
-            .max(currentYear, `Year cannot be greater than ${currentYear}`)  // Ensure year is not in the future
-            .min(1900, 'Year must be greater than or equal to 1900') // You can change this range if necessary
-            .test('len', 'Year must be 4 digits', (val) => val && val.toString().length === 4)
+            .matches(/^\d{4}$/, 'Year should be exactly 4 digits')
     });
-
-    // Function to handle case_number input validation (only numeric input)
-    const handleCaseNumberChange = (e) => {
-        const value = e.target.value;
-        // Allow only numbers (no special characters or letters) and limit to 6 digits
-        if (/^[0-9]*$/.test(value) && value.length <= 6) {
-            setForm({ ...form, [e.target.name]: value });
-        }
-    };
-
-    // Function to handle case_year input (typing validation)
-    const handleYearChange = (e) => {
-        const value = e.target.value;
-        // Allow only numbers and limit to 4 digits
-        if (/^[0-9]*$/.test(value) && value.length <= 4) {
-            setForm({ ...form, case_year: value });
-
-            // Check if the year entered is a future year and display an error message
-            if (value && parseInt(value) > currentYear) {
-                setErrors((prevErrors) => ({
-                    ...prevErrors,
-                    case_year: `Year cannot be greater than ${currentYear}`  // Error message for future year
-                }));
-            } else {
-                setErrors((prevErrors) => {
-                    const { case_year, ...rest } = prevErrors;  // Remove the error if year is valid
-                    return rest;
-                });
-            }
-
-            setShowYearDropdown(true); // Show the dropdown while typing
-        }
-    };
-
-    // Function to handle selecting a year from the dropdown
-    const handleYearSelect = (year) => {
-        setForm({ ...form, case_year: year });
-        setShowYearDropdown(false); // Hide the dropdown after selection
-    };
-
-    // Filter the years based on the input value
-    const filteredYears = [];
-    for (let year = currentYear; year >= 1900; year--) {
-        filteredYears.push(year);
-    }
 
 
     const handleSearch = async (e) => {
@@ -111,7 +63,6 @@ const ModifyBusiness = () => {
                 setProceeding(response.data)
             }
             }catch (error) {
-                console.log(error)
                 if (error.inner) {
                     const newErrors = {};
                     error.inner.forEach((err) => {
@@ -130,7 +81,6 @@ const ModifyBusiness = () => {
 
     return (
         <div className="card card-outline card-primary" style={{height:'600px'}}>
-            <ToastContainer />
             {loading && <Loading />}
             <div className="card-header">
                 <h3 className="card-title"><i className="fas fa-edit mr-2"></i><strong>Modify Business</strong></h3>
@@ -166,11 +116,14 @@ const ModifyBusiness = () => {
                                         className={`form-control ${errors.case_number ? 'is-invalid' : ''}`}
                                         name="case_number"
                                         value={form.case_number}
-                                        onChange={handleCaseNumberChange}  
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, '')
+                                            if(value.length <= 6){
+                                                setForm({ ...form, [e.target.name]: value })
+                                            }
+                                        }}  
                                     />
-                                    <div className="invalid-feedback">
-                                        {errors.case_number}
-                                    </div>
+                                    <div className="invalid-feedback">{errors.case_number}</div>
                                 </div>
                             </div>
                             <div className="col-md-4">
@@ -181,26 +134,15 @@ const ModifyBusiness = () => {
                                         className={`form-control ${errors.case_year ? 'is-invalid' : ''}`}
                                         name="case_year"
                                         value={form.case_year}
-                                        onChange={handleYearChange} 
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, '')
+                                            if(value.length <= 6){
+                                                setForm({ ...form, [e.target.name]: value })
+                                            }
+                                        }}   
                                         placeholder="Enter Year"
                                     />
-                                    <div className="invalid-feedback">
-                                        {errors.case_year}
-                                    </div>
-                                    {showYearDropdown && form.case_year && (
-                                        <ul className="list-group mt-2" style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ccc' }}>
-                                            {filteredYears.map((year) => (
-                                                <li
-                                                    key={year}
-                                                    className="list-group-item"
-                                                    style={{ cursor: 'pointer' }}
-                                                    onClick={() => handleYearSelect(year)} // Select year
-                                                >
-                                                    {year}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
+                                    <div className="invalid-feedback">{errors.case_year}</div>
                                 </div>
                             </div>
                             <div className="col-md-2 pt-4 mt-2">

@@ -44,10 +44,10 @@ const WebcamCapture = () => {
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
-                width={400}
+                width={600}
                 videoConstraints={{
                 width:1400,
-                height: 720,
+                height: 820,
                 facingMode: "user",
                 }}
                 className="img-thumbnail"

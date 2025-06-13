@@ -11,6 +11,8 @@ import { AuthContext } from 'contexts/AuthContext';
 import { RequiredField } from 'utils';
 
 const UploadOrder = () => {
+    const FILE_SIZE = 5 * 1024 * 1024
+    const SUPPORTED_FILES = 'application/pdf'
     const { t } = useTranslation();
     const { language } = useContext(LanguageContext);
     const { masters:{
@@ -44,9 +46,19 @@ const UploadOrder = () => {
             .matches(/^\d{4}$/, 'Year must be 4 digits'),
         file: Yup.mixed()
             .required('File is required')
-            .test('fileSize', 'File size must be less than 5MB', (value) => !value || value.size <= 5 * 1024 * 1024)  // 5MB
-            .test('fileType', 'Only PDF files are allowed', (value) => !value || value.type === 'application/pdf'), // Only PDF files
+            .test('fileSize', 'File size must be less than 5MB', (value) => !value || value.size <= FILE_SIZE)  
+            .test('fileType', 'Only PDF files are allowed', (value) => !value || value.type === SUPPORTED_FILES), 
     });
+
+    const searchValidationSchema = Yup.object({
+        case_type: Yup.string().required(),
+        case_number: Yup.string()
+            .required('Case number required')
+            .matches(/^\d{1,6}$/, 'Case number must be up to 6 digits'),
+        case_year: Yup.string()
+            .required('Year is required')
+            .matches(/^\d{4}$/, 'Year must be 4 digits'),
+    })
 
     useEffect(() => {
         if(user){
@@ -59,10 +71,10 @@ const UploadOrder = () => {
             })
         }
     }, [user])
-
     
     const handleSearch = async () => {
         try {
+            await searchValidationSchema.validate(form, { abortEarly: false })
             setLoading(true);
             const response = await api.post(`court/order/upload/`, form);
             if (response.status === 200) {
@@ -70,11 +82,18 @@ const UploadOrder = () => {
                 setShowDocument(true);
             }
         } catch (error) {
-            console.log(error);
+            if (error.inner) {
+                const newErrors = {}
+                error.inner.forEach(err => {
+                    newErrors[err.path] = err.message
+                })
+                setErrors(newErrors)
+            }
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     };
+
 
     const handleSubmit = async () => {
         try {

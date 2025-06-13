@@ -13,6 +13,9 @@ import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { Button } from 'react-bootstrap'
 import { AuthContext } from 'contexts/AuthContext'
+import DatePicker from 'components/utils/DatePicker';
+import { RequiredField } from 'utils'
+
 
 const JudgePeriodForm = () => {
 
@@ -42,86 +45,27 @@ const JudgePeriodForm = () => {
     const [errors, setErrors] = useState({})
     const [loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
-        state: Yup.string().required(),
-        district: Yup.string().required(),
-        establishment: Yup.string().required(),
-        court: Yup.string().required(),
-        jocode: Yup.string().required(),
-        judge_name: Yup.string().required(),
-        judge_name: Yup.string().required(),
-        joining_date: Yup.date().required(),
-        releiving_date: Yup.date().required(),
+        state: Yup.string().required(t('errors.state_required')),
+        district: Yup.string().required(t('errors.district_required')),
+        establishment: Yup.string().required(t('errors.establishment_required')),
+        court: Yup.string().required(t('errors.court_required')),
+        jocode: Yup.string().required('JO code is required'),
+        judge_name: Yup.string().required('Judge name is required'),
+        judge_lname: Yup.string().required('Judge name (Tamil) is required '),
+        joining_date: Yup.date()
+            .typeError('Joining date must be a valid date')    
+            .required(),
+        releiving_date: Yup.date()
+            .nullable() // allows null or empty
+            .typeError('Releiving date must be a valid date') // if invalid date (like text), show this error
+            .notRequired(), 
         is_incharge: Yup.boolean().required()
     })
-
-    const joining_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
-    
-    const joining_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const joining_date = flatpickr(".joining_date-date-picker", {
-            dateFormat: "d-m-Y",
-            maxDate: "today",
-            defaultDate: form.joining_date ? joining_date_Display(new Date(form.joining_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? joining_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, joining_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (joining_date && typeof joining_date.destroy === "function") {
-                joining_date.destroy();
-            }
-        };
-    }, [form]);
-
-    const releiving_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
-    
-    const releiving_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const releiving_date = flatpickr(".releiving_date-date-picker", {
-            dateFormat: "d-m-Y",
-            // maxDate: "today",
-            defaultDate: form.releiving_date ? releiving_date_Display(new Date(form.releiving_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? releiving_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, releiving_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (releiving_date && typeof releiving_date.destroy === "function") {
-                releiving_date.destroy();
-            }
-        };
-    }, [form]);
 
     useEffect(() => {
         if(user){
             setForm({...form,
-                state: user.state || '',
+                state: user.district?.state || '',
                 district: user.district?.district_code || '',
                 establishment: user.establishment?.establishment_code || '',
                 court: user.court?.court_code || '',
@@ -150,6 +94,13 @@ const JudgePeriodForm = () => {
             setLoading(false)
         }
     }
+
+    const handleDateChange = (field, value) => {
+        setForm((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+    };
 
     const handleSubmit = async() => {
         try{
@@ -187,7 +138,7 @@ const JudgePeriodForm = () => {
                 <div className="row">
                     <div className="col-md-6">
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('jocode')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('jocode')} <RequiredField/></label>
                             <div className="col-sm-4">
                                 <input 
                                     type="text" 
@@ -210,7 +161,7 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('judge_name')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('judge_name')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <input 
                                     type="text" 
@@ -226,7 +177,7 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('judge_lname')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('judge_lname')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <input 
                                     type="text" 
@@ -242,13 +193,14 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('state')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('state')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <select 
                                     name="state" 
                                     className={`form-control ${errors.state ? 'is-invalid' : ''}`}
                                     value={form.state}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    disabled={true}
                                 >
                                     <option value="">{t('alerts.select_state')}</option>
                                     {states.map((s, index) => (
@@ -261,32 +213,32 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('district')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('district')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <select 
                                     name="district" 
                                     className={`form-control ${errors.district ? 'is-invalid' : ''}`}
                                     value={form.district}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    disabled={true}
                                 >
                                     <option value="">{t('alerts.select_district')}</option>
                                     {districts.filter(d => parseInt(d.state) === parseInt(form.state)).map((d, index) => (
                                     <option key={index} value={d.district_code}>{ language === 'ta' ? d.district_lname : d.district_name }</option>    
                                     ))}
                                 </select>
-                                <div className="invalid-feedback">
-                                    { errors.district }
-                                </div>
+                                <div className="invalid-feedback">{ errors.district }</div>
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('est_name')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('est_name')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <select 
                                     name="establishment" 
                                     className={`form-control ${errors.establishment ? 'is-invalid' : ''}`}
                                     value={form.establishment}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    disabled={true}
                                 >
                                     <option value="">{t('alerts.select_establishment')}</option>
                                     {establishments.filter(e => parseInt(e.district) === parseInt(form.district)).map((e, index) => (
@@ -299,13 +251,14 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">{t('court')}</label>
+                            <label htmlFor="" className="col-sm-4">{t('court')}<RequiredField/></label>
                             <div className="col-sm-8">
                                 <select 
                                     name="court" 
                                     className={`form-control ${errors.court ? 'is-invalid' :''}`}
                                     value={form.court}
                                     onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
+                                    disabled={true}
                                 >
                                     <option value="">{t('alerts.select_court')}</option>
                                     {courts.filter(c => c.establishment === form.establishment).map((c, index) => (
@@ -318,45 +271,27 @@ const JudgePeriodForm = () => {
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label htmlFor="" className="col-sm-4">Joining Date</label>
+                            <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
                             <div className="col-sm-8">
-                                <input 
-                                    type="date" 
-                                    className={`form-control joining_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}`} 
+                                <DatePicker 
                                     name="joining_date"
-                                    value={form.joining_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.joining_date}
+                                    onChange={handleDateChange}
+                                    error={errors.joining_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.joining_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.joining_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Releiving Date</label>
                             <div className="col-sm-8">
-                                <input 
-                                    type="date" 
-                                    className={`form-control releiving_date-date-picker ${errors.releiving_date ? 'is-invalid' : ''}`}
+                                <DatePicker 
                                     name="releiving_date"
-                                    value={form.releiving_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.releiving_date}
+                                    onChange={handleDateChange}
+                                    error={errors.releiving_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.releiving_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.releiving_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">

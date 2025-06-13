@@ -200,9 +200,9 @@ const ResponseCreate = () => {
                         crime_year: response.data.petition.fir_year
                     })
                     setEfileNumber(response.data.petition.efile_number)
-                    const { petition, litigant, crime } = response.data
+                    const { petition, litigants, crime } = response.data
                     setPetition(petition)
-                    setAccused(litigant.filter(l => l.litigant_type === 1))
+                    setAccused(litigants.filter(l => l.litigant_type === 1))
                     setCrime(crime)
                 }
             }catch(error){
@@ -242,14 +242,17 @@ const ResponseCreate = () => {
         try {
             await validationSchema.validate(form, { abortEarly: false })
             form.efile_no = state.efile_no
-            const post_data = {
+            const data = {
                 response: form,
                 materials,
                 vehicles,
                 documents
             } 
-            console.log(post_data);
-            const response = await api.post("police/response/create/", post_data)
+            const response = await api.post("police/response/create/", data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
             if (response.status === 201) {
                 toast.success("Response added successfully", {
                     theme: "colored"

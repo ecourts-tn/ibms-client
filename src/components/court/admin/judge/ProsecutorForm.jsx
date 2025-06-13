@@ -9,10 +9,10 @@ import { LanguageContext } from 'contexts/LanguageContex'
 import { MasterContext } from 'contexts/MasterContext'
 import { RequiredField } from 'utils'
 import Loading from 'components/utils/Loading'
-import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
 import { EstablishmentContext } from 'contexts/EstablishmentContext'
 import { CourtContext } from 'contexts/CourtContext'
+import DatePicker from 'components/utils/DatePicker'
 
 const ProsecutorForm = () => {
 
@@ -49,74 +49,68 @@ const ProsecutorForm = () => {
     const[loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
         judiciary: Yup.string().required(),
-        prosecutor_name: Yup.string().required(),
-        designation: Yup.string().required(),
-        joining_date: Yup.string().required(),
+        seat: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 1){
+                    return schema.required('Seat is required')
+                }
+                return schema.notRequired()
+            }),
+        bench: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 1){
+                    return schema.required('Bench is required')
+                }
+                return schema.notRequired()
+            }),
+        state: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 2){
+                    return schema.required(t('errors.state_required'))
+                }
+                return schema.notRequired()
+            }),
+        district: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 2){
+                    return schema.required(t('errors.district_required'))
+                }
+                return schema.notRequired()
+            }),
+        establishment: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 2){
+                    return schema.required(t('errors.establishment_required'))
+                }
+                return schema.notRequired()
+            }),
+        court: Yup.string()
+            .nullable()
+            .when('judiciary', (judiciary, schema) => {
+                if(parseInt(judiciary) === 2){
+                    return schema.required(t('errors.court_required'))
+                }
+                return schema.notRequired()
+            }),
+        prosecutor_name: Yup.string().required('Prosecutor name is required'),
+        designation: Yup.string().required('Designation is required'),
+        joining_date: Yup.date()
+            .typeError('Joining date must be a valid date')
+            .required('Joining date is required'),
     })
 
-    const joining_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+    const handleDateChange = (field, value) => {
+        setForm((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
     };
     
-    const joining_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const joining_date = flatpickr(".joining_date-date-picker", {
-            dateFormat: "d-m-Y",
-            maxDate: "today",
-            defaultDate: form.joining_date ? joining_date_Display(new Date(form.joining_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? joining_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, joining_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (joining_date && typeof joining_date.destroy === "function") {
-                joining_date.destroy();
-            }
-        };
-    }, [form]);
-
-    const releiving_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
-    
-    const releiving_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const releiving_date = flatpickr(".releiving_date-date-picker", {
-            dateFormat: "d-m-Y",
-            // maxDate: "today",
-            defaultDate: form.releiving_date ? releiving_date_Display(new Date(form.releiving_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? releiving_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, releiving_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (releiving_date && typeof releiving_date.destroy === "function") {
-                releiving_date.destroy();
-            }
-        };
-    }, [form]);
 
     const handleSearch = async(e) => {
         e.preventDefault();
@@ -367,9 +361,7 @@ const ProsecutorForm = () => {
                                         <option key={index} value={c.court_code}>{c.court_name}</option>
                                         ))}
                                     </select>
-                                    <div className="invalid-feedback">
-                                        { errors.court }
-                                    </div>
+                                    <div className="invalid-feedback">{ errors.court }</div>
                                 </div>
                             </div>                              
                         </React.Fragment>
@@ -392,43 +384,25 @@ const ProsecutorForm = () => {
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
                             <div className="col-sm-3">
-                                <input 
-                                    type="date" 
-                                    className={`form-control joining_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}`} 
+                                <DatePicker 
                                     name="joining_date"
-                                    value={form.joining_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.joining_date}
+                                    onChange={handleDateChange}
+                                    error={errors.joining_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.joining_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.joining_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Releiving Date</label>
                             <div className="col-sm-3">
-                                <input 
-                                    type="date" 
-                                    className={`form-control releiving_date-date-picker ${errors.releiving_date ? 'is-invalid' : ''}`}
+                                <DatePicker 
                                     name="releiving_date"
-                                    value={form.releiving_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.releiving_date}
+                                    onChange={handleDateChange}
+                                    error={errors.releiving_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.releiving_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.releiving_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">

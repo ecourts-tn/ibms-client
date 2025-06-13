@@ -11,6 +11,7 @@ import { RequiredField } from 'utils'
 import Loading from 'components/utils/Loading'
 import flatpickr from 'flatpickr';
 import "flatpickr/dist/flatpickr.min.css";
+import DatePicker from 'components/utils/DatePicker'
 
 const BenchForm = () => {
 
@@ -27,10 +28,13 @@ const BenchForm = () => {
     const [form, setForm] = useState(initialState)
     const [judges, setJudges] = useState([])
     const [errors, setErrors] = useState({})
-    const[loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const validationSchema = Yup.object({
-        bench_code: Yup.string().required(),
-        bench_name: Yup.string().required(),
+        bench_code: Yup.string().required('Bench code is required'),
+        bench_name: Yup.string().required('Bench name is required'),
+        joining_date: Yup.date()
+            .typeError('Joining date should be valid date')
+            .required('Joining date is required')
     })
     const [selectedJudges, setSelectedJudges] = useState([]);
 
@@ -45,69 +49,12 @@ const BenchForm = () => {
         }
     };
 
-    const joining_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+    const handleDateChange = (field, value) => {
+        setForm((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
     };
-    
-    const joining_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const joining_date = flatpickr(".joining_date-date-picker", {
-            dateFormat: "d-m-Y",
-            maxDate: "today",
-            defaultDate: form.joining_date ? joining_date_Display(new Date(form.joining_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? joining_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, joining_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (joining_date && typeof joining_date.destroy === "function") {
-                joining_date.destroy();
-            }
-        };
-    }, [form]);
-
-    const releiving_date_Display = (date) => {
-        const day = ("0" + date.getDate()).slice(-2);
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
-    };
-    
-    const releiving_date_Backend = (date) => {
-        const year = date.getFullYear();
-        const month = ("0" + (date.getMonth() + 1)).slice(-2);
-        const day = ("0" + date.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    };
-    
-    useEffect(() => {
-        const releiving_date = flatpickr(".releiving_date-date-picker", {
-            dateFormat: "d-m-Y",
-            // maxDate: "today",
-            defaultDate: form.releiving_date ? releiving_date_Display(new Date(form.releiving_date)) : '',
-            onChange: (selectedDates) => {
-                const formattedDate = selectedDates[0] ? releiving_date_Backend(selectedDates[0]) : "";
-                setForm({ ...form, releiving_date: formattedDate });
-            },
-        });
-
-        return () => {
-            if (releiving_date && typeof releiving_date.destroy === "function") {
-                releiving_date.destroy();
-            }
-        };
-    }, [form]);
 
     useEffect(() => {
         async function fetchData(){
@@ -130,12 +77,13 @@ const BenchForm = () => {
         try{
             setLoading(true)
             await validationSchema.validate(form, {abortEarly:false})
-            // form.jocode = `${form.state_code}${form.jocode}`
-            const updatedForm = { 
+            const payload = { 
                 ...form, 
-                judges: selectedJudges 
+                judges: selectedJudges,
+                joining_date: new Date(form.joining_date).toISOString().split('T')[0],
+                releiving_date: new Date(form.releiving_date).toISOString().split('T')[0] || null
             };
-            const response = await api.post("base/bench/", updatedForm);
+            const response = await api.post("base/bench/", payload);
             if(response.status === 201){
                 toast.success("Judge details added successfully", {
                     theme:"colored"
@@ -219,44 +167,26 @@ const BenchForm = () => {
                         </div>
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Joining Date<RequiredField/></label>
-                            <div className="col-sm-8">
-                                <input 
-                                    type="date" 
-                                    className={`form-control joining_date-date-picker ${errors.joining_date ? 'is-invalid' : ''}`} 
+                            <div className="col-sm-4">
+                                <DatePicker 
                                     name="joining_date"
-                                    value={form.joining_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.joining_date}
+                                    onChange={handleDateChange}
+                                    error={errors.joining_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.joining_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.joining_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">
                             <label htmlFor="" className="col-sm-4">Releiving Date</label>
-                            <div className="col-sm-8">
-                                <input 
-                                    type="date" 
-                                    className={`form-control releiving_date-date-picker ${errors.releiving_date ? 'is-invalid' : ''}`}
+                            <div className="col-sm-4">
+                                <DatePicker 
                                     name="releiving_date"
-                                    value={form.releiving_date ? form.joining_date : ''}
-                                    placeholder="DD-MM-YYYY"
-                                    onChange={(e) => setForm({...form, [e.target.name]: e.target.value})}
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid #ccc', 
-                                        padding: '8px',            
-                                    }}
+                                    value={form.releiving_date}
+                                    onChange={handleDateChange}
+                                    error={errors.releiving_date ? true : false}
                                 />
-                                <div className="invalid-feedback">
-                                    { errors.releiving_date }
-                                </div>
+                                <div className="invalid-feedback">{errors.releiving_date}</div>
                             </div>
                         </div>
                         <div className="form-group row">

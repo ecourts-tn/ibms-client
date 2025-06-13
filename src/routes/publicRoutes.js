@@ -27,6 +27,5 @@ export const publicRoutes = [
     { path: "proceeding/detail/", element: <ProceedingDetail />},
     { path: "user-guide", element:<Home />},
     { path: "verify-order", element:<VerifyOrder />},
-    { path: "*", element:<NotFound />}
 ]
 

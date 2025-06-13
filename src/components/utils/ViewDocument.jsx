@@ -67,7 +67,7 @@ const ViewDocument = ({ url, title, show, handleClose, isDepartment }) => {
                 <Modal.Footer style={{ justifyContent: "end" }}>
                     <Button
                         variant="contained"
-                        onClick={handleClose}
+                        onClick={handleRemarksClose}
                         color="success"
                         className="mr-2"
                     >
@@ -93,9 +93,9 @@ const ViewDocument = ({ url, title, show, handleClose, isDepartment }) => {
                 centered
                 size="lg"
             >
-                <Modal.Header className="bg-info">
+                <Modal.Header className="bg-warning">
                     <strong>Remarks</strong>
-                    <ModelClose handleClose={handleClose} />
+                    <ModelClose handleClose={handleRemarksClose} />
                 </Modal.Header>
                 <Modal.Body>
                     <div className="row">
